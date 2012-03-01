@@ -1,0 +1,5 @@
+C:\Projects\Planner\Planner.Web\bin\MvcApplication1.dll
+C:\Projects\Planner\Planner.Web\bin\MvcApplication1.pdb
+C:\Projects\Planner\Planner.Web\obj\Debug\ResolveAssemblyReference.cache
+C:\Projects\Planner\Planner.Web\obj\Debug\MvcApplication1.dll
+C:\Projects\Planner\Planner.Web\obj\Debug\MvcApplication1.pdb
