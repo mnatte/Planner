@@ -1,0 +1,20 @@
+c:\Users\MND\Documents\Visual Studio 2010\Projects\MvcApplication1\MvcApplication1\bin\MvcApplication1.dll
+c:\Users\MND\Documents\Visual Studio 2010\Projects\MvcApplication1\MvcApplication1\bin\MvcApplication1.pdb
+c:\Users\MND\Documents\Visual Studio 2010\Projects\MvcApplication1\MvcApplication1\obj\Debug\ResolveAssemblyReference.cache
+c:\Users\MND\Documents\Visual Studio 2010\Projects\MvcApplication1\MvcApplication1\obj\Debug\MvcApplication1.dll
+c:\Users\MND\Documents\Visual Studio 2010\Projects\MvcApplication1\MvcApplication1\obj\Debug\MvcApplication1.pdb
+C:\Projects\MND\source\MvcApplication1\MvcApplication1\bin\MvcApplication1.dll
+C:\Projects\MND\source\MvcApplication1\MvcApplication1\bin\MvcApplication1.pdb
+C:\Projects\MND\source\MvcApplication1\MvcApplication1\bin\IronRuby.dll
+C:\Projects\MND\source\MvcApplication1\MvcApplication1\bin\IronRuby.Libraries.dll
+C:\Projects\MND\source\MvcApplication1\MvcApplication1\bin\IronRuby.Libraries.Yaml.dll
+C:\Projects\MND\source\MvcApplication1\MvcApplication1\bin\Microsoft.Dynamic.dll
+C:\Projects\MND\source\MvcApplication1\MvcApplication1\bin\Microsoft.Scripting.dll
+C:\Projects\MND\source\MvcApplication1\MvcApplication1\bin\Microsoft.Scripting.Metadata.dll
+C:\Projects\MND\source\MvcApplication1\MvcApplication1\bin\SassAndCoffee.AspNet.dll
+C:\Projects\MND\source\MvcApplication1\MvcApplication1\bin\SassAndCoffee.Core.dll
+C:\Projects\MND\source\MvcApplication1\MvcApplication1\bin\SassAndCoffee.JavaScript.dll
+C:\Projects\MND\source\MvcApplication1\MvcApplication1\bin\SassAndCoffee.Ruby.dll
+C:\Projects\MND\source\MvcApplication1\MvcApplication1\obj\Debug\ResolveAssemblyReference.cache
+C:\Projects\MND\source\MvcApplication1\MvcApplication1\obj\Debug\MvcApplication1.dll
+C:\Projects\MND\source\MvcApplication1\MvcApplication1\obj\Debug\MvcApplication1.pdb

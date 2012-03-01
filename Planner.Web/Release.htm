@@ -1,0 +1,327 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+	<title>Release</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="stylesheets/base.css">
+	<link rel="stylesheet" href="stylesheets/skeleton.css">
+	<link rel="stylesheet" href="stylesheets/layout.css">
+    <link rel="stylesheet" href="stylesheets/tables.css">
+
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+    
+    <script type="text/javascript" src="javascripts/release.js"></script>
+    <script type="text/javascript" src="javascripts/ajax.js"></script>
+    <!--<script type="text/javascript" src="javascripts/Mixin.js"></script>-->
+    <script type="text/javascript" src="javascripts/Roles.js"></script>
+
+    <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+    <!--<script type="text/javascript" src="Scripts/jquery-1.4.1.min.js"></script>-->
+    <script type="text/javascript" src="Scripts/highcharts.js"></script>
+</head>
+<body>
+<!-- Primary Page Layout
+	================================================== -->
+
+	<!-- Delete everything in this .container and get started on your own site! -->
+
+	<div class="container">
+		<header class="sixteen columns">
+            <div id="releasetitle" class="eight columns alpha">
+                <h1 data-bind="text: title"></h1>
+            </div>
+            <div id="releaseperiod" class="eight columns omega">
+                <h2><data data-bind="text: startDate"></data> - <data data-bind="text: endDate"></data></h2>
+            </div>
+        </header>
+        <section id="overview" class="sixteen columns">
+            <div id="phases" class="eight columns alpha">
+                <h4 class="price">Analyse 12 feb - 26 feb</h4>
+                <h4 class="price">Scope final 28 feb</h4>
+                <h4 class="price">Development 1 mar - 15 may</h4>
+                <h4 class="price">UAT 20 may - 3 jun</h4>
+                <h4 class="price">GoLive 16 jun</h4>
+                <div id="chart-hours"></div>
+            </div>
+            <div id="remaininghours" class="eight columns omega">
+                <div class="eight columns omega">
+                    <div id="pie-pbis"></div>
+                    <!--<h5>Technical design: <data data-bind="text: PBI.remaininghours()"></data> 16 hrs needed, 40 hrs available, 10 hrs used</h5>
+                    <h5>Development: <data data-bind="text: PBI.remaininghours()"></data> 140 hrs needed, 200 hrs available, 20 hrs used</h5>
+                    <h5>Documentation: <data data-bind="text: PBI.remaininghours()"></data> 20 hrs needed, 10 hrs available, 40 hrs used</h5>-->
+                </div>
+            </div>
+        </section>
+
+        <section class="sixteen columns">
+            <div class="ten columns alpha">
+                <ul class="tabs">
+                <!-- Give href an ID value of corresponding "tabs-content" <li>'s -->
+                  <li><a class="active" href="#tasks">Duitsland (10)</a></li>
+                  <li><a href="#bugs">Rusland (5)</a></li>
+                  <li><a href="#changes">Japan (4)</a></li>
+                  <li><a href="#changes">TQ (12)</a></li>
+                  <li><a href="#impediments">Impediments (2)</a></li>
+                </ul>
+                <!--<div class="row">-->
+                <!-- Standard <ul> with class of "tabs-content" -->
+                <ul class="tabs-content">
+                  <!-- Give ID that matches HREF of above anchors -->
+                  <li class="active" id="tasks">
+                        <table class="zebra-striped condensed" id="taskstable">
+                        <!--TODO: Per Activity grouping, same as bug and change as container for tasks-->
+                            <thead>
+                                <tr>
+                                    <th>Feature Id</th>
+                                    <th>Feature Title</th>
+                                    <th>Estimation</th>
+                                    <th>Contact Person</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="11">Task Hours Remaining</td>
+                                    <td aria-live="polite"><strong>82</strong> </td>
+                                </tr>
+                            </tfoot>
+                            <!-- render tr for each bug under pbi-->
+                            <tbody data-bind="foreach: phases" id="taskstablebody">
+                                <tr aria-live="polite">
+                                    <td data-bind="text: title"></td>
+                                    <!--<td data-bind="text: remaininghoursforactivity()">Some feature</td>
+                                    <td data-bind="text: activityname">81 hrs</td>
+                                    <td data-bind="text: remaininghoursforactivity()">Twan de Jong</td>
+                                    <td data-bind="text: activityname">Under Development</td>-->
+                                </tr>
+
+                                <!--<tr aria-live="polite">
+                                    <td data-bind="text: activityname">1229</td>
+                                    <td data-bind="text: remaininghoursforactivity()">Some other feature</td>
+                                    <td data-bind="text: activityname">27 hrs</td>
+                                    <td data-bind="text: remaininghoursforactivity()">John Stolwerk</td>
+                                    <td data-bind="text: activityname">Ready For System Test</td>
+                                </tr>-->
+                            </tbody>
+                        </table>
+                    </li>
+
+            <!--<div class="row">-->
+                    <li id="bugs">
+                        <table class="zebra-striped condensed">
+                            <thead>
+                                <tr>
+                                    <th>Bug ID</th>
+                                    <th>Bug name</th>
+                                    <th>Amount Tasks</th>
+                                    <th>Hours Remaining</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="11">Bug Hours Remaining</td>
+                                    <td aria-live="polite"><strong></strong> </td>
+                                </tr>
+                            </tfoot>
+                            <!-- render tbody for each bug under pbi-->
+                            <!--<tbody data-bind="foreach: PBI.pbibugs">
+                                <tr aria-live="polite">
+                                    <td data-bind="text: bugid"></td>
+                                    <td data-bind="text: bugname"></td>
+                                    <td data-bind="text: amountTasks"></td>
+                                    <td data-bind="text: remaininghoursforbug()"></td>
+                                </tr>
+                            </tbody>-->
+                        </table>
+                    </li>
+            <!--<div class="row">-->
+                <li id="changes">
+                    <table class="zebra-striped condensed">
+                        <thead>
+                            <tr>
+                                <th>Change ID</th>
+                                <th>Change name</th>
+                                <th>Amount Tasks</th>
+                                <th>Hours Remaining</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <td colspan="11">Change Hours Remaining</td>
+                                <td aria-live="polite"><strong></strong> </td>
+                            </tr>
+                        </tfoot>
+                        <!-- render tbody for each bug under pbi-->
+                        <!--<tbody data-bind="foreach: PBI.pbichanges">
+                            <tr aria-live="polite">
+                                <td data-bind="text: changeid"></td>
+                                <td data-bind="text: changename"></td>
+                                <td data-bind="text: amountTasks"></td>
+                                <td data-bind="text: remaininghoursforchange()"></td>
+                            </tr>
+                        </tbody>-->
+                    </table>
+                </li>
+                <li id="impediments">
+                    <table class="zebra-striped condensed" id="tblImpdiments">
+                        <thead>
+                            <tr>
+                                <th>Impediment Id</th>
+                                <th>Description</th>
+                                <th>Register date</th>
+                                <th>Registered by</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <!-- render tr for each bug under pbi-->
+                        <!--<tbody data-bind="foreach: PBI.pbiactivities" id="Tbody1">-->
+                        <tbody id="Tbody2">
+                            <tr aria-live="polite">
+                                <td>1</td>
+                                <td>Network too slow</td>
+                                <td>Feb 21 2012</td>
+                                <td>Twan de Jong</td>
+                                <td>Solved</td>
+                            </tr>
+
+                            <tr aria-live="polite">
+                                <td>2</td>
+                                <td>No contactperson RU</td>
+                                <td>Feb 14 2012</td>
+                                <td>Roland Jochems</td>
+                                <td>Active</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+            </ul>
+            </div>
+        </section>
+	</div><!-- container -->
+    <script src="javascripts/tabs.js"></script>
+    <script type="text/javascript">
+        // see http://www.highcharts.com/ref/#plotOptions-pie-dataLabels--formatter
+        var pieChartOptions = {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            size: "40%",
+            dataLabels: {
+                enabled: true,
+                connectorPadding: 5,
+                style: {
+                    fontSize: 8
+                },
+                connectorWidth: 0.5,
+                formatter: function () {
+//                    var label = "<b>" + this.point.name + "</b> : " + this.percentage;
+//                    return label;
+                    return "<b>" + this.point.name + "</b>:" + this.y;
+                }
+            }
+        };
+
+        $(function () {
+            var chart = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'chart-hours',
+                    defaultSeriesType: 'column'
+                },
+                title: {
+                    text: 'Overview hours'
+                },
+                xAxis: {
+                    //categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
+                    categories: ['DUI', 'RU', 'JP', 'TQ', 'ROM', 'TUR']
+                },
+                tooltip: {
+                    formatter: function () {
+                        return '' + this.series.name + ': ' + this.y + '';
+                    }
+                },
+                credits: {
+                    enabled: false
+                },
+                series: [{
+                    name: 'Requirements',
+                    data: [5, 2, -6, -15, 3, 6]
+                },
+                {
+                    name: 'Development',
+                    data: [-10, 2, -10, -20, 2, 4]
+                },
+                {
+                    name: 'Documentation',
+                    data: [14, 10, 7, 5, 1, 4]
+                }]
+            })
+
+            var chartOptions = {};
+            chartOptions.chart = {
+                // set to div id
+                renderTo: "pie-pbis",
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            };
+            chartOptions.title = { text: "Status Features" };
+            chartOptions.series = [{
+                type: "pie",
+                name: "amount",
+                data: [
+                    ["Ready For Dev", 25],
+                    ["Under Dev", 20],
+                    ["Ready For System Test", 8],
+                    ["Under System Test", 6],
+                    ["Ready For UAT", 14],
+                    ["Under UAT", 4],
+                    ["To Be Analyzed", 14],
+                    ["Under Analysis", 9]
+                ]
+            }];
+            chartOptions.plotOptions = {
+                pie: pieChartOptions
+            };
+            var chart2 = new Highcharts.Chart(chartOptions);
+        });
+
+        $(document).ready(function () {
+            var ajax = new Ajax();
+            ajax.load();
+
+            var devPhase = new Phase("10 feb 2012", "16 may 2012", 83, "Development");
+            var release1 = new Release("11 jan 2012", "19 jun 2012", 167, "Release 9.2");
+            release1.addPhase(devPhase);
+            Release.extend(RMoveItem);
+            console.log(release1.test);
+            ko.applyBindings(release1);
+        });
+    </script>
+
+</body>
+</html>

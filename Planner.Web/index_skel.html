@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+	<title>Product Backlog Item</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="stylesheets/base.css">
+	<link rel="stylesheet" href="stylesheets/skeleton.css">
+	<link rel="stylesheet" href="stylesheets/layout.css">
+    <link rel="stylesheet" href="stylesheets/tables.css">
+
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
+    <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
+
+</head>
+<body>
+
+
+
+	<!-- Primary Page Layout
+	================================================== -->
+
+	<!-- Delete everything in this .container and get started on your own site! -->
+
+	<div class="container">
+		<header class="sixteen columns">
+            <div id="pbidetails" class="twelve columns alpha">
+                <h1 data-bind="text: PBI.issueid"></h1>
+                <h3 data-bind="text: PBI.pbiname"></h3>
+                <h4 class="price"><data data-bind="text: PBI.storypoints"></data> StoryPoints</h4>
+            </div>
+            <div id="remaining" class="four columns omega">
+                <h4>Remaining Hours: <data data-bind="text: PBI.remaininghours()"></data></h4>
+            </div>
+        </header>
+
+        <section id="data" class="six columns">
+            <div class="row"></div>
+            <!--explicitly define new row-->
+            <div class="row">
+                <!--<h5><data data-bind="text: amountTasks"></data> Tasks, <data data-bind="text: amountBugs"></data> Bugs, <data data-bind="text: amountChanges"></data> Changes</h5>
+                <div class="four columns alpha">
+                    <p>
+                        <strong>PBI ID:</strong><data data-bind="text: pbi_id"></data>
+                    </p>
+                    <p>
+                        <strong># Tasks:</strong><data data-bind="text: amountTasks"></data>
+                    </p>
+                    <p>
+                        <strong># Bugs:</strong><data data-bind="text: amountBugs"></data>
+                    </p>
+                    <p>
+                        <strong># Changes:</strong><data data-bind="text: amountChanges"></data>
+                    </p>
+                </div>-->
+                   <!-- <p>
+                        <h3>Remaining Hours: <data data-bind="text: remaininghours()"></data></h3>
+                    </p>-->
+        </section>
+        <section class="ten columns">
+            <div class="two columns alpha">&nbsp;</div>
+            <div class="eight columns omega">
+                <ul class="tabs">
+                <!-- Give href an ID value of corresponding "tabs-content" <li>'s -->
+                  <li><a class="active" href="#tasks">Tasks (<data data-bind="text: PBI.amountTasks"></data>)</a></li>
+                  <li><a href="#bugs">Bugs (<data data-bind="text: PBI.amountBugs"></data>)</a></li>
+                  <li><a href="#changes">Changes (<data data-bind="text: PBI.amountChanges"></data>)</a></li>
+                </ul>
+                <!--<div class="row">-->
+                <!-- Standard <ul> with class of "tabs-content" -->
+                <ul class="tabs-content">
+                  <!-- Give ID that matches HREF of above anchors -->
+                  <li class="active" id="tasks">
+                        <table class="zebra-striped condensed" id="taskstable">
+                        <!--TODO: Per Activity grouping, same as bug and change as container for tasks-->
+                            <thead>
+                                <tr>
+                                    <!--<th>Task ID</th>-->
+                                    <th>Activity</th>
+                                    <th>Hours Remaining</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="11">Task Hours Remaining</td>
+                                    <td aria-live="polite"><strong data-bind="text: PBI.remainingtaskhours()"></strong> </td>
+                                </tr>
+                            </tfoot>
+                            <!-- render tr for each bug under pbi-->
+                            <tbody data-bind="foreach: PBI.pbiactivities" id="taskstablebody">
+                                <tr aria-live="polite">
+                                    <!--<td data-bind="text: taskid"></td>-->
+                                    <td data-bind="text: activityname"></td>
+                                    <td data-bind="text: remaininghoursforactivity()"></td>
+                                </tr>
+                                <tr aria-live="polite">
+                                    <td>
+                                        <ul>
+                                            <li>Aap banaan Afrika</li>
+                                            <li>Beer vis Canada</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+
+            <!--<div class="row">-->
+                    <li id="bugs">
+                        <table class="zebra-striped condensed">
+                            <thead>
+                                <tr>
+                                    <th>Bug ID</th>
+                                    <th>Bug name</th>
+                                    <th>Amount Tasks</th>
+                                    <th>Hours Remaining</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="11">Bug Hours Remaining</td>
+                                    <td aria-live="polite"><strong data-bind="text: PBI.remainingbughours()"></strong> </td>
+                                </tr>
+                            </tfoot>
+                            <!-- render tbody for each bug under pbi-->
+                            <tbody data-bind="foreach: PBI.pbibugs">
+                                <tr aria-live="polite">
+                                    <td data-bind="text: bugid"></td>
+                                    <td data-bind="text: bugname"></td>
+                                    <td data-bind="text: amountTasks"></td>
+                                    <td data-bind="text: remaininghoursforbug()"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+            <!--<div class="row">-->
+                <li id="changes">
+                    <table class="zebra-striped condensed">
+                        <thead>
+                            <tr>
+                                <th>Change ID</th>
+                                <th>Change name</th>
+                                <th>Amount Tasks</th>
+                                <th>Hours Remaining</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <td colspan="11">Change Hours Remaining</td>
+                                <td aria-live="polite"><strong data-bind="text: PBI.remainingchangehours()"></strong> </td>
+                            </tr>
+                        </tfoot>
+                        <!-- render tbody for each bug under pbi-->
+                        <tbody data-bind="foreach: PBI.pbichanges">
+                            <tr aria-live="polite">
+                                <td data-bind="text: changeid"></td>
+                                <td data-bind="text: changename"></td>
+                                <td data-bind="text: amountTasks"></td>
+                                <td data-bind="text: remaininghoursforchange()"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+            <!--<img class="scale-with-grid" src="http://placehold.it/660x200&text=Tasks" alt="Tasks section">-->
+            <!--<img src="http://placehold.it/660x200&text=Bugs" alt="Bugs section">-->
+            <!--<img src="http://placehold.it/660x200&text=Changes" alt="Changes section">-->
+            </ul>
+        </section>
+	</div><!-- container -->
+
+
+
+	<!-- JS
+	================================================== -->
+	<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+	<script src="javascripts/tabs.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#taskstablebody tr:even").addClass("odd");
+            $("#taskstablebody tr:not(.odd)").hide();
+            $("#taskstablebody tr:first-child").show();
+
+            $("#taskstablebody tr.odd").click(function () {
+                $(this).next("tr").toggle();
+                $(this).find(".arrow").toggleClass("up");
+            });
+            //$("#taskstable").jExpand();
+        });
+
+        var PbiSummary = function (id, name, issueid) {
+            this.name = name;
+            this.issueid = issueid;
+            this.id = id;
+        }
+
+        // function is object ctor in javascript
+        var PBI = function (id, issueId, name, storypoints, activities, bugs, changes) {
+            this.pbi_id = id;
+            this.issueid = issueId;
+            this.pbiname = name;
+            this.storypoints = storypoints;
+
+            // observableArray makes adding and removing visible to all subscribers
+            this.pbibugs = ko.observableArray();
+            // bugs is provided externally, it can contain other items than Bug items so their properties are extracted here for creation of Bug array
+            for (var i in bugs) {
+                var bug = new Bug(bugs[i].bugid, bugs[i].bugname, bugs[i].bugtasks);
+                console.log(bug.bugname);
+                this.pbibugs.push(bug);
+            }
+
+            this.pbichanges = ko.observableArray();
+            for (var i in changes) {
+                var change = new Change(changes[i].changeid, changes[i].changename, changes[i].changetasks);
+                console.log(change.changename);
+                this.pbichanges.push(change);
+            }
+
+            this.pbiactivities = ko.observableArray();
+            for (var i in activities) {
+                var activity = new Activity(activities[i].name, activities[i].tasks);
+                console.log(activity.name + " -> " + activity.activitytasks.length);
+                this.pbiactivities.push(activity);
+            }
+
+            this.amountTasks = this.pbiactivities().length;
+            this.amountChanges = this.pbichanges().length;
+            this.amountBugs = this.pbibugs().length;
+
+            this.remainingbughours = function () {
+                var total = 0;
+                for (itm in this.pbibugs()) {
+                    total += this.pbibugs()[itm].remaininghoursforbug();
+                }
+                return total;
+            }
+            this.remainingchangehours = function () {
+                var total = 0;
+                for (itm in this.pbichanges()) {
+                    total += this.pbichanges()[itm].remaininghoursforchange();
+                }
+                return total;
+            }
+            this.remainingtaskhours = function () {
+                var total = 0;
+                for (itm in this.pbiactivities()) {
+                    total += this.pbiactivities()[itm].remaininghoursforactivity();
+                }
+                return total;
+            }
+
+            this.remaininghours = function () {
+                return this.remainingbughours() + this.remainingtaskhours() + this.remainingchangehours();
+            }
+        }
+
+        var Task = function (id, name, activity, remainingHours, completedHours, originalEstimate) {
+            this.taskid = id;
+            this.taskname = name;
+            this.taskactivity = activity;
+            this.remaininghours = remainingHours;
+            this.completedhours = completedHours;
+            this.originalestimate = originalEstimate;
+        }
+
+        var Activity = function (name, tasks) {
+            this.activityname = name;
+            this.activitytasks = ko.observableArray();
+            
+            for (var i in tasks) {
+                var task = new Task(tasks[i].taskid, tasks[i].taskname, tasks[i].taskactivity, tasks[i].remaininghours, tasks[i].completedhours, tasks[i].originalestimate);
+                console.log(task.taskactivity + " -> " + task.taskname);
+                this.activitytasks.push(task);
+            }
+
+            this.remaininghoursforactivity = function () {
+                var total = 0;
+                for (itm in this.activitytasks()) {
+                    total += this.activitytasks()[itm].remaininghours;
+                }
+                return total;
+            }
+
+            this.amountTasks = this.activitytasks().length;
+        }
+
+        var Bug = function (id, name, tasks) {
+            this.bugid = id;
+            this.bugname = name;
+            // observableArray makes adding and removing visible to all subscribers
+            this.bugtasks = ko.observableArray();
+            // bugs is provided externally, it can contain other items than Bug items so their properties are extracted here for creation of Bug array
+            for (var i in tasks) {
+                var task = new Task(tasks[i].taskid, tasks[i].taskname, tasks[i].taskactivity, tasks[i].remaininghours, tasks[i].completedhours, tasks[i].originalestimate);
+                console.log(task.taskactivity + " -> " + task.taskname);
+                this.bugtasks.push(task);
+            }
+
+            this.remaininghoursforbug = function () {
+                var total = 0;
+                for (itm in this.bugtasks()) {
+                    total += this.bugtasks()[itm].remaininghours;
+                }
+                return total;
+            }
+
+            this.amountTasks = this.bugtasks().length;
+        }
+
+        var Change = function (id, name, tasks) {
+            this.changeid = id;
+            this.changename = name;
+            this.changetasks = ko.observableArray();
+
+            for (var i in tasks) {
+                var task = new Task(tasks[i].taskid, tasks[i].taskname, tasks[i].taskactivity, tasks[i].remaininghours, tasks[i].completedhours, tasks[i].originalestimate);
+                console.log(task.taskactivity + " -> " + task.taskname);
+                this.changetasks.push(task);
+            }
+
+            this.remaininghoursforchange = function () {
+                var total = 0;
+                for (itm in this.changetasks()) {
+                    total += this.changetasks()[itm].remaininghours;
+                }
+                return total;
+            }
+
+            this.amountTasks = this.changetasks().length;
+        }
+
+        var ViewModel = function (detailPbi, pbilist) {
+            this.PBI = detailPbi;
+            this.pbis = ko.observableArray();
+
+            for (var i in pbilist) {
+                var pbi = new PbiSummary(pbilist[i].id, pbilist[i].name, pbilist[i].issueid);
+                console.log(pbi.issueid + " -> " + pbi.name);
+                this.pbis.push(pbi);
+            }
+        }
+
+        // data loaded by AJAX or serverside code
+        var digfactDevTasks =
+            [
+                { taskid: 1, taskname: "ontwikkelen", taskactivity: "Development", remaininghours: 2, completedhours: 3, originalestimate: 3 },
+                { taskid: 2, taskname: "unittesten", taskactivity: "Development", remaininghours: 4, completedhours: 0, originalestimate: 4 },
+                { taskid: 1, taskname: "code review", taskactivity: "Development", remaininghours: 2, completedhours: 3, originalestimate: 3 },
+                { taskid: 2, taskname: "url routing", taskactivity: "Development", remaininghours: 4, completedhours: 0, originalestimate: 4 },
+                { taskid: 1, taskname: "dependency injection", taskactivity: "Development", remaininghours: 2, completedhours: 3, originalestimate: 3 }
+            ];
+
+        var digfactTestTasks =
+            [    
+                { taskid: 2, taskname: "testen", taskactivity: "Testing", remaininghours: 4, completedhours: 0, originalestimate: 4 },
+                { taskid: 1, taskname: "testscripts", taskactivity: "Testing", remaininghours: 2, completedhours: 3, originalestimate: 3 },
+                { taskid: 2, taskname: "review verwerken", taskactivity: "Testing", remaininghours: 4, completedhours: 0, originalestimate: 4 },
+                { taskid: 1, taskname: "testplan", taskactivity: "Testing", remaininghours: 2, completedhours: 3, originalestimate: 3 }
+            ];
+
+        var digfactReqTasks =
+            [    
+                { taskid: 2, taskname: "analyse", taskactivity: "Requirements", remaininghours: 4, completedhours: 0, originalestimate: 4 },
+                { taskid: 1, taskname: "meetings", taskactivity: "Requirements", remaininghours: 2, completedhours: 3, originalestimate: 3 },
+                { taskid: 2, taskname: "functionele documentatie", taskactivity: "Requirements", remaininghours: 4, completedhours: 0, originalestimate: 4 },
+                { taskid: 1, taskname: "review verwerken", taskactivity: "Requirements", remaininghours: 2, completedhours: 3, originalestimate: 3 }
+            ];
+
+        var digfactDeployTasks =
+            [
+                { taskid: 2, taskname: "configuratie", taskactivity: "Deployment", remaininghours: 4, completedhours: 0, originalestimate: 4 },
+                { taskid: 1, taskname: "testomgeving inrichten", taskactivity: "Deployment", remaininghours: 2, completedhours: 3, originalestimate: 3 },
+                { taskid: 2, taskname: "database project", taskactivity: "Deployment", remaininghours: 4, completedhours: 0, originalestimate: 4 },
+                { taskid: 1, taskname: "integratie omgeving", taskactivity: "Deployment", remaininghours: 2, completedhours: 3, originalestimate: 3 },
+                { taskid: 2, taskname: "MSDeploy gebruiken", taskactivity: "Deployment", remaininghours: 4, completedhours: 0, originalestimate: 4 }
+
+            ];
+
+        var digfactMailBugTasks =
+            [
+                { taskid: 5, taskname: "fixen mail bug", taskactivity: "Development", remaininghours: 2, completedhours: 0, originalestimate: 3 },
+                { taskid: 6, taskname: "testen mail bug", taskactivity: "Testing", remaininghours: 2, completedhours: 0, originalestimate: 2 }
+            ];
+
+        var digfactFactuurBugTasks =
+            [
+                { taskid: 7, taskname: "fixen factuur bug", taskactivity: "Development", remaininghours: 2, completedhours: 0, originalestimate: 3 },
+                { taskid: 8, taskname: "testen factuur bug", taskactivity: "Testing", remaininghours: 4, completedhours: 1, originalestimate: 6 }
+            ];
+
+        var digfactChangeTasks =
+            [
+                { taskid: 10, taskname: "toevoegen pdf document", taskactivity: "Development", remaininghours: 16, completedhours: 0, originalestimate: 16 },
+                { taskid: 11, taskname: "testen pdf doc", taskactivity: "Testing", remaininghours: 4, completedhours: 0, originalestimate: 4 }
+            ];
+
+        var digfactActivities =
+            [
+                {name: "Development", tasks: digfactDevTasks},
+                {name: "Testing", tasks: digfactTestTasks},
+                {name: "Requirements", tasks: digfactReqTasks},
+                {name: "Deployment", tasks: digfactDeployTasks}
+            ]; 
+
+        var digfactBugs =
+            [
+                { bugid: 3, bugname: "fout in mail", bugtasks: digfactMailBugTasks },
+                { bugid: 4, bugname: "fout in factuur", bugtasks: digfactFactuurBugTasks }
+            ];
+
+        var digfactChanges =
+            [
+                { changeid: 9, changename: "toch pdf versie", changetasks: digfactChangeTasks }
+            ];
+
+        var pbilist =
+            [
+                { id: 9, name: "Factureren per product", issueid: 67752 },
+                { id: 10, name: "Aanmaningen", issueid: 21318 },
+                { id: 11, name: "Fisfo naar .NET", issueid: 45882 },
+                { id: 19, name: "weekstaat rapport", issueid: 18752 },
+                { id: 29, name: "medewerker budget", issueid: 71152 },
+                { id: 33, name: "Mobiliteit vergoeding", issueid: 70846 },
+                { id: 26, name: "Doorbelasting diensten", issueid: 88432 },
+                { id: 54, name: "Uitbetaling factuurkosten", issueid: 23177 },
+                { id: 23, name: "WENS - Info scherm", issueid: 42996 },
+                { id: 22, name: "CRM peiler", issueid: 32586 },
+                { id: 76, name: "Herstructurering arbeidskosten", issueid: 55637 },
+                { id: 82, name: "Inkoop voorraad heffing", issueid: 87643 },
+                { id: 27, name: "Onderhoud jobs refactoren", issueid: 55532 },
+                { id: 56, name: "Link naar help werkt niet", issueid: 72435 }
+            ];
+
+        var viewModel = new ViewModel(new PBI(1, 68075, "Digitaal factureren", 13, digfactActivities, digfactBugs, digfactChanges), pbilist);
+        ko.applyBindings(viewModel);
+        </script>
+
+<!-- End Document
+================================================== -->
+</body>
+</html>
