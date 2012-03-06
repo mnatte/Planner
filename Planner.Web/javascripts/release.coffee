@@ -22,7 +22,7 @@ class Release extends Phase
 		@backlog.push(feature)
 
 class Feature
-	constructor: (@businessId, @contactPerson, @estimatedHours, @hoursWorked, @priority, @project, @remainingHours, @title) ->
+	constructor: (@businessId, @contactPerson, @estimatedHours, @hoursWorked, @priority, @project, @remainingHours, @title, @state) ->
 	
 # export to root object
 root.Phase = Phase

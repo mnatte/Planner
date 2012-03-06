@@ -87,37 +87,41 @@
         </section>
 
         <section class="sixteen columns">
-            <div id="tabSection" class="ten columns alpha">
+            <div id="tabSection" class="fourteen columns alpha">
                 <ul class="tabs" data-bind="foreach: sets">
                 <!-- Give href an ID value of corresponding "tabs-content" <li>'s -->
-                  <li><a data-bind="attr: {href: link}"><data data-bind="text: name"></data></a></li>
+                  <li data-bind="attr: {tag: label}"><a data-bind="attr: {href: link}"><data data-bind="text: label"></data></a></li>
                 </ul>
                 <!--<div class="row">-->
                 <!-- Standard <ul> with class of "tabs-content" -->
-                <ul class="tabs-content" data-bind="foreach: sets">
+                <ul id="tabsContent" class="tabs-content" data-bind="foreach: sets">
                   <!-- Give ID that matches HREF of above anchors -->
-                  <li data-bind="attr: {id: name}">
+                  <li data-bind="attr: {id: label}">
                     <table class="zebra-striped condensed">
                     <!--TODO: Per Activity grouping, same as bug and change as container for tasks-->
                         <thead>
                             <tr>
                                 <th>Feature Id</th>
                                 <th>Feature Title</th>
-                                <th>Estimation</th>
+                                <th>Remaining Hours</th>
                                 <th>Contact Person</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <tfoot>
                             <tr>
-                                <td colspan="11"><data data-bind="text: name"></data> Task Hours Remaining</td>
-                                <td aria-live="polite"><strong>82</strong> </td>
+                                <td colspan="11"><strong>Total Hours Remaining<strong></td>
+                                <td aria-live="polite"><strong><data data-bind="text: totalHours"></data></strong> </td>
                             </tr>
                         </tfoot>
-                        <!-- render tr for each bug under pbi-->
+                        <!-- @businessId, @contactPerson, @estimatedHours, @hoursWorked, @priority, @project, @remainingHours, @title, @state-->
                         <tbody data-bind="foreach: items" id="taskstablebody">
                             <tr aria-live="polite">
+                                <td data-bind="text: businessId"></td>
                                 <td data-bind="text: title"></td>
+                                <td data-bind="text: remainingHours"></td>
+                                <td data-bind="text: contactPerson"></td>
+                                <td data-bind="text: state"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -215,13 +219,26 @@
         $(document).ready(function () {
             var ajax = new Ajax();
 
-//            var devPhase = new Phase("10 feb 2012", "16 may 2012", 83, "Development");
-//            var release1 = new Release("11 jan 2012", "19 jun 2012", 167, "Release 9.2");
-//            release1.addPhase(devPhase);
+            //            var devPhase = new Phase("10 feb 2012", "16 may 2012", 83, "Development");
+            //            var release1 = new Release("11 jan 2012", "19 jun 2012", 167, "Release 9.2");
+            //            release1.addPhase(devPhase);
             Release.extend(RMoveItem);
 
             var displayReleaseStatus = new UDisplayReleaseStatus();
             ajax.load(displayReleaseStatus.execute);
+
+            //$("#tabSection > ul > li > a").first().addClass("active");
+            //$(".tabs-content > li").first().addClass("active");
+
+            $("#tabSection > ul").on("click", "li > a", function (event) {
+                var tag = $(this).parent().attr('tag');
+                //console.log("this: " + $(this).attr('href'));
+                //console.log(li);
+                $(".active").removeClass("active");
+
+                $(this).addClass("active");
+                $("#tabsContent").find("#" + tag).addClass("active");
+            });
 
             //console.log(release1.test);
         });

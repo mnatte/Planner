@@ -10,8 +10,7 @@
     }
 
     UDisplayReleaseStatus.prototype.execute = function(data) {
-      var feat, phase, _i, _j, _len, _len2, _ref, _ref2;
-      console.log(data.Title);
+      var feat, ft, phase, set, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4;
       this.release = new Release(DateFormatter.formatJsonDate(data.StartDate, "dd/MM/yyyy"), DateFormatter.formatJsonDate(data.EndDate, "dd/MM/yyyy"), data.WorkingDays, data.Title);
       _ref = data.Phases;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -21,13 +20,21 @@
       _ref2 = data.Backlog;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         feat = _ref2[_j];
-        this.release.addFeature(new Feature(feat.BusinessId, feat.ContactPerson, feat.EstimatedHours, feat.HoursWorked, feat.Priority, feat.Project, feat.RemainingHours, feat.Title));
+        this.release.addFeature(new Feature(feat.BusinessId, feat.ContactPerson, feat.EstimatedHours, feat.HoursWorked, feat.Priority, feat.Project, feat.RemainingHours, feat.Title, feat.Status));
       }
       this.release.group('project', this.release.backlog);
-      console.log(this.release.sets.length);
-      ko.applyBindings(this.release);
-      $("#tabSection > ul > li > a").first().addClass("active");
-      return $(".tabs-content > li").first().addClass("active");
+      _ref3 = this.release.sets;
+      for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+        set = _ref3[_k];
+        set.link = "#" + set.label;
+        set.totalHours = 0;
+        _ref4 = set.items;
+        for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
+          ft = _ref4[_l];
+          set.totalHours += ft.remainingHours;
+        }
+      }
+      return ko.applyBindings(this.release);
     };
 
     return UDisplayReleaseStatus;

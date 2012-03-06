@@ -63,6 +63,7 @@ namespace MvcApplication1.Models
             public int RemainingHours { get; set; }
             public int HoursWorked { get; set; }
             public string Project { get; set; }
+            public string Status { get; set; }
         }
 
         public class Project

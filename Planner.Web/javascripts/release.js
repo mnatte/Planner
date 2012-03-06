@@ -64,7 +64,7 @@
 
   Feature = (function() {
 
-    function Feature(businessId, contactPerson, estimatedHours, hoursWorked, priority, project, remainingHours, title) {
+    function Feature(businessId, contactPerson, estimatedHours, hoursWorked, priority, project, remainingHours, title, state) {
       this.businessId = businessId;
       this.contactPerson = contactPerson;
       this.estimatedHours = estimatedHours;
@@ -73,6 +73,7 @@
       this.project = project;
       this.remainingHours = remainingHours;
       this.title = title;
+      this.state = state;
     }
 
     return Feature;
