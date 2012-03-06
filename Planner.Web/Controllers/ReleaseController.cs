@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using MvcApplication1.Models;
 
 namespace MvcApplication1.Controllers
 {
@@ -18,8 +19,26 @@ namespace MvcApplication1.Controllers
         
         public JsonResult GetRelease()
         {
-            var release = new MvcApplication1.Models.ReleaseModels.Release { EndDate = new DateTime(2012, 6, 17), StartDate = new DateTime(2012, 1, 25), Title = "Release 9.2", WorkingDays = 92 };
-            release.Phases.Add(new Models.ReleaseModels.Phase { EndDate = new DateTime(2012, 2, 24), StartDate = new DateTime(2012, 3, 15), Title = "Development", WorkingDays = 35 });
+            var Tq = new ReleaseModels.Project { ShortName = "TQ" };
+            var Eu = new ReleaseModels.Project { ShortName = "EU" };
+            var Jpn = new ReleaseModels.Project { ShortName = "JPN" };
+            var Opt = new ReleaseModels.Project { ShortName = "OPTIM" };
+
+            var release = new ReleaseModels.Release { EndDate = new DateTime(2012, 6, 17), StartDate = new DateTime(2012, 1, 25), Title = "Release 9.2" };
+
+            release.Phases.Add(new ReleaseModels.Phase { StartDate = new DateTime(2012, 2, 24), EndDate = new DateTime(2012, 3, 15), Title = "Development" });
+            release.Phases.Add(new ReleaseModels.Phase { StartDate = new DateTime(2012, 3, 18), EndDate = new DateTime(2012, 4, 2), Title = "System Test" });
+            release.Phases.Add(new ReleaseModels.Phase { StartDate = new DateTime(2012, 4, 16), EndDate = new DateTime(2012, 4, 30), Title = "UAT" });
+
+            release.Backlog.Add(new ReleaseModels.Feature { BusinessId = "TP100", ContactPerson = "Kris Kater", EstimatedHours = 12, HoursWorked = 2, Priority = 15, Project = "TQ", RemainingHours=12, Title = "TQ Scorecard"});
+            release.Backlog.Add(new ReleaseModels.Feature { BusinessId = "TP230", ContactPerson = "Arno van Hout", EstimatedHours = 10, HoursWorked = 0, Priority = 2, Project = "TQ", RemainingHours = 10, Title = "GUI Maintenance" });
+            release.Backlog.Add(new ReleaseModels.Feature { BusinessId = "TP140", ContactPerson = "Arno van Hout", EstimatedHours = 210, HoursWorked = 30, Priority = 1, Project = "EU", RemainingHours = 120, Title = "NEXT Integration" });
+            release.Backlog.Add(new ReleaseModels.Feature { BusinessId = "TP6035", ContactPerson = "Tanvir Hossain", EstimatedHours = 120, HoursWorked = 0, Priority = 10, Project = "JPN", RemainingHours = 110, Title = "Use case A" });
+            release.Backlog.Add(new ReleaseModels.Feature { BusinessId = "TP0030", ContactPerson = "Twan de Jong", EstimatedHours = 91, HoursWorked = 20, Priority = 21, Project = "JPN", RemainingHours = 78, Title = "Use case B" });
+            release.Backlog.Add(new ReleaseModels.Feature { BusinessId = "1234", ContactPerson = "Andreas van Bergen", EstimatedHours = 40, HoursWorked = 0, Priority = 3, Project = "OPTIM", RemainingHours = 40, Title = "Reduce DB calls" });
+            release.Backlog.Add(new ReleaseModels.Feature { BusinessId = "2345", ContactPerson = "Martijn van der Munnik", EstimatedHours = 30, HoursWorked = 0, Priority = 4, Project = "OPTIM", RemainingHours = 30, Title = "Remove Threading" });
+            release.Backlog.Add(new ReleaseModels.Feature { BusinessId = "3456", ContactPerson = "Reinier Hutzeson", EstimatedHours = 35, HoursWorked = 10, Priority = 5, Project = "OPTIM", RemainingHours = 35, Title = "Implement Caching" });
+
             return this.Json(release, JsonRequestBehavior.AllowGet);
         }
 

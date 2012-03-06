@@ -123,6 +123,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ajax.coffee</DependentUpon>
     </Content>
+    <Content Include="javascripts\UseCases.js">
+      <DependentUpon>UseCases.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
     <Content Include="javascripts\jExpand.js" />
     <Content Include="javascripts\Mixin.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
@@ -198,6 +203,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="javascripts\UseCases.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>UseCases.js</LastGenOutput>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

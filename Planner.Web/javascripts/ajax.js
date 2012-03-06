@@ -7,14 +7,15 @@
 
     function Ajax() {}
 
-    Ajax.prototype.load = function() {
+    Ajax.prototype.load = function(callback) {
       var url;
       url = "/Release/GetRelease";
       return $.ajax(url, {
         dataType: "json",
         type: "GET",
         success: function(data, status, XHR) {
-          return console.log(data);
+          console.log("AJAX data loaded");
+          return callback(data);
         },
         error: function(XHR, status, errorThrown) {
           return console.log("AJAX error: " + status);

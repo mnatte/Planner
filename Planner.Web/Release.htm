@@ -34,15 +34,20 @@
 	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
 	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
+    <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.dateFormat-1.0.js"></script>
+    <!--<script type="text/javascript" src="Scripts/jquery.calendars.plus.min.js"></script>-->
     
+    <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
     <script type="text/javascript" src="javascripts/ajax.js"></script>
-    <!--<script type="text/javascript" src="javascripts/Mixin.js"></script>-->
     <script type="text/javascript" src="javascripts/Roles.js"></script>
+    <script type="text/javascript" src="javascripts/UseCases.js"></script>
 
     <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
-    <script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
-    <!--<script type="text/javascript" src="Scripts/jquery-1.4.1.min.js"></script>-->
+    <!--<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>-->
+    
     <script type="text/javascript" src="Scripts/highcharts.js"></script>
 </head>
 <body>
@@ -62,11 +67,13 @@
         </header>
         <section id="overview" class="sixteen columns">
             <div id="phases" class="eight columns alpha">
-                <h4 class="price">Analyse 12 feb - 26 feb</h4>
-                <h4 class="price">Scope final 28 feb</h4>
+                <ul data-bind="foreach: phases">
+                    <li class="price"><h5 data-bind="text: toString()"></h5></li>
+                </ul>
+                <!--<h4 class="price">Scope final 28 feb</h4>
                 <h4 class="price">Development 1 mar - 15 may</h4>
                 <h4 class="price">UAT 20 may - 3 jun</h4>
-                <h4 class="price">GoLive 16 jun</h4>
+                <h4 class="price">GoLive 16 jun</h4>-->
                 <div id="chart-hours"></div>
             </div>
             <div id="remaininghours" class="eight columns omega">
@@ -80,142 +87,37 @@
         </section>
 
         <section class="sixteen columns">
-            <div class="ten columns alpha">
-                <ul class="tabs">
+            <div id="tabSection" class="ten columns alpha">
+                <ul class="tabs" data-bind="foreach: sets">
                 <!-- Give href an ID value of corresponding "tabs-content" <li>'s -->
-                  <li><a class="active" href="#tasks">Duitsland (10)</a></li>
-                  <li><a href="#bugs">Rusland (5)</a></li>
-                  <li><a href="#changes">Japan (4)</a></li>
-                  <li><a href="#changes">TQ (12)</a></li>
-                  <li><a href="#impediments">Impediments (2)</a></li>
+                  <li><a data-bind="attr: {href: link}"><data data-bind="text: name"></data></a></li>
                 </ul>
                 <!--<div class="row">-->
                 <!-- Standard <ul> with class of "tabs-content" -->
-                <ul class="tabs-content">
+                <ul class="tabs-content" data-bind="foreach: sets">
                   <!-- Give ID that matches HREF of above anchors -->
-                  <li class="active" id="tasks">
-                        <table class="zebra-striped condensed" id="taskstable">
-                        <!--TODO: Per Activity grouping, same as bug and change as container for tasks-->
-                            <thead>
-                                <tr>
-                                    <th>Feature Id</th>
-                                    <th>Feature Title</th>
-                                    <th>Estimation</th>
-                                    <th>Contact Person</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="11">Task Hours Remaining</td>
-                                    <td aria-live="polite"><strong>82</strong> </td>
-                                </tr>
-                            </tfoot>
-                            <!-- render tr for each bug under pbi-->
-                            <tbody data-bind="foreach: phases" id="taskstablebody">
-                                <tr aria-live="polite">
-                                    <td data-bind="text: title"></td>
-                                    <!--<td data-bind="text: remaininghoursforactivity()">Some feature</td>
-                                    <td data-bind="text: activityname">81 hrs</td>
-                                    <td data-bind="text: remaininghoursforactivity()">Twan de Jong</td>
-                                    <td data-bind="text: activityname">Under Development</td>-->
-                                </tr>
-
-                                <!--<tr aria-live="polite">
-                                    <td data-bind="text: activityname">1229</td>
-                                    <td data-bind="text: remaininghoursforactivity()">Some other feature</td>
-                                    <td data-bind="text: activityname">27 hrs</td>
-                                    <td data-bind="text: remaininghoursforactivity()">John Stolwerk</td>
-                                    <td data-bind="text: activityname">Ready For System Test</td>
-                                </tr>-->
-                            </tbody>
-                        </table>
-                    </li>
-
-            <!--<div class="row">-->
-                    <li id="bugs">
-                        <table class="zebra-striped condensed">
-                            <thead>
-                                <tr>
-                                    <th>Bug ID</th>
-                                    <th>Bug name</th>
-                                    <th>Amount Tasks</th>
-                                    <th>Hours Remaining</th>
-                                </tr>
-                            </thead>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="11">Bug Hours Remaining</td>
-                                    <td aria-live="polite"><strong></strong> </td>
-                                </tr>
-                            </tfoot>
-                            <!-- render tbody for each bug under pbi-->
-                            <!--<tbody data-bind="foreach: PBI.pbibugs">
-                                <tr aria-live="polite">
-                                    <td data-bind="text: bugid"></td>
-                                    <td data-bind="text: bugname"></td>
-                                    <td data-bind="text: amountTasks"></td>
-                                    <td data-bind="text: remaininghoursforbug()"></td>
-                                </tr>
-                            </tbody>-->
-                        </table>
-                    </li>
-            <!--<div class="row">-->
-                <li id="changes">
+                  <li data-bind="attr: {id: name}">
                     <table class="zebra-striped condensed">
+                    <!--TODO: Per Activity grouping, same as bug and change as container for tasks-->
                         <thead>
                             <tr>
-                                <th>Change ID</th>
-                                <th>Change name</th>
-                                <th>Amount Tasks</th>
-                                <th>Hours Remaining</th>
+                                <th>Feature Id</th>
+                                <th>Feature Title</th>
+                                <th>Estimation</th>
+                                <th>Contact Person</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tfoot>
                             <tr>
-                                <td colspan="11">Change Hours Remaining</td>
-                                <td aria-live="polite"><strong></strong> </td>
+                                <td colspan="11"><data data-bind="text: name"></data> Task Hours Remaining</td>
+                                <td aria-live="polite"><strong>82</strong> </td>
                             </tr>
                         </tfoot>
-                        <!-- render tbody for each bug under pbi-->
-                        <!--<tbody data-bind="foreach: PBI.pbichanges">
-                            <tr aria-live="polite">
-                                <td data-bind="text: changeid"></td>
-                                <td data-bind="text: changename"></td>
-                                <td data-bind="text: amountTasks"></td>
-                                <td data-bind="text: remaininghoursforchange()"></td>
-                            </tr>
-                        </tbody>-->
-                    </table>
-                </li>
-                <li id="impediments">
-                    <table class="zebra-striped condensed" id="tblImpdiments">
-                        <thead>
-                            <tr>
-                                <th>Impediment Id</th>
-                                <th>Description</th>
-                                <th>Register date</th>
-                                <th>Registered by</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
                         <!-- render tr for each bug under pbi-->
-                        <!--<tbody data-bind="foreach: PBI.pbiactivities" id="Tbody1">-->
-                        <tbody id="Tbody2">
+                        <tbody data-bind="foreach: items" id="taskstablebody">
                             <tr aria-live="polite">
-                                <td>1</td>
-                                <td>Network too slow</td>
-                                <td>Feb 21 2012</td>
-                                <td>Twan de Jong</td>
-                                <td>Solved</td>
-                            </tr>
-
-                            <tr aria-live="polite">
-                                <td>2</td>
-                                <td>No contactperson RU</td>
-                                <td>Feb 14 2012</td>
-                                <td>Roland Jochems</td>
-                                <td>Active</td>
+                                <td data-bind="text: title"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -312,14 +214,16 @@
 
         $(document).ready(function () {
             var ajax = new Ajax();
-            ajax.load();
 
-            var devPhase = new Phase("10 feb 2012", "16 may 2012", 83, "Development");
-            var release1 = new Release("11 jan 2012", "19 jun 2012", 167, "Release 9.2");
-            release1.addPhase(devPhase);
+//            var devPhase = new Phase("10 feb 2012", "16 may 2012", 83, "Development");
+//            var release1 = new Release("11 jan 2012", "19 jun 2012", 167, "Release 9.2");
+//            release1.addPhase(devPhase);
             Release.extend(RMoveItem);
-            console.log(release1.test);
-            ko.applyBindings(release1);
+
+            var displayReleaseStatus = new UDisplayReleaseStatus();
+            ajax.load(displayReleaseStatus.execute);
+
+            //console.log(release1.test);
         });
     </script>
 

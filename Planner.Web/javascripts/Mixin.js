@@ -1,5 +1,5 @@
 (function() {
-  var Mixin, moduleKeywords, root,
+  var DateFormatter, Mixin, moduleKeywords, root,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   root = typeof global !== "undefined" && global !== null ? global : window;
@@ -34,6 +34,20 @@
 
   })();
 
+  DateFormatter = (function() {
+
+    function DateFormatter() {}
+
+    DateFormatter.formatJsonDate = function(date, format) {
+      return $.format.date(eval("new " + date.slice(1, -1)), format);
+    };
+
+    return DateFormatter;
+
+  })();
+
   root.Mixin = Mixin;
+
+  root.DateFormatter = DateFormatter;
 
 }).call(this);
