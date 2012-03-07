@@ -26,15 +26,15 @@ RGroupBy =
 					for item in collection
 						# add set (with label) to set collection when no set with label propertyValue exists
 						unless item[property] in addedSets
-							# console.log("add set with propertyValue: " + item[property])
+							console.log("add set with propertyValue: " + item[property])
 							# set has a label, a collection and a link property. link can be used to link to it in UI for tabs for example
-							@sets.push(label: item[property], items: [])
+							@sets.push(label: item[property], items: [], groupedBy: property)
 							addedSets.push(item[property])
 						# add item to set when property == propertyValue
 						set = (grp for grp in @sets when grp.label == item[property])[0]
 						# console.log("set: #{set}")
 						set.items.push(item)
-						# console.log("added #{item} to set #{set.name}")
+						console.log("added #{item} to set #{set.label}")
 
 # export to root object
 root.RMoveItem = RMoveItem

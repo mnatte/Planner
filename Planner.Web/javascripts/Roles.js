@@ -27,9 +27,11 @@
           for (_i = 0, _len = collection.length; _i < _len; _i++) {
             item = collection[_i];
             if (_ref = item[property], __indexOf.call(addedSets, _ref) < 0) {
+              console.log("add set with propertyValue: " + item[property]);
               this.sets.push({
                 label: item[property],
-                items: []
+                items: [],
+                groupedBy: property
               });
               addedSets.push(item[property]);
             }
@@ -43,7 +45,8 @@
               }
               return _results2;
             }).call(this))[0];
-            _results.push(set.items.push(item));
+            set.items.push(item);
+            _results.push(console.log("added " + item + " to set " + set.label));
           }
           return _results;
         }

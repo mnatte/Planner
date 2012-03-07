@@ -88,13 +88,13 @@
 
         <section class="sixteen columns">
             <div id="tabSection" class="fourteen columns alpha">
-                <ul class="tabs" data-bind="foreach: sets">
+                <ul class="tabs" data-bind="foreach: $.grep(sets, function(n,I) { return n.groupedBy == 'project';})">
                 <!-- Give href an ID value of corresponding "tabs-content" <li>'s -->
                   <li data-bind="attr: {tag: label}"><a data-bind="attr: {href: link}"><data data-bind="text: label"></data></a></li>
                 </ul>
                 <!--<div class="row">-->
                 <!-- Standard <ul> with class of "tabs-content" -->
-                <ul id="tabsContent" class="tabs-content" data-bind="foreach: sets">
+                <ul id="tabsContent" class="tabs-content" data-bind="foreach: $.grep(sets, function(n,I) { return n.groupedBy == 'project';}) ">
                   <!-- Give ID that matches HREF of above anchors -->
                   <li data-bind="attr: {id: label}">
                     <table class="zebra-striped condensed">
@@ -186,7 +186,9 @@
                     data: [14, 10, 7, 5, 1, 4]
                 }]
             })
+        });
 
+        function showStatusChart(statusdata) {
             var chartOptions = {};
             chartOptions.chart = {
                 // set to div id
@@ -199,29 +201,18 @@
             chartOptions.series = [{
                 type: "pie",
                 name: "amount",
-                data: [
-                    ["Ready For Dev", 25],
-                    ["Under Dev", 20],
-                    ["Ready For System Test", 8],
-                    ["Under System Test", 6],
-                    ["Ready For UAT", 14],
-                    ["Under UAT", 4],
-                    ["To Be Analyzed", 14],
-                    ["Under Analysis", 9]
-                ]
+                data: statusdata
             }];
             chartOptions.plotOptions = {
                 pie: pieChartOptions
             };
             var chart2 = new Highcharts.Chart(chartOptions);
-        });
+        }
+        
 
         $(document).ready(function () {
             var ajax = new Ajax();
 
-            //            var devPhase = new Phase("10 feb 2012", "16 may 2012", 83, "Development");
-            //            var release1 = new Release("11 jan 2012", "19 jun 2012", 167, "Release 9.2");
-            //            release1.addPhase(devPhase);
             Release.extend(RMoveItem);
 
             var displayReleaseStatus = new UDisplayReleaseStatus();
@@ -230,17 +221,18 @@
             //$("#tabSection > ul > li > a").first().addClass("active");
             //$(".tabs-content > li").first().addClass("active");
 
+            // add toggle function for tabs
             $("#tabSection > ul").on("click", "li > a", function (event) {
-                var tag = $(this).parent().attr('tag');
-                //console.log("this: " + $(this).attr('href'));
-                //console.log(li);
+                // set active tab and content to inactive
                 $(".active").removeClass("active");
-
+                // set clicked tab to active
                 $(this).addClass("active");
+
+                // set content for clicked tab to active
+                var tag = $(this).parent().attr('tag');
                 $("#tabsContent").find("#" + tag).addClass("active");
             });
 
-            //console.log(release1.test);
         });
     </script>
 

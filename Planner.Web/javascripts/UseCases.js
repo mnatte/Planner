@@ -10,7 +10,7 @@
     }
 
     UDisplayReleaseStatus.prototype.execute = function(data) {
-      var feat, ft, phase, set, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4;
+      var feat, ft, phase, set, statusData, statusgroup, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref, _ref2, _ref3, _ref4, _ref5;
       this.release = new Release(DateFormatter.formatJsonDate(data.StartDate, "dd/MM/yyyy"), DateFormatter.formatJsonDate(data.EndDate, "dd/MM/yyyy"), data.WorkingDays, data.Title);
       _ref = data.Phases;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -23,9 +23,11 @@
         this.release.addFeature(new Feature(feat.BusinessId, feat.ContactPerson, feat.EstimatedHours, feat.HoursWorked, feat.Priority, feat.Project, feat.RemainingHours, feat.Title, feat.Status));
       }
       this.release.group('project', this.release.backlog);
+      this.release.group('state', this.release.backlog);
       _ref3 = this.release.sets;
       for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
         set = _ref3[_k];
+        if (!(set.groupedBy === "project")) continue;
         set.link = "#" + set.label;
         set.totalHours = 0;
         _ref4 = set.items;
@@ -34,7 +36,18 @@
           set.totalHours += ft.remainingHours;
         }
       }
-      return ko.applyBindings(this.release);
+      statusData = [];
+      _ref5 = this.release.sets;
+      for (_m = 0, _len5 = _ref5.length; _m < _len5; _m++) {
+        statusgroup = _ref5[_m];
+        if (!(statusgroup.groupedBy === "state")) continue;
+        data = [];
+        data.push(statusgroup.label);
+        data.push(statusgroup.items.length);
+        statusData.push(data);
+      }
+      ko.applyBindings(this.release);
+      return showStatusChart(statusData);
     };
 
     return UDisplayReleaseStatus;
