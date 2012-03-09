@@ -1,5 +1,5 @@
 (function() {
-  var Feature, MileStone, Phase, Release, root,
+  var Feature, MileStone, Phase, Release, Resource, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -48,6 +48,7 @@
       Release.__super__.constructor.apply(this, arguments);
       this.phases = [];
       this.backlog = [];
+      this.resources = [];
     }
 
     Release.prototype.addPhase = function(phase) {
@@ -56,6 +57,11 @@
 
     Release.prototype.addFeature = function(feature) {
       return this.backlog.push(feature);
+    };
+
+    Release.prototype.addResource = function(resource) {
+      console.log(resource.initials + "->" + resource.memberProject);
+      return this.resources.push(resource);
     };
 
     return Release;
@@ -80,6 +86,28 @@
 
   })();
 
+  Resource = (function(_super) {
+
+    __extends(Resource, _super);
+
+    function Resource(firstName, middleName, lastName, initials, hoursPerWeek, _function) {
+      this.firstName = firstName;
+      this.middleName = middleName;
+      this.lastName = lastName;
+      this.initials = initials;
+      this.hoursPerWeek = hoursPerWeek;
+      this["function"] = _function;
+      this.periodsAway = [];
+    }
+
+    Resource.prototype.addAbsence = function(period) {
+      return this.periodsAway.push(period);
+    };
+
+    return Resource;
+
+  })(Mixin);
+
   root.Phase = Phase;
 
   root.MileStone = MileStone;
@@ -87,5 +115,7 @@
   root.Release = Release;
 
   root.Feature = Feature;
+
+  root.Resource = Resource;
 
 }).call(this);

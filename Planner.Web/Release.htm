@@ -87,7 +87,7 @@
         </section>
 
         <section class="sixteen columns">
-            <div id="tabSection" class="fourteen columns alpha">
+            <div id="tabSection" class="sixteen columns alpha">
                 <ul class="tabs" data-bind="foreach: $.grep(sets, function(n,I) { return n.groupedBy == 'project';})">
                 <!-- Give href an ID value of corresponding "tabs-content" <li>'s -->
                   <li data-bind="attr: {tag: label}"><a data-bind="attr: {href: link}"><data data-bind="text: label"></data></a></li>
@@ -110,7 +110,7 @@
                         </thead>
                         <tfoot>
                             <tr>
-                                <td colspan="11"><strong>Total Hours Remaining<strong></td>
+                                <td colspan="11"><strong>Total Hours Remaining (excl. Descoped)<strong></td>
                                 <td aria-live="polite"><strong><data data-bind="text: totalHours"></data></strong> </td>
                             </tr>
                         </tfoot>
@@ -162,7 +162,6 @@
                     text: 'Overview hours'
                 },
                 xAxis: {
-                    //categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
                     categories: ['DUI', 'RU', 'JP', 'TQ', 'ROM', 'TUR']
                 },
                 tooltip: {

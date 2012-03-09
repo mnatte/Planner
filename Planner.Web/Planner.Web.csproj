@@ -151,6 +151,8 @@
     <Content Include="pbi.htm" />
     <Content Include="Release.htm" />
     <Content Include="Scripts\highcharts.js" />
+    <Content Include="Scripts\jquery-1.7.1.min.js" />
+    <Content Include="Scripts\jquery.dateFormat-1.0.js" />
     <Content Include="Scripts\knockout-2.0.0.debug.js" />
     <Content Include="Scripts\knockout-2.0.0.js" />
     <Content Include="stylesheets\base.css" />
@@ -175,8 +177,6 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="Content\Site.css" />
-    <Content Include="Scripts\jquery-1.4.1.js" />
-    <Content Include="Scripts\jquery-1.4.1.min.js" />
     <Content Include="Scripts\jquery-1.4.1-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />

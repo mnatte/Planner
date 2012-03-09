@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MvcApplication1.Models;
+using System.Data.SqlClient;
 
 namespace MvcApplication1.Controllers
 {
@@ -19,25 +20,64 @@ namespace MvcApplication1.Controllers
         
         public JsonResult GetRelease()
         {
-            var Tq = new ReleaseModels.Project { ShortName = "TQ" };
-            var Eu = new ReleaseModels.Project { ShortName = "EU" };
-            var Jpn = new ReleaseModels.Project { ShortName = "JPN" };
-            var Opt = new ReleaseModels.Project { ShortName = "OPTIM" };
-
             var release = new ReleaseModels.Release { EndDate = new DateTime(2012, 6, 17), StartDate = new DateTime(2012, 1, 25), Title = "Release 9.2" };
 
             release.Phases.Add(new ReleaseModels.Phase { StartDate = new DateTime(2012, 2, 24), EndDate = new DateTime(2012, 3, 15), Title = "Development" });
             release.Phases.Add(new ReleaseModels.Phase { StartDate = new DateTime(2012, 3, 18), EndDate = new DateTime(2012, 4, 2), Title = "System Test" });
             release.Phases.Add(new ReleaseModels.Phase { StartDate = new DateTime(2012, 4, 16), EndDate = new DateTime(2012, 4, 30), Title = "UAT" });
 
-            release.Backlog.Add(new ReleaseModels.Feature { BusinessId = "TP100", ContactPerson = "Kris Kater", EstimatedHours = 12, HoursWorked = 2, Priority = 15, Project = "TQ", RemainingHours=12, Title = "TQ Scorecard", Status="Ready For Dev"});
-            release.Backlog.Add(new ReleaseModels.Feature { BusinessId = "TP230", ContactPerson = "Arno van Hout", EstimatedHours = 10, HoursWorked = 0, Priority = 2, Project = "TQ", RemainingHours = 10, Title = "GUI Maintenance", Status = "Ready For Dev" });
-            release.Backlog.Add(new ReleaseModels.Feature { BusinessId = "TP140", ContactPerson = "Arno van Hout", EstimatedHours = 210, HoursWorked = 30, Priority = 1, Project = "EU", RemainingHours = 120, Title = "NEXT Integration", Status = "Under Development" });
-            release.Backlog.Add(new ReleaseModels.Feature { BusinessId = "TP6035", ContactPerson = "Tanvir Hossain", EstimatedHours = 120, HoursWorked = 0, Priority = 10, Project = "JPN", RemainingHours = 110, Title = "Use case A", Status = "Under Analysis" });
-            release.Backlog.Add(new ReleaseModels.Feature { BusinessId = "TP0030", ContactPerson = "Twan de Jong", EstimatedHours = 91, HoursWorked = 20, Priority = 21, Project = "JPN", RemainingHours = 78, Title = "Use case B", Status = "Ready For SystemTest" });
-            release.Backlog.Add(new ReleaseModels.Feature { BusinessId = "1234", ContactPerson = "Andreas van Bergen", EstimatedHours = 40, HoursWorked = 0, Priority = 3, Project = "OPTIM", RemainingHours = 40, Title = "Reduce DB calls", Status = "Ready For Dev" });
-            release.Backlog.Add(new ReleaseModels.Feature { BusinessId = "2345", ContactPerson = "Martijn van der Munnik", EstimatedHours = 30, HoursWorked = 0, Priority = 4, Project = "OPTIM", RemainingHours = 30, Title = "Remove Threading", Status = "Under Development" });
-            release.Backlog.Add(new ReleaseModels.Feature { BusinessId = "3456", ContactPerson = "Reinier Hutzeson", EstimatedHours = 35, HoursWorked = 10, Priority = 5, Project = "OPTIM", RemainingHours = 35, Title = "Implement Caching", Status = "Under Development" });
+            // focusfactor, hoursAvailable (40 p.w., 32, etc.), minus days away (vacation, etc.)
+
+            var teamTq = new ReleaseModels.Team();
+            teamTq.TeamMembers.Add(new ReleaseModels.TeamMember { Initials = "CH", FocusFactor = 0.8, AvailableHoursPerWeek = 40 });
+            teamTq.TeamMembers.Add(new ReleaseModels.TeamMember { Initials = "JPB", FocusFactor = 0.8, AvailableHoursPerWeek = 40 });
+            var Tq = new ReleaseModels.Project { ShortName = "TQ", ProjectTeam = teamTq };
+
+            var teamEu = new ReleaseModels.Team();
+            teamEu.TeamMembers.Add(new ReleaseModels.TeamMember { Initials = "KK", FocusFactor = 0.8, AvailableHoursPerWeek = 40 });
+            teamEu.TeamMembers.Add(new ReleaseModels.TeamMember { Initials = "TdJ", FocusFactor = 0.8, AvailableHoursPerWeek = 40 });
+            var Eu = new ReleaseModels.Project { ShortName = "EU", ProjectTeam = teamEu };
+
+            var teamApac = new ReleaseModels.Team();
+            teamApac.TeamMembers.Add(new ReleaseModels.TeamMember { Initials = "TH", FocusFactor = 0.8, AvailableHoursPerWeek = 40 });
+            teamApac.TeamMembers.Add(new ReleaseModels.TeamMember { Initials = "AvH", FocusFactor = 0.8, AvailableHoursPerWeek = 40 });
+            var Apac = new ReleaseModels.Project { ShortName = "APAC", ProjectTeam = teamApac };
+
+            var teamOpt = new ReleaseModels.Team();
+            teamOpt.TeamMembers.Add(new ReleaseModels.TeamMember { Initials = "AvB", FocusFactor = 0.8, AvailableHoursPerWeek = 40 });
+            teamOpt.TeamMembers.Add(new ReleaseModels.TeamMember { Initials = "RH", FocusFactor = 0.8, AvailableHoursPerWeek = 40 });
+            var Opt = new ReleaseModels.Project { ShortName = "OPTIM", ProjectTeam = teamOpt };
+
+            using (var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI"))
+            {
+                var cmd = new SqlCommand("Select * from TfsImport", conn);
+                conn.Open();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var feature = new ReleaseModels.Feature { BusinessId = reader["BusinessId"].ToString(), ContactPerson = reader["ContactPerson"].ToString(), RemainingHours = int.Parse(reader["WorkRemaining"].ToString()), Title = reader["Title"].ToString(), Status = reader["State"].ToString() };
+                        var iterationPath = reader["IterationPath"].ToString();
+
+                        var project = Opt;
+                        if (iterationPath.Contains("APAC"))
+                        {
+                            project = Apac;
+                        }
+                        else if (iterationPath.Contains("EU"))
+                        {
+                            project = Eu;
+                        }
+                        else if (iterationPath.Contains("TQ"))
+                        {
+                            project = Tq;
+                        }
+                        feature.Project = project;
+                        release.Backlog.Add(feature);
+                    }
+                }
+
+            }
 
             return this.Json(release, JsonRequestBehavior.AllowGet);
         }

@@ -41,6 +41,9 @@ namespace MvcApplication1.Models
                 }
             }
 
+            /// <summary>
+            /// Use Backlog to access Features to Projects to Teams (to Resources)
+            /// </summary>
             private List<Feature> _backlog;
             public IList<Feature> Backlog
             {
@@ -51,6 +54,17 @@ namespace MvcApplication1.Models
                     return _backlog;
                 }
             }
+
+            //private List<Team> _teams;
+            //public IList<Team> Teams
+            //{
+            //    get
+            //    {
+            //        if (_teams == null)
+            //            _teams = new List<Team>();
+            //        return _teams;
+            //    }
+            //}
         }
 
         public class Feature
@@ -62,7 +76,7 @@ namespace MvcApplication1.Models
             public int EstimatedHours { get; set; }
             public int RemainingHours { get; set; }
             public int HoursWorked { get; set; }
-            public string Project { get; set; }
+            public Project Project { get; set; }
             public string Status { get; set; }
         }
 
@@ -70,6 +84,67 @@ namespace MvcApplication1.Models
         {
             public string Title { get; set; }
             public string ShortName { get; set; }
+            public Team ProjectTeam { get; set; }
+        }
+
+        public class Team
+        {
+            private List<TeamMember> _teamMembers;
+            public IList<TeamMember> TeamMembers
+            {
+                get
+                {
+                    if (_teamMembers == null)
+                        _teamMembers = new List<TeamMember>();
+                    return _teamMembers;
+                }
+            }
+        }
+
+        public class Resource
+        {
+            public string FirstName { get; set; }
+            public string MiddleName { get; set; }
+            public string LastName { get; set; }
+            public string Initials { get; set; }
+            public string DisplayName { get { return string.Format("{0} {1} {2}", this.FirstName, this.MiddleName ?? "", this.LastName); } }
+            public int AvailableHoursPerWeek { get; set; }
+            public Role Function { get; set; }
+
+            private List<Phase> _periodsAway;
+            public IList<Phase> PeriodsAway
+            {
+                get
+                {
+                    if (_periodsAway == null)
+                        _periodsAway = new List<Phase>();
+                    return _periodsAway;
+                }
+            }
+        }
+
+        // DCI Role? Persist use case with release, project, team, teammembers, etc.
+        public class TeamMember : Resource
+        {
+            public double FocusFactor { get; set; }
+            // Role in team is something else than official Function of resource
+            public Role Role { get; set; }
+        }
+
+        public class Role
+        {
+            public string Name { get; set; }
+
+            private List<string> _activities;
+            public IList<string> Activities
+            {
+                get
+                {
+                    if (_activities == null)
+                        _activities = new List<string>();
+                    return _activities;
+                }
+            }
         }
     }
 }
