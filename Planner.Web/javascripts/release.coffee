@@ -2,10 +2,32 @@
 root = global ? window
 
 class Phase extends Mixin
-	constructor: (@startDate, @endDate, @workingDays, @title) ->
-		@workingHours = @workingDays * 8
+	constructor: (@startDate, @endDate, @title) ->
+	workingDays: ->
+		days = 0
+		# console.log "days: #{days}"
+		msPerDay = 86400 * 1000
+		@startDate.setHours(0,0,0,1)
+		@endDate.setHours(23,59,59,59,999)
+		diff = @endDate - @startDate
+		days = Math.ceil(diff / msPerDay)
+		# console.log "days: #{days}"
+		weeks = Math.floor(days / 7)
+		days = days - (weeks * 2)
+		# console.log "days: #{days}"
+		startDay = @startDate.getDay()
+		endDay = @endDate.getDay()
+		days = days - 2 if (startDay - endDay > 1)
+		# console.log "days: #{days}"
+		days = days - 1 if (startDay == 0 and endDay != 6)
+		# console.log "days: #{days}"
+		days = days - 1 if (endDay == 6 and startDay != 0)
+		# console.log "days: #{days}"
+		days
+	workingHours: ->
+		@workingDays() * 8
 	toString: ->
-		"#{@title} #{@startDate} - #{@endDate} (#{@workingDays} working days)"
+		"#{@title} #{DateFormatter.formatJsDate(@startDate, 'dd/MM/yyyy')} - #{DateFormatter.formatJsDate(@endDate, 'dd/MM/yyyy')} (#{@workingDays()} working days)"
 
 class MileStone
 	constructor: (@date, @title) ->

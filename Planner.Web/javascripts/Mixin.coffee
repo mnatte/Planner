@@ -25,8 +25,13 @@ class Mixin
 
 class DateFormatter
 	# static function, @ is static at this moment
-	@formatJsonDate: (date, format) ->
-		$.format.date(eval("new " + date.slice(1, -1)), format)
+	@formatJsonDate: (dateJson, format) ->
+		console.log "formatJsonDate: #{dateJson} with format #{format}"
+		$.format.date(@createJsDateFromJson(dateJson), format)
+	@createJsDateFromJson: (dateJson) ->
+		eval("new " + dateJson.slice(1, -1))
+	@formatJsDate: (date, format) ->
+		$.format.date(date, format)
 
 # export to root object
 root.Mixin = Mixin

@@ -62,7 +62,7 @@
                 <h1 data-bind="text: title"></h1>
             </div>
             <div id="releaseperiod" class="eight columns omega">
-                <h2><data data-bind="text: startDate"></data> - <data data-bind="text: endDate"></data></h2>
+                <h2><data data-bind="text: DateFormatter.formatJsDate(startDate, 'dd/MM/yyyy')"></data> - <data data-bind="text: DateFormatter.formatJsDate(endDate, 'dd/MM/yyyy')"></data></h2>
             </div>
         </header>
         <section id="overview" class="sixteen columns">
@@ -152,7 +152,7 @@
             }
         };
 
-        $(function () {
+        function showHoursChart(projectNames, remainingHours, availableHours, balanceHours) {
             var chart = new Highcharts.Chart({
                 chart: {
                     renderTo: 'chart-hours',
@@ -162,7 +162,7 @@
                     text: 'Overview hours'
                 },
                 xAxis: {
-                    categories: ['DUI', 'RU', 'JP', 'TQ', 'ROM', 'TUR']
+                    categories: projectNames
                 },
                 tooltip: {
                     formatter: function () {
@@ -173,19 +173,19 @@
                     enabled: false
                 },
                 series: [{
-                    name: 'Requirements',
-                    data: [5, 2, -6, -15, 3, 6]
+                    name: 'Hours Available',
+                    data: availableHours
                 },
                 {
-                    name: 'Development',
-                    data: [-10, 2, -10, -20, 2, 4]
+                    name: 'Workload',
+                    data: remainingHours
                 },
                 {
-                    name: 'Documentation',
-                    data: [14, 10, 7, 5, 1, 4]
+                    name: 'Balance',
+                    data: balanceHours
                 }]
             })
-        });
+        }
 
         function showStatusChart(statusdata) {
             var chartOptions = {};
@@ -212,7 +212,7 @@
         $(document).ready(function () {
             var ajax = new Ajax();
 
-            Release.extend(RMoveItem);
+            //Release.extend(RMoveItem);
 
             var displayReleaseStatus = new UDisplayReleaseStatus();
             ajax.load(displayReleaseStatus.execute);

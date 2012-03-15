@@ -9,16 +9,36 @@
 
     __extends(Phase, _super);
 
-    function Phase(startDate, endDate, workingDays, title) {
+    function Phase(startDate, endDate, title) {
       this.startDate = startDate;
       this.endDate = endDate;
-      this.workingDays = workingDays;
       this.title = title;
-      this.workingHours = this.workingDays * 8;
     }
 
+    Phase.prototype.workingDays = function() {
+      var days, diff, endDay, msPerDay, startDay, weeks;
+      days = 0;
+      msPerDay = 86400 * 1000;
+      this.startDate.setHours(0, 0, 0, 1);
+      this.endDate.setHours(23, 59, 59, 59, 999);
+      diff = this.endDate - this.startDate;
+      days = Math.ceil(diff / msPerDay);
+      weeks = Math.floor(days / 7);
+      days = days - (weeks * 2);
+      startDay = this.startDate.getDay();
+      endDay = this.endDate.getDay();
+      if (startDay - endDay > 1) days = days - 2;
+      if (startDay === 0 && endDay !== 6) days = days - 1;
+      if (endDay === 6 && startDay !== 0) days = days - 1;
+      return days;
+    };
+
+    Phase.prototype.workingHours = function() {
+      return this.workingDays() * 8;
+    };
+
     Phase.prototype.toString = function() {
-      return "" + this.title + " " + this.startDate + " - " + this.endDate + " (" + this.workingDays + " working days)";
+      return "" + this.title + " " + (DateFormatter.formatJsDate(this.startDate, 'dd/MM/yyyy')) + " - " + (DateFormatter.formatJsDate(this.endDate, 'dd/MM/yyyy')) + " (" + (this.workingDays()) + " working days)";
     };
 
     return Phase;

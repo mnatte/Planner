@@ -20,63 +20,77 @@ namespace MvcApplication1.Controllers
         
         public JsonResult GetRelease()
         {
-            var release = new ReleaseModels.Release { EndDate = new DateTime(2012, 6, 17), StartDate = new DateTime(2012, 1, 25), Title = "Release 9.2" };
+            // add MultipleActiveResultSets=true to enable nested datareaders
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            ReleaseModels.Release release;
 
-            release.Phases.Add(new ReleaseModels.Phase { StartDate = new DateTime(2012, 2, 24), EndDate = new DateTime(2012, 3, 15), Title = "Development" });
-            release.Phases.Add(new ReleaseModels.Phase { StartDate = new DateTime(2012, 3, 18), EndDate = new DateTime(2012, 4, 2), Title = "System Test" });
-            release.Phases.Add(new ReleaseModels.Phase { StartDate = new DateTime(2012, 4, 16), EndDate = new DateTime(2012, 4, 30), Title = "UAT" });
-
-            // focusfactor, hoursAvailable (40 p.w., 32, etc.), minus days away (vacation, etc.)
-
-            var teamTq = new ReleaseModels.Team();
-            teamTq.TeamMembers.Add(new ReleaseModels.TeamMember { Initials = "CH", FocusFactor = 0.8, AvailableHoursPerWeek = 40 });
-            teamTq.TeamMembers.Add(new ReleaseModels.TeamMember { Initials = "JPB", FocusFactor = 0.8, AvailableHoursPerWeek = 40 });
-            var Tq = new ReleaseModels.Project { ShortName = "TQ", ProjectTeam = teamTq };
-
-            var teamEu = new ReleaseModels.Team();
-            teamEu.TeamMembers.Add(new ReleaseModels.TeamMember { Initials = "KK", FocusFactor = 0.8, AvailableHoursPerWeek = 40 });
-            teamEu.TeamMembers.Add(new ReleaseModels.TeamMember { Initials = "TdJ", FocusFactor = 0.8, AvailableHoursPerWeek = 40 });
-            var Eu = new ReleaseModels.Project { ShortName = "EU", ProjectTeam = teamEu };
-
-            var teamApac = new ReleaseModels.Team();
-            teamApac.TeamMembers.Add(new ReleaseModels.TeamMember { Initials = "TH", FocusFactor = 0.8, AvailableHoursPerWeek = 40 });
-            teamApac.TeamMembers.Add(new ReleaseModels.TeamMember { Initials = "AvH", FocusFactor = 0.8, AvailableHoursPerWeek = 40 });
-            var Apac = new ReleaseModels.Project { ShortName = "APAC", ProjectTeam = teamApac };
-
-            var teamOpt = new ReleaseModels.Team();
-            teamOpt.TeamMembers.Add(new ReleaseModels.TeamMember { Initials = "AvB", FocusFactor = 0.8, AvailableHoursPerWeek = 40 });
-            teamOpt.TeamMembers.Add(new ReleaseModels.TeamMember { Initials = "RH", FocusFactor = 0.8, AvailableHoursPerWeek = 40 });
-            var Opt = new ReleaseModels.Project { ShortName = "OPTIM", ProjectTeam = teamOpt };
-
-            using (var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI"))
+            using (conn)
             {
-                var cmd = new SqlCommand("Select * from TfsImport", conn);
                 conn.Open();
+
+                var cmd = new SqlCommand("Select * from Phases where Id = 1", conn);
                 using (var reader = cmd.ExecuteReader())
+                {
+                    reader.Read();
+                    release = new ReleaseModels.Release { EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString() };
+                }
+
+                var cmd2 = new SqlCommand("Select * from Phases where ParentId = 1", conn);
+                using (var reader = cmd2.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        release.Phases.Add (new ReleaseModels.Phase { EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString() });
+                    }
+                }
+
+                var cmd3 = new SqlCommand("Select i.BusinessId, i.ContactPerson, i.WorkRemaining, i.Title, i.State, p.Id AS ProjectId from TfsImport i INNER JOIN Projects p on i.IterationPath LIKE p.TfsIterationPath + '%'", conn);
+                using (var reader = cmd3.ExecuteReader())
                 {
                     while (reader.Read())
                     {
                         var feature = new ReleaseModels.Feature { BusinessId = reader["BusinessId"].ToString(), ContactPerson = reader["ContactPerson"].ToString(), RemainingHours = int.Parse(reader["WorkRemaining"].ToString()), Title = reader["Title"].ToString(), Status = reader["State"].ToString() };
-                        var iterationPath = reader["IterationPath"].ToString();
+                        
+                        // find Project for Feature
+                        ReleaseModels.Project project;
+                        var cmd4 = new SqlCommand(String.Format("Select * from Projects where Id = {0}", reader["ProjectId"].ToString()), conn);
+                        using (var reader2 = cmd4.ExecuteReader())
+                        {
+                            reader2.Read();
+                            project = new ReleaseModels.Project { ShortName = reader2["ShortName"].ToString() };
 
-                        var project = Opt;
-                        if (iterationPath.Contains("APAC"))
-                        {
-                            project = Apac;
+                            var team = new ReleaseModels.Team();
+                            var cmd5 = new SqlCommand(String.Format("Select * from ReleaseResources where ReleaseId = {0} and ProjectId = {1}", "1", reader["ProjectId"].ToString()), conn);
+                            using (var reader3 = cmd5.ExecuteReader())
+                            {
+                                while (reader3.Read())
+                                {
+                                    var cmd6 = new SqlCommand(String.Format("Select * from Persons where Id = {0}", reader3["PersonId"].ToString()), conn);
+
+                                    using (var reader4 = cmd6.ExecuteReader())
+                                    {
+                                        // TODO: focusfactor, hoursAvailable (40 p.w., 32, etc.), minus days away (vacation, etc.)
+
+                                        reader4.Read();
+                                        // reader3 is used for FocusFactor since this is stored in ReleaseResources, the rest is from Persons
+                                        var teamMember = new ReleaseModels.TeamMember { Initials = reader4["Initials"].ToString(), FocusFactor = double.Parse(reader3["FocusFactor"].ToString()), AvailableHoursPerWeek = int.Parse(reader4["HoursPerWeek"].ToString()) };
+                                        if (teamMember.Initials == "JS" || teamMember.Initials == "TdJ")
+                                            teamMember.PeriodsAway.Add(new ReleaseModels.Phase { EndDate = new DateTime(2012, 3, 29), StartDate = new DateTime(2012, 3, 15), Title = "Vakantie" });
+                                        if (teamMember.Initials == "KK")
+                                            teamMember.PeriodsAway.Add(new ReleaseModels.Phase { EndDate = new DateTime(2012, 5, 2), StartDate = new DateTime(2012, 4, 21), Title = "Vakantie" });
+                                        team.TeamMembers.Add(teamMember);
+                                    }
+                                }
+                            }
+                            project.ProjectTeam = team;
                         }
-                        else if (iterationPath.Contains("EU"))
-                        {
-                            project = Eu;
-                        }
-                        else if (iterationPath.Contains("TQ"))
-                        {
-                            project = Tq;
-                        }
+
                         feature.Project = project;
                         release.Backlog.Add(feature);
                     }
                 }
 
+                conn.Close();
             }
 
             return this.Json(release, JsonRequestBehavior.AllowGet);

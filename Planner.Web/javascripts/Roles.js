@@ -27,14 +27,12 @@
           for (_i = 0, _len = collection.length; _i < _len; _i++) {
             item = collection[_i];
             if (_ref = "" + property + "_" + item[property], __indexOf.call(addedSets, _ref) < 0) {
-              console.log("add set with label " + item[property] + " and groupedBy " + property);
               this.sets.push({
                 label: item[property],
                 items: [],
                 groupedBy: property
               });
               addedSets.push("" + property + "_" + item[property]);
-              console.log(addedSets);
             }
             set = ((function() {
               var _j, _len2, _ref2, _results2;
@@ -48,8 +46,7 @@
               }
               return _results2;
             }).call(this))[0];
-            set.items.push(item);
-            _results.push(console.log("added " + item + " to set " + set.label));
+            _results.push(set.items.push(item));
           }
           return _results;
         }
