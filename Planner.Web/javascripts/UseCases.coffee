@@ -13,15 +13,19 @@ class UDisplayReleaseStatus
 		# fill release object
 		
 		@release = new Release(DateFormatter.createJsDateFromJson(data.StartDate), DateFormatter.createJsDateFromJson(data.EndDate), data.Title)
+		# add phases
 		for phase in data.Phases
 			@release.addPhase new Phase(DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title)
+		# add backlog
 		for feat in data.Backlog
 			@release.addFeature new Feature(feat.BusinessId, feat.ContactPerson, feat.EstimatedHours, feat.HoursWorked, feat.Priority, feat.Project.ShortName, feat.RemainingHours, feat.Title, feat.Status)
+			# add team member per project through backlog per project
 			for member in feat.Project.ProjectTeam.TeamMembers when "#{member.Initials}_#{feat.Project.ShortName}" not in projectMembers
 				# console.log("ADD TEAMMEMBERS TO PROJECT")
 				teamMember = new Resource(member.FirstName, member.MiddleName, member.LastName, member.Initials, member.AvailableHoursPerWeek, member.Function)
 				teamMember.focusFactor = member.FocusFactor
 				teamMember.memberProject = feat.Project.ShortName
+				# add team member absences
 				for absence in member.PeriodsAway when DateFormatter.createJsDateFromJson(absence.EndDate) < @release.endDate or DateFormatter.createJsDateFromJson(absence.StartDate) >= @release.startDate
 					teamMember.addAbsence(new Phase(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title))
 				@release.addResource teamMember
@@ -48,12 +52,14 @@ class UDisplayReleaseStatus
 			set.link = "#" + set.label
 			set.totalHours = 0
 			for ft in set.items
-				set.totalHours += ft.remainingHours unless ft.state is "Descoped" 
+				# TODO: configure statusses to be excluded from summing e.g. - ft.state is "Ready for System Test" or ft.state is "Under System Test"
+				set.totalHours += ft.remainingHours unless (ft.state is "Descoped" or ft.state is "Ready for UAT" or ft.state is "Under UAT")
 		
 		projects = []
 		for set in @release.sets when set.groupedBy == "memberProject"
 			projectHours = {}
 			console.log "memberProject: #{set.label} #{set.items.length} members"
+			# get development phase
 			phase = (item for item in @release.phases when item.title == "Ontwikkelfase")[0]
 			set.availableHours = 0
 			for member in set.items
@@ -61,11 +67,11 @@ class UDisplayReleaseStatus
 				uGetHours = new UGetAvailableHoursForTeamMemberFromNow(member, phase)
 				set.availableHours += uGetHours.execute()
 			projectHours.project = set.label 
-			projectHours.available = set.availableHours 
+			projectHours.available = Math.round set.availableHours 
 			# lookup project in groupedBy project set for remaining hours
 			for projset in @release.sets when projset.groupedBy == "project" and projset.label == set.label
 				# console.log "projset: #{projset.totalHours}"
-				projectHours.workload = projset.totalHours
+				projectHours.workload = Math.round projset.totalHours
 			
 			projects.push(projectHours)
 		console.log projects
@@ -80,7 +86,7 @@ class UDisplayReleaseStatus
 			projectNames.push(project)
 			remainingHours.push(workload)
 			availableHours.push(available)
-			balanceHours.push(available - workload)
+			balanceHours.push(Math.round available - workload)
 
 		# console.log @release.sets.length
 		ko.applyBindings(@release)

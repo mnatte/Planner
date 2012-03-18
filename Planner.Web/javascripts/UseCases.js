@@ -66,7 +66,9 @@
         _ref8 = set.items;
         for (_o = 0, _len7 = _ref8.length; _o < _len7; _o++) {
           ft = _ref8[_o];
-          if (ft.state !== "Descoped") set.totalHours += ft.remainingHours;
+          if (!(ft.state === "Descoped" || ft.state === "Ready for UAT" || ft.state === "Under UAT")) {
+            set.totalHours += ft.remainingHours;
+          }
         }
       }
       projects = [];
@@ -94,12 +96,12 @@
           set.availableHours += uGetHours.execute();
         }
         projectHours.project = set.label;
-        projectHours.available = set.availableHours;
+        projectHours.available = Math.round(set.availableHours);
         _ref11 = this.release.sets;
         for (_r = 0, _len10 = _ref11.length; _r < _len10; _r++) {
           projset = _ref11[_r];
           if (projset.groupedBy === "project" && projset.label === set.label) {
-            projectHours.workload = projset.totalHours;
+            projectHours.workload = Math.round(projset.totalHours);
           }
         }
         projects.push(projectHours);
@@ -115,7 +117,7 @@
         projectNames.push(project);
         remainingHours.push(workload);
         availableHours.push(available);
-        balanceHours.push(available - workload);
+        balanceHours.push(Math.round(available - workload));
       }
       ko.applyBindings(this.release);
       showStatusChart(statusData);
