@@ -3,7 +3,7 @@ root = global ? window
 
 class releaseViewmodel
 	constructor ->
-		# load from model Release
+		# load from model: Release
 
 	# release overview info
 	releasetitle
