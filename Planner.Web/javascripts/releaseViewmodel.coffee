@@ -18,7 +18,7 @@ class releaseViewmodel
 		endDate
 
 	# tabs per project
-	statuses # for selecting what to exclude from calculations
+	disgardedStatuses # observable for selecting what to exclude from calculations
 	projectShortname[]
 		features[]
 			businessId
