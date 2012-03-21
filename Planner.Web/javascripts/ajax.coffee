@@ -5,7 +5,7 @@ root = global ? window
 class Ajax
 	constructor: -> 
 	load: (callback) ->
-		url = "/Release/GetRelease"
+		url = "/planner/Release/GetRelease"
 		$.ajax url,
 			dataType: "json"
 			type: "GET"

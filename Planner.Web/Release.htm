@@ -37,14 +37,16 @@
 
     <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="Scripts/jquery.dateFormat-1.0.js"></script>
+    <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
+    <script type="text/javascript" src="Scripts/knockout-array-filter.js"></script>
         
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
+    <script type="text/javascript" src="javascripts/releaseViewmodel.js"></script>
     <script type="text/javascript" src="javascripts/ajax.js"></script>
     <script type="text/javascript" src="javascripts/Roles.js"></script>
     <script type="text/javascript" src="javascripts/UseCases.js"></script>
 
-    <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
     <script type="text/javascript" src="Scripts/highcharts.js"></script>
 </head>
 <body>
@@ -56,19 +58,19 @@
 	<div class="container">
 		<header class="sixteen columns">
             <div id="releasetitle" class="eight columns alpha">
-                <h1 data-bind="text: title"></h1>
+                <h1 data-bind="text: releaseTitle()"></h1>
             </div>
             <div id="releaseperiod" class="eight columns omega">
-                <h2><data data-bind="text: DateFormatter.formatJsDate(startDate, 'dd/MM/yyyy')"></data> - <data data-bind="text: DateFormatter.formatJsDate(endDate, 'dd/MM/yyyy')"></data></h2>
+                <h2><data data-bind="text: DateFormatter.formatJsDate(releaseStartdate(), 'dd/MM/yyyy')"></data> - <data data-bind="text: DateFormatter.formatJsDate(releaseEnddate(), 'dd/MM/yyyy')"></data></h2>
             </div>
         </header>
         <section id="overview" class="sixteen columns">
             <div id="phases" class="eight columns alpha">
-                <ul data-bind="foreach: phases">
+                <ul data-bind="foreach: phases()">
                     <li class="price"><h5 data-bind="text: toString()"></h5></li>
                 </ul>
-                <!--<h4 class="price">Scope final 28 feb</h4>
-                <h4 class="price">Development 1 mar - 15 may</h4>
+                <h6 class="price"><data data-bind="text: DateFormatter.formatJsDate(currentDate(), 'dd/MM/yyyy')"></data> - <data data-bind="text: DateFormatter.formatJsDate(releaseEnddate(), 'dd/MM/yyyy')"></data>: <data data-bind="text: releaseWorkingDaysRemaining()"></data> days remaining</h6>
+                <!--<h4 class="price">Development 1 mar - 15 may</h4>
                 <h4 class="price">UAT 20 may - 3 jun</h4>
                 <h4 class="price">GoLive 16 jun</h4>-->
                 <div id="chart-hours"></div>
@@ -84,16 +86,26 @@
         </section>
 
         <section class="sixteen columns">
+            <div>
+                <div><input type="checkbox" value="banaan" data-bind="checked: disgardedStatuses()" /> Banaan</div>
+                <div><input type="checkbox" value="Under Development" data-bind="checked: disgardedStatuses()" /> Under Development</div>
+            </div>
+            <div>
+                Selected: <span data-bind="text: displaySelected()"></span>
+            </div>
+        </section>
+
+        <section class="sixteen columns">
             <div id="tabSection" class="sixteen columns alpha">
-                <ul class="tabs" data-bind="foreach: $.grep(sets, function(n,I) { return n.groupedBy == 'project';})">
+                <ul class="tabs" data-bind="foreach: projects">
                 <!-- Give href an ID value of corresponding "tabs-content" <li>'s -->
-                  <li data-bind="attr: {tag: label}"><a data-bind="attr: {href: link}"><data data-bind="text: label"></data></a></li>
+                  <li data-bind="attr: {tag: projectname}"><a data-bind="attr: {href: link}"><data data-bind="text: projectname"></data></a></li>
                 </ul>
                 <!--<div class="row">-->
                 <!-- Standard <ul> with class of "tabs-content" -->
-                <ul id="tabsContent" class="tabs-content" data-bind="foreach: $.grep(sets, function(n,I) { return n.groupedBy == 'project';}) ">
+                <ul id="tabsContent" class="tabs-content" data-bind="foreach: projects">
                   <!-- Give ID that matches HREF of above anchors -->
-                  <li data-bind="attr: {id: label}">
+                  <li data-bind="attr: {id: projectname}">
                     <table class="zebra-striped condensed">
                     <!--TODO: Per Activity grouping, same as bug and change as container for tasks-->
                         <thead>

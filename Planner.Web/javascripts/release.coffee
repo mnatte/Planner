@@ -1,12 +1,25 @@
 # access (for browser)
 root = global ? window
 
+	# '@' is shortcut for 'this'. Unlike C#, 'this' refers to 'this context', which can be different every time a function is called
+	
+	# 'new' says: don't return result of function, just create new object and run function in object's context
+	# all properties are part of the prototype, except the constructor
+
+	# Phase is an object; it is actually the constructor function
+	# '@' insists that the property is attached to the class object itself
+
+	# functions attached to the prototype are invoked in the context of the individual object
+	# @-variables within those functions refer to the instance properties because the '@' context IS the object instance: e.g. phase.workingHours()
+
 class Phase extends Mixin
+	# attach seperate startDate, endDate and title properties to each instance
 	constructor: (@startDate, @endDate, @title) ->
 	workingDays: ->
 		days = 0
 		# console.log "days: #{days}"
 		msPerDay = 86400 * 1000
+		# '@' refers to object instance
 		@startDate.setHours(0,0,0,1)
 		@endDate.setHours(23,59,59,59,999)
 		diff = @endDate - @startDate

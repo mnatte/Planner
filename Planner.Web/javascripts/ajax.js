@@ -9,7 +9,7 @@
 
     Ajax.prototype.load = function(callback) {
       var url;
-      url = "/Release/GetRelease";
+      url = "/planner/Release/GetRelease";
       return $.ajax(url, {
         dataType: "json",
         type: "GET",
