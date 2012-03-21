@@ -1,271 +1,203 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+    <!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+	<title>Test</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="stylesheets/base.css">
+	<link rel="stylesheet" href="stylesheets/skeleton.css">
+	<link rel="stylesheet" href="stylesheets/layout.css">
+    <link rel="stylesheet" href="stylesheets/tables.css">
+
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
+    <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.dateFormat-1.0.js"></script>
     <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
-    <title>Product Backlog Items</title>
+    <script type="text/javascript" src="Scripts/knockout-array-filter.js"></script>
+
+    <script type="text/javascript" src="javascripts/Mixin.js"></script>
+        
+    <script type="text/javascript" src="Scripts/highcharts.js"></script>
 </head>
 <body>
-    <div role="application">
-            <table>
-                <thead>
-                    <tr>
-                        <th>PBI ID</th>
-                        <th>BDO IssueId</th>
-                        <th>PBI name</th>
-                        <th>Amount Tasks</th>
-                        <th>Amount Bugs</th>
-                        <th>Amount Changes</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <td colspan="11">Total Hours Remaining</td>
-                        <td aria-live="polite" data-bind="text: remaininghours()"></td>
-                    </tr>
-                </tfoot>
-                <tbody>
-                    <tr aria-live="polite">
-                        <td data-bind="text: pbi_id"></td>
-                        <td data-bind="text: issueid"></td>
-                        <td data-bind="text: pbiname"></td>
-                        <td data-bind="text: amountTasks"></td>
-                        <td data-bind="text: amountBugs"></td>
-                        <td data-bind="text: amountChanges"></td>
-                    </tr>
-                </tbody>
-            </table>
+<!-- Primary Page Layout
+	================================================== -->
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Task ID</th>
-                        <th>Task name</th>
-                        <th>Hours Remaining</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <td colspan="11">Total Hours Remaining</td>
-                        <td aria-live="polite" data-bind="text: remainingtaskhours()"></td>
-                    </tr>
-                </tfoot>
-                <!-- render tbody for each bug under pbi-->
-                <tbody data-bind="foreach: pbitasks">
-                    <tr aria-live="polite">
-                        <td data-bind="text: taskid"></td>
-                        <td data-bind="text: taskname"></td>
-                        <td data-bind="text: remaininghours"></td>
-                    </tr>
-                </tbody>
-            </table>
+	<!-- Delete everything in this .container and get started on your own site! -->
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Bug ID</th>
-                        <th>Bug name</th>
-                        <th>Amount Tasks</th>
-                        <th>Task Hours Remaining</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <td colspan="11">Total Hours Remaining</td>
-                        <td aria-live="polite" data-bind="text: remainingbughours()"></td>
-                    </tr>
-                </tfoot>
-                <!-- render tbody for each bug under pbi-->
-                <tbody data-bind="foreach: pbibugs">
-                    <tr aria-live="polite">
-                        <td data-bind="text: bugid"></td>
-                        <td data-bind="text: bugname"></td>
-                        <td data-bind="text: amountTasks"></td>
-                        <td data-bind="text: remaininghoursforbug()"></td>
-                    </tr>
-                </tbody>
-            </table>
+	<div class="container">
+		<header class="sixteen columns">
+            <div id="releasetitle" class="eight columns alpha">
+                <h1 data-bind="text: releaseTitle"></h1>
+            </div>
+            <div id="releaseperiod" class="eight columns omega">
+                <h2><data data-bind="text: DateFormatter.formatJsDate(releaseStartdate, 'dd/MM/yyyy')"></data> - <data data-bind="text: DateFormatter.formatJsDate(releaseEnddate, 'dd/MM/yyyy')"></data></h2>
+            </div>
+        </header>
+        <section id="overview" class="sixteen columns">
+            <div id="chart-hours"></div>
+           <div id="remaininghours" class="eight columns omega">
+                <div class="eight columns omega">
+                    <div id="pie-pbis"></div>
+                    <!--<h5>Technical design: <data data-bind="text: PBI.remaininghours()"></data> 16 hrs needed, 40 hrs available, 10 hrs used</h5>
+                    <h5>Development: <data data-bind="text: PBI.remaininghours()"></data> 140 hrs needed, 200 hrs available, 20 hrs used</h5>
+                    <h5>Documentation: <data data-bind="text: PBI.remaininghours()"></data> 20 hrs needed, 10 hrs available, 40 hrs used</h5>-->
+                </div>
+            </div>
+        </section>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Change ID</th>
-                        <th>Change name</th>
-                        <th>Amount Tasks</th>
-                        <th>Task Hours Remaining</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <td colspan="11">Total Hours Remaining</td>
-                        <td aria-live="polite" data-bind="text: remainingchangehours()"></td>
-                    </tr>
-                </tfoot>
-                <!-- render tbody for each bug under pbi-->
-                <tbody data-bind="foreach: pbichanges">
-                    <tr aria-live="polite">
-                        <td data-bind="text: changeid"></td>
-                        <td data-bind="text: changename"></td>
-                        <td data-bind="text: amountTasks"></td>
-                        <td data-bind="text: remaininghoursforchange()"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <script type="text/javascript">
-            // function is object ctor in javascript
-            var PBI = function (id, issueId, name, tasks, bugs, changes) {
-                this.pbi_id = id;
-                this.issueid = issueId;
-                this.pbiname = name;
-                //this.pbitasks = tasks;
-                //this.pbichanges = changes;
+        <section class="sixteen columns">
+            <div>
+                <div><input type="checkbox" value="banaan" data-bind="checked: disgardedStatuses" /> Banaan</div>
+                <div><input type="checkbox" value="Under Development" data-bind="checked: disgardedStatuses" /> Under Development</div>
+            </div>
+            <div>
+                Selected: <span data-bind="text: displaySelected()"></span>
+            </div>
+        </section>
 
-                // observableArray makes adding and removing visible to all subscribers
-                this.pbibugs = ko.observableArray();
-                // bugs is provided externally, it can contain other items than Bug items so their properties are extracted here for creation of Bug array
-                for (var i in bugs) {
-                    var bug = new Bug(bugs[i].bugid, bugs[i].bugname, bugs[i].bugtasks);
-                    console.log(bug.bugname);
-                    this.pbibugs.push(bug);
-                }
-
-                this.pbichanges = ko.observableArray();
-                for (var i in changes) {
-                    var change = new Change(changes[i].changeid, changes[i].changename, changes[i].changetasks);
-                    console.log(change.changename);
-                    this.pbichanges.push(change);
-                }
-
-                this.pbitasks = ko.observableArray();
-                for (var i in tasks) {
-                    var task = new Task(tasks[i].taskid, tasks[i].taskname, tasks[i].taskactivity, tasks[i].remaininghours, tasks[i].completedhours, tasks[i].originalestimate);
-                    console.log(task.taskactivity + " -> " + task.taskname);
-                    this.pbitasks.push(task);
-                }
-
-                this.amountTasks = this.pbitasks().length;
-                this.amountChanges = this.pbichanges().length;
-                this.amountBugs = this.pbibugs().length;
-
-                this.remainingbughours = function () {
-                    var total = 0;
-                    for (itm in this.pbibugs()) {
-                        total += this.pbibugs()[itm].remaininghoursforbug();
-                    }
-                    return total;
-                }
-                this.remainingchangehours = function () {
-                    var total = 0;
-                    for (itm in this.pbichanges()) {
-                        total += this.pbichanges()[itm].remaininghoursforchange();
-                    }
-                    return total;
-                }
-                this.remainingtaskhours = function () {
-                    var total = 0;
-                    for (itm in this.pbitasks()) {
-                        total += this.pbitasks()[itm].remaininghours;
-                    }
-                    return total;
-                }
-
-                this.remaininghours = function () {
-                    return this.remainingbughours() + this.remainingtaskhours() + this.remainingchangehours();
+	</div><!-- container -->
+    <script type="text/javascript">
+        // see http://www.highcharts.com/ref/#plotOptions-pie-dataLabels--formatter
+        var pieChartOptions = {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            size: "40%",
+            dataLabels: {
+                enabled: true,
+                connectorPadding: 5,
+                style: {
+                    fontSize: 8
+                },
+                connectorWidth: 0.5,
+                formatter: function () {
+                    //                    var label = "<b>" + this.point.name + "</b> : " + this.percentage;
+                    //                    return label;
+                    return "<b>" + this.point.name + "</b>:" + this.y;
                 }
             }
+        };
 
-            var Task = function (id, name, activity, remainingHours, completedHours, originalEstimate) {
-                this.taskid = id;
-                this.taskname = name;
-                this.taskactivity = activity;
-                this.remaininghours = remainingHours;
-                this.completedhours = completedHours;
-                this.originalestimate = originalEstimate;
-            }
-
-            var Bug = function (id, name, tasks) {
-                this.bugid = id;
-                this.bugname = name;
-                // observableArray makes adding and removing visible to all subscribers
-                this.bugtasks = ko.observableArray();
-                // bugs is provided externally, it can contain other items than Bug items so their properties are extracted here for creation of Bug array
-                for (var i in tasks) {
-                    var task = new Task(tasks[i].taskid, tasks[i].taskname, tasks[i].taskactivity, tasks[i].remaininghours, tasks[i].completedhours, tasks[i].originalestimate);
-                    console.log(task.taskactivity + " -> " + task.taskname);
-                    this.bugtasks.push(task);
-                }
-
-                this.remaininghoursforbug = function () {
-                    var total = 0;
-                    for (itm in this.bugtasks()) {
-                        total += this.bugtasks()[itm].remaininghours;
+        function showHoursChart(projectNames, remainingHours, availableHours, balanceHours) {
+            var chart = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'chart-hours',
+                    defaultSeriesType: 'column'
+                },
+                title: {
+                    text: 'Overview hours'
+                },
+                xAxis: {
+                    categories: projectNames
+                },
+                tooltip: {
+                    formatter: function () {
+                        return '' + this.series.name + ': ' + this.y + '';
                     }
-                    return total;
-                }
+                },
+                credits: {
+                    enabled: false
+                },
+                series: [{
+                    name: 'Hours Available',
+                    data: availableHours
+                },
+                {
+                    name: 'Workload',
+                    data: remainingHours
+                },
+                {
+                    name: 'Balance',
+                    data: balanceHours
+                }]
+            })
+        }
 
-                this.amountTasks = this.bugtasks().length;
-            }
+        function showStatusChart(statusdata) {
+            var chartOptions = {};
+            chartOptions.chart = {
+                // set to div id
+                renderTo: "pie-pbis",
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            };
+            chartOptions.title = { text: "Status Features" };
+            chartOptions.series = [{
+                type: "pie",
+                name: "amount",
+                data: statusdata
+            }];
+            chartOptions.plotOptions = {
+                pie: pieChartOptions
+            };
+            var chart2 = new Highcharts.Chart(chartOptions);
+        }
 
-            var Change = function (id, name, tasks) {
-                this.changeid = id;
-                this.changename = name;
-                this.changetasks = ko.observableArray();
-                
-                for (var i in tasks) {
-                    var task = new Task(tasks[i].taskid, tasks[i].taskname, tasks[i].taskactivity, tasks[i].remaininghours, tasks[i].completedhours, tasks[i].originalestimate);
-                    console.log(task.taskactivity + " -> " + task.taskname);
-                    this.changetasks.push(task);
-                }
 
-                this.remaininghoursforchange = function () {
-                    var total = 0;
-                    for (itm in this.changetasks()) {
-                        total += this.changetasks()[itm].remaininghours;
+        $(document).ready(function () {
+
+            var viewModel = function () {
+                var _this = this;
+
+                this.releaseTitle = "Test release",
+                this.releaseStartdate = new Date(),
+                this.releaseEnddate = new Date(2012, 6, 4),
+                this.disgardedStatuses = ko.observableArray(),
+                this.displaySelected = ko.computed(function () {
+                    var item, s, _i, _len, _ref;
+                    //                    console.log(_this);
+                    //                    console.log(_this.disgardedStatuses());
+                    s = "";
+                    _ref = _this.disgardedStatuses();
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        item = _ref[_i];
+                        s += "" + item + " - ";
                     }
-                    return total;
-                }
+                    return s;// this.disgardedStatuses;
+                }, this)
+            };
 
-                this.amountTasks = this.changetasks().length;
-            }
+            ko.applyBindings(new viewModel());
+            // add toggle function for tabs
+            $("#tabSection > ul").on("click", "li > a", function (event) {
+                // set active tab and content to inactive
+                $(".active").removeClass("active");
+                // set clicked tab to active
+                $(this).addClass("active");
 
-            // data loaded by AJAX or serverside code
-            var digfactTasks =
-            [
-                { taskid: 1, taskname: "ontwikkelen", taskactivity: "Development", remaininghours: 2, completedhours: 3, originalestimate: 3 },
-                { taskid: 2, taskname: "testen", taskactivity: "Testing", remaininghours: 4, completedhours: 0, originalestimate: 4 }
-            ];
+                // set content for clicked tab to active
+                var tag = $(this).parent().attr('tag');
+                $("#tabsContent").find("#" + tag).addClass("active");
+            });
 
-            var digfactMailBugTasks =
-            [
-                { taskid: 5, taskname: "fixen mail bug", taskactivity: "Development", remaininghours: 2, completedhours: 0, originalestimate: 3 },
-                { taskid: 6, taskname: "testen mail bug", taskactivity: "Testing", remaininghours: 2, completedhours: 0, originalestimate: 2 }
-            ];
+        });
+    </script>
 
-            var digfactFactuurBugTasks =
-            [
-                { taskid: 7, taskname: "fixen factuur bug", taskactivity: "Development", remaininghours: 2, completedhours: 0, originalestimate: 3 },
-                { taskid: 8, taskname: "testen factuur bug", taskactivity: "Testing", remaininghours: 4, completedhours: 1, originalestimate: 6 }
-            ];
-
-            var digfactChangeTasks =
-            [
-                { taskid: 10, taskname: "toevoegen pdf document", taskactivity: "Development", remaininghours: 16, completedhours: 0, originalestimate: 16 },
-                { taskid: 11, taskname: "testen pdf doc", taskactivity: "Testing", remaininghours: 4, completedhours: 0, originalestimate: 4 }
-            ];
-
-            var digfactBugs =
-            [
-                { bugid: 3, bugname: "fout in mail", bugtasks: digfactMailBugTasks  },
-                { bugid: 4, bugname: "fout in factuur", bugtasks: digfactFactuurBugTasks }
-            ];
-
-            var digfactChanges =
-            [
-                { changeid: 9, changename: "toch pdf versie", changetasks: digfactChangeTasks }
-            ];
-            
-            var viewModel = new PBI(1, 68075, "Digitaal factureren", digfactTasks, digfactBugs, digfactChanges);
-            ko.applyBindings(viewModel);
-        </script>
 </body>
 </html>

@@ -57,7 +57,7 @@ class Release extends Phase
 	addFeature: (feature) ->
 		@backlog.push(feature)
 	addResource: (resource) ->
-		console.log resource.initials + "->" + resource.memberProject
+		# console.log resource.initials + "->" + resource.memberProject
 		@resources.push(resource)
 
 class Feature

@@ -80,7 +80,6 @@
     };
 
     Release.prototype.addResource = function(resource) {
-      console.log(resource.initials + "->" + resource.memberProject);
       return this.resources.push(resource);
     };
 

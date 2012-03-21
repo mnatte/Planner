@@ -12,7 +12,7 @@
     }
 
     UDisplayReleaseStatus.prototype.execute = function(data) {
-      var absence, availableHours, balanceHours, feat, member, phase, projectMembers, projectNames, remainingHours, teamMember, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4, _ref5, _ref6;
+      var absence, feat, member, phase, projectMembers, teamMember, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4, _ref5;
       projectMembers = [];
       this.release = new Release(DateFormatter.createJsDateFromJson(data.StartDate), DateFormatter.createJsDateFromJson(data.EndDate), data.Title);
       _ref = data.Phases;
@@ -50,8 +50,7 @@
       this.viewModel = new ReleaseViewmodel(this.release);
       ko.applyBindings(this.viewModel);
       showStatusChart(this.viewModel.statusData());
-      _ref6 = this.viewModel.hourBalance(), projectNames = _ref6.projectNames, remainingHours = _ref6.remainingHours, availableHours = _ref6.availableHours, balanceHours = _ref6.balanceHours;
-      return showHoursChart(projectNames, remainingHours, availableHours, balanceHours);
+      return showTableChart();
     };
 
     return UDisplayReleaseStatus;
@@ -67,11 +66,8 @@
 
     UGetAvailableHoursForTeamMemberFromNow.prototype.execute = function() {
       var absence, absentHours, availableHours, endDate, periodAway, restPeriod, startDate, today, _i, _len, _ref;
-      console.log("available hours for: " + this.teamMember.initials);
-      console.log("in phase: " + (this.phase.toString()));
       today = new Date();
       restPeriod = new Phase(today, this.phase.endDate, this.phase.title);
-      console.log("period: " + restPeriod);
       absentHours = 0;
       _ref = this.teamMember.periodsAway;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -87,13 +83,9 @@
           startDate = today;
         }
         periodAway = new Phase(startDate, endDate, "Absence in phase");
-        console.log("periodAway: " + (periodAway.toString()));
         absentHours += periodAway.workingHours();
       }
-      console.log("absentHours: " + absentHours);
       availableHours = restPeriod.workingHours() - absentHours;
-      console.log("availableHours: " + availableHours);
-      console.log("corrected with focusfactor " + this.teamMember.focusFactor + ": " + (this.teamMember.focusFactor * availableHours));
       return this.teamMember.focusFactor * availableHours;
     };
 

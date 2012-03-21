@@ -48,19 +48,20 @@ class UDisplayReleaseStatus
 		# show charts
 		showStatusChart(@viewModel.statusData())
 		# pattern matching
-		{projectNames, remainingHours, availableHours, balanceHours} = @viewModel.hourBalance()
-		showHoursChart(projectNames, remainingHours, availableHours, balanceHours)
+		# {projectNames, remainingHours, availableHours, balanceHours} = @viewModel.hourBalance()
+		# showHoursChart(projectNames, remainingHours, availableHours, balanceHours)
+		showTableChart()
 
 
 class UGetAvailableHoursForTeamMemberFromNow
 	constructor: (@teamMember, @phase) ->
 	execute: ->
-		console.log "available hours for: #{@teamMember.initials}"
-		console.log "in phase: #{@phase.toString()}"
+		# console.log "available hours for: #{@teamMember.initials}"
+		# console.log "in phase: #{@phase.toString()}"
 		# set start date of phase to Now
 		today = new Date()
 		restPeriod = new Phase(today, @phase.endDate, @phase.title)
-		console.log "period: #{restPeriod}"
+		# console.log "period: #{restPeriod}"
 		# TODO: subtract absence days
 		absentHours = 0
 		for absence in @teamMember.periodsAway
@@ -74,12 +75,12 @@ class UGetAvailableHoursForTeamMemberFromNow
 			else
 				startDate = today 	
 			periodAway = new Phase(startDate, endDate, "Absence in phase")
-			console.log "periodAway: #{periodAway.toString()}"
+			# console.log "periodAway: #{periodAway.toString()}"
 			absentHours += periodAway.workingHours()
-		console.log "absentHours: #{absentHours}"
+		# console.log "absentHours: #{absentHours}"
 		availableHours = restPeriod.workingHours() - absentHours
-		console.log "availableHours: #{availableHours}"
-		console.log "corrected with focusfactor #{@teamMember.focusFactor}: #{@teamMember.focusFactor * availableHours}"
+		# console.log "availableHours: #{availableHours}"
+		# console.log "corrected with focusfactor #{@teamMember.focusFactor}: #{@teamMember.focusFactor * availableHours}"
 		@teamMember.focusFactor * availableHours
 		
 # export to root object

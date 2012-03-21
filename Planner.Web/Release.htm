@@ -70,25 +70,36 @@
                     <li class="price"><h5 data-bind="text: toString()"></h5></li>
                 </ul>
                 <h6 class="price"><data data-bind="text: DateFormatter.formatJsDate(currentDate(), 'dd/MM/yyyy')"></data> - <data data-bind="text: DateFormatter.formatJsDate(releaseEnddate(), 'dd/MM/yyyy')"></data>: <data data-bind="text: releaseWorkingDaysRemaining()"></data> days remaining</h6>
-                <!--<h4 class="price">Development 1 mar - 15 may</h4>
-                <h4 class="price">UAT 20 may - 3 jun</h4>
-                <h4 class="price">GoLive 16 jun</h4>-->
                 <div id="chart-hours"></div>
+                <table id="datatable">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Hours Available</th>
+                            <th>Workload</th>
+                            <th>Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: hourBalance()">
+                        <tr>
+                            <th data-bind="text: projectname"></th>
+                            <td data-bind="text: availableHours"></td>
+                            <td data-bind="text: workload"></td>
+                            <td data-bind="text: balance"></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             <div id="remaininghours" class="eight columns omega">
                 <div class="eight columns omega">
                     <div id="pie-pbis"></div>
-                    <!--<h5>Technical design: <data data-bind="text: PBI.remaininghours()"></data> 16 hrs needed, 40 hrs available, 10 hrs used</h5>
-                    <h5>Development: <data data-bind="text: PBI.remaininghours()"></data> 140 hrs needed, 200 hrs available, 20 hrs used</h5>
-                    <h5>Documentation: <data data-bind="text: PBI.remaininghours()"></data> 20 hrs needed, 10 hrs available, 40 hrs used</h5>-->
                 </div>
             </div>
         </section>
 
         <section class="sixteen columns">
-            <div>
-                <div><input type="checkbox" value="banaan" data-bind="checked: disgardedStatuses()" /> Banaan</div>
-                <div><input type="checkbox" value="Under Development" data-bind="checked: disgardedStatuses()" /> Under Development</div>
+            <div data-bind="foreach: statuses">
+                <div><input type="checkbox" data-bind="checked: $parent.disgardedStatuses, value: $data" /><data data-bind="text: $data"></data></div>
             </div>
             <div>
                 Selected: <span data-bind="text: displaySelected()"></span>
@@ -119,7 +130,7 @@
                         </thead>
                         <tfoot>
                             <tr>
-                                <td colspan="11"><strong>Total Hours Remaining (excl. Descoped and from Ready for System Test on)<strong></td>
+                                <td colspan="11"><strong>Total Hours Remaining<strong></td>
                                 <td aria-live="polite"><strong><data data-bind="text: totalHours"></data></strong> </td>
                             </tr>
                         </tfoot>
@@ -215,18 +226,80 @@
             };
             var chart2 = new Highcharts.Chart(chartOptions);
         }
-        
+
+        function showTableChart() {
+            /**
+            * Visualize an HTML table using Highcharts. The top (horizontal) header
+            * is used for series names, and the left (vertical) header is used
+            * for category names. This function is based on jQuery.
+            * @param {Object} table The reference to the HTML table to visualize
+            * @param {Object} options Highcharts options
+            */
+
+            Highcharts.visualize = function (table, options) {
+                // the categories
+                options.xAxis.categories = [];
+                $('tbody th', table).each(function (i) {
+                    options.xAxis.categories.push(this.innerHTML);
+                });
+
+                // the data series
+                options.series = [];
+                $('tr', table).each(function (i) {
+                    var tr = this;
+                    $('th, td', tr).each(function (j) {
+                        if (j > 0) { // skip first column
+                            if (i == 0) { // get the name and init the series
+                                options.series[j - 1] = {
+                                    name: this.innerHTML,
+                                    data: []
+                                };
+                            } else { // add values
+                                console.log(this.innerHTML)
+                                options.series[j - 1].data.push(parseFloat(this.innerHTML));
+                            }
+                        }
+                    });
+                });
+            }
+
+            var table = document.getElementById('datatable'),
+                options = {
+                    chart: {
+                        renderTo: 'chart-hours',
+                        type: 'column'
+                    },
+                    title: {
+                        text: 'Data extracted from a HTML table in the page'
+                    },
+                    xAxis: {
+                },
+                yAxis: {
+                    title: {
+                        text: 'Hours'
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        return '<b>' + this.series.name + '</b><br/>' +
+                                this.y + ' ' + this.x.toLowerCase();
+                    }
+                }
+            };
+
+            Highcharts.visualize(table, options);
+
+            var chart = new Highcharts.Chart(options);
+        }
+
 
         $(document).ready(function () {
             var ajax = new Ajax();
 
-            //Release.extend(RMoveItem);
-
             var displayReleaseStatus = new UDisplayReleaseStatus();
             ajax.load(displayReleaseStatus.execute);
 
-            //$("#tabSection > ul > li > a").first().addClass("active");
-            //$(".tabs-content > li").first().addClass("active");
+            // showTableChart();
 
             // add toggle function for tabs
             $("#tabSection > ul").on("click", "li > a", function (event) {
@@ -239,7 +312,6 @@
                 var tag = $(this).parent().attr('tag');
                 $("#tabsContent").find("#" + tag).addClass("active");
             });
-
         });
     </script>
 
