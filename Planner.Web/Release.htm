@@ -71,38 +71,38 @@
                 </ul>
                 <h6 class="price"><data data-bind="text: DateFormatter.formatJsDate(currentDate(), 'dd/MM/yyyy')"></data> - <data data-bind="text: DateFormatter.formatJsDate(releaseEnddate(), 'dd/MM/yyyy')"></data>: <data data-bind="text: releaseWorkingDaysRemaining()"></data> days remaining</h6>
                 <div id="chart-hours"></div>
-                <table id="datatable">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Hours Available</th>
-                            <th>Workload</th>
-                            <th>Balance</th>
-                        </tr>
-                    </thead>
-                    <tbody data-bind="foreach: hourBalance()">
-                        <tr>
-                            <th data-bind="text: projectname"></th>
-                            <td data-bind="text: availableHours"></td>
-                            <td data-bind="text: workload"></td>
-                            <td data-bind="text: balance"></td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
             <div id="remaininghours" class="eight columns omega">
                 <div class="eight columns omega">
                     <div id="pie-pbis"></div>
-                </div>
-            </div>
-        </section>
-
-        <section class="sixteen columns">
-            <div data-bind="foreach: statuses">
-                <div><input type="checkbox" data-bind="checked: $parent.disgardedStatuses, value: $data" /><data data-bind="text: $data"></data></div>
-            </div>
-            <div>
-                Selected: <span data-bind="text: displaySelected()"></span>
+                    <table id="datatable">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Hours Available</th>
+                                <th>Workload</th>
+                                <th>Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="foreach: hourBalance()">
+                            <tr>
+                                <th data-bind="text: projectname"></th>
+                                <td data-bind="text: availableHours"></td>
+                                <td data-bind="text: workload"></td>
+                                <td data-bind="text: balance"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="four columns omega">&nbsp;</div>
+                    <div class="four columns omega">
+                        <div data-bind="foreach: statuses">
+                            <div><input type="checkbox" data-bind="checked: $parent.disgardedStatuses, value: $data" /><data data-bind="text: $data"></data></div>
+                        </div>
+                    </div>
+                    <!--<div>
+                        Selected: <span data-bind="text: displaySelected()"></span>
+                    </div>-->
+                    </div>
             </div>
         </section>
 
@@ -270,7 +270,7 @@
                         type: 'column'
                     },
                     title: {
-                        text: 'Data extracted from a HTML table in the page'
+                        text: 'Workload overview'
                     },
                     xAxis: {
                 },
@@ -298,8 +298,6 @@
 
             var displayReleaseStatus = new UDisplayReleaseStatus();
             ajax.load(displayReleaseStatus.execute);
-
-            // showTableChart();
 
             // add toggle function for tabs
             $("#tabSection > ul").on("click", "li > a", function (event) {
