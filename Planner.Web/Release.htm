@@ -69,7 +69,10 @@
                 <ul data-bind="foreach: phases()">
                     <li class="price"><h5 data-bind="text: toString()"></h5></li>
                 </ul>
-                <h6 class="price"><data data-bind="text: DateFormatter.formatJsDate(currentDate(), 'dd/MM/yyyy')"></data> - <data data-bind="text: DateFormatter.formatJsDate(releaseEnddate(), 'dd/MM/yyyy')"></data>: <data data-bind="text: releaseWorkingDaysRemaining()"></data> days remaining</h6>
+                <ul data-bind="foreach: currentPhases">
+                    <li class="price"><h6><data data-bind="text: title"></data> <data data-bind="text: DateFormatter.formatJsDate($parent.currentDate(), 'dd/MM/yyyy')"></data> - <data data-bind="text: DateFormatter.formatJsDate(endDate, 'dd/MM/yyyy')"></data>: <data data-bind="text: workingDaysRemaining"></data> days remaining</h6></li>
+                </ul>
+                
                 <div id="chart-hours"></div>
             </div>
             <div id="remaininghours" class="eight columns omega">
@@ -171,40 +174,40 @@
             }
         };
 
-        function showHoursChart(projectNames, remainingHours, availableHours, balanceHours) {
-            var chart = new Highcharts.Chart({
-                chart: {
-                    renderTo: 'chart-hours',
-                    defaultSeriesType: 'column'
-                },
-                title: {
-                    text: 'Overview hours'
-                },
-                xAxis: {
-                    categories: projectNames
-                },
-                tooltip: {
-                    formatter: function () {
-                        return '' + this.series.name + ': ' + this.y + '';
-                    }
-                },
-                credits: {
-                    enabled: false
-                },
-                series: [{
-                    name: 'Hours Available',
-                    data: availableHours
-                },
-                {
-                    name: 'Workload',
-                    data: remainingHours
-                },
-                {
-                    name: 'Balance',
-                    data: balanceHours
-                }]
-            })
-        }
+//        function showHoursChart(projectNames, remainingHours, availableHours, balanceHours) {
+//            var chart = new Highcharts.Chart({
+//                chart: {
+//                    renderTo: 'chart-hours',
+//                    defaultSeriesType: 'column'
+//                },
+//                title: {
+//                    text: 'Overview hours'
+//                },
+//                xAxis: {
+//                    categories: projectNames
+//                },
+//                tooltip: {
+//                    formatter: function () {
+//                        return '' + this.series.name + ': ' + this.y + '';
+//                    }
+//                },
+//                credits: {
+//                    enabled: false
+//                },
+//                series: [{
+//                    name: 'Hours Available',
+//                    data: availableHours
+//                },
+//                {
+//                    name: 'Workload',
+//                    data: remainingHours
+//                },
+//                {
+//                    name: 'Balance',
+//                    data: balanceHours
+//                }]
+//            })
+//        }
 
         function showStatusChart(statusdata) {
             var chartOptions = {};
@@ -255,7 +258,7 @@
                                     data: []
                                 };
                             } else { // add values
-                                console.log(this.innerHTML)
+                                // console.log(this.innerHTML)
                                 options.series[j - 1].data.push(parseFloat(this.innerHTML));
                             }
                         }

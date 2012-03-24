@@ -41,6 +41,11 @@ class Phase extends Mixin
 		@workingDays() * 8
 	toString: ->
 		"#{@title} #{DateFormatter.formatJsDate(@startDate, 'dd/MM/yyyy')} - #{DateFormatter.formatJsDate(@endDate, 'dd/MM/yyyy')} (#{@workingDays()} working days)"
+	isCurrent: ->
+		today = new Date()
+		today >= @startDate and today < @endDate
+	overlaps: (other) ->
+		@startDate >= other.startDate or @endDate < other.endDate
 
 class MileStone
 	constructor: (@date, @title) ->

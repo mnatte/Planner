@@ -8,13 +8,14 @@
   ReleaseViewmodel = (function() {
 
     function ReleaseViewmodel(release) {
-      var statusgroup, _i, _len, _ref,
+      var ph, phase, statusgroup, _i, _j, _len, _len2, _ref, _ref2,
         _this = this;
       this.release = release;
       this.loadProjects = __bind(this.loadProjects, this);
       this.fromNowTillEnd = new Phase(new Date(), this.release.endDate, "from now till end");
       this.projects = [];
       this.statuses = [];
+      this.currentPhases = [];
       _ref = this.release.sets;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         statusgroup = _ref[_i];
@@ -22,17 +23,25 @@
           this.statuses.push(statusgroup.label);
         }
       }
+      _ref2 = this.phases();
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        phase = _ref2[_j];
+        if (!(phase.isCurrent())) continue;
+        ph = new Phase(this.currentDate(), phase.endDate, "");
+        phase.workingDaysRemaining = ph.workingDays();
+        this.currentPhases.push(phase);
+      }
       this.disgardedStatuses = ko.observableArray();
       this.loadProjects();
       this.displaySelected = ko.computed(function() {
-        var item, s, _j, _len2, _ref2;
+        var item, s, _k, _len3, _ref3;
         console.log(_this);
         console.log(_this.disgardedStatuses());
         showTableChart();
         s = "";
-        _ref2 = _this.disgardedStatuses();
-        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-          item = _ref2[_j];
+        _ref3 = _this.disgardedStatuses();
+        for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+          item = _ref3[_k];
           s += "" + item + " - ";
         }
         return s;
@@ -59,12 +68,12 @@
       return new Date();
     };
 
-    ReleaseViewmodel.prototype.releaseWorkingDaysRemaining = function() {
-      return this.fromNowTillEnd.workingDays();
-    };
-
     ReleaseViewmodel.prototype.phases = function() {
       return this.release.phases;
+    };
+
+    ReleaseViewmodel.prototype.releaseWorkingDaysRemaining = function() {
+      return this.fromNowTillEnd.workingDays();
     };
 
     ReleaseViewmodel.prototype.loadProjects = function() {

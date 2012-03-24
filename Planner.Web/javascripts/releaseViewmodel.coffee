@@ -11,8 +11,15 @@ class ReleaseViewmodel
 		# console.log "releaseViewmodel for release #{@release.title}"
 		@projects = []
 		@statuses = []
+		@currentPhases = []
+
 		for statusgroup in @release.sets when statusgroup.groupedBy == "state"
 			@statuses.push(statusgroup.label)
+
+		for phase in @phases() when phase.isCurrent()
+			ph = new Phase(@currentDate(), phase.endDate, "")
+			phase.workingDaysRemaining = ph.workingDays()
+			@currentPhases.push(phase)
 			
 		# observable for selecting what to exclude from calculations
 		@disgardedStatuses = ko.observableArray()
@@ -32,9 +39,10 @@ class ReleaseViewmodel
 	releaseEnddate: -> @release.endDate
 	releaseWorkingDays: -> @release.workingDays()
 	currentDate: -> new Date()
+	phases: -> @release.phases
+			
 	releaseWorkingDaysRemaining: -> @fromNowTillEnd.workingDays()
 	
-	phases: -> @release.phases
 	# projects: -> $.grep(@release.sets, (n,I) -> n.groupedBy == 'project') #jQuery syntax
 	loadProjects: =>
 		for set in @release.sets when set.groupedBy == "project"

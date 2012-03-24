@@ -41,6 +41,16 @@
       return "" + this.title + " " + (DateFormatter.formatJsDate(this.startDate, 'dd/MM/yyyy')) + " - " + (DateFormatter.formatJsDate(this.endDate, 'dd/MM/yyyy')) + " (" + (this.workingDays()) + " working days)";
     };
 
+    Phase.prototype.isCurrent = function() {
+      var today;
+      today = new Date();
+      return today >= this.startDate && today < this.endDate;
+    };
+
+    Phase.prototype.overlaps = function(other) {
+      return this.startDate >= other.startDate || this.endDate < other.endDate;
+    };
+
     return Phase;
 
   })(Mixin);
