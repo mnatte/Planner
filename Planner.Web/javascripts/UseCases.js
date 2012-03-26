@@ -1,5 +1,5 @@
 (function() {
-  var UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, root,
+  var UDisplayPhases, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, root,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   root = typeof global !== "undefined" && global !== null ? global : window;
@@ -93,8 +93,24 @@
 
   })();
 
+  UDisplayPhases = (function() {
+
+    function UDisplayPhases() {}
+
+    UDisplayPhases.prototype.execute = function(data) {
+      this.viewModel = new PhasesViewmodel();
+      this.viewModel.load(data);
+      return ko.applyBindings(this.viewModel);
+    };
+
+    return UDisplayPhases;
+
+  })();
+
   root.UDisplayReleaseStatus = UDisplayReleaseStatus;
 
   root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFromNow;
+
+  root.UDisplayPhases = UDisplayPhases;
 
 }).call(this);

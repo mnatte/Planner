@@ -96,6 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\PhasesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ReleaseController.cs" />
     <Compile Include="Global.asax.cs">
@@ -107,6 +108,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="404.html" />
+    <Content Include="javascripts\phasesViewmodel.js">
+      <DependentUpon>phasesViewmodel.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
+    <Content Include="Phases.htm" />
     <Content Include="Global.asax" />
     <Content Include="images\apple-touch-icon-114x114.png" />
     <Content Include="images\apple-touch-icon-72x72.png" />
@@ -217,6 +224,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="javascripts\phasesViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>phasesViewmodel.js</LastGenOutput>
+    </None>
     <None Include="javascripts\releaseViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>releaseViewmodel.js</LastGenOutput>

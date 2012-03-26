@@ -1,5 +1,5 @@
 (function() {
-  var Feature, MileStone, Phase, Release, Resource, root,
+  var Absence, Feature, MileStone, Phase, Release, Resource, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -70,10 +70,9 @@
 
     __extends(Release, _super);
 
-    function Release(startDate, endDate, workingDays, title) {
+    function Release(startDate, endDate, title) {
       this.startDate = startDate;
       this.endDate = endDate;
-      this.workingDays = workingDays;
       this.title = title;
       Release.__super__.constructor.apply(this, arguments);
       this.phases = [];
@@ -94,6 +93,21 @@
     };
 
     return Release;
+
+  })(Phase);
+
+  Absence = (function(_super) {
+
+    __extends(Absence, _super);
+
+    function Absence(startDate, endDate, title, resource) {
+      this.startDate = startDate;
+      this.endDate = endDate;
+      this.title = title;
+      this.resource = resource;
+    }
+
+    return Absence;
 
   })(Phase);
 
@@ -142,6 +156,8 @@
   root.MileStone = MileStone;
 
   root.Release = Release;
+
+  root.Absence = Absence;
 
   root.Feature = Feature;
 

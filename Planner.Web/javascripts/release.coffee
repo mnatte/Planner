@@ -51,7 +51,7 @@ class MileStone
 	constructor: (@date, @title) ->
 
 class Release extends Phase
-	constructor: (@startDate, @endDate, @workingDays, @title) ->
+	constructor: (@startDate, @endDate, @title) ->
 		# pass along all args to parent ctor by using 'super' instead of 'super()'
 		super
 		@phases = []
@@ -64,6 +64,10 @@ class Release extends Phase
 	addResource: (resource) ->
 		# console.log resource.initials + "->" + resource.memberProject
 		@resources.push(resource)
+
+class Absence extends Phase
+	constructor: (@startDate, @endDate, @title, @resource) ->
+		# pass along all args to parent ctor by using 'super' instead of 'super()'
 
 class Feature
 	constructor: (@businessId, @contactPerson, @estimatedHours, @hoursWorked, @priority, @project, @remainingHours, @title, @state) ->
@@ -79,5 +83,6 @@ class Resource extends Mixin
 root.Phase = Phase
 root.MileStone = MileStone
 root.Release = Release
+root.Absence = Absence
 root.Feature = Feature
 root.Resource = Resource

@@ -74,10 +74,15 @@ namespace MvcApplication1.Controllers
                                         reader4.Read();
                                         // reader3 is used for FocusFactor since this is stored in ReleaseResources, the rest is from Persons
                                         var teamMember = new ReleaseModels.TeamMember { Initials = reader4["Initials"].ToString(), FocusFactor = double.Parse(reader3["FocusFactor"].ToString()), AvailableHoursPerWeek = int.Parse(reader4["HoursPerWeek"].ToString()) };
-                                        if (teamMember.Initials == "JS" || teamMember.Initials == "TdJ")
-                                            teamMember.PeriodsAway.Add(new ReleaseModels.Phase { EndDate = new DateTime(2012, 3, 29), StartDate = new DateTime(2012, 3, 15), Title = "Vakantie" });
-                                        if (teamMember.Initials == "KK")
-                                            teamMember.PeriodsAway.Add(new ReleaseModels.Phase { EndDate = new DateTime(2012, 5, 2), StartDate = new DateTime(2012, 4, 21), Title = "Vakantie" });
+
+                                        var cmd7 = new SqlCommand(String.Format("Select * from Absences where PersonId = {0}", reader3["PersonId"].ToString()), conn);
+                                        using (var reader5 = cmd7.ExecuteReader())
+                                        {
+                                            while (reader5.Read())
+                                            {
+                                                teamMember.PeriodsAway.Add(new ReleaseModels.Phase { EndDate = DateTime.Parse(reader5["EndDate"].ToString()), StartDate = DateTime.Parse(reader5["StartDate"].ToString()), Title = reader5["Title"].ToString() });
+                                            }
+                                        }
                                         team.TeamMembers.Add(teamMember);
                                     }
                                 }

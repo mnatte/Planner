@@ -14,6 +14,16 @@ class Ajax
 				callback data
 			error: (XHR, status, errorThrown) ->
 				console.log "AJAX error: #{status}"
+	loadPhases: (callback) ->
+		url = "/planner/Phases/GetPhases"
+		$.ajax url,
+			dataType: "json"
+			type: "GET"
+			success: (data, status, XHR) ->
+				console.log "Phases data loaded"
+				callback data
+			error: (XHR, status, errorThrown) ->
+				console.log "AJAX Phases error: #{status}"
 	test: ->
 		console.log "testing AJAX class"
 

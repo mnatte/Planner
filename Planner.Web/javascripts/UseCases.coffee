@@ -82,8 +82,16 @@ class UGetAvailableHoursForTeamMemberFromNow
 		# console.log "availableHours: #{availableHours}"
 		# console.log "corrected with focusfactor #{@teamMember.focusFactor}: #{@teamMember.focusFactor * availableHours}"
 		@teamMember.focusFactor * availableHours
+
+class UDisplayPhases
+	constructor: ->
+	execute: (data) ->
+		@viewModel = new PhasesViewmodel()
+		@viewModel.load data
+		ko.applyBindings(@viewModel)
 		
 # export to root object
 root.UDisplayReleaseStatus = UDisplayReleaseStatus
 root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFromNow
+root.UDisplayPhases = UDisplayPhases
 

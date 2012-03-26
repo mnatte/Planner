@@ -23,6 +23,22 @@
       });
     };
 
+    Ajax.prototype.loadPhases = function(callback) {
+      var url;
+      url = "/planner/Phases/GetPhases";
+      return $.ajax(url, {
+        dataType: "json",
+        type: "GET",
+        success: function(data, status, XHR) {
+          console.log("Phases data loaded");
+          return callback(data);
+        },
+        error: function(XHR, status, errorThrown) {
+          return console.log("AJAX Phases error: " + status);
+        }
+      });
+    };
+
     Ajax.prototype.test = function() {
       return console.log("testing AJAX class");
     };

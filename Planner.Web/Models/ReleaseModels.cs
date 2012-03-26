@@ -7,6 +7,30 @@ namespace MvcApplication1.Models
 {
     public class ReleaseModels
     {
+        public class Periods
+        {
+            private List<Release> _phases;
+            public IList<Release> Releases
+            {
+                get
+                {
+                    if (_phases == null)
+                        _phases = new List<Release>();
+                    return _phases;
+                }
+            }
+
+            private List<Absence> _absences;
+            public IList<Absence> Absences
+            {
+                get
+                {
+                    if (_absences == null)
+                        _absences = new List<Absence>();
+                    return _absences;
+                }
+            }
+        }
         public class Phase
         {
             public string Title { get; set; }
@@ -26,6 +50,11 @@ namespace MvcApplication1.Models
                     return workingDays;
                 }
             }
+        }
+
+        public class Absence : Phase
+        {
+            public ReleaseModels.Resource Person { get; set; }
         }
 
         public class Release : Phase
