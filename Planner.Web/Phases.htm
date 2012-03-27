@@ -59,7 +59,12 @@
         <section id="overview" class="sixteen columns">
             <div id="phases" class="eight columns alpha">
                 <ul data-bind="foreach: currentPhases()">
-                    <li class="price"><h5 data-bind="text: toString()"></h5></li>
+                    <li class="price"><h5 data-bind="text: toString()"></h5>
+                        <ul data-bind="foreach: phases">
+                            <li class="price"><h6 data-bind="text: toString()"></h5></li>
+                        </ul>
+                    
+                    </li>
                 </ul>
                 <ul data-bind="foreach: currentAbsences()">
                     <li class="price"><h6 data data-bind="text: toString()"></h6></li>
@@ -70,29 +75,6 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
-            var viewModel = function () {
-                var _this = this;
-
-                this.releaseTitle = "Test release",
-                this.releaseStartdate = new Date(),
-                this.releaseEnddate = new Date(2012, 6, 4),
-                this.releasePhases = [],
-                this.otherPhases = [],
-                this.disgardedStatuses = ko.observableArray(),
-                this.displaySelected = ko.computed(function () {
-                    var item, s, _i, _len, _ref;
-                    //                    console.log(_this);
-                    //                    console.log(_this.disgardedStatuses());
-                    s = "";
-                    _ref = _this.disgardedStatuses();
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        item = _ref[_i];
-                        s += "" + item + " - ";
-                    }
-                    return s; // this.disgardedStatuses;
-                }, this)
-            };
-
             var uc = new UDisplayPhases();
             var ajax = new Ajax();
             ajax.loadPhases(uc.execute);
