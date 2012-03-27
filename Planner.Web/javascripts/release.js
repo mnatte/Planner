@@ -48,7 +48,7 @@
     };
 
     Phase.prototype.overlaps = function(other) {
-      return this.startDate >= other.startDate || this.endDate < other.endDate;
+      return (this.startDate >= other.startDate && this.startDate < other.endDate) || (this.endDate >= other.startDate && this.endDate < other.endDate);
     };
 
     return Phase;

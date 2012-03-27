@@ -59,9 +59,15 @@
         <section id="overview" class="sixteen columns">
             <div id="phases" class="eight columns alpha">
                 <ul data-bind="foreach: currentPhases()">
-                    <li class="price"><h5 data-bind="text: toString()"></h5>
+                    <li class="price">
+                        <span data-bind="text: toString(), style: { color: isCurrent() ? 'red' : 'black' }"></span>
+                        <button data-bind="click: $parent.check">Details</button>
+    
                         <ul data-bind="foreach: phases">
-                            <li class="price"><h6 data-bind="text: toString()"></h5></li>
+                            <li class="price">
+                                <span data-bind="text: toString(), style: { color: isCurrent() ? 'red' : 'black' }"></span>
+                                <button data-bind="click: $root.check">Details</button>
+                            </li>
                         </ul>
                     
                     </li>
@@ -69,6 +75,14 @@
                 <ul data-bind="foreach: currentAbsences()">
                     <li class="price"><h6 data data-bind="text: toString()"></h6></li>
                 </ul>
+            </div>
+            </section>
+            <section>
+            <div>
+                Selected phase <span data-bind="text: selectedPhase()"></span>
+            </div>
+            <div>
+                Overlapping absences <span data-bind="text: overlappingAbsences"></span>
             </div>
         </section>
 	</div><!-- container -->

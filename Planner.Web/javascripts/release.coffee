@@ -45,7 +45,7 @@ class Phase extends Mixin
 		today = new Date()
 		today >= @startDate and today < @endDate
 	overlaps: (other) ->
-		@startDate >= other.startDate or @endDate < other.endDate
+		(@startDate >= other.startDate and @startDate < other.endDate) or (@endDate >= other.startDate and @endDate < other.endDate)
 
 class MileStone
 	constructor: (@date, @title) ->

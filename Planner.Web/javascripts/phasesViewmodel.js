@@ -6,10 +6,13 @@
   PhasesViewmodel = (function() {
     var _this = this;
 
-    function PhasesViewmodel() {}
+    function PhasesViewmodel() {
+      this.selectedPhase = ko.observable();
+    }
 
     PhasesViewmodel.prototype.load = function(data) {
-      var abs, absence, phase, release, rl, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
+      var abs, absence, phase, release, rl, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3,
+        _this = this;
       this.releases = [];
       _ref = data.Releases;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -29,6 +32,24 @@
         abs = new Absence(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title, absence.Person);
         this.absences.push(abs);
       }
+      this.overlappingAbsences = ko.computed(function() {
+        var a, abs, sel, _l, _len4, _ref4;
+        if (_this.selectedPhase === !void 0) {
+          sel = _this.selectedPhase;
+        } else {
+          sel = _this.releases[0];
+        }
+        console.log("sel: " + sel);
+        _this.selectedPhase(sel);
+        a = [];
+        console.log("selectedPhase: " + (_this.selectedPhase()));
+        _ref4 = _this.absences;
+        for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
+          abs = _ref4[_l];
+          if (abs.overlaps(_this.selectedPhase())) a.push(abs);
+        }
+        return a;
+      }, this);
       return console.log("this.absences: " + this.absences);
     };
 
@@ -67,6 +88,11 @@
         if (abs.isCurrent()) current.push(abs);
       }
       return current;
+    };
+
+    PhasesViewmodel.prototype.check = function(data) {
+      this.selectedPhase(data);
+      return console.log(data);
     };
 
     return PhasesViewmodel;
