@@ -72,17 +72,17 @@
                     
                     </li>
                 </ul>
-                <ul data-bind="foreach: currentAbsences()">
+                <!--<ul data-bind="foreach: currentAbsences()">
                     <li class="price"><h6 data data-bind="text: toString()"></h6></li>
-                </ul>
+                </ul>-->
             </div>
             </section>
-            <section>
+            <section class="sixteen columns" alpha>
             <div>
-                Selected phase <span data-bind="text: selectedPhase()"></span>
+                <h4 data-bind="text: selectedPhase()"></h4>
             </div>
-            <div>
-                <span>Overlapping absences</span>
+            <div class="one columns alpha">&nbsp;</div>
+            <div class="fifteen columns omega">
                 <ul data-bind="foreach: overlappingAbsences()">
                     <li class="price"><h6 data data-bind="text: toString(), style: { color: isCurrent() ? 'red' : isPast() ? 'green' : 'black' }"></h6></li>
                 </ul>
