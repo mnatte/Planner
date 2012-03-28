@@ -1,5 +1,6 @@
 (function() {
-  var PhasesViewmodel, root;
+  var PhasesViewmodel, root,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -7,7 +8,7 @@
     var _this = this;
 
     function PhasesViewmodel() {
-      this.selectedPhase = ko.observable();
+      this.check = __bind(this.check, this);      this.selectedPhase = ko.observable();
     }
 
     PhasesViewmodel.prototype.load = function(data) {
@@ -33,20 +34,14 @@
         this.absences.push(abs);
       }
       this.overlappingAbsences = ko.computed(function() {
-        var a, abs, sel, _l, _len4, _ref4;
-        if (_this.selectedPhase === !void 0) {
-          sel = _this.selectedPhase;
-        } else {
-          sel = _this.releases[0];
-        }
-        console.log("sel: " + sel);
-        _this.selectedPhase(sel);
+        var a, abs, _l, _len4, _ref4;
         a = [];
-        console.log("selectedPhase: " + (_this.selectedPhase()));
         _ref4 = _this.absences;
         for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
           abs = _ref4[_l];
-          if (abs.overlaps(_this.selectedPhase())) a.push(abs);
+          if (!(abs.overlaps(_this.selectedPhase()))) continue;
+          console.log("overlaps: " + abs);
+          a.push(abs);
         }
         return a;
       }, this);
@@ -91,8 +86,9 @@
     };
 
     PhasesViewmodel.prototype.check = function(data) {
+      console.log("CHECK - function");
       this.selectedPhase(data);
-      return console.log(data);
+      return console.log("check after selection: " + this.selectedPhase());
     };
 
     return PhasesViewmodel;

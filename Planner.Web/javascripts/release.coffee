@@ -44,8 +44,17 @@ class Phase extends Mixin
 	isCurrent: ->
 		today = new Date()
 		today >= @startDate and today < @endDate
+	isFuture: ->
+		today = new Date()
+		today < @startDate
+	isPast: ->
+		today = new Date()
+		today > @startDate
 	overlaps: (other) ->
-		(@startDate >= other.startDate and @startDate < other.endDate) or (@endDate >= other.startDate and @endDate < other.endDate)
+		console.log "other: #{other}"
+		unless other is undefined
+			console.log (@startDate >= other.startDate and @startDate < other.endDate) or (@endDate >= other.startDate and @endDate < other.endDate)
+			(@startDate >= other.startDate and @startDate < other.endDate) or (@endDate >= other.startDate and @endDate < other.endDate)
 
 class MileStone
 	constructor: (@date, @title) ->

@@ -6,8 +6,11 @@ root = global ? window
 
 class PhasesViewmodel
 	constructor: ->
+		# ctor is executed in context of INSTANCE. Therfore @ refers here to CURRENT INSTANCE and attaches selectedPhase to all instances (since object IS ctor)
 		@selectedPhase = ko.observable()
 	load: (data) ->
+		# all properties besides ctor are ATTACHED to prototype. these are EXECUTED in context of INSTANCE.
+		# therefore @ refers to INSTANCE here 
 		@releases = []
 		for release in data.Releases
 			# fill release object
@@ -29,21 +32,12 @@ class PhasesViewmodel
 
 		# @selectedPhase(@releases[0])
 		@overlappingAbsences = ko.computed(=> 
-				if(@selectedPhase is not undefined)
-					sel = @selectedPhase
-				else
-					sel = @releases[0]
-				console.log "sel: #{sel}"
-
-				# WHY IS @selectedPhase AS A  FUNCTION OK HERE AND NOT ANYMORE DOWN AT THE check() function?
-
-				@selectedPhase sel
 				a = []
-				console.log "selectedPhase: #{@selectedPhase()}"
 				for abs in @absences when abs.overlaps(@selectedPhase())
+					console.log "overlaps: #{abs}"
 					a.push(abs)
 				a
-			, this)
+		, this)
 
 		console.log "this.absences: #{@absences}"
 			
@@ -69,9 +63,12 @@ class PhasesViewmodel
 			current.push abs
 		current
 
-	check: (data) ->
-		@selectedPhase data
-		console.log data
+	check: (data) =>
+		console.log "CHECK - function"
+		# console.log @
+		# console.log data
+		@selectedPhase(data)
+		console.log "check after selection: " + @selectedPhase()
 
 # export to root object
 root.PhasesViewmodel = PhasesViewmodel

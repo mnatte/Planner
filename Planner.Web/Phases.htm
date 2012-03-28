@@ -82,7 +82,10 @@
                 Selected phase <span data-bind="text: selectedPhase()"></span>
             </div>
             <div>
-                Overlapping absences <span data-bind="text: overlappingAbsences"></span>
+                <span>Overlapping absences</span>
+                <ul data-bind="foreach: overlappingAbsences()">
+                    <li class="price"><h6 data data-bind="text: toString(), style: { color: isCurrent() ? 'red' : isPast() ? 'green' : 'black' }"></h6></li>
+                </ul>
             </div>
         </section>
 	</div><!-- container -->

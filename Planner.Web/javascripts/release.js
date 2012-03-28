@@ -47,8 +47,24 @@
       return today >= this.startDate && today < this.endDate;
     };
 
+    Phase.prototype.isFuture = function() {
+      var today;
+      today = new Date();
+      return today < this.startDate;
+    };
+
+    Phase.prototype.isPast = function() {
+      var today;
+      today = new Date();
+      return today > this.startDate;
+    };
+
     Phase.prototype.overlaps = function(other) {
-      return (this.startDate >= other.startDate && this.startDate < other.endDate) || (this.endDate >= other.startDate && this.endDate < other.endDate);
+      console.log("other: " + other);
+      if (other !== void 0) {
+        console.log((this.startDate >= other.startDate && this.startDate < other.endDate) || (this.endDate >= other.startDate && this.endDate < other.endDate));
+        return (this.startDate >= other.startDate && this.startDate < other.endDate) || (this.endDate >= other.startDate && this.endDate < other.endDate);
+      }
     };
 
     return Phase;
