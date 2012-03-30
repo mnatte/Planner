@@ -108,6 +108,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="404.html" />
+    <Content Include="images\bg_nav.PNG" />
+    <Content Include="stylesheets\StyleSheet1.css" />
+    <Content Include="test.htm" />
     <Content Include="javascripts\phasesViewmodel.js">
       <DependentUpon>phasesViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
