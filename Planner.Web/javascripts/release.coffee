@@ -14,7 +14,9 @@ root = global ? window
 
 class Phase extends Mixin
 	# attach seperate startDate, endDate and title properties to each instance
-	constructor: (@startDate, @endDate, @title) ->
+	constructor: (@id, @startDate, @endDate, @title, @tfsIterationPath) ->
+		@startDateString = DateFormatter.formatJsDate(@startDate, 'dd-MM-yyyy')
+		@endDateString = DateFormatter.formatJsDate(@endDate, 'dd-MM-yyyy')
 	workingDays: ->
 		days = 0
 		# console.log "days: #{days}"
@@ -51,16 +53,16 @@ class Phase extends Mixin
 		today = new Date()
 		today > @startDate
 	overlaps: (other) ->
-		console.log "other: #{other}"
+		# console.log "other: #{other}"
 		unless other is undefined
-			console.log (@startDate >= other.startDate and @startDate < other.endDate) or (@endDate >= other.startDate and @endDate < other.endDate)
+			# console.log (@startDate >= other.startDate and @startDate < other.endDate) or (@endDate >= other.startDate and @endDate < other.endDate)
 			(@startDate >= other.startDate and @startDate < other.endDate) or (@endDate >= other.startDate and @endDate < other.endDate)
 
 class MileStone
 	constructor: (@date, @title) ->
 
 class Release extends Phase
-	constructor: (@startDate, @endDate, @title) ->
+	constructor: (@startDate, @endDate, @title, @tfsIterationPath) ->
 		# pass along all args to parent ctor by using 'super' instead of 'super()'
 		super
 		@phases = []

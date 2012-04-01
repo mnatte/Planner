@@ -59,6 +59,7 @@
             <ul>
                 <li><a href="Release.htm">Release</a></li>
                 <li><a href="#">Phases</a></li>
+                <li><a href="addRelease.htm">Add Release</a></li>
             </ul>
         </nav>
     </div>
@@ -67,7 +68,7 @@
                 <ul data-bind="foreach: currentPhases()">
                     <li class="price">
                         <span data-bind="text: toString(), style: { color: isCurrent() ? 'red' : 'black' }"></span>
-                        <button data-bind="click: $parent.check">Details</button>
+                        <button data-bind="click: $parent.selectPhase">Details</button>
     
                         <ul data-bind="foreach: phases">
                             <li class="price">

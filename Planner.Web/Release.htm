@@ -60,6 +60,7 @@
             <ul>
                 <li><a href="#">Release</a></li>
                 <li><a href="Phases.htm">Phases</a></li>
+                <li><a href="addRelease.htm">Add Release</a></li>
             </ul>
         </nav>
     </div>
@@ -174,47 +175,25 @@
                 },
                 connectorWidth: 0.5,
                 formatter: function () {
-//                    var label = "<b>" + this.point.name + "</b> : " + this.percentage;
-//                    return label;
-                    return "<b>" + this.point.name + "</b>:" + this.y;
+                    var label = this.point.name;
+                    switch (this.point.name) {
+                        case "Ready for System Test":
+                            label = "RST";
+                            break;
+                        case "Under System Test":
+                            label = "UST";
+                            break;
+                        case "Ready for Dev":
+                            label = "RD";
+                            break;
+                        case "Under Development":
+                            label = "UD";
+                            break;
+                    }
+                    return "<b>" + label + "</b>:" + this.y;
                 }
             }
         };
-
-//        function showHoursChart(projectNames, remainingHours, availableHours, balanceHours) {
-//            var chart = new Highcharts.Chart({
-//                chart: {
-//                    renderTo: 'chart-hours',
-//                    defaultSeriesType: 'column'
-//                },
-//                title: {
-//                    text: 'Overview hours'
-//                },
-//                xAxis: {
-//                    categories: projectNames
-//                },
-//                tooltip: {
-//                    formatter: function () {
-//                        return '' + this.series.name + ': ' + this.y + '';
-//                    }
-//                },
-//                credits: {
-//                    enabled: false
-//                },
-//                series: [{
-//                    name: 'Hours Available',
-//                    data: availableHours
-//                },
-//                {
-//                    name: 'Workload',
-//                    data: remainingHours
-//                },
-//                {
-//                    name: 'Balance',
-//                    data: balanceHours
-//                }]
-//            })
-//        }
 
         function showStatusChart(statusdata) {
             var chartOptions = {};
@@ -226,6 +205,7 @@
                 plotShadow: false
             };
             chartOptions.title = { text: "Status Features" };
+            chartOptions.tooltip = { formatter: function () { return this.point.name + ': ' + Math.round(this.percentage) + '%' } };
             chartOptions.series = [{
                 type: "pie",
                 name: "amount",

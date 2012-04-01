@@ -33,9 +33,11 @@ namespace MvcApplication1.Models
         }
         public class Phase
         {
+            public int Id { get; set; }
             public string Title { get; set; }
             public DateTime StartDate { get; set; }
             public DateTime EndDate { get; set; }
+            public string TfsIterationPath { get; set; }
 
             public int WorkingDays
             {

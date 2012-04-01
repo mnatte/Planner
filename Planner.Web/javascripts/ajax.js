@@ -39,6 +39,27 @@
       });
     };
 
+    Ajax.prototype.submitRelease = function(data) {
+      var url;
+      return url = "/planner/Release/Create";
+    };
+
+    Ajax.prototype.getReleaseSummaries = function(callback) {
+      var url;
+      url = "/planner/Release/GetReleaseSummaries";
+      return $.ajax(url, {
+        dataType: "json",
+        type: "GET",
+        success: function(data, status, XHR) {
+          console.log("Releases data loaded");
+          return callback(data);
+        },
+        error: function(XHR, status, errorThrown) {
+          return console.log("AJAX Releases error: " + status);
+        }
+      });
+    };
+
     Ajax.prototype.test = function() {
       return console.log("testing AJAX class");
     };

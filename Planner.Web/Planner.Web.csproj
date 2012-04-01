@@ -52,6 +52,10 @@
     <Reference Include="Microsoft.Scripting.Metadata">
       <HintPath>..\packages\IronRuby.1.1.3\Lib\Microsoft.Scripting.Metadata.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Web.Mvc, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Microsoft.Web.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="SassAndCoffee.AspNet">
       <HintPath>..\packages\SassAndCoffee.AspNet.2.0.2.0\lib\net40\SassAndCoffee.AspNet.dll</HintPath>
     </Reference>
@@ -102,15 +106,21 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\ReleaseModels.cs" />
+    <Compile Include="Models\ReleaseInputModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="404.html" />
     <Content Include="images\bg_nav.PNG" />
-    <Content Include="stylesheets\StyleSheet1.css" />
-    <Content Include="test.htm" />
+    <Content Include="addRelease.htm" />
+    <Content Include="javascripts\adminReleaseViewmodel.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>adminReleaseViewmodel.coffee</DependentUpon>
+    </Content>
     <Content Include="javascripts\phasesViewmodel.js">
       <DependentUpon>phasesViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -227,6 +237,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="javascripts\adminReleaseViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>adminReleaseViewmodel.js</LastGenOutput>
+    </None>
     <None Include="javascripts\phasesViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>phasesViewmodel.js</LastGenOutput>

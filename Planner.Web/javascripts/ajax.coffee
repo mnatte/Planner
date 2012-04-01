@@ -24,6 +24,18 @@ class Ajax
 				callback data
 			error: (XHR, status, errorThrown) ->
 				console.log "AJAX Phases error: #{status}"
+	submitRelease: (data) ->
+		url = "/planner/Release/Create"
+	getReleaseSummaries: (callback) ->
+		url = "/planner/Release/GetReleaseSummaries"
+		$.ajax url,
+			dataType: "json"
+			type: "GET"
+			success: (data, status, XHR) ->
+				console.log "Releases data loaded"
+				callback data
+			error: (XHR, status, errorThrown) ->
+				console.log "AJAX Releases error: #{status}"
 	test: ->
 		console.log "testing AJAX class"
 

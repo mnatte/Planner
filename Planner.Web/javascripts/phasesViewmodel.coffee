@@ -41,16 +41,6 @@ class PhasesViewmodel
 
 		console.log "this.absences: #{@absences}"
 			
-	# observable for selecting what to exclude from calculations
-	@disgardedStatuses = ko.observableArray()
-	@displaySelected = ko.computed(=> 
-			console.log @
-			console.log @disgardedStatuses()
-			s = ""
-			s += "#{item} - " for item in @disgardedStatuses()
-			s 
-		, this)
-
 	currentPhases: ->
 		current = []
 		for phase in @releases when phase.isCurrent()
@@ -63,12 +53,12 @@ class PhasesViewmodel
 			current.push abs
 		current
 
-	check: (data) =>
-		console.log "CHECK - function"
+	selectPhase: (data) =>
+		console.log "selectPhase - function"
 		# console.log @
 		# console.log data
 		@selectedPhase(data)
-		console.log "check after selection: " + @selectedPhase()
+		console.log "selectPhase after selection: " + @selectedPhase()
 
 # export to root object
 root.PhasesViewmodel = PhasesViewmodel

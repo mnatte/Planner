@@ -1,8 +1,33 @@
 (function() {
-  var UDisplayPhases, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, root,
+  var HLoadReleases, UDisplayPhases, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminReleases, root,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   root = typeof global !== "undefined" && global !== null ? global : window;
+
+  HLoadReleases = (function() {
+
+    function HLoadReleases() {}
+
+    HLoadReleases.prototype.execute = function(data) {
+      var phase, release, releases, _i, _j, _len, _len2, _ref;
+      releases = [];
+      for (_i = 0, _len = data.length; _i < _len; _i++) {
+        release = data[_i];
+        this.release = new Release(release.Id, DateFormatter.createJsDateFromJson(release.StartDate), DateFormatter.createJsDateFromJson(release.EndDate), release.Title, release.TfsIterationPath);
+        _ref = release.Phases;
+        for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
+          phase = _ref[_j];
+          console.log(phase);
+          this.release.addPhase(new Phase(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath));
+        }
+        releases.push(this.release);
+      }
+      return releases;
+    };
+
+    return HLoadReleases;
+
+  })();
 
   UDisplayReleaseStatus = (function() {
 
@@ -14,11 +39,11 @@
     UDisplayReleaseStatus.prototype.execute = function(data) {
       var absence, feat, member, phase, projectMembers, teamMember, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4, _ref5;
       projectMembers = [];
-      this.release = new Release(DateFormatter.createJsDateFromJson(data.StartDate), DateFormatter.createJsDateFromJson(data.EndDate), data.Title);
+      this.release = new Release(data.Id, DateFormatter.createJsDateFromJson(data.StartDate), DateFormatter.createJsDateFromJson(data.EndDate), data.Title, data.TfsIterationPath);
       _ref = data.Phases;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         phase = _ref[_i];
-        this.release.addPhase(new Phase(DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title));
+        this.release.addPhase(new Phase(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath));
       }
       _ref2 = data.Backlog;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
@@ -107,10 +132,32 @@
 
   })();
 
+  ULoadAdminReleases = (function() {
+
+    function ULoadAdminReleases() {}
+
+    ULoadAdminReleases.prototype.execute = function(data) {
+      var loadReleases, releases;
+      loadReleases = new HLoadReleases();
+      releases = loadReleases.execute(data);
+      this.viewModel = new AdminReleaseViewmodel(releases);
+      console.log(this.viewModel);
+      this.viewModel.selectRelease(this.viewModel.allReleases[0]);
+      return ko.applyBindings(this.viewModel);
+    };
+
+    return ULoadAdminReleases;
+
+  })();
+
   root.UDisplayReleaseStatus = UDisplayReleaseStatus;
 
   root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFromNow;
 
   root.UDisplayPhases = UDisplayPhases;
+
+  root.HLoadReleases = HLoadReleases;
+
+  root.ULoadAdminReleases = ULoadAdminReleases;
 
 }).call(this);

@@ -9,10 +9,14 @@
 
     __extends(Phase, _super);
 
-    function Phase(startDate, endDate, title) {
+    function Phase(id, startDate, endDate, title, tfsIterationPath) {
+      this.id = id;
       this.startDate = startDate;
       this.endDate = endDate;
       this.title = title;
+      this.tfsIterationPath = tfsIterationPath;
+      this.startDateString = DateFormatter.formatJsDate(this.startDate, 'dd-MM-yyyy');
+      this.endDateString = DateFormatter.formatJsDate(this.endDate, 'dd-MM-yyyy');
     }
 
     Phase.prototype.workingDays = function() {
@@ -60,9 +64,7 @@
     };
 
     Phase.prototype.overlaps = function(other) {
-      console.log("other: " + other);
       if (other !== void 0) {
-        console.log((this.startDate >= other.startDate && this.startDate < other.endDate) || (this.endDate >= other.startDate && this.endDate < other.endDate));
         return (this.startDate >= other.startDate && this.startDate < other.endDate) || (this.endDate >= other.startDate && this.endDate < other.endDate);
       }
     };
@@ -86,10 +88,11 @@
 
     __extends(Release, _super);
 
-    function Release(startDate, endDate, title) {
+    function Release(startDate, endDate, title, tfsIterationPath) {
       this.startDate = startDate;
       this.endDate = endDate;
       this.title = title;
+      this.tfsIterationPath = tfsIterationPath;
       Release.__super__.constructor.apply(this, arguments);
       this.phases = [];
       this.backlog = [];

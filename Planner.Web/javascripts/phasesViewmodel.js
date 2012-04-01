@@ -5,10 +5,9 @@
   root = typeof global !== "undefined" && global !== null ? global : window;
 
   PhasesViewmodel = (function() {
-    var _this = this;
 
     function PhasesViewmodel() {
-      this.check = __bind(this.check, this);      this.selectedPhase = ko.observable();
+      this.selectPhase = __bind(this.selectPhase, this);      this.selectedPhase = ko.observable();
     }
 
     PhasesViewmodel.prototype.load = function(data) {
@@ -48,21 +47,6 @@
       return console.log("this.absences: " + this.absences);
     };
 
-    PhasesViewmodel.disgardedStatuses = ko.observableArray();
-
-    PhasesViewmodel.displaySelected = ko.computed(function() {
-      var item, s, _i, _len, _ref;
-      console.log(PhasesViewmodel);
-      console.log(PhasesViewmodel.disgardedStatuses());
-      s = "";
-      _ref = PhasesViewmodel.disgardedStatuses();
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        item = _ref[_i];
-        s += "" + item + " - ";
-      }
-      return s;
-    }, PhasesViewmodel);
-
     PhasesViewmodel.prototype.currentPhases = function() {
       var current, phase, _i, _len, _ref;
       current = [];
@@ -85,15 +69,15 @@
       return current;
     };
 
-    PhasesViewmodel.prototype.check = function(data) {
-      console.log("CHECK - function");
+    PhasesViewmodel.prototype.selectPhase = function(data) {
+      console.log("selectPhase - function");
       this.selectedPhase(data);
-      return console.log("check after selection: " + this.selectedPhase());
+      return console.log("selectPhase after selection: " + this.selectedPhase());
     };
 
     return PhasesViewmodel;
 
-  }).call(this);
+  })();
 
   root.PhasesViewmodel = PhasesViewmodel;
 

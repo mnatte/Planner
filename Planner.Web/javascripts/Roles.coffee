@@ -43,9 +43,24 @@ RTeamMember =
 			# default value, just setting focusFactor in client code without specifying it here is enough to set it, but then it can be undefined.
 			focusFactor: 0.8
 			roles: []
-			
+
+RCrud = 
+	extended: ->
+		@include
+			save: (url, jsonData, callback) ->
+				$.ajax url,
+					dataType: "json"
+					data: jsonData
+					type: "POST"
+					contentType: "application/json; charset=utf-8"
+					success: (data, status, XHR) ->
+						console.log "#{jsonData} saved"
+						callback data
+					error: (XHR, status, errorThrown) ->
+						console.log "AJAX error: #{status}"
 
 # export to root object
 root.RMoveItem = RMoveItem
 root.RGroupBy = RGroupBy
 root.RTeamMember = RTeamMember
+root.RCrud = RCrud

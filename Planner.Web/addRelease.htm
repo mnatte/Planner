@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+	<title>Add Release</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="stylesheets/base.css">
+	<link rel="stylesheet" href="stylesheets/skeleton.css">
+	<link rel="stylesheet" href="stylesheets/layout.css">
+    <link rel="stylesheet" href="stylesheets/tables.css">
+
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
+    <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.dateFormat-1.0.js"></script>
+    <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
+    <script type="text/javascript" src="Scripts/knockout-array-filter.js"></script>
+        
+    <script type="text/javascript" src="javascripts/Mixin.js"></script>
+    <script type="text/javascript" src="javascripts/release.js"></script>
+    <script type="text/javascript" src="javascripts/adminReleaseViewmodel.js"></script>
+    <script type="text/javascript" src="javascripts/ajax.js"></script>
+    <script type="text/javascript" src="javascripts/Roles.js"></script>
+    <script type="text/javascript" src="javascripts/UseCases.js"></script>
+</head>
+<body>
+<!-- Primary Page Layout
+	================================================== -->
+
+	
+    <div class="container">
+        <div class="band navigation">
+	
+		    <nav class="primary container">
+		
+			    <ul>
+		
+				    <li><a href="Release.htm">Release Status</a></li>
+				    <li><a href="Phases.htm">Phases Overview</a></li>
+				    <li><a href="#">Administration</a>
+						    <ul>
+							    <li><a href="addRelease.htm"><span>- </span>Add Release</a></li>
+							    <li><a href="#"><span>- </span>Assign Resources</a></li>
+							    <li><a href="#"><span>- </span>TV</a></li>
+							    <li><a href="#"><span>- </span>Music</a></li>
+						    </ul>
+				    </li>
+				    <li><a href="#">Social</a></li>
+				    <li><a href="#">Media</a></li>
+				    <li><a href="#">Contact</a></li>
+		
+			    </ul>
+		
+		    </nav>
+	
+	    </div><!--end band-->
+
+        <div class="band">
+            <div class="sixteen columns omega">
+                <div class="six columns omega">
+                    <form data-bind="with: selectedRelease()">
+                        <label>Release title:</label><input type="text" data-bind="value: title, valueUpdate: 'afterkeydown'" />
+                        <label>Start date (dd-mm-yyyy):</label><input type="text" data-bind="value: startDateString" />
+                        <label>End date (dd-mm-yyyy):</label><input type="text" data-bind="value: endDateString" />
+                        <label>Tfs IterationPath:</label><input type="text" data-bind="value: tfsIterationPath" />
+                        <p>Release Title: <span data-bind="text: title"></span></p> <!-- updates in real-time -->
+                        <button data-bind="click: $parent.saveSelected.bind($data)">Submit</button>
+                    </form>
+                </div>
+                <div class="ten columns omega">
+                    <ul data-bind="foreach: allReleases">
+                        <li data-bind="text: title"></li>
+                    </ul>
+                    <button data-bind="click: clear.bind($data)">New</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript">
+    /* var viewModel = {
+        id: ko.observable(),
+        title: ko.observable(),
+        descr: ko.observable(),
+        startDate: ko.observable(),
+        endDate: ko.observable(),
+        tfsIterationPath: ko.observable(),
+        myFunction: function (data) {
+            if (event.shiftKey) {
+                //do something different when user has shift key down
+            } else {
+                var jsonData = ko.toJSON(viewModel);
+                console.log(jsonData);
+
+                $.ajax({
+                    url: '/planner/Release/Save',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: jsonData,
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        // get the result and do some magic with it
+                        var message = data.Message;
+                        console.log("succesful submit. data: " + ko.toJSON(data));
+                    }
+                });
+            }
+        },
+        clear: function() {
+            this.title = "";
+            this.descr = "";
+            this.startDate = "";
+            this.endDate = "";
+            this.tfsIterationPath = "";
+            this.id = 0;
+        }
+    };
+    ko.applyBindings(viewModel);*/
+
+    $(document).ready(function () {
+        var uc = new ULoadAdminReleases();
+        var ajax = new Ajax();
+        ajax.getReleaseSummaries(uc.execute);
+    });
+</script>    
+</body>
+</html>
+

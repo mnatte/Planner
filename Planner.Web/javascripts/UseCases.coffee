@@ -5,6 +5,21 @@
 # access (for browser)
 root = global ? window
 
+class HLoadReleases
+	execute: (data) ->
+		releases = []
+		# fill release collection
+		for release in data
+			#console.log release.StartDate
+			#console.log release.EndDate
+			@release = new Release(release.Id, DateFormatter.createJsDateFromJson(release.StartDate), DateFormatter.createJsDateFromJson(release.EndDate), release.Title, release.TfsIterationPath)
+			# add phases
+			for phase in release.Phases
+				console.log phase
+				@release.addPhase new Phase(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath)
+			releases.push @release
+		releases
+
 class UDisplayReleaseStatus
 	constructor: ->
 		Release.extend(RGroupBy)
@@ -15,10 +30,10 @@ class UDisplayReleaseStatus
 		projectMembers = []
 
 		# fill release object
-		@release = new Release(DateFormatter.createJsDateFromJson(data.StartDate), DateFormatter.createJsDateFromJson(data.EndDate), data.Title)
+		@release = new Release(data.Id, DateFormatter.createJsDateFromJson(data.StartDate), DateFormatter.createJsDateFromJson(data.EndDate), data.Title, data.TfsIterationPath)
 		# add phases
 		for phase in data.Phases
-			@release.addPhase new Phase(DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title)
+			@release.addPhase new Phase(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath)
 		# add backlog
 		for feat in data.Backlog
 			@release.addFeature new Feature(feat.BusinessId, feat.ContactPerson, feat.EstimatedHours, feat.HoursWorked, feat.Priority, feat.Project.ShortName, feat.RemainingHours, feat.Title, feat.Status)
@@ -89,9 +104,21 @@ class UDisplayPhases
 		@viewModel = new PhasesViewmodel()
 		@viewModel.load data
 		ko.applyBindings(@viewModel)
+
+class ULoadAdminReleases
+	constructor: ->
+	execute: (data) ->
+		loadReleases = new HLoadReleases()
+		releases = loadReleases.execute(data)
+		@viewModel = new AdminReleaseViewmodel(releases)
+		console.log @viewModel
+		@viewModel.selectRelease @viewModel.allReleases[0]
+		ko.applyBindings(@viewModel)
 		
 # export to root object
 root.UDisplayReleaseStatus = UDisplayReleaseStatus
 root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFromNow
 root.UDisplayPhases = UDisplayPhases
+root.HLoadReleases = HLoadReleases
+root.ULoadAdminReleases = ULoadAdminReleases
 
