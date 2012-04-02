@@ -33,6 +33,11 @@ class DateFormatter
 	@formatJsDate: (date, format) ->
 		$.format.date(date, format)
 
+class DatePlus
+	constructor: (@date) ->
+		@dateString = $.format.date(date, 'dd/MM/yyyy')
+
 # export to root object
 root.Mixin = Mixin
 root.DateFormatter = DateFormatter
+root.DatePlus = DatePlus

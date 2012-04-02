@@ -14,17 +14,17 @@ class AdminReleaseViewmodel
 		console.log "selectRelease - function"
 		# console.log @
 		# console.log data
-		@selectedRelease(data)
+		@selectedRelease data
 		console.log "selectRelease after selection: " + @selectedRelease().title
 
 	clear: ->
 		console.log "clear: selectedRelease: #{@selectedRelease().title}"
-		@selectRelease new Release("", "", "", "")
+		@selectRelease new Release(0, new Date(), new Date(), "", "")
 
 	saveSelected: =>
 		console.log "saveSelected: selectedRelease: #{@selectedRelease()}"
 		console.log ko.toJSON(@selectedRelease())
-		# @selectedRelease().save("/planner/Release/Save", ko.toJSON(@selectedRelease()), alert "saved!")
+		@selectedRelease().save("/planner/Release/Save", ko.toJSON(@selectedRelease()), (data) -> alert "#{data.Title} saved with Id #{data.Id}")
 
 # export to root object
 root.AdminReleaseViewmodel = AdminReleaseViewmodel

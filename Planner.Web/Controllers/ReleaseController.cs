@@ -176,14 +176,16 @@ namespace MvcApplication1.Controllers
                     conn.Open();
 
                     var cmd = new SqlCommand("sp_insert_release", conn);
+                    cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = obj.Id;
                     cmd.Parameters.Add("@Title", System.Data.SqlDbType.VarChar).Value = obj.Title;
-                    cmd.Parameters.Add("@Descr", System.Data.SqlDbType.VarChar).Value = obj.Descr;
+                    cmd.Parameters.Add("@Descr", System.Data.SqlDbType.VarChar).Value = "";// obj.Descr;
                     cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = obj.StartDate.ToDateTimeFromDutchString();
                     cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = obj.EndDate.ToDateTimeFromDutchString();
                     cmd.Parameters.Add("@IterationPath", System.Data.SqlDbType.VarChar).Value = obj.TfsIterationPath;
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    newId = int.Parse(cmd.ExecuteScalar().ToString());
+                    var result = cmd.ExecuteScalar().ToString();
+                    newId = result == string.Empty ? obj.Id : int.Parse(result);
                 }
 
                 return GetReleaseById(newId);

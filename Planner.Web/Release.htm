@@ -78,7 +78,7 @@
                     <li class="price"><h5 data-bind="text: toString()"></h5></li>
                 </ul>
                 <ul data-bind="foreach: currentPhases">
-                    <li class="price"><h6><data data-bind="text: title"></data> <data data-bind="text: DateFormatter.formatJsDate($parent.currentDate(), 'dd/MM/yyyy')"></data> - <data data-bind="text: DateFormatter.formatJsDate(endDate, 'dd/MM/yyyy')"></data>: <data data-bind="text: workingDaysRemaining"></data> days remaining</h6></li>
+                    <li class="price"><h6><data data-bind="text: title"></data> <data data-bind="text: DateFormatter.formatJsDate($parent.currentDate(), 'dd/MM/yyyy')"></data> - <data data-bind="text: endDate.dateString"></data>: <data data-bind="text: workingDaysRemaining"></data> days remaining</h6></li>
                 </ul>
                 
                 <div id="chart-hours"></div>

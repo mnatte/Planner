@@ -76,18 +76,18 @@ class UGetAvailableHoursForTeamMemberFromNow
 		# console.log "in phase: #{@phase.toString()}"
 		# set start date of phase to Now
 		today = new Date()
-		restPeriod = new Period(today, @phase.endDate, @phase.title)
+		restPeriod = new Period(today, @phase.endDate.date, @phase.title)
 		# console.log "period: #{restPeriod}"
 		# TODO: subtract absence days
 		absentHours = 0
 		for absence in @teamMember.periodsAway
 			# days away between today or startdate of phase and enddate of either absence or phase
-			if (absence.endDate < restPeriod.endDate) 
-				endDate = absence.endDate 	
+			if (absence.endDate.date < restPeriod.endDate.date) 
+				endDate = absence.endDate.date 	
 			else 
-				endDate = restPeriod.endDate
-			if (absence.startDate > today) 
-				startDate = absence.startDate
+				endDate = restPeriod.endDate.date
+			if (absence.startDate.date > today) 
+				startDate = absence.startDate.date
 			else
 				startDate = today 	
 			periodAway = new Period(startDate, endDate, "Absence in phase")

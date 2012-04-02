@@ -14,7 +14,7 @@ namespace MvcApplication1
         /// <returns></returns>
         public static DateTime ToDateTimeFromDutchString(this string str)
         {
-            var splitString = str.Split('-');
+            var splitString = str.Split('/');
             return new DateTime(int.Parse(splitString[2]), int.Parse(splitString[1]), int.Parse(splitString[0]));
         }
     }

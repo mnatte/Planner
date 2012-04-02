@@ -7,7 +7,7 @@ root = global ? window
 class ReleaseViewmodel
 	constructor: (@release) ->
 		# create Phase from now till end of release
-		@fromNowTillEnd = new Period(new Date(), @release.endDate, "from now till end")
+		@fromNowTillEnd = new Period(new Date(), @release.endDate.date, "from now till end")
 		# console.log "releaseViewmodel for release #{@release.title}"
 		@projects = []
 		@statuses = []
@@ -17,7 +17,7 @@ class ReleaseViewmodel
 			@statuses.push(statusgroup.label)
 
 		for phase in @phases() when phase.isCurrent()
-			ph = new Period(@currentDate(), phase.endDate, "")
+			ph = new Period(@currentDate(), phase.endDate.date, "")
 			phase.workingDaysRemaining = ph.workingDays()
 			@currentPhases.push(phase)
 			
@@ -35,8 +35,8 @@ class ReleaseViewmodel
 			, this)
 	# release overview info
 	releaseTitle: -> @release.title
-	releaseStartdate: -> @release.startDate
-	releaseEnddate: -> @release.endDate
+	releaseStartdate: -> @release.startDate.date
+	releaseEnddate: -> @release.endDate.date
 	releaseWorkingDays: -> @release.workingDays()
 	currentDate: -> new Date()
 	phases: -> @release.phases

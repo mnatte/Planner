@@ -23,12 +23,15 @@
 
     AdminReleaseViewmodel.prototype.clear = function() {
       console.log("clear: selectedRelease: " + (this.selectedRelease().title));
-      return this.selectRelease(new Release("", "", "", ""));
+      return this.selectRelease(new Release(0, new Date(), new Date(), "", ""));
     };
 
     AdminReleaseViewmodel.prototype.saveSelected = function() {
       console.log("saveSelected: selectedRelease: " + (this.selectedRelease()));
-      return console.log(ko.toJSON(this.selectedRelease()));
+      console.log(ko.toJSON(this.selectedRelease()));
+      return this.selectedRelease().save("/planner/Release/Save", ko.toJSON(this.selectedRelease()), function(data) {
+        return alert("" + data.Title + " saved with Id " + data.Id);
+      });
     };
 
     return AdminReleaseViewmodel;

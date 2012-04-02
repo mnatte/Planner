@@ -1,5 +1,5 @@
 (function() {
-  var DateFormatter, Mixin, moduleKeywords, root,
+  var DateFormatter, DatePlus, Mixin, moduleKeywords, root,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   root = typeof global !== "undefined" && global !== null ? global : window;
@@ -55,8 +55,21 @@
 
   })();
 
+  DatePlus = (function() {
+
+    function DatePlus(date) {
+      this.date = date;
+      this.dateString = $.format.date(date, 'dd/MM/yyyy');
+    }
+
+    return DatePlus;
+
+  })();
+
   root.Mixin = Mixin;
 
   root.DateFormatter = DateFormatter;
+
+  root.DatePlus = DatePlus;
 
 }).call(this);

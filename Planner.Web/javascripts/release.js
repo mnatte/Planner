@@ -10,23 +10,26 @@
     __extends(Period, _super);
 
     function Period(startDate, endDate, title) {
-      this.startDate = startDate;
-      this.endDate = endDate;
       this.title = title;
+      console.log("title: " + this.title);
+      console.log("startDate: " + startDate);
+      console.log("endDate: " + endDate);
+      this.startDate = new DatePlus(startDate);
+      this.endDate = new DatePlus(endDate);
     }
 
     Period.prototype.workingDays = function() {
       var days, diff, endDay, msPerDay, startDay, weeks;
       days = 0;
       msPerDay = 86400 * 1000;
-      this.startDate.setHours(0, 0, 0, 1);
-      this.endDate.setHours(23, 59, 59, 59, 999);
-      diff = this.endDate - this.startDate;
+      this.startDate.date.setHours(0, 0, 0, 1);
+      this.endDate.date.setHours(23, 59, 59, 59, 999);
+      diff = this.endDate.date - this.startDate.date;
       days = Math.ceil(diff / msPerDay);
       weeks = Math.floor(days / 7);
       days = days - (weeks * 2);
-      startDay = this.startDate.getDay();
-      endDay = this.endDate.getDay();
+      startDay = this.startDate.date.getDay();
+      endDay = this.endDate.date.getDay();
       if (startDay - endDay > 1) days = days - 2;
       if (startDay === 0 && endDay !== 6) days = days - 1;
       if (endDay === 6 && startDay !== 0) days = days - 1;
@@ -38,38 +41,47 @@
     };
 
     Period.prototype.toString = function() {
-      return "" + this.title + " " + (DateFormatter.formatJsDate(this.startDate, 'dd/MM/yyyy')) + " - " + (DateFormatter.formatJsDate(this.endDate, 'dd/MM/yyyy')) + " (" + (this.workingDays()) + " working days)";
+      return "" + this.title + " " + this.startDate.dateString + " - " + this.endDate.dateString + " (" + (this.workingDays()) + " working days)";
     };
 
     Period.prototype.isCurrent = function() {
       var today;
       today = new Date();
-      return today >= this.startDate && today < this.endDate;
+      return today >= this.startDate.date && today < this.endDate.date;
     };
 
     Period.prototype.isFuture = function() {
       var today;
       today = new Date();
-      return today < this.startDate;
+      return today < this.startDate.date;
     };
 
     Period.prototype.isPast = function() {
       var today;
       today = new Date();
-      return today > this.startDate;
+      return today > this.startDate.date;
     };
 
     Period.prototype.comingUpThisWeek = function() {
       var nextWeek, today;
       today = new Date();
       nextWeek = today.setDate(today.getDate() + 7);
-      return nextWeek > this.startDate;
+      return nextWeek > this.startDate.date;
     };
 
     Period.prototype.overlaps = function(other) {
       if (other !== void 0) {
-        return (this.startDate >= other.startDate && this.startDate < other.endDate) || (this.endDate >= other.startDate && this.endDate < other.endDate);
+        return (this.startDate.date >= other.startDate.date && this.startDate.date < other.endDate.date) || (this.endDate.date >= other.startDate.date && this.endDate.date < other.endDate.date);
       }
+    };
+
+    Period.prototype.toJSON = function() {
+      var copy;
+      copy = ko.toJS(this);
+      delete copy.startDate.date;
+      copy.startDate = this.startDate.dateString;
+      copy.endDate = this.endDate.dateString;
+      return copy;
     };
 
     return Period;

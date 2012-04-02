@@ -14,10 +14,12 @@ root = global ? window
 
 class Period extends Mixin
 	# attach seperate startDate, endDate and title properties to each instance
-	constructor: (@startDate, @endDate, @title) ->
-		# console.log "title: #{@title}"
-		# console.log "startDate: #{@startDate}"
-		# console.log "endDate: #{@endDate}"
+	constructor: (startDate, endDate, @title) ->
+		console.log "title: #{@title}"
+		console.log "startDate: #{startDate}"
+		console.log "endDate: #{endDate}"
+		@startDate = new DatePlus(startDate)
+		@endDate = new DatePlus(endDate)
 		#@startDateString = DateFormatter.formatJsDate(@startDate, 'dd-MM-yyyy')
 		#@endDateString = DateFormatter.formatJsDate(@endDate, 'dd-MM-yyyy')
 	workingDays: ->
@@ -29,16 +31,16 @@ class Period extends Mixin
 		#console.log "endDate: #{@endDate}"
 		msPerDay = 86400 * 1000
 		# '@' refers to object instance
-		@startDate.setHours(0,0,0,1)
-		@endDate.setHours(23,59,59,59,999)
-		diff = @endDate - @startDate
+		@startDate.date.setHours(0,0,0,1)
+		@endDate.date.setHours(23,59,59,59,999)
+		diff = @endDate.date - @startDate.date
 		days = Math.ceil(diff / msPerDay)
 		# console.log "days: #{days}"
 		weeks = Math.floor(days / 7)
 		days = days - (weeks * 2)
 		# console.log "days: #{days}"
-		startDay = @startDate.getDay()
-		endDay = @endDate.getDay()
+		startDay = @startDate.date.getDay()
+		endDay = @endDate.date.getDay()
 		days = days - 2 if (startDay - endDay > 1)
 		# console.log "days: #{days}"
 		days = days - 1 if (startDay == 0 and endDay != 6)
@@ -49,26 +51,32 @@ class Period extends Mixin
 	workingHours: ->
 		@workingDays() * 8
 	toString: ->
-		"#{@title} #{DateFormatter.formatJsDate(@startDate, 'dd/MM/yyyy')} - #{DateFormatter.formatJsDate(@endDate, 'dd/MM/yyyy')} (#{@workingDays()} working days)"
+		"#{@title} #{@startDate.dateString} - #{@endDate.dateString} (#{@workingDays()} working days)"
 	isCurrent: ->
 		today = new Date()
-		today >= @startDate and today < @endDate
+		today >= @startDate.date and today < @endDate.date
 	isFuture: ->
 		today = new Date()
-		today < @startDate
+		today < @startDate.date
 	isPast: ->
 		today = new Date()
-		today > @startDate
+		today > @startDate.date
 	comingUpThisWeek: ->
 		today = new Date()
 		nextWeek = today.setDate(today.getDate()+7)
 		# console.log nextWeek
-		nextWeek > @startDate
+		nextWeek > @startDate.date
 	overlaps: (other) ->
 		# console.log "other: #{other}"
 		unless other is undefined
 			# console.log (@startDate >= other.startDate and @startDate < other.endDate) or (@endDate >= other.startDate and @endDate < other.endDate)
-			(@startDate >= other.startDate and @startDate < other.endDate) or (@endDate >= other.startDate and @endDate < other.endDate)
+			(@startDate.date >= other.startDate.date and @startDate.date < other.endDate.date) or (@endDate.date >= other.startDate.date and @endDate.date < other.endDate.date)
+	toJSON: ->
+		copy = ko.toJS(@) #get a clean copy
+		delete copy.startDate.date #remove property
+		copy.startDate = @startDate.dateString
+		copy.endDate = @endDate.dateString
+		copy #return the copy to be serialized
 
 class Phase extends Period
 	# attach seperate startDate, endDate and title properties to each instance

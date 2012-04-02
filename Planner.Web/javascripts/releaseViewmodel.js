@@ -12,7 +12,7 @@
         _this = this;
       this.release = release;
       this.loadProjects = __bind(this.loadProjects, this);
-      this.fromNowTillEnd = new Period(new Date(), this.release.endDate, "from now till end");
+      this.fromNowTillEnd = new Period(new Date(), this.release.endDate.date, "from now till end");
       this.projects = [];
       this.statuses = [];
       this.currentPhases = [];
@@ -27,7 +27,7 @@
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         phase = _ref2[_j];
         if (!(phase.isCurrent())) continue;
-        ph = new Period(this.currentDate(), phase.endDate, "");
+        ph = new Period(this.currentDate(), phase.endDate.date, "");
         phase.workingDaysRemaining = ph.workingDays();
         this.currentPhases.push(phase);
       }
@@ -53,11 +53,11 @@
     };
 
     ReleaseViewmodel.prototype.releaseStartdate = function() {
-      return this.release.startDate;
+      return this.release.startDate.date;
     };
 
     ReleaseViewmodel.prototype.releaseEnddate = function() {
-      return this.release.endDate;
+      return this.release.endDate.date;
     };
 
     ReleaseViewmodel.prototype.releaseWorkingDays = function() {
