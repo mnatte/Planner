@@ -11,9 +11,6 @@
 
     function Period(startDate, endDate, title) {
       this.title = title;
-      console.log("title: " + this.title);
-      console.log("startDate: " + startDate);
-      console.log("endDate: " + endDate);
       this.startDate = new DatePlus(startDate);
       this.endDate = new DatePlus(endDate);
     }

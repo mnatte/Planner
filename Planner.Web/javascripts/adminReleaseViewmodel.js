@@ -7,12 +7,11 @@
   AdminReleaseViewmodel = (function() {
 
     function AdminReleaseViewmodel(allReleases) {
-      this.allReleases = allReleases;
       this.saveSelected = __bind(this.saveSelected, this);
-      this.selectRelease = __bind(this.selectRelease, this);
-      Release.extend(RCrud);
-      console.log(this.allReleases);
+      this.selectRelease = __bind(this.selectRelease, this);      Release.extend(RCrud);
       this.selectedRelease = ko.observable();
+      this.allReleases = ko.observableArray(allReleases);
+      console.log(this.allReleases);
     }
 
     AdminReleaseViewmodel.prototype.selectRelease = function(data) {
@@ -27,10 +26,11 @@
     };
 
     AdminReleaseViewmodel.prototype.saveSelected = function() {
+      var _this = this;
       console.log("saveSelected: selectedRelease: " + (this.selectedRelease()));
       console.log(ko.toJSON(this.selectedRelease()));
       return this.selectedRelease().save("/planner/Release/Save", ko.toJSON(this.selectedRelease()), function(data) {
-        return alert("" + data.Title + " saved with Id " + data.Id);
+        return _this.allReleases.push(new Release(data.Id, DateFormatter.createJsDateFromJson(data.StartDate), DateFormatter.createJsDateFromJson(data.EndDate), data.Title, data.TfsIterationPath));
       });
     };
 

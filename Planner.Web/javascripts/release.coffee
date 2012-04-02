@@ -15,13 +15,14 @@ root = global ? window
 class Period extends Mixin
 	# attach seperate startDate, endDate and title properties to each instance
 	constructor: (startDate, endDate, @title) ->
-		console.log "title: #{@title}"
-		console.log "startDate: #{startDate}"
-		console.log "endDate: #{endDate}"
+		# console.log "title: #{@title}"
+		# console.log "startDate: #{startDate}"
+		# console.log "endDate: #{endDate}"
 		@startDate = new DatePlus(startDate)
 		@endDate = new DatePlus(endDate)
-		#@startDateString = DateFormatter.formatJsDate(@startDate, 'dd-MM-yyyy')
-		#@endDateString = DateFormatter.formatJsDate(@endDate, 'dd-MM-yyyy')
+	# FOR MAKING title OBSERVABLE IN PARENT VIEWMODELS USE:
+	# constructor: (startDate, endDate, title) ->
+		# @title = ko.observable(title)
 	workingDays: ->
 		days = 0
 		# console.log "days: #{days}"

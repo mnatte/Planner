@@ -5,10 +5,12 @@
 root = global ? window
 
 class AdminReleaseViewmodel
-	constructor: (@allReleases) ->
+	constructor: (allReleases) ->
 		Release.extend(RCrud)
-		console.log @allReleases
 		@selectedRelease = ko.observable()
+		@allReleases = ko.observableArray(allReleases)
+		console.log @allReleases
+		# @selectedRelease.subscribe( (newValue) -> alert 'selectedRelease changed with ' + newValue)
 
 	selectRelease: (data) =>
 		console.log "selectRelease - function"
@@ -24,7 +26,9 @@ class AdminReleaseViewmodel
 	saveSelected: =>
 		console.log "saveSelected: selectedRelease: #{@selectedRelease()}"
 		console.log ko.toJSON(@selectedRelease())
-		@selectedRelease().save("/planner/Release/Save", ko.toJSON(@selectedRelease()), (data) -> alert "#{data.Title} saved with Id #{data.Id}")
+		# TODO: replace existing item with this one or add it when new to @allReleases
+
+		@selectedRelease().save("/planner/Release/Save", ko.toJSON(@selectedRelease()), (data) => @allReleases.push new Release(data.Id, DateFormatter.createJsDateFromJson(data.StartDate), DateFormatter.createJsDateFromJson(data.EndDate), data.Title, data.TfsIterationPath))
 
 # export to root object
 root.AdminReleaseViewmodel = AdminReleaseViewmodel

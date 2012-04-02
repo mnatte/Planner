@@ -113,7 +113,9 @@ class ULoadAdminReleases
 		releases = loadReleases.execute(data)
 		@viewModel = new AdminReleaseViewmodel(releases)
 		console.log @viewModel
-		@viewModel.selectRelease @viewModel.allReleases[0]
+		@viewModel.selectRelease @viewModel.allReleases()[0]
+		# console.log @viewModel.selectedRelease().title
+		# @viewModel.selectedRelease().title.subscribe( (newValue) -> alert 'selectedRelease title changed with ' + newValue)
 		ko.applyBindings(@viewModel)
 		
 # export to root object

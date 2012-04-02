@@ -143,7 +143,7 @@
       releases = loadReleases.execute(data);
       this.viewModel = new AdminReleaseViewmodel(releases);
       console.log(this.viewModel);
-      this.viewModel.selectRelease(this.viewModel.allReleases[0]);
+      this.viewModel.selectRelease(this.viewModel.allReleases()[0]);
       return ko.applyBindings(this.viewModel);
     };
 
