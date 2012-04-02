@@ -12,14 +12,21 @@ root = global ? window
 	# functions attached to the prototype are invoked in the context of the individual object
 	# @-variables within those functions refer to the instance properties because the '@' context IS the object instance: e.g. phase.workingHours()
 
-class Phase extends Mixin
+class Period extends Mixin
 	# attach seperate startDate, endDate and title properties to each instance
-	constructor: (@id, @startDate, @endDate, @title, @tfsIterationPath) ->
-		@startDateString = DateFormatter.formatJsDate(@startDate, 'dd-MM-yyyy')
-		@endDateString = DateFormatter.formatJsDate(@endDate, 'dd-MM-yyyy')
+	constructor: (@startDate, @endDate, @title) ->
+		# console.log "title: #{@title}"
+		# console.log "startDate: #{@startDate}"
+		# console.log "endDate: #{@endDate}"
+		#@startDateString = DateFormatter.formatJsDate(@startDate, 'dd-MM-yyyy')
+		#@endDateString = DateFormatter.formatJsDate(@endDate, 'dd-MM-yyyy')
 	workingDays: ->
 		days = 0
 		# console.log "days: #{days}"
+		# console.log @
+		#console.log "title: #{@title}"
+		#console.log "startDate: #{@startDate}"
+		#console.log "endDate: #{@endDate}"
 		msPerDay = 86400 * 1000
 		# '@' refers to object instance
 		@startDate.setHours(0,0,0,1)
@@ -52,17 +59,27 @@ class Phase extends Mixin
 	isPast: ->
 		today = new Date()
 		today > @startDate
+	comingUpThisWeek: ->
+		today = new Date()
+		nextWeek = today.setDate(today.getDate()+7)
+		# console.log nextWeek
+		nextWeek > @startDate
 	overlaps: (other) ->
 		# console.log "other: #{other}"
 		unless other is undefined
 			# console.log (@startDate >= other.startDate and @startDate < other.endDate) or (@endDate >= other.startDate and @endDate < other.endDate)
 			(@startDate >= other.startDate and @startDate < other.endDate) or (@endDate >= other.startDate and @endDate < other.endDate)
 
+class Phase extends Period
+	# attach seperate startDate, endDate and title properties to each instance
+	constructor: (@id, @startDate, @endDate, @title, @tfsIterationPath) ->
+		super @startDate, @endDate, @title
+
 class MileStone
 	constructor: (@date, @title) ->
 
 class Release extends Phase
-	constructor: (@startDate, @endDate, @title, @tfsIterationPath) ->
+	constructor: (@id, @startDate, @endDate, @title, @tfsIterationPath) ->
 		# pass along all args to parent ctor by using 'super' instead of 'super()'
 		super
 		@phases = []
@@ -76,10 +93,6 @@ class Release extends Phase
 		# console.log resource.initials + "->" + resource.memberProject
 		@resources.push(resource)
 
-class Absence extends Phase
-	constructor: (@startDate, @endDate, @title, @resource) ->
-		# pass along all args to parent ctor by using 'super' instead of 'super()'
-
 class Feature
 	constructor: (@businessId, @contactPerson, @estimatedHours, @hoursWorked, @priority, @project, @remainingHours, @title, @state) ->
 	
@@ -91,10 +104,10 @@ class Resource extends Mixin
 
 	
 # export to root object
+root.Period = Period
 root.Phase = Phase
 root.MileStone = MileStone
 root.Release = Release
-root.Absence = Absence
 root.Feature = Feature
 root.Resource = Resource
 

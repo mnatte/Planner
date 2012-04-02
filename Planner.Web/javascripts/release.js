@@ -1,25 +1,21 @@
 (function() {
-  var Absence, Feature, MileStone, Phase, Release, Resource, root,
+  var Feature, MileStone, Period, Phase, Release, Resource, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
-  Phase = (function(_super) {
+  Period = (function(_super) {
 
-    __extends(Phase, _super);
+    __extends(Period, _super);
 
-    function Phase(id, startDate, endDate, title, tfsIterationPath) {
-      this.id = id;
+    function Period(startDate, endDate, title) {
       this.startDate = startDate;
       this.endDate = endDate;
       this.title = title;
-      this.tfsIterationPath = tfsIterationPath;
-      this.startDateString = DateFormatter.formatJsDate(this.startDate, 'dd-MM-yyyy');
-      this.endDateString = DateFormatter.formatJsDate(this.endDate, 'dd-MM-yyyy');
     }
 
-    Phase.prototype.workingDays = function() {
+    Period.prototype.workingDays = function() {
       var days, diff, endDay, msPerDay, startDay, weeks;
       days = 0;
       msPerDay = 86400 * 1000;
@@ -37,41 +33,65 @@
       return days;
     };
 
-    Phase.prototype.workingHours = function() {
+    Period.prototype.workingHours = function() {
       return this.workingDays() * 8;
     };
 
-    Phase.prototype.toString = function() {
+    Period.prototype.toString = function() {
       return "" + this.title + " " + (DateFormatter.formatJsDate(this.startDate, 'dd/MM/yyyy')) + " - " + (DateFormatter.formatJsDate(this.endDate, 'dd/MM/yyyy')) + " (" + (this.workingDays()) + " working days)";
     };
 
-    Phase.prototype.isCurrent = function() {
+    Period.prototype.isCurrent = function() {
       var today;
       today = new Date();
       return today >= this.startDate && today < this.endDate;
     };
 
-    Phase.prototype.isFuture = function() {
+    Period.prototype.isFuture = function() {
       var today;
       today = new Date();
       return today < this.startDate;
     };
 
-    Phase.prototype.isPast = function() {
+    Period.prototype.isPast = function() {
       var today;
       today = new Date();
       return today > this.startDate;
     };
 
-    Phase.prototype.overlaps = function(other) {
+    Period.prototype.comingUpThisWeek = function() {
+      var nextWeek, today;
+      today = new Date();
+      nextWeek = today.setDate(today.getDate() + 7);
+      return nextWeek > this.startDate;
+    };
+
+    Period.prototype.overlaps = function(other) {
       if (other !== void 0) {
         return (this.startDate >= other.startDate && this.startDate < other.endDate) || (this.endDate >= other.startDate && this.endDate < other.endDate);
       }
     };
 
-    return Phase;
+    return Period;
 
   })(Mixin);
+
+  Phase = (function(_super) {
+
+    __extends(Phase, _super);
+
+    function Phase(id, startDate, endDate, title, tfsIterationPath) {
+      this.id = id;
+      this.startDate = startDate;
+      this.endDate = endDate;
+      this.title = title;
+      this.tfsIterationPath = tfsIterationPath;
+      Phase.__super__.constructor.call(this, this.startDate, this.endDate, this.title);
+    }
+
+    return Phase;
+
+  })(Period);
 
   MileStone = (function() {
 
@@ -88,7 +108,8 @@
 
     __extends(Release, _super);
 
-    function Release(startDate, endDate, title, tfsIterationPath) {
+    function Release(id, startDate, endDate, title, tfsIterationPath) {
+      this.id = id;
       this.startDate = startDate;
       this.endDate = endDate;
       this.title = title;
@@ -112,21 +133,6 @@
     };
 
     return Release;
-
-  })(Phase);
-
-  Absence = (function(_super) {
-
-    __extends(Absence, _super);
-
-    function Absence(startDate, endDate, title, resource) {
-      this.startDate = startDate;
-      this.endDate = endDate;
-      this.title = title;
-      this.resource = resource;
-    }
-
-    return Absence;
 
   })(Phase);
 
@@ -170,13 +176,13 @@
 
   })(Mixin);
 
+  root.Period = Period;
+
   root.Phase = Phase;
 
   root.MileStone = MileStone;
 
   root.Release = Release;
-
-  root.Absence = Absence;
 
   root.Feature = Feature;
 

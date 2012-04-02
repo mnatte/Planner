@@ -64,7 +64,7 @@ namespace MvcApplication1.Controllers
                 {
                     while (reader.Read())
                     {
-                        release.Phases.Add(new ReleaseModels.Phase { EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString() });
+                        release.Phases.Add(new ReleaseModels.Phase { Id =  int.Parse(reader["Id"].ToString()), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString() });
                     }
                 }
 
@@ -104,7 +104,7 @@ namespace MvcApplication1.Controllers
                                         {
                                             while (reader5.Read())
                                             {
-                                                teamMember.PeriodsAway.Add(new ReleaseModels.Phase { EndDate = DateTime.Parse(reader5["EndDate"].ToString()), StartDate = DateTime.Parse(reader5["StartDate"].ToString()), Title = reader5["Title"].ToString() });
+                                                teamMember.PeriodsAway.Add(new ReleaseModels.Phase { Id = int.Parse(reader5["Id"].ToString()), EndDate = DateTime.Parse(reader5["EndDate"].ToString()), StartDate = DateTime.Parse(reader5["StartDate"].ToString()), Title = reader5["Title"].ToString() });
                                             }
                                         }
                                         team.TeamMembers.Add(teamMember);

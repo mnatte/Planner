@@ -34,6 +34,7 @@ class UDisplayReleaseStatus
 		# add phases
 		for phase in data.Phases
 			@release.addPhase new Phase(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath)
+		console.log @release
 		# add backlog
 		for feat in data.Backlog
 			@release.addFeature new Feature(feat.BusinessId, feat.ContactPerson, feat.EstimatedHours, feat.HoursWorked, feat.Priority, feat.Project.ShortName, feat.RemainingHours, feat.Title, feat.Status)
@@ -45,7 +46,7 @@ class UDisplayReleaseStatus
 				teamMember.memberProject = feat.Project.ShortName
 				# add team member absences
 				for absence in member.PeriodsAway when DateFormatter.createJsDateFromJson(absence.EndDate) < @release.endDate or DateFormatter.createJsDateFromJson(absence.StartDate) >= @release.startDate
-					teamMember.addAbsence(new Phase(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title))
+					teamMember.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title))
 				@release.addResource teamMember
 				# mark teamMember as added to project
 				projectMembers.push("#{member.Initials}_#{feat.Project.ShortName}")
@@ -75,7 +76,7 @@ class UGetAvailableHoursForTeamMemberFromNow
 		# console.log "in phase: #{@phase.toString()}"
 		# set start date of phase to Now
 		today = new Date()
-		restPeriod = new Phase(today, @phase.endDate, @phase.title)
+		restPeriod = new Period(today, @phase.endDate, @phase.title)
 		# console.log "period: #{restPeriod}"
 		# TODO: subtract absence days
 		absentHours = 0
@@ -89,7 +90,7 @@ class UGetAvailableHoursForTeamMemberFromNow
 				startDate = absence.startDate
 			else
 				startDate = today 	
-			periodAway = new Phase(startDate, endDate, "Absence in phase")
+			periodAway = new Period(startDate, endDate, "Absence in phase")
 			# console.log "periodAway: #{periodAway.toString()}"
 			absentHours += periodAway.workingHours()
 		# console.log "absentHours: #{absentHours}"

@@ -45,6 +45,7 @@
         phase = _ref[_i];
         this.release.addPhase(new Phase(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath));
       }
+      console.log(this.release);
       _ref2 = data.Backlog;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         feat = _ref2[_j];
@@ -62,7 +63,7 @@
           for (_l = 0, _len4 = _ref5.length; _l < _len4; _l++) {
             absence = _ref5[_l];
             if (DateFormatter.createJsDateFromJson(absence.EndDate) < this.release.endDate || DateFormatter.createJsDateFromJson(absence.StartDate) >= this.release.startDate) {
-              teamMember.addAbsence(new Phase(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title));
+              teamMember.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title));
             }
           }
           this.release.addResource(teamMember);
@@ -92,7 +93,7 @@
     UGetAvailableHoursForTeamMemberFromNow.prototype.execute = function() {
       var absence, absentHours, availableHours, endDate, periodAway, restPeriod, startDate, today, _i, _len, _ref;
       today = new Date();
-      restPeriod = new Phase(today, this.phase.endDate, this.phase.title);
+      restPeriod = new Period(today, this.phase.endDate, this.phase.title);
       absentHours = 0;
       _ref = this.teamMember.periodsAway;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -107,7 +108,7 @@
         } else {
           startDate = today;
         }
-        periodAway = new Phase(startDate, endDate, "Absence in phase");
+        periodAway = new Period(startDate, endDate, "Absence in phase");
         absentHours += periodAway.workingHours();
       }
       availableHours = restPeriod.workingHours() - absentHours;
