@@ -195,6 +195,12 @@ nav.primary ul li:hover > a {
     border: 1px dashed gray;
 }
 
+.selectable:hover
+{
+    cursor: pointer;
+    font-weight: bold;
+}
+
 
 /* smaller than standard 960*/
 @media only screen and (max-width 959px) {

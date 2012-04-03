@@ -93,7 +93,7 @@
                 </div>
                 <div class="ten columns omega">
                     <ul data-bind="foreach: allReleases">
-                        <li data-bind="text: title"></li>
+                        <li class="selectable" data-bind="text: title, click: $root.selectRelease.bind($data)"></li>
                     </ul>
                     <button data-bind="click: clear.bind($data)">New</button>
                 </div>

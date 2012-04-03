@@ -55,7 +55,7 @@ namespace MvcApplication1.Controllers
                 using (var reader = cmd.ExecuteReader())
                 {
                     reader.Read();
-                    release = new ReleaseModels.Release { Id =  int.Parse(reader["Id"].ToString()), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString() };
+                    release = new ReleaseModels.Release { Id = int.Parse(reader["Id"].ToString()), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString(), TfsIterationPath = reader["TfsIterationPath"].ToString() };
                 }
 
                 // Child phases
