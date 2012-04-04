@@ -11,6 +11,8 @@ class AdminReleaseViewmodel
 		@allReleases = ko.observableArray(allReleases)
 		console.log @allReleases
 		# @selectedRelease.subscribe( (newValue) -> alert 'selectedRelease changed with ' + newValue)
+		# setup nice remove method for Array
+		Array::remove = (e) -> @[t..t] = [] if (t = @indexOf(e)) > -1
 
 	selectRelease: (data) =>
 		console.log "selectRelease - function"
@@ -24,8 +26,12 @@ class AdminReleaseViewmodel
 		@selectRelease new Release(0, new Date(), new Date(), "", "")
 
 	saveSelected: =>
-		console.log "saveSelected: selectedRelease: #{@selectedRelease()}"
-		console.log ko.toJSON(@selectedRelease())
+		# console.log "saveSelected: selectedRelease: #{@selectedRelease()}"
+		# console.log ko.toJSON(@selectedRelease())
+		# console.log @allReleases()
+		rel = (a for a in @allReleases() when a.id is @selectedRelease().id)[0]
+		# console.log rel
+		@allReleases.remove(rel)
 		# TODO: replace existing item with this one or add it when new to @allReleases
 
 		@selectedRelease().save("/planner/Release/Save", ko.toJSON(@selectedRelease()), (data) => @allReleases.push new Release(data.Id, DateFormatter.createJsDateFromJson(data.StartDate), DateFormatter.createJsDateFromJson(data.EndDate), data.Title, data.TfsIterationPath))
