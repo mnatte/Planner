@@ -16,7 +16,7 @@ class HLoadReleases
 			# add phases
 			for phase in release.Phases
 				console.log phase
-				@release.addPhase new Phase(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath)
+				@release.addPhase new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, release.Id)
 			releases.push @release
 		releases
 

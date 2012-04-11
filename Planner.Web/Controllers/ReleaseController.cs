@@ -28,12 +28,23 @@ namespace MvcApplication1.Controllers
                 conn.Open();
 
                 // Release
-                var cmd = new SqlCommand("Select * from Phases where [Type] = 'Release'", conn);
+                var cmd = new SqlCommand("Select * from Phases where ISNULL(ParentId, 0) = 0", conn);
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        releases.Add(new ReleaseModels.Release { Id = int.Parse(reader["Id"].ToString()), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString(), TfsIterationPath = reader["TfsIterationPath"].ToString() });
+                        var rel = new ReleaseModels.Release { Id = int.Parse(reader["Id"].ToString()), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString(), TfsIterationPath = reader["TfsIterationPath"].ToString() };
+
+                        // Child phases
+                        var cmd2 = new SqlCommand(string.Format("Select * from Phases where ParentId = {0}", rel.Id), conn);
+                        using (var reader2 = cmd2.ExecuteReader())
+                        {
+                            while (reader2.Read())
+                            {
+                                rel.Phases.Add(new ReleaseModels.Phase { Id = int.Parse(reader2["Id"].ToString()), EndDate = DateTime.Parse(reader2["EndDate"].ToString()), StartDate = DateTime.Parse(reader2["StartDate"].ToString()), Title = reader2["Title"].ToString(), TfsIterationPath = reader2["TfsIterationPath"].ToString() });
+                            }
+                        }
+                        releases.Add(rel);
                     }
                 }
             }
@@ -64,7 +75,7 @@ namespace MvcApplication1.Controllers
                 {
                     while (reader.Read())
                     {
-                        release.Phases.Add(new ReleaseModels.Phase { Id =  int.Parse(reader["Id"].ToString()), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString() });
+                        release.Phases.Add(new ReleaseModels.Phase { Id = int.Parse(reader["Id"].ToString()), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString(), TfsIterationPath = reader["TfsIterationPath"].ToString() });
                     }
                 }
 
@@ -181,11 +192,27 @@ namespace MvcApplication1.Controllers
                     cmd.Parameters.Add("@Descr", System.Data.SqlDbType.VarChar).Value = "";// obj.Descr;
                     cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = obj.StartDate.ToDateTimeFromDutchString();
                     cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = obj.EndDate.ToDateTimeFromDutchString();
-                    cmd.Parameters.Add("@IterationPath", System.Data.SqlDbType.VarChar).Value = obj.TfsIterationPath;
+                    cmd.Parameters.Add("@IterationPath", System.Data.SqlDbType.VarChar).Value = obj.TfsIterationPath ?? "";
+                    cmd.Parameters.Add("@ParentId", System.Data.SqlDbType.Int).Value = obj.ParentId;
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
                     var result = cmd.ExecuteScalar().ToString();
-                    newId = result == string.Empty ? obj.Id : int.Parse(result);
+
+                    if (result == string.Empty && obj.ParentId == 0)
+                    // it's an update of a root node
+                    {
+                        newId = obj.Id;
+                    }
+                    else if (result != string.Empty && obj.ParentId == 0)
+                    // it's an insert of a root node
+                    {
+                            newId = int.Parse(result);
+                    }
+                    else
+                    // it's a child; return parentId
+                    {
+                        newId = obj.ParentId;
+                    }
                 }
 
                 return GetReleaseById(newId);

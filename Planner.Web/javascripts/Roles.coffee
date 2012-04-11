@@ -57,7 +57,7 @@ RCrud =
 						console.log "#{jsonData} saved"
 						callback data
 					error: (XHR, status, errorThrown) ->
-						console.log "AJAX error: #{status}"
+						console.log "AJAX error: #{errorThrown}"
 
 # export to root object
 root.RMoveItem = RMoveItem

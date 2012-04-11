@@ -77,7 +77,7 @@
               return callback(data);
             },
             error: function(XHR, status, errorThrown) {
-              return console.log("AJAX error: " + status);
+              return console.log("AJAX error: " + errorThrown);
             }
           });
         }

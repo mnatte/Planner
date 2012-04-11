@@ -89,12 +89,13 @@
 
     __extends(Phase, _super);
 
-    function Phase(id, startDate, endDate, title, tfsIterationPath) {
+    function Phase(id, startDate, endDate, title, tfsIterationPath, parentId) {
       this.id = id;
       this.startDate = startDate;
       this.endDate = endDate;
       this.title = title;
       this.tfsIterationPath = tfsIterationPath;
+      this.parentId = parentId;
       Phase.__super__.constructor.call(this, this.startDate, this.endDate, this.title);
     }
 
@@ -117,12 +118,13 @@
 
     __extends(Release, _super);
 
-    function Release(id, startDate, endDate, title, tfsIterationPath) {
+    function Release(id, startDate, endDate, title, tfsIterationPath, parentId) {
       this.id = id;
       this.startDate = startDate;
       this.endDate = endDate;
       this.title = title;
       this.tfsIterationPath = tfsIterationPath;
+      this.parentId = parentId;
       Release.__super__.constructor.apply(this, arguments);
       this.phases = [];
       this.backlog = [];

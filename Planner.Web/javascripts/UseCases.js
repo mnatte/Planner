@@ -18,7 +18,7 @@
         for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
           phase = _ref[_j];
           console.log(phase);
-          this.release.addPhase(new Phase(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath));
+          this.release.addPhase(new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, release.Id));
         }
         releases.push(this.release);
       }

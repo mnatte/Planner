@@ -81,17 +81,17 @@ class Period extends Mixin
 
 class Phase extends Period
 	# attach seperate startDate, endDate and title properties to each instance
-	constructor: (@id, @startDate, @endDate, @title, @tfsIterationPath) ->
+	constructor: (@id, @startDate, @endDate, @title, @tfsIterationPath, @parentId) ->
 		super @startDate, @endDate, @title
 
 class MileStone
 	constructor: (@date, @title) ->
 
 class Release extends Phase
-	constructor: (@id, @startDate, @endDate, @title, @tfsIterationPath) ->
+	constructor: (@id, @startDate, @endDate, @title, @tfsIterationPath, @parentId) ->
 		# pass along all args to parent ctor by using 'super' instead of 'super()'
 		super
-		@phases = []
+		@phases = [] # ko.observableArray()
 		@backlog = []
 		@resources = []
 	addPhase: (phase) ->

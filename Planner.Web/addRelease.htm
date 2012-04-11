@@ -93,7 +93,13 @@
                 </div>
                 <div class="ten columns omega">
                     <ul data-bind="foreach: allReleases">
-                        <li class="selectable" data-bind="text: title, click: $root.selectRelease.bind($data)"></li>
+                        <li>
+                            <span class="selectable" data-bind="text: title, click: $root.selectRelease.bind($data)"></span>
+                            <button data-bind="click: $root.addPhase.bind($data)">Add Phase</button>
+                            <ul data-bind="foreach: phases">
+                                <li class="selectable" data-bind="text: title, click: $root.selectRelease.bind($data)"></li>
+                            </ul>
+                        </li>
                     </ul>
                     <button data-bind="click: clear.bind($data)">New</button>
                 </div>
@@ -102,45 +108,6 @@
     </div>
 
 <script type="text/javascript">
-    /* var viewModel = {
-        id: ko.observable(),
-        title: ko.observable(),
-        descr: ko.observable(),
-        startDate: ko.observable(),
-        endDate: ko.observable(),
-        tfsIterationPath: ko.observable(),
-        myFunction: function (data) {
-            if (event.shiftKey) {
-                //do something different when user has shift key down
-            } else {
-                var jsonData = ko.toJSON(viewModel);
-                console.log(jsonData);
-
-                $.ajax({
-                    url: '/planner/Release/Save',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: jsonData,
-                    contentType: 'application/json; charset=utf-8',
-                    success: function (data) {
-                        // get the result and do some magic with it
-                        var message = data.Message;
-                        console.log("succesful submit. data: " + ko.toJSON(data));
-                    }
-                });
-            }
-        },
-        clear: function() {
-            this.title = "";
-            this.descr = "";
-            this.startDate = "";
-            this.endDate = "";
-            this.tfsIterationPath = "";
-            this.id = 0;
-        }
-    };
-    ko.applyBindings(viewModel);*/
-
     $(document).ready(function () {
         var uc = new ULoadAdminReleases();
         var ajax = new Ajax();
