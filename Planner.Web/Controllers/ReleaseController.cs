@@ -51,6 +51,38 @@ namespace MvcApplication1.Controllers
             return this.Json(releases, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult GetReleaseSummaryById(int id)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            ReleaseModels.Release release = null;
+
+            using (conn)
+            {
+                conn.Open();
+
+                // Release
+                var cmd = new SqlCommand(string.Format("Select * from Phases where Id = {0}", id), conn);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        release = new ReleaseModels.Release { Id = int.Parse(reader["Id"].ToString()), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString(), TfsIterationPath = reader["TfsIterationPath"].ToString() };
+
+                        // Child phases
+                        var cmd2 = new SqlCommand(string.Format("Select * from Phases where ParentId = {0}", release.Id), conn);
+                        using (var reader2 = cmd2.ExecuteReader())
+                        {
+                            while (reader2.Read())
+                            {
+                                release.Phases.Add(new ReleaseModels.Phase { Id = int.Parse(reader2["Id"].ToString()), EndDate = DateTime.Parse(reader2["EndDate"].ToString()), StartDate = DateTime.Parse(reader2["StartDate"].ToString()), Title = reader2["Title"].ToString(), TfsIterationPath = reader2["TfsIterationPath"].ToString() });
+                            }
+                        }
+                    }
+                }
+            }
+            return this.Json(release, JsonRequestBehavior.AllowGet);
+        }
+
         public JsonResult GetReleaseById(int id)
         {
             // add MultipleActiveResultSets=true to enable nested datareaders
@@ -250,11 +282,39 @@ namespace MvcApplication1.Controllers
         }
 
         //
-        // GET: /Release/Delete/5
- 
-        public ActionResult Delete(int id)
+        // DELETE: /Release/Delete/5
+        [HttpDelete]
+        public JsonResult Delete(int id)
         {
-            return View();
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            int amount = 0;
+            try
+            {
+                using (conn)
+                {
+                    conn.Open();
+
+                    // Remove Child phases
+                    var cmdChild = new SqlCommand(string.Format("Select * from Phases where ParentId = {0}", id), conn);
+                    using (var reader = cmdChild.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var cmdPhases = new SqlCommand(string.Format("Delete from Phases where Id = {0}", reader["Id"].ToString()), conn);
+                            amount += cmdPhases.ExecuteNonQuery();
+                        }
+                    }
+
+                    // Remove Release
+                    var cmdMain = new SqlCommand(string.Format("Delete from Phases where Id = {0}", id), conn);
+                    amount += cmdMain.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            return this.Json(string.Format("{0} rows deleted", amount), JsonRequestBehavior.AllowGet); 
         }
 
         //

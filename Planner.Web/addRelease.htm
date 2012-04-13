@@ -96,8 +96,10 @@
                         <li>
                             <span class="selectable" data-bind="text: title, click: $root.selectRelease.bind($data)"></span>
                             <button data-bind="click: $root.addPhase.bind($data)">Add Phase</button>
+                            <button data-bind="click: $root.deleteRelease.bind($data)">Delete</button>
                             <ul data-bind="foreach: phases">
                                 <li class="selectable" data-bind="text: title, click: $root.selectRelease.bind($data)"></li>
+                                <button data-bind="click: $root.deleteRelease.bind($data)">Delete</button>
                             </ul>
                         </li>
                     </ul>

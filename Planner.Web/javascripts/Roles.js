@@ -77,7 +77,33 @@
               return callback(data);
             },
             error: function(XHR, status, errorThrown) {
-              return console.log("AJAX error: " + errorThrown);
+              return console.log("AJAX SAVE error: " + errorThrown);
+            }
+          });
+        },
+        "delete": function(url, callback) {
+          return $.ajax(url, {
+            type: "DELETE",
+            contentType: "application/json; charset=utf-8",
+            success: function(data, status, XHR) {
+              console.log("" + url + " called succesfully");
+              return callback(data);
+            },
+            error: function(XHR, status, errorThrown) {
+              return console.log("AJAX DELETE error: " + errorThrown);
+            }
+          });
+        },
+        get: function(url, callback) {
+          return $.ajax(url, {
+            dataType: "json",
+            type: "GET",
+            success: function(data, status, XHR) {
+              console.log("AJAX data loaded");
+              return callback(data);
+            },
+            error: function(XHR, status, errorThrown) {
+              return console.log("AJAX error: " + status);
             }
           });
         }

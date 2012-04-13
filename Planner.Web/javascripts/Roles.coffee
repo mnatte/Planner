@@ -57,7 +57,27 @@ RCrud =
 						console.log "#{jsonData} saved"
 						callback data
 					error: (XHR, status, errorThrown) ->
-						console.log "AJAX error: #{errorThrown}"
+						console.log "AJAX SAVE error: #{errorThrown}"
+			delete: (url, callback) ->
+				$.ajax url,
+					#dataType: "json"
+					#data: jsonData
+					type: "DELETE"
+					contentType: "application/json; charset=utf-8"
+					success: (data, status, XHR) ->
+						console.log "#{url} called succesfully"
+						callback data
+					error: (XHR, status, errorThrown) ->
+						console.log "AJAX DELETE error: #{errorThrown}"
+			get: (url, callback) ->
+				$.ajax url,
+					dataType: "json"
+					type: "GET"
+					success: (data, status, XHR) ->
+						console.log "AJAX data loaded"
+						callback data
+					error: (XHR, status, errorThrown) ->
+						console.log "AJAX error: #{status}"
 
 # export to root object
 root.RMoveItem = RMoveItem
