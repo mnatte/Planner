@@ -29,34 +29,13 @@
       return console.log("selectRelease after selection: " + this.selectedRelease().title + ", parentId: " + this.selectedRelease().parentId);
     };
 
-    AdminReleaseViewmodel.prototype.refreshRelease = function(oldElement, jsonData) {
-      var a, i, parentrel, phase, rel, _i, _len, _ref;
-      rel = ((function() {
-        var _i, _len, _ref, _results;
-        _ref = this.allReleases();
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          a = _ref[_i];
-          if (a.id === oldElement.id) _results.push(a);
-        }
-        return _results;
-      }).call(this))[0];
-      console.log(rel);
-      parentrel = ((function() {
-        var _i, _len, _ref, _results;
-        _ref = this.allReleases();
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          a = _ref[_i];
-          if (a.id === oldElement.parentId) _results.push(a);
-        }
-        return _results;
-      }).call(this))[0];
-      console.log(parentrel);
-      this.allReleases.remove(rel);
-      this.allReleases.remove(parentrel);
-      if (jsonData === !null && jsonData === !void 0) {
-        i = this.allReleases().indexOf(rel) === -1 ? this.allReleases().indexOf(parentrel) : this.allReleases().indexOf(rel);
+    AdminReleaseViewmodel.prototype.refreshRelease = function(index, jsonData) {
+      var i, phase, rel, _i, _len, _ref;
+      i = index >= 0 ? index : this.allReleases().length;
+      this.allReleases.splice(i, 1);
+      console.log(jsonData);
+      if (jsonData !== null && jsonData !== void 0) {
+        console.log("jsonData not undefined");
         rel = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath);
         _ref = jsonData.Phases;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -78,18 +57,39 @@
     };
 
     AdminReleaseViewmodel.prototype.saveSelected = function() {
-      var _this = this;
+      var a, i, parentrel, rel,
+        _this = this;
       console.log("saveSelected: selectedRelease: " + (this.selectedRelease()));
       console.log(ko.toJSON(this.selectedRelease()));
+      rel = ((function() {
+        var _i, _len, _ref, _results;
+        _ref = this.allReleases();
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          a = _ref[_i];
+          if (a.id === this.selectedRelease().id) _results.push(a);
+        }
+        return _results;
+      }).call(this))[0];
+      parentrel = ((function() {
+        var _i, _len, _ref, _results;
+        _ref = this.allReleases();
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          a = _ref[_i];
+          if (a.id === this.selectedRelease().parentId) _results.push(a);
+        }
+        return _results;
+      }).call(this))[0];
+      i = this.allReleases().indexOf(rel) === -1 ? this.allReleases().indexOf(parentrel) : this.allReleases().indexOf(rel);
       return this.selectedRelease().save("/planner/Release/Save", ko.toJSON(this.selectedRelease()), function(data) {
-        return _this.refreshRelease(_this.selectedRelease(), data);
+        return _this.refreshRelease(i, data);
       });
     };
 
     AdminReleaseViewmodel.prototype.deleteRelease = function(data) {
-      var a, parentrel, refreshId, rel,
+      var a, i, id, parentrel, rel,
         _this = this;
-      console.log("deleteRelease: " + data.id);
       if (data.parentId === void 0) {
         rel = ((function() {
           var _i, _len, _ref, _results;
@@ -101,7 +101,8 @@
           }
           return _results;
         }).call(this))[0];
-        refreshId = data.id;
+        id = data.id;
+        i = this.allReleases().indexOf(rel);
       } else {
         parentrel = ((function() {
           var _i, _len, _ref, _results;
@@ -123,13 +124,13 @@
           }
           return _results;
         })())[0];
-        refreshId = data.parentId;
+        id = data.parentId;
+        i = this.allReleases().indexOf(parentrel);
       }
-      console.log("rel: " + rel);
       return rel["delete"]("/planner/Release/Delete/" + rel.id, function(callbackdata) {
         console.log(callbackdata);
-        return rel.get("/planner/Release/GetReleaseSummaryById/" + refreshId, function(jsonData) {
-          return _this.refreshRelease(rel, jsonData);
+        return rel.get("/planner/Release/GetReleaseSummaryById/" + id, function(jsonData) {
+          return _this.refreshRelease(i, jsonData);
         });
       });
     };

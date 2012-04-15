@@ -23,20 +23,23 @@ class AdminReleaseViewmodel
 		@selectedRelease data
 		console.log "selectRelease after selection: " + @selectedRelease().title + ", parentId: " +  @selectedRelease().parentId
 
-	refreshRelease: (oldElement, jsonData) =>
-		# remove item from array
-		rel = (a for a in @allReleases() when a.id is oldElement.id)[0]
-		console.log rel
-		parentrel = (a for a in @allReleases() when a.id is oldElement.parentId)[0]
-		console.log parentrel
-		@allReleases.remove(rel)
-		@allReleases.remove(parentrel)
+	refreshRelease: (index, jsonData) =>
+		# use given index or take new index ('length' is one larger than max index) when item is not in @allReleases (value is -1). 
+		# when not in @allReleases, the item is new and will be inserted at the end. no item will be removed prior to adding it.
+		i = if index >= 0 then index else @allReleases().length
+		# console.log "index: #{index}"
+		# console.log "i: #{i}"
+		
+		# i = index of item to remove, 1 is amount to be removed
+		@allReleases.splice(i,1)
 		# insert newly loaded release when available
-		if jsonData is not null and jsonData is not undefined
-			i = if @allReleases().indexOf(rel) is -1 then @allReleases().indexOf(parentrel) else @allReleases().indexOf(rel)
+		console.log jsonData
+		if jsonData != null and jsonData != undefined
+			console.log "jsonData not undefined"
 			rel = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath)
 			for phase in jsonData.Phases
 				rel.addPhase new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, rel.id)
+			# index = index of item to remove, 0 is amount to be removed, rel is item to be inserted there
 			@allReleases.splice i, 0, rel
 
 	clear: ->
@@ -50,37 +53,27 @@ class AdminReleaseViewmodel
 	saveSelected: =>
 		console.log "saveSelected: selectedRelease: #{@selectedRelease()}"
 		console.log ko.toJSON(@selectedRelease())
-		# console.log @allReleases()
-		#rel = (a for a in @allReleases() when a.id is @selectedRelease().id)[0]
-		#console.log rel
-		#parentrel = (a for a in @allReleases() when a.id is @selectedRelease().parentId)[0]
-		#console.log parentrel
-		#i = if @allReleases().indexOf(rel) is -1 then @allReleases().indexOf(parentrel) else @allReleases().indexOf(rel)
-		#@allReleases.remove(rel)
-		#@allReleases.remove(parentrel)
-
-		@selectedRelease().save("/planner/Release/Save", ko.toJSON(@selectedRelease()), (data) => @refreshRelease(@selectedRelease(), data))
-			#rel = new Release(data.Id, DateFormatter.createJsDateFromJson(data.StartDate), DateFormatter.createJsDateFromJson(data.EndDate), data.Title, data.TfsIterationPath)
-			#for phase in data.Phases
-				#rel.addPhase new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, rel.id)
-			#@allReleases.splice i, 0, rel)
+		rel = (a for a in @allReleases() when a.id is @selectedRelease().id)[0]
+		parentrel = (a for a in @allReleases() when a.id is @selectedRelease().parentId)[0]
+		i = if @allReleases().indexOf(rel) is -1 then @allReleases().indexOf(parentrel) else @allReleases().indexOf(rel)
+		@selectedRelease().save("/planner/Release/Save", ko.toJSON(@selectedRelease()), (data) => @refreshRelease(i, data))
 	
 	deleteRelease: (data) =>
-		console.log "deleteRelease: #{data.id}"
-		#console.log @allReleases()
-		
 		if data.parentId is undefined
 			rel = (a for a in @allReleases() when a.id is data.id)[0]
-			refreshId = data.id
+			id = data.id
+			# use index for removing from @allReleases
+			i = @allReleases().indexOf(rel)
 		else
 			parentrel = (a for a in @allReleases() when a.id is data.parentId)[0]
 			rel = (a for a in parentrel.phases when a.id is data.id)[0]
-			refreshId = data.parentId
-		console.log "rel: #{rel}"
+			id = data.parentId
+			# use i as parent index for refreshing in @allReleases
+			i = @allReleases().indexOf(parentrel)
 
 		rel.delete("/planner/Release/Delete/" + rel.id, (callbackdata) =>
 			console.log callbackdata
-			rel.get("/planner/Release/GetReleaseSummaryById/"+ refreshId, (jsonData) => @refreshRelease(rel, jsonData))
+			rel.get("/planner/Release/GetReleaseSummaryById/"+ id, (jsonData) => @refreshRelease(i, jsonData))
 		)
 		
 # export to root object
