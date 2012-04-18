@@ -23,8 +23,26 @@
           phase = _ref2[_j];
           rl.addPhase(new Phase(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title));
         }
+        rl.phases.sort(function(a, b) {
+          if (a.startDate.date > b.startDate.date) {
+            return 1;
+          } else if (a.startDate.date < b.startDate.date) {
+            return -1;
+          } else {
+            return 0;
+          }
+        });
         this.releases.push(rl);
       }
+      this.releases.sort(function(a, b) {
+        if (a.startDate.date > b.startDate.date) {
+          return 1;
+        } else if (a.startDate.date < b.startDate.date) {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
       this.absences = [];
       _ref3 = data.Absences;
       for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {

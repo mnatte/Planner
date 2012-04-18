@@ -11,8 +11,12 @@ class AdminReleaseViewmodel
 		Release.extend(RCrud)
 		@selectedRelease = ko.observable()
 		@allReleases = ko.observableArray(allReleases)
-		console.log @allReleases
-		
+		for rel in @allReleases()
+			do (rel) ->
+				# console.log "ctor sort rel: #{rel}"
+				rel.phases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
+		@allReleases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
+		#console.log @allReleases()
 		# setup nice 'remove' method for Array
 		Array::remove = (e) -> @[t..t] = [] if (t = @indexOf(e)) > -1
 
@@ -21,7 +25,7 @@ class AdminReleaseViewmodel
 		# console.log @
 		# console.log data
 		@selectedRelease data
-		console.log "selectRelease after selection: " + @selectedRelease().title + ", parentId: " +  @selectedRelease().parentId
+		#console.log "selectRelease after selection: " + @selectedRelease().title + ", parentId: " +  @selectedRelease().parentId
 
 	refreshRelease: (index, jsonData) =>
 		# use given index or take new index ('length' is one larger than max index) when item is not in @allReleases (value is -1). 
@@ -40,6 +44,7 @@ class AdminReleaseViewmodel
 			for phase in jsonData.Phases
 				rel.addPhase new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, rel.id)
 			# index = index of item to remove, 0 is amount to be removed, rel is item to be inserted there
+			rel.phases.sort((a,b)->a.startDate.date - b.startDate.date)
 			@allReleases.splice i, 0, rel
 
 	clear: ->

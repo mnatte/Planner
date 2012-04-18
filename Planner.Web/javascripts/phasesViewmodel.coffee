@@ -20,8 +20,10 @@ class PhasesViewmodel
 			for phase in release.Phases
 				# console.log phase
 				rl.addPhase new Phase(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title)
+			rl.phases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
 			@releases.push rl
 			# console.log "this.releases: #{@releases}"
+		@releases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
 
 		@absences = []
 		for absence in data.Absences

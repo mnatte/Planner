@@ -11,22 +11,47 @@
       this.saveSelected = __bind(this.saveSelected, this);
       this.addPhase = __bind(this.addPhase, this);
       this.refreshRelease = __bind(this.refreshRelease, this);
-      this.selectRelease = __bind(this.selectRelease, this);      Release.extend(RCrud);
+      this.selectRelease = __bind(this.selectRelease, this);
+      var rel, _fn, _i, _len, _ref;
+      Release.extend(RCrud);
       this.selectedRelease = ko.observable();
       this.allReleases = ko.observableArray(allReleases);
-      console.log(this.allReleases);
+      _ref = this.allReleases();
+      _fn = function(rel) {
+        return rel.phases.sort(function(a, b) {
+          if (a.startDate.date > b.startDate.date) {
+            return 1;
+          } else if (a.startDate.date < b.startDate.date) {
+            return -1;
+          } else {
+            return 0;
+          }
+        });
+      };
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        rel = _ref[_i];
+        _fn(rel);
+      }
+      this.allReleases.sort(function(a, b) {
+        if (a.startDate.date > b.startDate.date) {
+          return 1;
+        } else if (a.startDate.date < b.startDate.date) {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
       Array.prototype.remove = function(e) {
-        var t, _ref;
+        var t, _ref2;
         if ((t = this.indexOf(e)) > -1) {
-          return ([].splice.apply(this, [t, t - t + 1].concat(_ref = [])), _ref);
+          return ([].splice.apply(this, [t, t - t + 1].concat(_ref2 = [])), _ref2);
         }
       };
     }
 
     AdminReleaseViewmodel.prototype.selectRelease = function(data) {
       console.log("selectRelease - function");
-      this.selectedRelease(data);
-      return console.log("selectRelease after selection: " + this.selectedRelease().title + ", parentId: " + this.selectedRelease().parentId);
+      return this.selectedRelease(data);
     };
 
     AdminReleaseViewmodel.prototype.refreshRelease = function(index, jsonData) {
@@ -42,6 +67,9 @@
           phase = _ref[_i];
           rel.addPhase(new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, rel.id));
         }
+        rel.phases.sort(function(a, b) {
+          return a.startDate.date - b.startDate.date;
+        });
         return this.allReleases.splice(i, 0, rel);
       }
     };
