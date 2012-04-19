@@ -59,6 +59,28 @@
       return today > this.startDate.date;
     };
 
+    Period.prototype.startDaysFromNow = function() {
+      var ONE_DAY, date1_ms, date2_ms, difference_ms;
+      if (this.isFuture()) {
+        ONE_DAY = 1000 * 60 * 60 * 24;
+        date1_ms = new Date().getTime();
+        date2_ms = this.startDate.date.getTime();
+        difference_ms = Math.abs(date2_ms - date1_ms);
+        return Math.round(difference_ms / ONE_DAY);
+      } else {
+        return 1;
+      }
+    };
+
+    Period.prototype.remainingDays = function() {
+      var ONE_DAY, date1_ms, date2_ms, difference_ms;
+      ONE_DAY = 1000 * 60 * 60 * 24;
+      date1_ms = new Date().getTime();
+      date2_ms = this.endDate.date.getTime();
+      difference_ms = Math.abs(date1_ms - date2_ms);
+      return Math.round(difference_ms / ONE_DAY);
+    };
+
     Period.prototype.comingUpThisWeek = function() {
       var nextWeek, today;
       today = new Date();

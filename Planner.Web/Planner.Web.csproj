@@ -121,6 +121,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>adminReleaseViewmodel.coffee</DependentUpon>
     </Content>
+    <Content Include="javascripts\ko.bindingHandlers.period.js" />
+    <Content Include="javascripts\ko.bindingHandlers.period2.js" />
     <Content Include="javascripts\phasesViewmodel.js">
       <DependentUpon>phasesViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -172,6 +174,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Roles.coffee</DependentUpon>
     </Content>
+    <Content Include="Scripts\jquery.ui.core.js" />
+    <Content Include="Scripts\jquery.ui.mouse.js" />
+    <Content Include="Scripts\jquery.ui.progressbar.js" />
+    <Content Include="Scripts\jquery.ui.slider.js" />
+    <Content Include="Scripts\jquery.ui.widget.js" />
     <Content Include="Scripts\knockout-array-filter.js" />
     <Content Include="Scripts\tabs.js" />
     <Content Include="pbi.htm" />
@@ -182,6 +189,8 @@
     <Content Include="Scripts\knockout-2.0.0.debug.js" />
     <Content Include="Scripts\knockout-2.0.0.js" />
     <Content Include="stylesheets\base.css" />
+    <Content Include="stylesheets\jquery-ui-1.8.19.custom.css" />
+    <Content Include="stylesheets\jquery.ui.progressbar.css" />
     <Content Include="stylesheets\layout.css" />
     <Content Include="stylesheets\skeleton.css" />
     <Content Include="stylesheets\tables.css" />

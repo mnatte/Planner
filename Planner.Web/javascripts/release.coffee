@@ -62,6 +62,29 @@ class Period extends Mixin
 	isPast: ->
 		today = new Date()
 		today > @startDate.date
+	startDaysFromNow: ->
+		if @isFuture() 
+			# The number of milliseconds in one day
+			ONE_DAY = 1000 * 60 * 60 * 24
+			# Convert both dates to milliseconds
+			date1_ms = new Date().getTime()
+			date2_ms = @startDate.date.getTime()
+			# Calculate the difference in milliseconds
+			difference_ms = Math.abs(date2_ms - date1_ms)
+			# Convert back to days and return
+			Math.round(difference_ms/ONE_DAY) 
+		else 
+			1
+	remainingDays: ->
+		# The number of milliseconds in one day
+		ONE_DAY = 1000 * 60 * 60 * 24
+		# Convert both dates to milliseconds
+		date1_ms = new Date().getTime()
+		date2_ms = @endDate.date.getTime()
+		# Calculate the difference in milliseconds
+		difference_ms = Math.abs(date1_ms - date2_ms)
+		# Convert back to days and return
+		Math.round(difference_ms/ONE_DAY)
 	comingUpThisWeek: ->
 		today = new Date()
 		nextWeek = today.setDate(today.getDate()+7)

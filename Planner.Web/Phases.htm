@@ -27,6 +27,7 @@
 	<link rel="stylesheet" href="stylesheets/skeleton.css">
 	<link rel="stylesheet" href="stylesheets/layout.css">
     <link rel="stylesheet" href="stylesheets/tables.css">
+    <link rel="stylesheet" href="stylesheets/jquery-ui-1.8.19.custom.css">
 
 	<!-- Favicons
 	================================================== -->
@@ -36,6 +37,11 @@
 	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
 
     <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.ui.core.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.ui.widget.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.ui.mouse.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.ui.progressbar.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.ui.slider.js"></script>
     <script type="text/javascript" src="Scripts/jquery.dateFormat-1.0.js"></script>
     <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
     <script type="text/javascript" src="Scripts/knockout-array-filter.js"></script>
@@ -46,6 +52,8 @@
     <script type="text/javascript" src="javascripts/ajax.js"></script>
     <script type="text/javascript" src="javascripts/Roles.js"></script>
     <script type="text/javascript" src="javascripts/UseCases.js"></script>
+    <script type="text/javascript" src="javascripts/ko.bindingHandlers.period.js"></script>
+    <script type="text/javascript" src="javascripts/ko.bindingHandlers.period2.js"></script>
 
     <script type="text/javascript" src="Scripts/highcharts.js"></script>
 </head>
@@ -64,15 +72,17 @@
         </nav>
     </div>
         <section id="overview" class="sixteen columns">
-            <div id="phases" class="sixteens columns alpha">
+            <div id="phases" class="sixteen columns">
                 <ul data-bind="foreach: currentPhases()">
                     <li class="price">
                         <span data-bind="text: toString(), style: { color: isCurrent() ? 'red' : 'black' }"></span>
+                        <div data-bind="period: workingDays()"></div>
                         <button data-bind="click: $parent.selectPhase">Details</button>
     
                         <ul data-bind="foreach: phases">
                             <li class="price">
                                 <span data-bind="text: toString(), style: { color: isCurrent() ? 'red' : 'black' }"></span>
+                                <div data-bind="period2: workingDays()"></div>
                                 <button data-bind="click: $root.selectPhase">Details</button>
                             </li>
                         </ul>
