@@ -85,6 +85,23 @@ class Period extends Mixin
 		difference_ms = Math.abs(date1_ms - date2_ms)
 		# Convert back to days and return
 		Math.round(difference_ms/ONE_DAY)
+	workingDaysRemaining: ->
+		days = 0
+		msPerDay = 86400 * 1000
+		today = new Date()
+		# '@' refers to object instance
+		today.setHours(0,0,0,1)
+		@endDate.date.setHours(23,59,59,59,999)
+		diff = @endDate.date - today
+		days = Math.ceil(diff / msPerDay)
+		weeks = Math.floor(days / 7)
+		days = days - (weeks * 2)
+		startDay = today.getDay()
+		endDay = @endDate.date.getDay()
+		days = days - 2 if (startDay - endDay > 1)
+		days = days - 1 if (startDay == 0 and endDay != 6)
+		days = days - 1 if (endDay == 6 and startDay != 0)
+		days
 	comingUpThisWeek: ->
 		today = new Date()
 		nextWeek = today.setDate(today.getDate()+7)

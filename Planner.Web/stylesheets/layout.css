@@ -201,6 +201,66 @@ nav.primary ul li:hover > a {
     font-weight: bold;
 }
 
+.tmpl {
+    display: none;
+}
+
+div.closeIcon {
+    margin: 4px 8px 2px 0;
+    width: 20px;
+    height: 20px;
+    background-size: 20px;
+    background-image: url(../images/close_white1.png);
+    background-repeat: no-repeat;
+    float: right;
+    cursor: pointer;
+}
+div[class=closeIcon]:hover {
+    background-image: url(../images/close_white2.png);
+}
+.dialogTitleBorder {
+    background-color:rgb(250, 197, 102);
+    border:orange solid 1px; 
+    width: inherit;
+    -moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+    height: 30px;
+    margin: 0 0 10px 0;
+}
+
+.borderTitleText 
+{
+    font-size: 120%;
+    vertical-align: middle;    
+    line-height: 30px;
+    color: white;
+    float: left;
+}
+
+.textValues {
+	margin: 0 4px 0 4px;
+	color: rgb(47, 123, 163);
+}
+
+.leftFloat {
+    float: left;
+}
+
+.productDetailsArea {
+    margin: 3em 0;
+    width: 500px;
+    float: left;
+	/*background-color: #f4f8fc;*/
+	border: lightgray solid 1px;
+    padding: 1em;
+	-moz-border-radius: 20px;
+	-webkit-border-radius: 20px;
+	border-radius: 20px;
+    -moz-box-shadow:4px 4px 3px #655e5e;
+    -webkit-box-shadow:4px 4px 3px #655e5e;
+    box-shadow:4px 4px 3px #655e5e;
+    }
 
 /* smaller than standard 960*/
 @media only screen and (max-width 959px) {

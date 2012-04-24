@@ -1,0 +1,35 @@
+﻿<div>
+    <div class="dialogTitleBorder">
+        <span class="borderTitleText">Release Details</span>
+        <div class="closeIcon" data-bind="click:$root.closeDetails"></div>
+    </div>
+    <!--<div class="photoContainer leftFloat">
+        <img data-bind="visible: photoUrl, attr: { src: photoUrl, alt: shortDesc}" class="photoThumbnail"></img>
+    </div>-->
+    <div>
+        <span>title: </span><span data-bind="text: title" class="textValues"></span>
+    </div>
+    <div>
+        <span>startDate: </span><span data-bind="text: startDate.dateString" class="textValues"></span>
+    </div>
+    <div>
+        <span>endDate: </span><span data-bind="text: endDate.dateString" class="textValues"></span>
+    </div>
+    <div>
+        <span>workingDays: </span><span data-bind="text: workingDays()" class="textValues"></span>
+    </div>
+    <div>
+        <span>workingDaysRemaining: </span><span data-bind="text: workingDaysRemaining()" class="textValues"></span>
+    </div>
+    <div>
+        <span>startDaysFromNow: </span><span data-bind="text: startDaysFromNow()" class="textValues"></span>
+    </div>
+    <div>
+        <span>remainingDays: </span><span data-bind="text: remainingDays()" class="textValues"></span>
+    </div>
+    <div>
+        <span>Description:</span></div>
+    <div>
+        <span data-bind="text: toString()" class="textValues"></span>
+    </div>
+</div>

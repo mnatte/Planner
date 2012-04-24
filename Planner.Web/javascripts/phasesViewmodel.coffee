@@ -8,6 +8,7 @@ class PhasesViewmodel
 	constructor: ->
 		# ctor is executed in context of INSTANCE. Therfore @ refers here to CURRENT INSTANCE and attaches selectedPhase to all instances (since object IS ctor)
 		@selectedPhase = ko.observable()
+		@canShowDetails = ko.observable(false)
 	load: (data) ->
 		# all properties besides ctor are ATTACHED to prototype. these are EXECUTED in context of INSTANCE.
 		# therefore @ refers to INSTANCE here 
@@ -49,6 +50,9 @@ class PhasesViewmodel
 			current.push phase
 		current
 
+	closeDetails: =>
+        @canShowDetails(false)
+
 	currentAbsences: ->
 		current = []
 		for abs in @absences when abs.isCurrent()
@@ -60,6 +64,7 @@ class PhasesViewmodel
 		# console.log @
 		# console.log data
 		@selectedPhase(data)
+		@canShowDetails(true)
 		# console.log "selectPhase after selection: " + @selectedPhase()
 
 # export to root object

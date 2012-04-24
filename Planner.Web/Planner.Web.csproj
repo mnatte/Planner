@@ -174,12 +174,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Roles.coffee</DependentUpon>
     </Content>
+    <Content Include="Scripts\jquery.delegate.js" />
+    <Content Include="Scripts\jquery.dimensions.js" />
+    <Content Include="Scripts\jquery.tooltip.min.js" />
     <Content Include="Scripts\jquery.ui.core.js" />
     <Content Include="Scripts\jquery.ui.mouse.js" />
     <Content Include="Scripts\jquery.ui.progressbar.js" />
     <Content Include="Scripts\jquery.ui.slider.js" />
     <Content Include="Scripts\jquery.ui.widget.js" />
     <Content Include="Scripts\knockout-array-filter.js" />
+    <Content Include="Scripts\koExternalTemplateEngine_all.min.js" />
     <Content Include="Scripts\tabs.js" />
     <Content Include="pbi.htm" />
     <Content Include="Release.htm" />
@@ -190,6 +194,7 @@
     <Content Include="Scripts\knockout-2.0.0.js" />
     <Content Include="stylesheets\base.css" />
     <Content Include="stylesheets\jquery-ui-1.8.19.custom.css" />
+    <Content Include="stylesheets\jquery.tooltip.css" />
     <Content Include="stylesheets\jquery.ui.progressbar.css" />
     <Content Include="stylesheets\layout.css" />
     <Content Include="stylesheets\skeleton.css" />
@@ -204,6 +209,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>release.coffee</DependentUpon>
     </Content>
+    <Content Include="templates\releaseDetails.tmpl.html" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

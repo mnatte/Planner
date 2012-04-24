@@ -7,7 +7,9 @@
   PhasesViewmodel = (function() {
 
     function PhasesViewmodel() {
-      this.selectPhase = __bind(this.selectPhase, this);      this.selectedPhase = ko.observable();
+      this.selectPhase = __bind(this.selectPhase, this);
+      this.closeDetails = __bind(this.closeDetails, this);      this.selectedPhase = ko.observable();
+      this.canShowDetails = ko.observable(false);
     }
 
     PhasesViewmodel.prototype.load = function(data) {
@@ -73,6 +75,10 @@
       return current;
     };
 
+    PhasesViewmodel.prototype.closeDetails = function() {
+      return this.canShowDetails(false);
+    };
+
     PhasesViewmodel.prototype.currentAbsences = function() {
       var abs, current, _i, _len, _ref;
       current = [];
@@ -85,7 +91,8 @@
     };
 
     PhasesViewmodel.prototype.selectPhase = function(data) {
-      return this.selectedPhase(data);
+      this.selectedPhase(data);
+      return this.canShowDetails(true);
     };
 
     return PhasesViewmodel;

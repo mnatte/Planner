@@ -81,6 +81,25 @@
       return Math.round(difference_ms / ONE_DAY);
     };
 
+    Period.prototype.workingDaysRemaining = function() {
+      var days, diff, endDay, msPerDay, startDay, today, weeks;
+      days = 0;
+      msPerDay = 86400 * 1000;
+      today = new Date();
+      today.setHours(0, 0, 0, 1);
+      this.endDate.date.setHours(23, 59, 59, 59, 999);
+      diff = this.endDate.date - today;
+      days = Math.ceil(diff / msPerDay);
+      weeks = Math.floor(days / 7);
+      days = days - (weeks * 2);
+      startDay = today.getDay();
+      endDay = this.endDate.date.getDay();
+      if (startDay - endDay > 1) days = days - 2;
+      if (startDay === 0 && endDay !== 6) days = days - 1;
+      if (endDay === 6 && startDay !== 0) days = days - 1;
+      return days;
+    };
+
     Period.prototype.comingUpThisWeek = function() {
       var nextWeek, today;
       today = new Date();
