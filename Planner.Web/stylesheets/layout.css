@@ -205,6 +205,11 @@ nav.primary ul li:hover > a {
     display: none;
 }
 
+.hand
+{
+    cursor: pointer;
+}
+
 div.closeIcon {
     margin: 4px 8px 2px 0;
     width: 20px;
@@ -245,6 +250,7 @@ div[class=closeIcon]:hover {
 
 .leftFloat {
     float: left;
+    z-index:100;
 }
 
 .productDetailsArea {

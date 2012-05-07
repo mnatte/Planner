@@ -79,28 +79,28 @@
         </nav>
     </div>
         <section id="overview" class="sixteen columns">
+            <!-- ko if: $root.selectedPhase() -->
+            <div class="leftFloat" data-bind="fadeVisible: $root.canShowDetails(), fadeDuration: 2000">
+                <div class="productDetailsArea">
+                    <!-- ko template: {name: 'releaseDetails', data: $root.selectedPhase} -->
+                    <!-- /ko -->
+                </div>
+            </div>
+            <!--/ko-->
             <div id="phases" class="sixteen columns">
                 <ul data-bind="foreach: currentPhases()">
                     <li class="price">
                         <span data-bind="text: toString(), style: { color: isCurrent() ? 'red' : 'black' }"></span>
                         <div data-bind="period: workingDays()"></div>
-                        <button data-bind="click: $parent.selectPhase">Details</button>
+                        <!--<button data-bind="click: $parent.selectPhase">Details</button>-->
     
                         <ul data-bind="foreach: phases">
                             <li class="price">
                                 <span data-bind="text: toString(), style: { color: isCurrent() ? 'red' : 'black' }"></span>
                                 <div data-bind="period2: workingDays(), click:$root.selectPhase"></div>
-                                <button data-bind="click: $root.selectPhase">Details</button>
+                                <!--<button data-bind="click: $root.selectPhase">Details</button>-->
                             </li>
                         </ul>
-                        <!-- ko if: $root.selectedPhase() -->
-                        <div class="leftFloat" data-bind="fadeVisible: $root.canShowDetails(), fadeDuration: 2000">
-                            <div class="productDetailsArea">
-                                <!-- ko template: {name: 'releaseDetails', data: $root.selectedPhase} -->
-                                <!-- /ko -->
-                            </div>
-                        </div>
-                        <!--/ko-->
                     </li>
                 </ul>
                 <!--<ul data-bind="foreach: currentAbsences()">
