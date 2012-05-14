@@ -151,6 +151,8 @@ class Resource extends Mixin
 	addAbsence: (period) ->
 		@periodsAway.push(period)
 
+class Project extends Mixin
+	constructor: (@id, @title, @shortName, @tfsIterationPath, @tfsDevBranch) ->
 	
 # export to root object
 root.Period = Period
@@ -159,4 +161,5 @@ root.MileStone = MileStone
 root.Release = Release
 root.Feature = Feature
 root.Resource = Resource
+root.Project = Project
 

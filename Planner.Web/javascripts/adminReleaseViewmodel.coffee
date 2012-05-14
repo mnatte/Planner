@@ -4,8 +4,6 @@
 # access (for browser)
 root = global ? window
 
-# TODO: ADD 'DELETE' FUNCTIONALITY FOR PHASES AND RELEASES. MOVE TO TREE STRUCTURE OF RELEASES, FACTOR OUT PHASES
-
 class AdminReleaseViewmodel
 	constructor: (allReleases) ->
 		Release.extend(RCrud)

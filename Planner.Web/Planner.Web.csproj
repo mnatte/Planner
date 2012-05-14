@@ -114,8 +114,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="404.html" />
+    <Content Include="addProject.htm" />
     <Content Include="images\bg_nav.PNG" />
     <Content Include="addRelease.htm" />
+    <Content Include="javascripts\adminProjectViewmodel.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>adminProjectViewmodel.coffee</DependentUpon>
+    </Content>
     <Content Include="javascripts\adminReleaseViewmodel.js">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -254,6 +260,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="javascripts\adminProjectViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>adminProjectViewmodel.js</LastGenOutput>
+    </None>
     <None Include="javascripts\adminReleaseViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>adminReleaseViewmodel.js</LastGenOutput>

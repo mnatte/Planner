@@ -1,5 +1,5 @@
 (function() {
-  var Feature, MileStone, Period, Phase, Release, Resource, root,
+  var Feature, MileStone, Period, Phase, Project, Release, Resource, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -228,6 +228,22 @@
 
   })(Mixin);
 
+  Project = (function(_super) {
+
+    __extends(Project, _super);
+
+    function Project(id, title, shortName, tfsIterationPath, tfsDevBranch) {
+      this.id = id;
+      this.title = title;
+      this.shortName = shortName;
+      this.tfsIterationPath = tfsIterationPath;
+      this.tfsDevBranch = tfsDevBranch;
+    }
+
+    return Project;
+
+  })(Mixin);
+
   root.Period = Period;
 
   root.Phase = Phase;
@@ -239,5 +255,7 @@
   root.Feature = Feature;
 
   root.Resource = Resource;
+
+  root.Project = Project;
 
 }).call(this);
