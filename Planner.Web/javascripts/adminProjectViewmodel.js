@@ -37,6 +37,8 @@
         console.log("jsonData not undefined");
         proj = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch);
         return this.allProjects.splice(i, 0, proj);
+      } else {
+        return this.selectProject(this.allProjects()[0]);
       }
     };
 
@@ -87,9 +89,7 @@
       i = this.allProjects().indexOf(proj);
       return proj["delete"]("/planner/Project/Delete/" + proj.id, function(callbackdata) {
         console.log(callbackdata);
-        return proj.get("/planner/Project/GetProjectById/" + id, function(jsonData) {
-          return _this.refreshProject(i, jsonData);
-        });
+        return _this.refreshProject(i);
       });
     };
 

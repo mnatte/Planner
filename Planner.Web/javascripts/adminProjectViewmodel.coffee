@@ -37,6 +37,8 @@ class AdminProjectViewmodel
 			console.log "jsonData not undefined"
 			proj = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch)
 			@allProjects.splice i, 0, proj
+		else
+			@selectProject @allProjects()[0]
 
 	clear: ->
 		console.log "clear: selectedProject: #{@selectedProject().title}"
@@ -60,7 +62,8 @@ class AdminProjectViewmodel
 
 		proj.delete("/planner/Project/Delete/" + proj.id, (callbackdata) =>
 			console.log callbackdata
-			proj.get("/planner/Project/GetProjectById/"+ id, (jsonData) => @refreshProject(i, jsonData))
+			@refreshProject(i)
+			#proj.get("/planner/Project/GetProjectById/"+ id, (jsonData) => @refreshProject(i, jsonData))
 		)
 		
 # export to root object
