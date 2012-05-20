@@ -85,17 +85,6 @@ namespace MvcApplication1.Models
                     return _backlog;
                 }
             }
-
-            //private List<Team> _teams;
-            //public IList<Team> Teams
-            //{
-            //    get
-            //    {
-            //        if (_teams == null)
-            //            _teams = new List<Team>();
-            //        return _teams;
-            //    }
-            //}
         }
 
         public class Feature
@@ -113,8 +102,12 @@ namespace MvcApplication1.Models
 
         public class Project
         {
+            public int Id { get; set; }
             public string Title { get; set; }
             public string ShortName { get; set; }
+            public string Description { get; set; }
+            public string TfsIterationPath { get; set; }
+            public string TfsDevBranch { get; set; }
             public Team ProjectTeam { get; set; }
         }
 

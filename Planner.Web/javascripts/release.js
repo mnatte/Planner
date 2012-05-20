@@ -232,10 +232,11 @@
 
     __extends(Project, _super);
 
-    function Project(id, title, shortName, tfsIterationPath, tfsDevBranch) {
+    function Project(id, title, shortName, descr, tfsIterationPath, tfsDevBranch) {
       this.id = id;
       this.title = title;
       this.shortName = shortName;
+      this.descr = descr;
       this.tfsIterationPath = tfsIterationPath;
       this.tfsDevBranch = tfsDevBranch;
     }

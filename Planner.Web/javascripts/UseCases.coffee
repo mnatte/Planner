@@ -20,6 +20,17 @@ class HLoadReleases
 			releases.push @release
 		releases
 
+class HLoadProjects
+	execute: (data) ->
+		projects = []
+		# fill project collection
+		for project in data
+			#console.log release.StartDate
+			#console.log release.EndDate
+			@project = new Project(project.Id, project.Title, project.ShortName, project.Description, project.TfsIterationPath, project.TfsDevBranch)
+			projects.push @project
+		projects
+
 class UDisplayReleaseStatus
 	constructor: ->
 		Release.extend(RGroupBy)
@@ -117,6 +128,18 @@ class ULoadAdminReleases
 		# console.log @viewModel.selectedRelease().title
 		# @viewModel.selectedRelease().title.subscribe( (newValue) -> alert 'selectedRelease title changed with ' + newValue)
 		ko.applyBindings(@viewModel)
+
+class ULoadAdminProjects
+	constructor: ->
+	execute: (data) ->
+		loadProjects = new HLoadProjects()
+		projects = loadProjects.execute(data)
+		@viewModel = new AdminProjectViewmodel(projects)
+		console.log @viewModel
+		@viewModel.selectProject @viewModel.allProjects()[0]
+		# console.log @viewModel.selectedRelease().title
+		# @viewModel.selectedRelease().title.subscribe( (newValue) -> alert 'selectedRelease title changed with ' + newValue)
+		ko.applyBindings(@viewModel)
 		
 # export to root object
 root.UDisplayReleaseStatus = UDisplayReleaseStatus
@@ -124,4 +147,6 @@ root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFro
 root.UDisplayPhases = UDisplayPhases
 root.HLoadReleases = HLoadReleases
 root.ULoadAdminReleases = ULoadAdminReleases
+root.HLoadProjects = HLoadProjects
+root.ULoadAdminProjects = ULoadAdminProjects
 

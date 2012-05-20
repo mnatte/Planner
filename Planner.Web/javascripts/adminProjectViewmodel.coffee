@@ -35,16 +35,15 @@ class AdminProjectViewmodel
 		console.log jsonData
 		if jsonData != null and jsonData != undefined
 			console.log "jsonData not undefined"
-			proj = new Project(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath)
+			proj = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch)
 			@allProjects.splice i, 0, proj
 
 	clear: ->
 		console.log "clear: selectedProject: #{@selectedProject().title}"
-		@selectProject new Project(0, "", "", "", "")
+		@selectProject new Project(0, "", "", "", "", "")
 
 	addProject: (data) =>
-		@selectProject new Project(0, "", "", "", "", data.id)
-		console.log "selectedProject parentId: #{@selectedProject().parentId}"
+		@selectProject new Project(0, "", "", "", "", "", data.id)
 
 	saveSelected: =>
 		console.log "saveSelected: selectedProject: #{@selectedProject()}"

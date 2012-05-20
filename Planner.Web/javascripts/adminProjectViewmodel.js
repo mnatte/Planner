@@ -35,19 +35,18 @@
       console.log(jsonData);
       if (jsonData !== null && jsonData !== void 0) {
         console.log("jsonData not undefined");
-        proj = new Project(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath);
+        proj = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch);
         return this.allProjects.splice(i, 0, proj);
       }
     };
 
     AdminProjectViewmodel.prototype.clear = function() {
       console.log("clear: selectedProject: " + (this.selectedProject().title));
-      return this.selectProject(new Project(0, "", "", "", ""));
+      return this.selectProject(new Project(0, "", "", "", "", ""));
     };
 
     AdminProjectViewmodel.prototype.addProject = function(data) {
-      this.selectProject(new Project(0, "", "", "", "", data.id));
-      return console.log("selectedProject parentId: " + (this.selectedProject().parentId));
+      return this.selectProject(new Project(0, "", "", "", "", "", data.id));
     };
 
     AdminProjectViewmodel.prototype.saveSelected = function() {

@@ -64,7 +64,7 @@
 				    <li><a href="#">Administration</a>
 						    <ul>
 							    <li><a href="addRelease.htm"><span>- </span>Add Release</a></li>
-							    <li><a href="#"><span>- </span>Add Project</a></li>
+							    <li><a href="addProject.htm"><span>- </span>Add Project</a></li>
 							    <li><a href="addProject.htm"><span>- </span>Assign Resources</a></li>
 							    <li><a href="#"><span>- </span>Music</a></li>
 						    </ul>
@@ -84,9 +84,10 @@
                 <div class="six columns omega">
                     <form data-bind="with: selectedProject()">
                         <label>Project title:</label><input type="text" data-bind="value: title, valueUpdate: 'afterkeydown'" />
-                        <label>Short Name:</label><input type="text" data-bind="value: tfsIterationPath" />
-                        <label>TFS Iteration Path:</label><input type="text" data-bind="value: startDate.dateString" />
-                        <label>TFS Development Branch:</label><input type="text" data-bind="value: endDate.dateString" />
+                        <label>Short Name:</label><input type="text" data-bind="value: shortName" />
+                        <label>Description:</label><input type="text" data-bind="value: descr" />
+                        <label>TFS Iteration Path:</label><input type="text" data-bind="value: tfsIterationPath" />
+                        <label>TFS Development Branch:</label><input type="text" data-bind="value: tfsDevBranch" />
                         <!--<p>Release Title: <span data-bind="text: title"></span></p>--> <!-- updates in real-time -->
                         <button data-bind="click: $parent.saveSelected.bind($data)">Submit</button>
                     </form>
@@ -95,7 +96,7 @@
                     <ul data-bind="foreach: allProjects">
                         <li>
                             <span class="selectable" data-bind="text: title, click: $root.selectProject.bind($data), style: { color: $data.id == $root.selectedProject().id ? 'red' : 'black' }"></span>
-                            <button data-bind="click: $root.deleteRelease.bind($data)">Delete</button>
+                            <button data-bind="click: $root.deleteProject.bind($data)">Delete</button>
                         </li>
                     </ul>
                     <button data-bind="click: clear.bind($data)">New</button>
@@ -106,9 +107,9 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        var uc = new ULoadAdminReleases();
+        var uc = new ULoadAdminProjects();
         var ajax = new Ajax();
-        ajax.getReleaseSummaries(uc.execute);
+        ajax.getProjects(uc.execute);
     });
 </script>    
 </body>

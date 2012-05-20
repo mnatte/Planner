@@ -1,5 +1,5 @@
 (function() {
-  var HLoadReleases, UDisplayPhases, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminReleases, root,
+  var HLoadProjects, HLoadReleases, UDisplayPhases, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminProjects, ULoadAdminReleases, root,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   root = typeof global !== "undefined" && global !== null ? global : window;
@@ -26,6 +26,25 @@
     };
 
     return HLoadReleases;
+
+  })();
+
+  HLoadProjects = (function() {
+
+    function HLoadProjects() {}
+
+    HLoadProjects.prototype.execute = function(data) {
+      var project, projects, _i, _len;
+      projects = [];
+      for (_i = 0, _len = data.length; _i < _len; _i++) {
+        project = data[_i];
+        this.project = new Project(project.Id, project.Title, project.ShortName, project.Description, project.TfsIterationPath, project.TfsDevBranch);
+        projects.push(this.project);
+      }
+      return projects;
+    };
+
+    return HLoadProjects;
 
   })();
 
@@ -151,6 +170,24 @@
 
   })();
 
+  ULoadAdminProjects = (function() {
+
+    function ULoadAdminProjects() {}
+
+    ULoadAdminProjects.prototype.execute = function(data) {
+      var loadProjects, projects;
+      loadProjects = new HLoadProjects();
+      projects = loadProjects.execute(data);
+      this.viewModel = new AdminProjectViewmodel(projects);
+      console.log(this.viewModel);
+      this.viewModel.selectProject(this.viewModel.allProjects()[0]);
+      return ko.applyBindings(this.viewModel);
+    };
+
+    return ULoadAdminProjects;
+
+  })();
+
   root.UDisplayReleaseStatus = UDisplayReleaseStatus;
 
   root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFromNow;
@@ -160,5 +197,9 @@
   root.HLoadReleases = HLoadReleases;
 
   root.ULoadAdminReleases = ULoadAdminReleases;
+
+  root.HLoadProjects = HLoadProjects;
+
+  root.ULoadAdminProjects = ULoadAdminProjects;
 
 }).call(this);

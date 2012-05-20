@@ -152,7 +152,7 @@ class Resource extends Mixin
 		@periodsAway.push(period)
 
 class Project extends Mixin
-	constructor: (@id, @title, @shortName, @tfsIterationPath, @tfsDevBranch) ->
+	constructor: (@id, @title, @shortName, @descr, @tfsIterationPath, @tfsDevBranch) ->
 	
 # export to root object
 root.Period = Period
