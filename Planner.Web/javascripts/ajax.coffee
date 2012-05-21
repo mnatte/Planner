@@ -46,6 +46,16 @@ class Ajax
 				callback data
 			error: (XHR, status, errorThrown) ->
 				console.log "AJAX Releases error: #{status}"
+	getResources: (callback) ->
+		url = "/planner/Resource/GetResources"
+		$.ajax url,
+			dataType: "json"
+			type: "GET"
+			success: (data, status, XHR) ->
+				console.log "Resources data loaded"
+				callback data
+			error: (XHR, status, errorThrown) ->
+				console.log "AJAX Releases error: #{status}"
 	test: ->
 		console.log "testing AJAX class"
 

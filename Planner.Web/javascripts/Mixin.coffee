@@ -6,7 +6,7 @@ moduleKeywords = ['extended', 'included']
 class Mixin
 	@extend: (obj) ->
 		for key, value of obj when key not in moduleKeywords
-			# @ refers to this and that is now a static object
+			# @ refers to this and that is now a static object because of JS inheritance strategy through 'extends'
 			# all properties (incl. functions) of the extension are added as a static method
 			@[key] = value
 	

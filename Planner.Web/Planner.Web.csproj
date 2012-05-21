@@ -100,6 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ResourceController.cs" />
     <Compile Include="Controllers\PhasesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
@@ -109,6 +110,7 @@
     </Compile>
     <Compile Include="Helpers.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\PersonInputModel.cs" />
     <Compile Include="Models\ProjectInputModel.cs" />
     <Compile Include="Models\ReleaseModels.cs" />
     <Compile Include="Models\ReleaseInputModel.cs" />
@@ -117,6 +119,7 @@
   <ItemGroup>
     <Content Include="404.html" />
     <Content Include="addProject.htm" />
+    <Content Include="adminResource.htm" />
     <Content Include="images\bg_nav.PNG" />
     <Content Include="addRelease.htm" />
     <Content Include="javascripts\adminProjectViewmodel.js">
@@ -129,12 +132,22 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>adminReleaseViewmodel.coffee</DependentUpon>
     </Content>
+    <Content Include="javascripts\adminResourceViewmodel.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>adminResourceViewmodel.coffee</DependentUpon>
+    </Content>
     <Content Include="javascripts\ko.bindingHandlers.period.js" />
     <Content Include="javascripts\ko.bindingHandlers.period2.js" />
     <Content Include="javascripts\phasesViewmodel.js">
       <DependentUpon>phasesViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
+    </Content>
+    <Content Include="javascripts\simpleCrudViewmodel.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>simpleCrudViewmodel.coffee</DependentUpon>
     </Content>
     <Content Include="Phases.htm" />
     <Content Include="Global.asax" />
@@ -270,6 +283,10 @@
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>adminReleaseViewmodel.js</LastGenOutput>
     </None>
+    <None Include="javascripts\adminResourceViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>adminResourceViewmodel.js</LastGenOutput>
+    </None>
     <None Include="javascripts\phasesViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>phasesViewmodel.js</LastGenOutput>
@@ -277,6 +294,10 @@
     <None Include="javascripts\releaseViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>releaseViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\simpleCrudViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>simpleCrudViewmodel.js</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

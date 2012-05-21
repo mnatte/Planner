@@ -146,7 +146,7 @@ class Feature
 	constructor: (@businessId, @contactPerson, @estimatedHours, @hoursWorked, @priority, @project, @remainingHours, @title, @state) ->
 	
 class Resource extends Mixin
-	constructor: (@firstName, @middleName, @lastName, @initials, @hoursPerWeek, @function) ->
+	constructor: (@id, @firstName, @middleName, @lastName, @initials, @hoursPerWeek, @email, @phoneNumber, @company, @function) ->
 		@periodsAway = []
 	addAbsence: (period) ->
 		@periodsAway.push(period)

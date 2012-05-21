@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+	<title>Project</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="stylesheets/base.css">
+	<link rel="stylesheet" href="stylesheets/skeleton.css">
+	<link rel="stylesheet" href="stylesheets/layout.css">
+    <link rel="stylesheet" href="stylesheets/tables.css">
+
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
+    <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.dateFormat-1.0.js"></script>
+    <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
+    <script type="text/javascript" src="Scripts/knockout-array-filter.js"></script>
+        
+    <script type="text/javascript" src="javascripts/Mixin.js"></script>
+    <script type="text/javascript" src="javascripts/release.js"></script>
+    <script type="text/javascript" src="javascripts/simpleCrudViewmodel.js"></script>
+    <script type="text/javascript" src="javascripts/adminResourceViewmodel.js"></script>
+    <script type="text/javascript" src="javascripts/ajax.js"></script>
+    <script type="text/javascript" src="javascripts/Roles.js"></script>
+    <script type="text/javascript" src="javascripts/UseCases.js"></script>
+</head>
+<body>
+<!-- Primary Page Layout
+	================================================== -->
+
+	
+    <div class="container">
+        <div class="band navigation">
+	
+		    <nav class="primary container">
+		
+			    <ul>
+		
+				    <li><a href="Release.htm">Release Status</a></li>
+				    <li><a href="Phases.htm">Phases Overview</a></li>
+				    <li><a href="#">Administration</a>
+						    <ul>
+							    <li><a href="addRelease.htm"><span>- </span>Add Release</a></li>
+							    <li><a href="addProject.htm"><span>- </span>Add Project</a></li>
+                                <li><a href="adminResource.htm"><span>- </span>Admin Resources</a></li>
+							    <li><a href="addProject.htm"><span>- </span>Assign Resources</a></li>
+							    <li><a href="#"><span>- </span>Music</a></li>
+						    </ul>
+				    </li>
+				    <li><a href="#">Social</a></li>
+				    <li><a href="#">Media</a></li>
+				    <li><a href="#">Contact</a></li>
+		
+			    </ul>
+		
+		    </nav>
+	
+	    </div><!--end band-->
+
+        <div class="band">
+            <div class="sixteen columns omega">
+                <div class="six columns omega">
+                    <form data-bind="with: selectedItem()">
+                        <label>First name:</label><input type="text" data-bind="value: firstName, valueUpdate: 'afterkeydown'" />
+                        <label>Middle name:</label><input type="text" data-bind="value: middleName" />
+                        <label>Last name:</label><input type="text" data-bind="value: lastName" />
+                        <label>Initials:</label><input type="text" data-bind="value: initials" />
+                        <label>Email:</label><input type="text" data-bind="value: email" />
+                        <label>Phone number:</label><input type="text" data-bind="value: phoneNumber" />
+                        <label>Available hours per week:</label><input type="text" data-bind="value: hoursPerWeek" />
+                        <button data-bind="click: $parent.saveSelected.bind($data)">Submit</button>
+                    </form>
+                </div>
+                <div class="ten columns omega">
+                    <ul data-bind="foreach: allItems">
+                        <li>
+                            <span class="selectable" data-bind="text: initials, click: $root.selectItem.bind($data), style: { color: $data.id == $root.selectedItem().id ? 'red' : 'black' }"></span>
+                            <button data-bind="click: $root.deleteItem.bind($data)">Delete</button>
+                        </li>
+                    </ul>
+                    <button data-bind="click: clear.bind($data)">New</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var uc = new ULoadAdminResources();
+        var ajax = new Ajax();
+        ajax.getResources(uc.execute);
+    });
+</script>    
+</body>
+</html>
+

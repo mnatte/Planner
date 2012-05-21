@@ -40,7 +40,7 @@ RGroupBy =
 RTeamMember = 
 	extended: ->
 		@include
-			# default value, just setting focusFactor in client code without specifying it here is enough to set it, but then it can be undefined.
+			# default value, just setting focusFactor in target object without specifying it here is enough to set it, but then it can be undefined.
 			focusFactor: 0.8
 			roles: []
 
@@ -79,8 +79,55 @@ RCrud =
 					error: (XHR, status, errorThrown) ->
 						console.log "AJAX error: #{status}"
 
+RSimpleCrud = 
+	# static extensions
+	# @ here is static
+	setSaveUrl: (url) =>
+		@saveUrl = url
+	setDeleteUrl: (url) =>
+		@deleteUrl = url
+	setLoadUrl: (url) =>
+		@loadUrl = url
+	extended: ->
+		# instance extenstions
+		@include
+			save: (jsonData, callback) ->
+				# no @ here since saveUrl is static
+				$.ajax saveUrl,
+					dataType: "json"
+					data: jsonData
+					type: "POST"
+					contentType: "application/json; charset=utf-8"
+					success: (data, status, XHR) ->
+						console.log "#{jsonData} saved"
+						callback data
+					error: (XHR, status, errorThrown) ->
+						console.log "AJAX SAVE error: #{errorThrown}"
+			delete: (id, callback) ->
+				url = deleteUrl + "/" + id
+				$.ajax url,
+					#dataType: "json"
+					#data: jsonData
+					type: "DELETE"
+					contentType: "application/json; charset=utf-8"
+					success: (data, status, XHR) ->
+						console.log "#{url} called succesfully"
+						callback data
+					error: (XHR, status, errorThrown) ->
+						console.log "AJAX DELETE error: #{errorThrown}"
+			get: (callback) ->
+				$.ajax loadUrl,
+					dataType: "json"
+					type: "GET"
+					success: (data, status, XHR) ->
+						console.log "AJAX data loaded"
+						callback data
+					error: (XHR, status, errorThrown) ->
+						console.log "AJAX error: #{status}"
+
 # export to root object
 root.RMoveItem = RMoveItem
 root.RGroupBy = RGroupBy
 root.RTeamMember = RTeamMember
 root.RCrud = RCrud
+root.RSimpleCrud = RSimpleCrud

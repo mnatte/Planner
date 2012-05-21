@@ -210,12 +210,16 @@
 
     __extends(Resource, _super);
 
-    function Resource(firstName, middleName, lastName, initials, hoursPerWeek, _function) {
+    function Resource(id, firstName, middleName, lastName, initials, hoursPerWeek, email, phoneNumber, company, _function) {
+      this.id = id;
       this.firstName = firstName;
       this.middleName = middleName;
       this.lastName = lastName;
       this.initials = initials;
       this.hoursPerWeek = hoursPerWeek;
+      this.email = email;
+      this.phoneNumber = phoneNumber;
+      this.company = company;
       this["function"] = _function;
       this.periodsAway = [];
     }

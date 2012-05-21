@@ -1,5 +1,5 @@
 (function() {
-  var HLoadProjects, HLoadReleases, UDisplayPhases, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminProjects, ULoadAdminReleases, root,
+  var HLoadProjects, HLoadReleases, HLoadResources, UDisplayPhases, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, root,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   root = typeof global !== "undefined" && global !== null ? global : window;
@@ -48,6 +48,25 @@
 
   })();
 
+  HLoadResources = (function() {
+
+    function HLoadResources() {}
+
+    HLoadResources.prototype.execute = function(data) {
+      var resource, resources, _i, _len;
+      resources = [];
+      for (_i = 0, _len = data.length; _i < _len; _i++) {
+        resource = data[_i];
+        this.resource = new Resource(resource.Id, resource.FirstName, resource.MiddleName, resource.LastName, resource.Initials, resource.AvailableHoursPerWeek, resource.Email, resource.PhoneNumber);
+        resources.push(this.resource);
+      }
+      return resources;
+    };
+
+    return HLoadResources;
+
+  })();
+
   UDisplayReleaseStatus = (function() {
 
     function UDisplayReleaseStatus() {
@@ -75,7 +94,7 @@
           if (!(_ref4 = "" + member.Initials + "_" + feat.Project.ShortName, __indexOf.call(projectMembers, _ref4) < 0)) {
             continue;
           }
-          teamMember = new Resource(member.FirstName, member.MiddleName, member.LastName, member.Initials, member.AvailableHoursPerWeek, member.Function);
+          teamMember = new Resource(member.FirstName, member.MiddleName, member.LastName, member.Initials, member.AvailableHoursPerWeek, member.Email, member.PhoneNumber, member.Company, member.Function);
           teamMember.focusFactor = member.FocusFactor;
           teamMember.memberProject = feat.Project.ShortName;
           _ref5 = member.PeriodsAway;
@@ -188,6 +207,23 @@
 
   })();
 
+  ULoadAdminResources = (function() {
+
+    function ULoadAdminResources() {}
+
+    ULoadAdminResources.prototype.execute = function(data) {
+      var load, resources;
+      load = new HLoadResources();
+      resources = load.execute(data);
+      this.viewModel = new AdminResourceViewmodel(resources);
+      this.viewModel.selectItem(this.viewModel.allItems()[0]);
+      return ko.applyBindings(this.viewModel);
+    };
+
+    return ULoadAdminResources;
+
+  })();
+
   root.UDisplayReleaseStatus = UDisplayReleaseStatus;
 
   root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFromNow;
@@ -201,5 +237,9 @@
   root.HLoadProjects = HLoadProjects;
 
   root.ULoadAdminProjects = ULoadAdminProjects;
+
+  root.HLoadResources = HLoadResources;
+
+  root.ULoadAdminResources = ULoadAdminResources;
 
 }).call(this);

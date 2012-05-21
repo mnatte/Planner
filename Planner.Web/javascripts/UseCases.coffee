@@ -31,6 +31,15 @@ class HLoadProjects
 			projects.push @project
 		projects
 
+class HLoadResources
+	execute: (data) ->
+		resources = []
+		# fill project collection
+		for resource in data
+			@resource = new Resource(resource.Id, resource.FirstName, resource.MiddleName, resource.LastName, resource.Initials, resource.AvailableHoursPerWeek, resource.Email, resource.PhoneNumber)
+			resources.push @resource
+		resources
+
 class UDisplayReleaseStatus
 	constructor: ->
 		Release.extend(RGroupBy)
@@ -52,7 +61,7 @@ class UDisplayReleaseStatus
 			# add team member per project through backlog per project
 			for member in feat.Project.ProjectTeam.TeamMembers when "#{member.Initials}_#{feat.Project.ShortName}" not in projectMembers
 				# console.log("ADD TEAMMEMBERS TO PROJECT")
-				teamMember = new Resource(member.FirstName, member.MiddleName, member.LastName, member.Initials, member.AvailableHoursPerWeek, member.Function)
+				teamMember = new Resource(member.FirstName, member.MiddleName, member.LastName, member.Initials, member.AvailableHoursPerWeek, member.Email, member.PhoneNumber, member.Company, member.Function)
 				teamMember.focusFactor = member.FocusFactor
 				teamMember.memberProject = feat.Project.ShortName
 				# add team member absences
@@ -140,6 +149,16 @@ class ULoadAdminProjects
 		# console.log @viewModel.selectedRelease().title
 		# @viewModel.selectedRelease().title.subscribe( (newValue) -> alert 'selectedRelease title changed with ' + newValue)
 		ko.applyBindings(@viewModel)
+
+class ULoadAdminResources
+	constructor: ->
+	execute: (data) ->
+		load = new HLoadResources()
+		resources = load.execute(data)
+		@viewModel = new AdminResourceViewmodel(resources)
+		#console.log @viewModel
+		@viewModel.selectItem @viewModel.allItems()[0]
+		ko.applyBindings(@viewModel)
 		
 # export to root object
 root.UDisplayReleaseStatus = UDisplayReleaseStatus
@@ -149,4 +168,6 @@ root.HLoadReleases = HLoadReleases
 root.ULoadAdminReleases = ULoadAdminReleases
 root.HLoadProjects = HLoadProjects
 root.ULoadAdminProjects = ULoadAdminProjects
+root.HLoadResources = HLoadResources
+root.ULoadAdminResources = ULoadAdminResources
 
