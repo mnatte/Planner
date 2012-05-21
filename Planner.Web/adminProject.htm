@@ -43,7 +43,7 @@
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
     <script type="text/javascript" src="javascripts/simpleCrudViewmodel.js"></script>
-    <script type="text/javascript" src="javascripts/adminResourceViewmodel.js"></script>
+    <script type="text/javascript" src="javascripts/adminProjectViewmodel.js"></script>
     <script type="text/javascript" src="javascripts/ajax.js"></script>
     <script type="text/javascript" src="javascripts/Roles.js"></script>
     <script type="text/javascript" src="javascripts/UseCases.js"></script>
@@ -65,8 +65,7 @@
 				    <li><a href="#">Administration</a>
 						    <ul>
 							    <li><a href="addRelease.htm"><span>- </span>Add Release</a></li>
-							    <li><a href="adminProject.htm"><span>- </span>Admin Project</a></li>
-                                <li><a href="adminResource.htm"><span>- </span>Admin Resources</a></li>
+							    <li><a href="addProject.htm"><span>- </span>Add Project</a></li>
 							    <li><a href="addProject.htm"><span>- </span>Assign Resources</a></li>
 							    <li><a href="#"><span>- </span>Music</a></li>
 						    </ul>
@@ -85,20 +84,19 @@
             <div class="sixteen columns omega">
                 <div class="six columns omega">
                     <form data-bind="with: selectedItem()">
-                        <label>First name:</label><input type="text" data-bind="value: firstName, valueUpdate: 'afterkeydown'" />
-                        <label>Middle name:</label><input type="text" data-bind="value: middleName" />
-                        <label>Last name:</label><input type="text" data-bind="value: lastName" />
-                        <label>Initials:</label><input type="text" data-bind="value: initials" />
-                        <label>Email:</label><input type="text" data-bind="value: email" />
-                        <label>Phone number:</label><input type="text" data-bind="value: phoneNumber" />
-                        <label>Available hours per week:</label><input type="text" data-bind="value: hoursPerWeek" />
+                        <label>Project title:</label><input type="text" data-bind="value: title, valueUpdate: 'afterkeydown'" />
+                        <label>Short Name:</label><input type="text" data-bind="value: shortName" />
+                        <label>Description:</label><input type="text" data-bind="value: descr" />
+                        <label>TFS Iteration Path:</label><input type="text" data-bind="value: tfsIterationPath" />
+                        <label>TFS Development Branch:</label><input type="text" data-bind="value: tfsDevBranch" />
+                        <!--<p>Release Title: <span data-bind="text: title"></span></p>--> <!-- updates in real-time -->
                         <button data-bind="click: $parent.saveSelected.bind($data)">Submit</button>
                     </form>
                 </div>
                 <div class="ten columns omega">
                     <ul data-bind="foreach: allItems">
                         <li>
-                            <span class="selectable" data-bind="text: fullName(), click: $root.selectItem.bind($data), style: { color: $data.id == $root.selectedItem().id ? 'red' : 'black' }"></span>
+                            <span class="selectable" data-bind="text: title, click: $root.selectItem.bind($data), style: { color: $data.id == $root.selectedItem().id ? 'red' : 'black' }"></span>
                             <button data-bind="click: $root.deleteItem.bind($data)">Delete</button>
                         </li>
                     </ul>
@@ -110,9 +108,9 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        var uc = new ULoadAdminResources();
+        var uc = new ULoadAdminProjects();
         var ajax = new Ajax();
-        ajax.getResources(uc.execute);
+        ajax.getProjects(uc.execute);
     });
 </script>    
 </body>

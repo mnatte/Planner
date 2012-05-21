@@ -1,5 +1,5 @@
 (function() {
-  var HLoadProjects, HLoadReleases, HLoadResources, UDisplayPhases, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, root,
+  var HLoadReleases, UDisplayPhases, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, root,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   root = typeof global !== "undefined" && global !== null ? global : window;
@@ -26,44 +26,6 @@
     };
 
     return HLoadReleases;
-
-  })();
-
-  HLoadProjects = (function() {
-
-    function HLoadProjects() {}
-
-    HLoadProjects.prototype.execute = function(data) {
-      var project, projects, _i, _len;
-      projects = [];
-      for (_i = 0, _len = data.length; _i < _len; _i++) {
-        project = data[_i];
-        this.project = new Project(project.Id, project.Title, project.ShortName, project.Description, project.TfsIterationPath, project.TfsDevBranch);
-        projects.push(this.project);
-      }
-      return projects;
-    };
-
-    return HLoadProjects;
-
-  })();
-
-  HLoadResources = (function() {
-
-    function HLoadResources() {}
-
-    HLoadResources.prototype.execute = function(data) {
-      var resource, resources, _i, _len;
-      resources = [];
-      for (_i = 0, _len = data.length; _i < _len; _i++) {
-        resource = data[_i];
-        this.resource = new Resource(resource.Id, resource.FirstName, resource.MiddleName, resource.LastName, resource.Initials, resource.AvailableHoursPerWeek, resource.Email, resource.PhoneNumber);
-        resources.push(this.resource);
-      }
-      return resources;
-    };
-
-    return HLoadResources;
 
   })();
 
@@ -180,7 +142,6 @@
       loadReleases = new HLoadReleases();
       releases = loadReleases.execute(data);
       this.viewModel = new AdminReleaseViewmodel(releases);
-      console.log(this.viewModel);
       this.viewModel.selectRelease(this.viewModel.allReleases()[0]);
       return ko.applyBindings(this.viewModel);
     };
@@ -194,12 +155,10 @@
     function ULoadAdminProjects() {}
 
     ULoadAdminProjects.prototype.execute = function(data) {
-      var loadProjects, projects;
-      loadProjects = new HLoadProjects();
-      projects = loadProjects.execute(data);
+      var projects;
+      projects = Project.createCollection(data);
       this.viewModel = new AdminProjectViewmodel(projects);
-      console.log(this.viewModel);
-      this.viewModel.selectProject(this.viewModel.allProjects()[0]);
+      this.viewModel.selectItem(this.viewModel.allItems()[0]);
       return ko.applyBindings(this.viewModel);
     };
 
@@ -212,9 +171,8 @@
     function ULoadAdminResources() {}
 
     ULoadAdminResources.prototype.execute = function(data) {
-      var load, resources;
-      load = new HLoadResources();
-      resources = load.execute(data);
+      var resources;
+      resources = Resource.createCollection(data);
       this.viewModel = new AdminResourceViewmodel(resources);
       this.viewModel.selectItem(this.viewModel.allItems()[0]);
       return ko.applyBindings(this.viewModel);
@@ -234,11 +192,7 @@
 
   root.ULoadAdminReleases = ULoadAdminReleases;
 
-  root.HLoadProjects = HLoadProjects;
-
   root.ULoadAdminProjects = ULoadAdminProjects;
-
-  root.HLoadResources = HLoadResources;
 
   root.ULoadAdminResources = ULoadAdminResources;
 

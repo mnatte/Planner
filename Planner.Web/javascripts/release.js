@@ -228,6 +228,28 @@
       return this.periodsAway.push(period);
     };
 
+    Resource.prototype.fullName = function() {
+      var middle;
+      if (this.middleName.length === 0) middle = " ";
+      if (this.middleName.length > 0) middle = " " + this.middleName + " ";
+      return this.firstName + middle + this.lastName;
+    };
+
+    Resource.create = function(jsonData) {
+      return new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials, jsonData.AvailableHoursPerWeek, jsonData.Email, jsonData.PhoneNumber);
+    };
+
+    Resource.createCollection = function(jsonData) {
+      var resource, resources, _i, _len;
+      resources = [];
+      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
+        resource = jsonData[_i];
+        this.resource = Resource.create(resource);
+        resources.push(this.resource);
+      }
+      return resources;
+    };
+
     return Resource;
 
   })(Mixin);
@@ -244,6 +266,21 @@
       this.tfsIterationPath = tfsIterationPath;
       this.tfsDevBranch = tfsDevBranch;
     }
+
+    Project.create = function(jsonData) {
+      return new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch);
+    };
+
+    Project.createCollection = function(jsonData) {
+      var project, projects, _i, _len;
+      projects = [];
+      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
+        project = jsonData[_i];
+        this.project = Project.create(project);
+        projects.push(this.project);
+      }
+      return projects;
+    };
 
     return Project;
 

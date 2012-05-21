@@ -150,9 +150,30 @@ class Resource extends Mixin
 		@periodsAway = []
 	addAbsence: (period) ->
 		@periodsAway.push(period)
+	fullName: ->
+		middle = " " if (@middleName.length is 0)
+		middle = " " + @middleName + " " if (@middleName.length > 0)
+		@firstName + middle + @lastName
+	# @ to create a static method, attach to class object itself
+	@create: (jsonData) ->
+		new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials, jsonData.AvailableHoursPerWeek, jsonData.Email, jsonData.PhoneNumber)
+	@createCollection: (jsonData) ->
+		resources = []
+		for resource in jsonData
+			@resource = Resource.create(resource)
+			resources.push @resource
+		resources
 
 class Project extends Mixin
 	constructor: (@id, @title, @shortName, @descr, @tfsIterationPath, @tfsDevBranch) ->
+	@create: (jsonData) ->
+		new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch)
+	@createCollection: (jsonData) ->
+		projects = []
+		for project in jsonData
+			@project = Project.create project
+			projects.push @project
+		projects
 	
 # export to root object
 root.Period = Period

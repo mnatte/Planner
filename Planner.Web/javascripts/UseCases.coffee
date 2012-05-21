@@ -10,8 +10,6 @@ class HLoadReleases
 		releases = []
 		# fill release collection
 		for release in data
-			#console.log release.StartDate
-			#console.log release.EndDate
 			@release = new Release(release.Id, DateFormatter.createJsDateFromJson(release.StartDate), DateFormatter.createJsDateFromJson(release.EndDate), release.Title, release.TfsIterationPath)
 			# add phases
 			for phase in release.Phases
@@ -19,26 +17,6 @@ class HLoadReleases
 				@release.addPhase new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, release.Id)
 			releases.push @release
 		releases
-
-class HLoadProjects
-	execute: (data) ->
-		projects = []
-		# fill project collection
-		for project in data
-			#console.log release.StartDate
-			#console.log release.EndDate
-			@project = new Project(project.Id, project.Title, project.ShortName, project.Description, project.TfsIterationPath, project.TfsDevBranch)
-			projects.push @project
-		projects
-
-class HLoadResources
-	execute: (data) ->
-		resources = []
-		# fill project collection
-		for resource in data
-			@resource = new Resource(resource.Id, resource.FirstName, resource.MiddleName, resource.LastName, resource.Initials, resource.AvailableHoursPerWeek, resource.Email, resource.PhoneNumber)
-			resources.push @resource
-		resources
 
 class UDisplayReleaseStatus
 	constructor: ->
@@ -132,31 +110,22 @@ class ULoadAdminReleases
 		loadReleases = new HLoadReleases()
 		releases = loadReleases.execute(data)
 		@viewModel = new AdminReleaseViewmodel(releases)
-		console.log @viewModel
 		@viewModel.selectRelease @viewModel.allReleases()[0]
-		# console.log @viewModel.selectedRelease().title
-		# @viewModel.selectedRelease().title.subscribe( (newValue) -> alert 'selectedRelease title changed with ' + newValue)
 		ko.applyBindings(@viewModel)
 
 class ULoadAdminProjects
 	constructor: ->
 	execute: (data) ->
-		loadProjects = new HLoadProjects()
-		projects = loadProjects.execute(data)
+		projects = Project.createCollection data
 		@viewModel = new AdminProjectViewmodel(projects)
-		console.log @viewModel
-		@viewModel.selectProject @viewModel.allProjects()[0]
-		# console.log @viewModel.selectedRelease().title
-		# @viewModel.selectedRelease().title.subscribe( (newValue) -> alert 'selectedRelease title changed with ' + newValue)
+		@viewModel.selectItem @viewModel.allItems()[0]
 		ko.applyBindings(@viewModel)
 
 class ULoadAdminResources
 	constructor: ->
 	execute: (data) ->
-		load = new HLoadResources()
-		resources = load.execute(data)
+		resources = Resource.createCollection data
 		@viewModel = new AdminResourceViewmodel(resources)
-		#console.log @viewModel
 		@viewModel.selectItem @viewModel.allItems()[0]
 		ko.applyBindings(@viewModel)
 		
@@ -166,8 +135,6 @@ root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFro
 root.UDisplayPhases = UDisplayPhases
 root.HLoadReleases = HLoadReleases
 root.ULoadAdminReleases = ULoadAdminReleases
-root.HLoadProjects = HLoadProjects
 root.ULoadAdminProjects = ULoadAdminProjects
-root.HLoadResources = HLoadResources
 root.ULoadAdminResources = ULoadAdminResources
 

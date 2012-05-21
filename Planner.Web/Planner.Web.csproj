@@ -118,7 +118,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="404.html" />
-    <Content Include="addProject.htm" />
+    <Content Include="adminProject.htm" />
     <Content Include="adminResource.htm" />
     <Content Include="images\bg_nav.PNG" />
     <Content Include="addRelease.htm" />
