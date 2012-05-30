@@ -42,8 +42,7 @@ class SimpleCrudViewmodel
 		# console.log ko.toJSON(@selectedItem())
 		item = (a for a in @allItems() when a.id is @selectedItem().id)[0]
 		i = @allItems().indexOf(item)
-		# TODO: make URL configurable
-		#@selectedItem().save("/planner/Resource/Save", ko.toJSON(@selectedItem()), (data) => @refreshItem(i, data))
+		
 		@selectedItem().save(ko.toJSON(@selectedItem()), (data) => @refreshItem(i, data))
 	
 	deleteItem: (data) =>
@@ -52,11 +51,6 @@ class SimpleCrudViewmodel
 		# use index for removing from @allItems
 		i = @allItems().indexOf(item)
 
-		# TODO: make URL configurable
-		#item.delete("/planner/Resource/Delete/" + item.id, (callbackdata) =>
-			# console.log callbackdata
-			#@refreshItem(i)
-		#)
 		item.delete(item.id, (callbackdata) =>
 			# console.log callbackdata
 			@refreshItem(i)

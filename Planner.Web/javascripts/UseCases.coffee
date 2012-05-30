@@ -13,7 +13,7 @@ class HLoadReleases
 			@release = new Release(release.Id, DateFormatter.createJsDateFromJson(release.StartDate), DateFormatter.createJsDateFromJson(release.EndDate), release.Title, release.TfsIterationPath)
 			# add phases
 			for phase in release.Phases
-				console.log phase
+				#console.log phase
 				@release.addPhase new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, release.Id)
 			releases.push @release
 		releases
@@ -128,6 +128,18 @@ class ULoadAdminResources
 		@viewModel = new AdminResourceViewmodel(resources)
 		@viewModel.selectItem @viewModel.allItems()[0]
 		ko.applyBindings(@viewModel)
+
+class ULoadPlanResources
+	constructor: ->
+	execute: (releases, projects) ->
+		#console.log releases
+		#console.log projects
+		loadReleases = new HLoadReleases()
+		releases = loadReleases.execute(releases)
+		projects = Project.createCollection projects
+		@viewModel = new PlanResourcesViewmodel(releases, projects)
+		@viewModel.selectRelease @viewModel.allReleases()[0]
+		ko.applyBindings(@viewModel)
 		
 # export to root object
 root.UDisplayReleaseStatus = UDisplayReleaseStatus
@@ -137,4 +149,5 @@ root.HLoadReleases = HLoadReleases
 root.ULoadAdminReleases = ULoadAdminReleases
 root.ULoadAdminProjects = ULoadAdminProjects
 root.ULoadAdminResources = ULoadAdminResources
+root.ULoadPlanResources = ULoadPlanResources
 

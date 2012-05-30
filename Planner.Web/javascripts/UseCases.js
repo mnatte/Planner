@@ -1,5 +1,5 @@
 (function() {
-  var HLoadReleases, UDisplayPhases, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, root,
+  var HLoadReleases, UDisplayPhases, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, root,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   root = typeof global !== "undefined" && global !== null ? global : window;
@@ -17,7 +17,6 @@
         _ref = release.Phases;
         for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
           phase = _ref[_j];
-          console.log(phase);
           this.release.addPhase(new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, release.Id));
         }
         releases.push(this.release);
@@ -182,6 +181,24 @@
 
   })();
 
+  ULoadPlanResources = (function() {
+
+    function ULoadPlanResources() {}
+
+    ULoadPlanResources.prototype.execute = function(releases, projects) {
+      var loadReleases;
+      loadReleases = new HLoadReleases();
+      releases = loadReleases.execute(releases);
+      projects = Project.createCollection(projects);
+      this.viewModel = new PlanResourcesViewmodel(releases, projects);
+      this.viewModel.selectRelease(this.viewModel.allReleases()[0]);
+      return ko.applyBindings(this.viewModel);
+    };
+
+    return ULoadPlanResources;
+
+  })();
+
   root.UDisplayReleaseStatus = UDisplayReleaseStatus;
 
   root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFromNow;
@@ -195,5 +212,7 @@
   root.ULoadAdminProjects = ULoadAdminProjects;
 
   root.ULoadAdminResources = ULoadAdminResources;
+
+  root.ULoadPlanResources = ULoadPlanResources;
 
 }).call(this);

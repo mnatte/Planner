@@ -120,6 +120,12 @@
     <Content Include="404.html" />
     <Content Include="adminProject.htm" />
     <Content Include="adminResource.htm" />
+    <Content Include="javascripts\planResourcesViewmodel.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>planResourcesViewmodel.coffee</DependentUpon>
+    </Content>
+    <Content Include="planResources.htm" />
     <Content Include="images\bg_nav.PNG" />
     <Content Include="addRelease.htm" />
     <Content Include="javascripts\adminProjectViewmodel.js">
@@ -290,6 +296,10 @@
     <None Include="javascripts\phasesViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>phasesViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\planResourcesViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>planResourcesViewmodel.js</LastGenOutput>
     </None>
     <None Include="javascripts\releaseViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
