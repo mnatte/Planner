@@ -134,6 +134,7 @@ class Release extends Phase
 		@phases = [] # ko.observableArray()
 		@backlog = []
 		@resources = []
+		@projects = []
 	addPhase: (phase) ->
 		@phases.push(phase)
 	addFeature: (feature) ->
@@ -141,6 +142,8 @@ class Release extends Phase
 	addResource: (resource) ->
 		# console.log resource.initials + "->" + resource.memberProject
 		@resources.push(resource)
+	addProject: (project) ->
+		@projects.push(project)
 
 class Feature
 	constructor: (@businessId, @contactPerson, @estimatedHours, @hoursWorked, @priority, @project, @remainingHours, @title, @state) ->

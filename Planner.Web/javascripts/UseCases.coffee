@@ -15,6 +15,10 @@ class HLoadReleases
 			for phase in release.Phases
 				#console.log phase
 				@release.addPhase new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, release.Id)
+			# add projects
+			for project in release.Projects
+				#console.log phase
+				@release.addProject new Project(project.Id, project.Title, project.ShorttName)
 			releases.push @release
 		releases
 
@@ -106,10 +110,11 @@ class UDisplayPhases
 
 class ULoadAdminReleases
 	constructor: ->
-	execute: (data) ->
+	execute: (jsonRels, jsonProjects) ->
 		loadReleases = new HLoadReleases()
-		releases = loadReleases.execute(data)
-		@viewModel = new AdminReleaseViewmodel(releases)
+		releases = loadReleases.execute(jsonRels)
+		projects = Project.createCollection jsonProjects
+		@viewModel = new AdminReleaseViewmodel(releases, projects)
 		@viewModel.selectRelease @viewModel.allReleases()[0]
 		ko.applyBindings(@viewModel)
 

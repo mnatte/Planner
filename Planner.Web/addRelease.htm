@@ -87,6 +87,7 @@
                         <label>Start date (dd-mm-yyyy):</label><input type="text" data-bind="value: startDate.dateString" />
                         <label>End date (dd-mm-yyyy):</label><input type="text" data-bind="value: endDate.dateString" />
                         <label>Tfs IterationPath:</label><input type="text" data-bind="value: tfsIterationPath" />
+                        <label>Projects:</label><select data-bind="options: $root.allProjects(), optionsText: 'title', optionsValue: 'id', selectedOptions: $root.selectedProjectIds()" size="5" multiple="true"></select>
                         <!--<p>Release Title: <span data-bind="text: title"></span></p>--> <!-- updates in real-time -->
                         <button data-bind="click: $parent.saveSelected.bind($data)">Submit</button>
                     </form>
@@ -110,10 +111,23 @@
     </div>
 
 <script type="text/javascript">
-    $(document).ready(function () {
+    // 'projects' is callback data provided by former Ajax call
+    function loadReleases(projects) {
         var uc = new ULoadAdminReleases();
+        var ajx = new Ajax();
+        // use closure around execute method to pass 'projects' argument as well as 'data' from getReleaseSummaries callback
+        // function(data) is callback so data is available from callback while 'projects' is available from closure construction
+        ajx.getReleaseSummaries(function (data) { uc.execute(data, projects) });
+    }
+
+    // load all projects, afterwards load releases
+    $(document).ready(function () {
+//        var uc = new ULoadAdminReleases();
+//        var ajax = new Ajax();
+//        ajax.getReleaseSummaries(uc.execute);
         var ajax = new Ajax();
-        ajax.getReleaseSummaries(uc.execute);
+        // callback 'loadReleases' provided, callback jsonData automatically supplied as argument
+        ajax.getProjects(loadReleases);
     });
 </script>    
 </body>

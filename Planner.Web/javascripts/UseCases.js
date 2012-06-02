@@ -9,7 +9,7 @@
     function HLoadReleases() {}
 
     HLoadReleases.prototype.execute = function(data) {
-      var phase, release, releases, _i, _j, _len, _len2, _ref;
+      var phase, project, release, releases, _i, _j, _k, _len, _len2, _len3, _ref, _ref2;
       releases = [];
       for (_i = 0, _len = data.length; _i < _len; _i++) {
         release = data[_i];
@@ -18,6 +18,11 @@
         for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
           phase = _ref[_j];
           this.release.addPhase(new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, release.Id));
+        }
+        _ref2 = release.Projects;
+        for (_k = 0, _len3 = _ref2.length; _k < _len3; _k++) {
+          project = _ref2[_k];
+          this.release.addProject(new Project(project.Id, project.Title, project.ShorttName));
         }
         releases.push(this.release);
       }
@@ -136,11 +141,12 @@
 
     function ULoadAdminReleases() {}
 
-    ULoadAdminReleases.prototype.execute = function(data) {
-      var loadReleases, releases;
+    ULoadAdminReleases.prototype.execute = function(jsonRels, jsonProjects) {
+      var loadReleases, projects, releases;
       loadReleases = new HLoadReleases();
-      releases = loadReleases.execute(data);
-      this.viewModel = new AdminReleaseViewmodel(releases);
+      releases = loadReleases.execute(jsonRels);
+      projects = Project.createCollection(jsonProjects);
+      this.viewModel = new AdminReleaseViewmodel(releases, projects);
       this.viewModel.selectRelease(this.viewModel.allReleases()[0]);
       return ko.applyBindings(this.viewModel);
     };

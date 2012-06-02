@@ -44,6 +44,16 @@ namespace MvcApplication1.Controllers
                                 rel.Phases.Add(new ReleaseModels.Phase { Id = int.Parse(reader2["Id"].ToString()), EndDate = DateTime.Parse(reader2["EndDate"].ToString()), StartDate = DateTime.Parse(reader2["StartDate"].ToString()), Title = reader2["Title"].ToString(), TfsIterationPath = reader2["TfsIterationPath"].ToString() });
                             }
                         }
+
+                        var projs = new SqlCommand(string.Format("Select rp.ProjectId, p.Title, p.ShortName from ReleaseProjects rp inner join Projects p on rp.ProjectId = p.Id where PhaseId = {0}", rel.Id), conn);
+                        using (var reader3 = projs.ExecuteReader())
+                        {
+                            while (reader3.Read())
+                            {
+                                var p = new ReleaseModels.Project { Id = int.Parse(reader3["ProjectId"].ToString()), Title = reader3["Title"].ToString(), ShortName = reader3["ShortName"].ToString() };
+                                rel.Projects.Add(p);
+                            }
+                        }
                         releases.Add(rel);
                     }
                 }
@@ -218,7 +228,7 @@ namespace MvcApplication1.Controllers
                 {
                     conn.Open();
 
-                    var cmd = new SqlCommand("sp_insert_release", conn);
+                    var cmd = new SqlCommand("sp_upsert_release", conn);
                     cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = obj.Id;
                     cmd.Parameters.Add("@Title", System.Data.SqlDbType.VarChar).Value = obj.Title;
                     cmd.Parameters.Add("@Descr", System.Data.SqlDbType.VarChar).Value = "";// obj.Descr;

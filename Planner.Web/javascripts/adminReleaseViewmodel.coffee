@@ -5,16 +5,18 @@
 root = global ? window
 
 class AdminReleaseViewmodel
-	constructor: (allReleases) ->
+	constructor: (allReleases, allProjects) ->
 		Release.extend(RCrud)
 		@selectedRelease = ko.observable()
 		@allReleases = ko.observableArray(allReleases)
+		@allProjects = ko.observableArray(allProjects)
+		@selectedProjectIds = ko.observableArray([])
 		for rel in @allReleases()
 			do (rel) ->
 				# console.log "ctor sort rel: #{rel}"
 				rel.phases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
 		@allReleases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
-		#console.log @allReleases()
+		# console.log @alls()
 		# setup nice 'remove' method for Array
 		Array::remove = (e) -> @[t..t] = [] if (t = @indexOf(e)) > -1
 
@@ -23,6 +25,10 @@ class AdminReleaseViewmodel
 		# console.log @
 		# console.log data
 		@selectedRelease data
+		@selectedProjectIds.removeAll()
+		for proj in @selectedRelease().projects
+			@selectedProjectIds.push(proj.id)
+		console.log @selectedRelease().projects
 		#console.log "selectRelease after selection: " + @selectedRelease().title + ", parentId: " +  @selectedRelease().parentId
 
 	refreshRelease: (index, jsonData) =>

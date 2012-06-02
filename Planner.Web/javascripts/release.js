@@ -170,6 +170,7 @@
       this.phases = [];
       this.backlog = [];
       this.resources = [];
+      this.projects = [];
     }
 
     Release.prototype.addPhase = function(phase) {
@@ -182,6 +183,10 @@
 
     Release.prototype.addResource = function(resource) {
       return this.resources.push(resource);
+    };
+
+    Release.prototype.addProject = function(project) {
+      return this.projects.push(project);
     };
 
     return Release;

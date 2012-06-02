@@ -85,6 +85,20 @@ namespace MvcApplication1.Models
                     return _backlog;
                 }
             }
+
+            /// <summary>
+            /// Enable coupling of Projects to Releases so resources 
+            /// </summary>
+            private List<Project> _projects;
+            public IList<Project> Projects
+            {
+                get
+                {
+                    if (_projects == null)
+                        _projects = new List<Project>();
+                    return _projects;
+                }
+            }
         }
 
         public class Feature

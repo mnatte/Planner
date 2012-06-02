@@ -6,7 +6,7 @@
 
   AdminReleaseViewmodel = (function() {
 
-    function AdminReleaseViewmodel(allReleases) {
+    function AdminReleaseViewmodel(allReleases, allProjects) {
       this.deleteRelease = __bind(this.deleteRelease, this);
       this.saveSelected = __bind(this.saveSelected, this);
       this.addPhase = __bind(this.addPhase, this);
@@ -16,6 +16,8 @@
       Release.extend(RCrud);
       this.selectedRelease = ko.observable();
       this.allReleases = ko.observableArray(allReleases);
+      this.allProjects = ko.observableArray(allProjects);
+      this.selectedProjectIds = ko.observableArray([]);
       _ref = this.allReleases();
       _fn = function(rel) {
         return rel.phases.sort(function(a, b) {
@@ -50,8 +52,16 @@
     }
 
     AdminReleaseViewmodel.prototype.selectRelease = function(data) {
+      var proj, _i, _len, _ref;
       console.log("selectRelease - function");
-      return this.selectedRelease(data);
+      this.selectedRelease(data);
+      this.selectedProjectIds.removeAll();
+      _ref = this.selectedRelease().projects;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        proj = _ref[_i];
+        this.selectedProjectIds.push(proj.id);
+      }
+      return console.log(this.selectedRelease().projects);
     };
 
     AdminReleaseViewmodel.prototype.refreshRelease = function(index, jsonData) {
