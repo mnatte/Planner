@@ -87,6 +87,16 @@ namespace MvcApplication1.Controllers
                                 release.Phases.Add(new ReleaseModels.Phase { Id = int.Parse(reader2["Id"].ToString()), EndDate = DateTime.Parse(reader2["EndDate"].ToString()), StartDate = DateTime.Parse(reader2["StartDate"].ToString()), Title = reader2["Title"].ToString(), TfsIterationPath = reader2["TfsIterationPath"].ToString() });
                             }
                         }
+
+                        var projs = new SqlCommand(string.Format("Select rp.ProjectId, p.Title, p.ShortName from ReleaseProjects rp inner join Projects p on rp.ProjectId = p.Id where PhaseId = {0}", release.Id), conn);
+                        using (var reader3 = projs.ExecuteReader())
+                        {
+                            while (reader3.Read())
+                            {
+                                var p = new ReleaseModels.Project { Id = int.Parse(reader3["ProjectId"].ToString()), Title = reader3["Title"].ToString(), ShortName = reader3["ShortName"].ToString() };
+                                release.Projects.Add(p);
+                            }
+                        }
                     }
                 }
             }
@@ -255,9 +265,27 @@ namespace MvcApplication1.Controllers
                     {
                         newId = obj.ParentId;
                     }
+
+                    // completely renew the Projects for the Release as set in the client app
+                    var cmdDelCross = new SqlCommand(string.Format("Delete from ReleaseProjects where PhaseId = {0}", newId), conn);
+                    cmdDelCross.ExecuteNonQuery();
+
+                    if (obj.Projects != null && obj.Projects.Count > 0)
+                    {
+                        var cmdInsertReleaseProject = new SqlCommand("sp_insert_releaseproject", conn);
+                        cmdInsertReleaseProject.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = obj.Id;
+                        cmdInsertReleaseProject.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = 0;
+                        cmdInsertReleaseProject.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        foreach (var proj in obj.Projects)
+                        {
+                            cmdInsertReleaseProject.Parameters["@ProjectId"].Value = proj.Id;
+                            cmdInsertReleaseProject.ExecuteNonQuery();
+                        }
+                    }
                 }
 
-                return GetReleaseById(newId);
+                return GetReleaseSummaryById(newId);
             }
             catch(Exception ex)
             {

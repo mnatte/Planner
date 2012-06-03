@@ -143,7 +143,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>adminResourceViewmodel.coffee</DependentUpon>
     </Content>
-    <Content Include="javascripts\ko.bindingHandlers.period.js" />
+    <Content Include="javascripts\ko.bindingHandlers.multipleSelect.js" />
     <Content Include="javascripts\ko.bindingHandlers.period2.js" />
     <Content Include="javascripts\phasesViewmodel.js">
       <DependentUpon>phasesViewmodel.coffee</DependentUpon>

@@ -13,11 +13,18 @@
       this.refreshRelease = __bind(this.refreshRelease, this);
       this.selectRelease = __bind(this.selectRelease, this);
       var rel, _fn, _i, _len, _ref;
+      Array.prototype.remove = function(e) {
+        var t, _ref;
+        if ((t = this.indexOf(e)) > -1) {
+          return ([].splice.apply(this, [t, t - t + 1].concat(_ref = [])), _ref);
+        }
+      };
       Release.extend(RCrud);
       this.selectedRelease = ko.observable();
       this.allReleases = ko.observableArray(allReleases);
       this.allProjects = ko.observableArray(allProjects);
-      this.selectedProjectIds = ko.observableArray([]);
+      this.allNumbers = ko.observableArray([1, 2, 3, 4, 5]);
+      this.testNumbers = ko.observableArray([]);
       _ref = this.allReleases();
       _fn = function(rel) {
         return rel.phases.sort(function(a, b) {
@@ -32,6 +39,8 @@
       };
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         rel = _ref[_i];
+        this.setReleaseProjects(rel);
+        console.log(ko.isWriteableObservable(rel.projects));
         _fn(rel);
       }
       this.allReleases.sort(function(a, b) {
@@ -43,29 +52,37 @@
           return 0;
         }
       });
-      Array.prototype.remove = function(e) {
-        var t, _ref2;
-        if ((t = this.indexOf(e)) > -1) {
-          return ([].splice.apply(this, [t, t - t + 1].concat(_ref2 = [])), _ref2);
-        }
-      };
     }
 
+    AdminReleaseViewmodel.prototype.setReleaseProjects = function(rel) {
+      var p, proj, relprojs, _i, _len, _results;
+      relprojs = rel.projects.slice();
+      rel.projects = ko.observableArray([]);
+      _results = [];
+      for (_i = 0, _len = relprojs.length; _i < _len; _i++) {
+        proj = relprojs[_i];
+        _results.push((function() {
+          var _j, _len2, _ref, _results2;
+          _ref = this.allProjects();
+          _results2 = [];
+          for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
+            p = _ref[_j];
+            if (p.id === proj.id) _results2.push(rel.projects.push(p));
+          }
+          return _results2;
+        }).call(this));
+      }
+      return _results;
+    };
+
     AdminReleaseViewmodel.prototype.selectRelease = function(data) {
-      var proj, _i, _len, _ref;
       console.log("selectRelease - function");
       this.selectedRelease(data);
-      this.selectedProjectIds.removeAll();
-      _ref = this.selectedRelease().projects;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        proj = _ref[_i];
-        this.selectedProjectIds.push(proj.id);
-      }
-      return console.log(this.selectedRelease().projects);
+      return console.log(this.selectedRelease().projects());
     };
 
     AdminReleaseViewmodel.prototype.refreshRelease = function(index, jsonData) {
-      var i, phase, rel, _i, _len, _ref;
+      var i, phase, project, rel, _i, _j, _len, _len2, _ref, _ref2;
       i = index >= 0 ? index : this.allReleases().length;
       this.allReleases.splice(i, 1);
       console.log(jsonData);
@@ -80,6 +97,12 @@
         rel.phases.sort(function(a, b) {
           return a.startDate.date - b.startDate.date;
         });
+        _ref2 = jsonData.Projects;
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          project = _ref2[_j];
+          rel.addProject(new Project(project.Id, project.Title, project.ShortName));
+          this.setReleaseProjects(rel);
+        }
         return this.allReleases.splice(i, 0, rel);
       }
     };
@@ -99,6 +122,7 @@
         _this = this;
       console.log("saveSelected: selectedRelease: " + (this.selectedRelease()));
       console.log(ko.toJSON(this.selectedRelease()));
+      console.log(ko.isObservable(this.selectedRelease().projects));
       rel = ((function() {
         var _i, _len, _ref, _results;
         _ref = this.allReleases();

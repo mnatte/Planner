@@ -15,5 +15,6 @@ namespace MvcApplication1.Models
         public string TfsIterationPath { get; set; }
         public int ParentId { get; set; }
         public List<ReleaseInputModel> Phases { get; set; }
+        public List<ProjectInputModel> Projects { get; set; }
     }
 }

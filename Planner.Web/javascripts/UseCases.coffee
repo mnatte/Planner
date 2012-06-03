@@ -18,7 +18,7 @@ class HLoadReleases
 			# add projects
 			for project in release.Projects
 				#console.log phase
-				@release.addProject new Project(project.Id, project.Title, project.ShorttName)
+				@release.addProject new Project(project.Id, project.Title, project.ShortName)
 			releases.push @release
 		releases
 
@@ -116,7 +116,7 @@ class ULoadAdminReleases
 		projects = Project.createCollection jsonProjects
 		@viewModel = new AdminReleaseViewmodel(releases, projects)
 		@viewModel.selectRelease @viewModel.allReleases()[0]
-		ko.applyBindings(@viewModel)
+		ko.applyBindings(@viewModel, null, {independentBindings: true})
 
 class ULoadAdminProjects
 	constructor: ->

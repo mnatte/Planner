@@ -6,29 +6,49 @@ root = global ? window
 
 class AdminReleaseViewmodel
 	constructor: (allReleases, allProjects) ->
+		# setup nice 'remove' method for Array
+		Array::remove = (e) -> @[t..t] = [] if (t = @indexOf(e)) > -1
+
 		Release.extend(RCrud)
 		@selectedRelease = ko.observable()
 		@allReleases = ko.observableArray(allReleases)
 		@allProjects = ko.observableArray(allProjects)
-		@selectedProjectIds = ko.observableArray([])
+
+		@allNumbers = ko.observableArray([1,2,3,4,5])
+		@testNumbers = ko.observableArray([])
+		#@selectedProjectIds = ko.observableArray([])
 		for rel in @allReleases()
+			@setReleaseProjects rel
+			# console.log rel.projects()
+			# console.log ko.isObservable(rel.projects)
+			console.log ko.isWriteableObservable(rel.projects)
 			do (rel) ->
 				# console.log "ctor sort rel: #{rel}"
 				rel.phases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
 		@allReleases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
-		# console.log @alls()
-		# setup nice 'remove' method for Array
-		Array::remove = (e) -> @[t..t] = [] if (t = @indexOf(e)) > -1
+
+		#console.log @allProjects()
+
+	setReleaseProjects: (rel) ->
+		# assign projects and transform projects array to observableArray so changes will be registered
+			# use slice to create independent copy instead of copying the reference by relprojs = rel.projects
+			relprojs = rel.projects.slice()
+			rel.projects = ko.observableArray([])
+			for proj in relprojs
+				#console.log proj
+				for p in @allProjects() when p.id is proj.id
+					#console.log "assign project #{p.title}"
+					rel.projects.push p		
 
 	selectRelease: (data) =>
 		console.log "selectRelease - function"
 		# console.log @
 		# console.log data
 		@selectedRelease data
-		@selectedProjectIds.removeAll()
-		for proj in @selectedRelease().projects
-			@selectedProjectIds.push(proj.id)
-		console.log @selectedRelease().projects
+		#@selectedProjectIds.removeAll()
+		#for proj in @selectedRelease().projects
+			#@selectedProjectIds.push(proj.id)
+		console.log @selectedRelease().projects()
 		#console.log "selectRelease after selection: " + @selectedRelease().title + ", parentId: " +  @selectedRelease().parentId
 
 	refreshRelease: (index, jsonData) =>
@@ -49,6 +69,19 @@ class AdminReleaseViewmodel
 				rel.addPhase new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, rel.id)
 			# index = index of item to remove, 0 is amount to be removed, rel is item to be inserted there
 			rel.phases.sort((a,b)->a.startDate.date - b.startDate.date)
+
+			for project in jsonData.Projects
+				rel.addProject new Project(project.Id, project.Title, project.ShortName)
+				# use slice to create independent copy instead of copying the reference by relprojs = rel.projects
+				@setReleaseProjects rel
+
+				#relprojs = rel.projects.slice()
+				#rel.projects = ko.observableArray([])
+				#for proj in relprojs
+				#	console.log proj
+				#	for p in @allProjects() when p.id is proj.id
+				#		console.log "assign project #{p.title}"
+				#		rel.projects.push p
 			@allReleases.splice i, 0, rel
 
 	clear: ->
@@ -62,6 +95,7 @@ class AdminReleaseViewmodel
 	saveSelected: =>
 		console.log "saveSelected: selectedRelease: #{@selectedRelease()}"
 		console.log ko.toJSON(@selectedRelease())
+		console.log ko.isObservable(@selectedRelease().projects)
 		rel = (a for a in @allReleases() when a.id is @selectedRelease().id)[0]
 		parentrel = (a for a in @allReleases() when a.id is @selectedRelease().parentId)[0]
 		i = if @allReleases().indexOf(rel) is -1 then @allReleases().indexOf(parentrel) else @allReleases().indexOf(rel)
@@ -84,6 +118,6 @@ class AdminReleaseViewmodel
 			console.log callbackdata
 			rel.get("/planner/Release/GetReleaseSummaryById/"+ id, (jsonData) => @refreshRelease(i, jsonData))
 		)
-		
+
 # export to root object
 root.AdminReleaseViewmodel = AdminReleaseViewmodel

@@ -22,7 +22,7 @@
         _ref2 = release.Projects;
         for (_k = 0, _len3 = _ref2.length; _k < _len3; _k++) {
           project = _ref2[_k];
-          this.release.addProject(new Project(project.Id, project.Title, project.ShorttName));
+          this.release.addProject(new Project(project.Id, project.Title, project.ShortName));
         }
         releases.push(this.release);
       }
@@ -148,7 +148,9 @@
       projects = Project.createCollection(jsonProjects);
       this.viewModel = new AdminReleaseViewmodel(releases, projects);
       this.viewModel.selectRelease(this.viewModel.allReleases()[0]);
-      return ko.applyBindings(this.viewModel);
+      return ko.applyBindings(this.viewModel, null, {
+        independentBindings: true
+      });
     };
 
     return ULoadAdminReleases;
