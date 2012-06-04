@@ -1,5 +1,5 @@
 (function() {
-  var Feature, MileStone, Period, Phase, Project, Release, Resource, root,
+  var AssignedResource, Feature, MileStone, Period, Phase, Project, Release, Resource, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -291,6 +291,37 @@
 
   })(Mixin);
 
+  AssignedResource = (function(_super) {
+
+    __extends(AssignedResource, _super);
+
+    function AssignedResource(id, phaseId, phaseTitle, resourceId, firstName, middleName, lastName, projectId, projectTitle, focusFactor) {
+      this.id = id;
+      this.focusFactor = focusFactor;
+      this.resource = new Resource(resourceId, firstName, middleName, lastName);
+      this.project = new Project(projectId, projectTitle);
+      this.phase = new Phase(phaseId, "", "", phaseTitle);
+    }
+
+    AssignedResource.create = function(jsonData) {
+      return new AssignedResource(jsonData.Id, jsonData.Phase.Id, jsonData.Phase.Title, jsonData.Resource.Id, jsonData.Resource.FirstName, jsonData.Resource.MiddleName, jsonData.Resource.LastName, jsonData.Project.Id, jsonData.Project.Title, jsonData.FocusFactor);
+    };
+
+    AssignedResource.createCollection = function(jsonData) {
+      var assignment, assignments, _i, _len;
+      assignments = [];
+      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
+        assignment = jsonData[_i];
+        this.assignment = AssignedResource.create(assignment);
+        assignments.push(this.assignment);
+      }
+      return assignments;
+    };
+
+    return AssignedResource;
+
+  })(Mixin);
+
   root.Period = Period;
 
   root.Phase = Phase;
@@ -304,5 +335,7 @@
   root.Resource = Resource;
 
   root.Project = Project;
+
+  root.AssignedResource = AssignedResource;
 
 }).call(this);

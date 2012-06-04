@@ -5,13 +5,13 @@
 root = global ? window
 
 class PlanResourcesViewmodel
-	constructor: (allReleases, allProjects) ->
+	constructor: (allReleases) ->
 		#Release.extend(RCrud)
 		@selectedProject = ko.observable()
 		@selectedRelease = ko.observable()
 		@selectedPhase = ko.observable()
 		@allReleases = ko.observableArray(allReleases)
-		@allProjects = ko.observableArray(allProjects)
+		@assignments = ko.observableArray()
 
 		#for rel in @allReleases()
 		#	do (rel) ->
@@ -29,6 +29,16 @@ class PlanResourcesViewmodel
 
 	selectPhase: (data) =>
 		@selectedPhase data
+
+	setAssignments: (jsonData) =>
+		@assignments.removeAll()
+		@assignments (AssignedResource.createCollection jsonData)
+		#for a in @assignments()
+		#	console.log a
+
+	loadAssignments: ->
+        ajax = new Ajax()
+        ajax.getAssignedResources(@selectedRelease().id, @selectedProject().id, @setAssignments)
 
 # export to root object
 root.PlanResourcesViewmodel = PlanResourcesViewmodel

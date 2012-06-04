@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using MvcApplication1.Controllers;
 
 namespace MvcApplication1.Models
 {
-    public class PersonInputModel
+    public class PersonInputModel : IBasicCrudUsable
     {
         public int Id { get; set; }
         public string FirstName { get; set; }

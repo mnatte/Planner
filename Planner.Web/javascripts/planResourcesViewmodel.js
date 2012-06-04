@@ -6,14 +6,15 @@
 
   PlanResourcesViewmodel = (function() {
 
-    function PlanResourcesViewmodel(allReleases, allProjects) {
+    function PlanResourcesViewmodel(allReleases) {
+      this.setAssignments = __bind(this.setAssignments, this);
       this.selectPhase = __bind(this.selectPhase, this);
       this.selectProject = __bind(this.selectProject, this);
       this.selectRelease = __bind(this.selectRelease, this);      this.selectedProject = ko.observable();
       this.selectedRelease = ko.observable();
       this.selectedPhase = ko.observable();
       this.allReleases = ko.observableArray(allReleases);
-      this.allProjects = ko.observableArray(allProjects);
+      this.assignments = ko.observableArray();
       Array.prototype.remove = function(e) {
         var t, _ref;
         if ((t = this.indexOf(e)) > -1) {
@@ -32,6 +33,17 @@
 
     PlanResourcesViewmodel.prototype.selectPhase = function(data) {
       return this.selectedPhase(data);
+    };
+
+    PlanResourcesViewmodel.prototype.setAssignments = function(jsonData) {
+      this.assignments.removeAll();
+      return this.assignments(AssignedResource.createCollection(jsonData));
+    };
+
+    PlanResourcesViewmodel.prototype.loadAssignments = function() {
+      var ajax;
+      ajax = new Ajax();
+      return ajax.getAssignedResources(this.selectedRelease().id, this.selectedProject().id, this.setAssignments);
     };
 
     return PlanResourcesViewmodel;

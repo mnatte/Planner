@@ -78,7 +78,7 @@
 
     Ajax.prototype.getResources = function(callback) {
       var url;
-      url = "/planner/Resource/GetResources";
+      url = "/planner/Resource/GetItems";
       return $.ajax(url, {
         dataType: "json",
         type: "GET",
@@ -88,6 +88,24 @@
         },
         error: function(XHR, status, errorThrown) {
           return console.log("AJAX Releases error: " + status);
+        }
+      });
+    };
+
+    Ajax.prototype.getAssignedResources = function(phaseId, projectId, callback) {
+      var url;
+      url = "/planner/ResourceAssignment/Assignments" + "/" + phaseId + "/" + projectId;
+      return $.ajax(url, {
+        dataType: "json",
+        type: "GET",
+        success: function(data, status, XHR) {
+          console.log("Resource Assignments data loaded");
+          return callback(data);
+        },
+        error: function(XHR, status, errorThrown) {
+          console.log("AJAX Releases status: " + status);
+          console.log("AJAX Releases XHR: " + XHR);
+          return console.log("AJAX Releases errorThrown: " + errorThrown);
         }
       });
     };

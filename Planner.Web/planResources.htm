@@ -51,8 +51,8 @@
 <!-- Primary Page Layout
 	================================================== -->
 
-	<!--Process: for this page the projects that are included in a release are given. This happens through importing TFS workload and mapping the IterationPaths to Projects-->
-    Consequence is that all pulldowns need to be prefilled with phases and projects being related through 
+	<!--Process: for this page the projects that are included in a release are given. This happens through importing TFS workload and mapping the IterationPaths to Projects
+    Consequence is that all pulldowns need to be prefilled with phases and projects being related through -->
     <div class="container">
         <div class="band navigation">
 	
@@ -81,11 +81,20 @@
             </div>
             
             <div id="projects" class="five columns alpha">
-                Project: <select data-bind="options: allProjects, optionsText: 'title', value: selectedProject, optionsCaption: 'Choose...'"></select>
+                Project: <select data-bind="options: selectedRelease().projects, optionsText: 'title', value: selectedProject, optionsCaption: 'Choose...', event: { change: $root.loadAssignments }"></select>
             </div>
         </section>
 
-        <div class="band">
+            <!-- ko if: $root.selectedProject() -->
+            <ul data-bind="foreach: assignments">
+                <li>
+                    <span class="selectable" data-bind="text: resource.fullName()"></span>
+                    <span class="selectable" data-bind="text: focusFactor"></span>
+                </li>
+            </ul>
+            <!--/ko-->
+
+        <!--<div class="band">
             <div class="sixteen columns omega">
                 <div class="five columns omega" data-bind="with: selectedRelease()">
                     Selected Release: <data data-bind="text: title"></data>
@@ -97,7 +106,8 @@
                     Selected Project: <data data-bind="text: title"></data>
                 </div>
             </div>
-        </div>
+        </div>-->
+        <div 
     </div>
 
 <script type="text/javascript">
@@ -107,9 +117,12 @@
         // use closure around execute method to pass 'projects' argument as well as 'data' from getReleaseSummaries callback
         ajx.getReleaseSummaries(function (data) { uc.execute(data, projects) });
     }
+
     $(document).ready(function () {
         var ajax = new Ajax();
-        ajax.getProjects(loadReleases);
+        //ajax.getProjects(loadReleases);
+        var uc = new ULoadPlanResources();
+        ajax.getReleaseSummaries(uc.execute);
     });
 </script>    
 </body>

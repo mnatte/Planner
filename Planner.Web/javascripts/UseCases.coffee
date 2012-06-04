@@ -136,16 +136,18 @@ class ULoadAdminResources
 
 class ULoadPlanResources
 	constructor: ->
-	execute: (releases, projects) ->
+	#execute: (releases, projects) ->
+	execute: (releases) ->
 		#console.log releases
 		#console.log projects
 		loadReleases = new HLoadReleases()
 		releases = loadReleases.execute(releases)
-		projects = Project.createCollection projects
-		@viewModel = new PlanResourcesViewmodel(releases, projects)
+		#projects = Project.createCollection projects
+		#@viewModel = new PlanResourcesViewmodel(releases, projects)
+		@viewModel = new PlanResourcesViewmodel(releases)
 		@viewModel.selectRelease @viewModel.allReleases()[0]
 		ko.applyBindings(@viewModel)
-		
+
 # export to root object
 root.UDisplayReleaseStatus = UDisplayReleaseStatus
 root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFromNow

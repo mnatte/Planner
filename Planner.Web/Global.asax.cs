@@ -22,6 +22,11 @@ namespace MvcApplication1
                 "{controller}/{action}/{id}", // URL with parameters
                 new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults
             );
+            routes.MapRoute(
+                "ResourceAssignments", // Route name
+                "ResourceAssignment/Assignments/{phaseId}/{projectId}", // URL with parameters
+                new { controller = "ResourceAssignment", action = "GetAssignmentsByPhaseIdAndProjectId", param1 = UrlParameter.Optional, param2 = UrlParameter.Optional } // Parameter defaults
+            );
 
         }
 

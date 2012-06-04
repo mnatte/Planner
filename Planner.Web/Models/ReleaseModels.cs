@@ -59,6 +59,15 @@ namespace MvcApplication1.Models
             public ReleaseModels.Resource Person { get; set; }
         }
 
+        public class ResourceAssignment
+        {
+            public int Id { get; set; }
+            public ReleaseModels.Resource Resource { get; set; }
+            public ReleaseModels.Phase Phase { get; set; }
+            public ReleaseModels.Project Project { get; set; }
+            public double FocusFactor { get; set; }
+        }
+
         public class Release : Phase
         {
             private List<Phase> _phases;
@@ -87,7 +96,7 @@ namespace MvcApplication1.Models
             }
 
             /// <summary>
-            /// Enable coupling of Projects to Releases so resources 
+            /// Enable coupling of Projects to Releases to resources 
             /// </summary>
             private List<Project> _projects;
             public IList<Project> Projects

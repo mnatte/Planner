@@ -100,11 +100,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\SimpleCrudController.cs" />
+    <Compile Include="Controllers\IBasicCrudUsable.cs" />
+    <Compile Include="Controllers\ResourceAssignmentController.cs" />
     <Compile Include="Controllers\ResourceController.cs" />
     <Compile Include="Controllers\PhasesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
     <Compile Include="Controllers\ReleaseController.cs" />
+    <Compile Include="Controllers\BaseCrudController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -112,6 +116,7 @@
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\PersonInputModel.cs" />
     <Compile Include="Models\ProjectInputModel.cs" />
+    <Compile Include="Models\ResourceAssignmentInputModel.cs" />
     <Compile Include="Models\ReleaseModels.cs" />
     <Compile Include="Models\ReleaseInputModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -177,6 +177,21 @@ class Project extends Mixin
 			@project = Project.create project
 			projects.push @project
 		projects
+
+class AssignedResource extends Mixin
+	constructor: (@id, phaseId, phaseTitle, resourceId, firstName, middleName, lastName, projectId, projectTitle, @focusFactor) ->
+		@resource = new Resource(resourceId, firstName, middleName, lastName)
+		@project = new Project(projectId, projectTitle)
+		@phase = new Phase(phaseId, "", "", phaseTitle)
+	@create: (jsonData) ->
+		new AssignedResource(jsonData.Id, jsonData.Phase.Id, jsonData.Phase.Title, jsonData.Resource.Id, jsonData.Resource.FirstName, jsonData.Resource.MiddleName, jsonData.Resource.LastName, jsonData.Project.Id, jsonData.Project.Title, jsonData.FocusFactor)
+	@createCollection: (jsonData) ->
+		assignments = []
+		for assignment in jsonData
+			#console.log assignment
+			@assignment = AssignedResource.create assignment
+			assignments.push @assignment
+		assignments
 	
 # export to root object
 root.Period = Period
@@ -186,4 +201,5 @@ root.Release = Release
 root.Feature = Feature
 root.Resource = Resource
 root.Project = Project
+root.AssignedResource = AssignedResource
 
