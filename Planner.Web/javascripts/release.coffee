@@ -192,6 +192,17 @@ class AssignedResource extends Mixin
 			@assignment = AssignedResource.create assignment
 			assignments.push @assignment
 		assignments
+	toJSON: ->
+		copy = ko.toJS(@) #get a clean copy
+		delete copy.phase #remove property
+		delete copy.resource #remove property
+		delete copy.project #remove property
+		#console.log(@resource)
+		copy.resourceId = @resource.id
+		copy.phaseId = @phase.id
+		copy.projectId = @project.id
+		#console.log(copy)
+		copy #return the copy to be serialized
 	
 # export to root object
 root.Period = Period

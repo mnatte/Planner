@@ -39,6 +39,10 @@
     <script type="text/javascript" src="Scripts/jquery.dateFormat-1.0.js"></script>
     <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
     <script type="text/javascript" src="Scripts/knockout-array-filter.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.editinplace.js"></script>
+    <script type="text/javascript" src="javascripts/ko.bindingHandlers.editable.js"></script>
+    <script type="text/javascript" src="javascripts/ko.bindingHandlers.fadeVisible.js"></script>
+    <script type="text/javascript" src="Scripts/koExternalTemplateEngine_all.min.js"></script>
         
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
@@ -88,41 +92,40 @@
             <!-- ko if: $root.selectedProject() -->
             <ul data-bind="foreach: assignments">
                 <li>
-                    <span class="selectable" data-bind="text: resource.fullName()"></span>
-                    <span class="selectable" data-bind="text: focusFactor"></span>
+                    <span data-bind="text: resource.fullName()"></span>
+                    <span class="selectable" contenteditable="true" data-bind="text: focusFactor, editable: focusFactor"></span>
                 </li>
             </ul>
+            <button data-bind="click: $root.addResource.bind($data)">+ Resource</button>
             <!--/ko-->
 
-        <!--<div class="band">
-            <div class="sixteen columns omega">
-                <div class="five columns omega" data-bind="with: selectedRelease()">
-                    Selected Release: <data data-bind="text: title"></data>
-                </div>
-                <div class="five columns omega" data-bind="with: selectedPhase()">
-                    Selected Phase: <data data-bind="text: title"></data>
-                </div>
-                <div class="five columns omega" data-bind="with: selectedProject()">
-                    Selected Project: <data data-bind="text: title"></data>
+            <!-- ko if: $root.selectedProject() -->
+            <div class="rightFloat" data-bind="fadeVisible: $root.canShowForm(), fadeDuration: 2000">
+                <div class="productDetailsArea">
+                    <!-- ko template: {name: 'addAssignment', data: $root.newAssignment} -->
+                    <!-- /ko -->
                 </div>
             </div>
-        </div>-->
-        <div 
+            <!--/ko-->
+        <div>
     </div>
 
 <script type="text/javascript">
-    function loadReleases(projects) {
+    function loadReleases(resources) {
         var uc = new ULoadPlanResources();
         var ajx = new Ajax();
         // use closure around execute method to pass 'projects' argument as well as 'data' from getReleaseSummaries callback
-        ajx.getReleaseSummaries(function (data) { uc.execute(data, projects) });
+        ajx.getReleaseSummaries(function (data) { uc.execute(data, resources) });
     }
 
     $(document).ready(function () {
+        infuser.defaults.templateSuffix = ".tmpl.html";
+        infuser.defaults.templateUrl = "/planner/templates";
+
         var ajax = new Ajax();
-        //ajax.getProjects(loadReleases);
-        var uc = new ULoadPlanResources();
-        ajax.getReleaseSummaries(uc.execute);
+        ajax.getResources(loadReleases);
+        //var uc = new ULoadPlanResources();
+        //ajax.getReleaseSummaries(uc.execute);
     });
 </script>    
 </body>

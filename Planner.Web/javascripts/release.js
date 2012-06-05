@@ -318,6 +318,18 @@
       return assignments;
     };
 
+    AssignedResource.prototype.toJSON = function() {
+      var copy;
+      copy = ko.toJS(this);
+      delete copy.phase;
+      delete copy.resource;
+      delete copy.project;
+      copy.resourceId = this.resource.id;
+      copy.phaseId = this.phase.id;
+      copy.projectId = this.project.id;
+      return copy;
+    };
+
     return AssignedResource;
 
   })(Mixin);
