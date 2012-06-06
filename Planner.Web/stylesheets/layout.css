@@ -268,6 +268,14 @@ div[class=closeIcon]:hover {
     box-shadow:4px 4px 3px #655e5e;
     }
 
+[contenteditable]:hover {
+     outline: 1px dotted red;
+}
+
+[contenteditable]:focus {
+     outline: 1px dotted green;
+}
+
 /* smaller than standard 960*/
 @media only screen and (max-width 959px) {
     body

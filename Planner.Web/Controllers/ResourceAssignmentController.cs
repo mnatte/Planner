@@ -26,6 +26,40 @@ namespace MvcApplication1.Controllers
             cmd.CommandType = System.Data.CommandType.StoredProcedure;
         }
 
+        [HttpPost]
+        public JsonResult SaveAssignments(ReleaseAssignmentsInputModel model)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            int newId = 0;
+            int amount = 0;
+            try
+            {
+                using (conn)
+                {
+                    conn.Open();
+                    var cmd = new SqlCommand("sp_upsert_resource_assignment", conn);
+                    cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = 0;
+                    cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = model.PhaseId;
+                    cmd.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = model.ProjectId;
+                    cmd.Parameters.Add("@PersonId", System.Data.SqlDbType.Int).Value = 0;
+                    cmd.Parameters.Add("@FocusFactor", System.Data.SqlDbType.Decimal).Value = 9;
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    foreach (var ass in model.Assignments)
+                    {
+                        cmd.Parameters["@Id"].Value = ass.Id;
+                        cmd.Parameters["@PersonId"].Value = ass.ResourceId;
+                        cmd.Parameters["@FocusFactor"].Value = ass.FocusFactor;
+                        amount += cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return this.Json(string.Format("{0} rows deleted", amount), JsonRequestBehavior.AllowGet); 
+        }
+
         protected override void ConfigureSelectAllCommand(System.Data.SqlClient.SqlCommand cmd)
         {
             cmd.CommandText = "sp_get_release_resources";

@@ -7,12 +7,13 @@
   PlanResourcesViewmodel = (function() {
 
     function PlanResourcesViewmodel(allReleases, allResources) {
-      this.saveAssignment = __bind(this.saveAssignment, this);
+      this.saveAssignments = __bind(this.saveAssignments, this);
       this.closeForm = __bind(this.closeForm, this);
+      this.addAssignment = __bind(this.addAssignment, this);
       this.setAssignments = __bind(this.setAssignments, this);
       this.selectPhase = __bind(this.selectPhase, this);
       this.selectProject = __bind(this.selectProject, this);
-      this.selectRelease = __bind(this.selectRelease, this);      AssignedResource.extend(RCrud);
+      this.selectRelease = __bind(this.selectRelease, this);      ReleaseAssignments.extend(RCrud);
       this.selectedProject = ko.observable();
       this.selectedRelease = ko.observable();
       this.selectedPhase = ko.observable();
@@ -57,16 +58,20 @@
       return this.canShowForm(true);
     };
 
+    PlanResourcesViewmodel.prototype.addAssignment = function() {
+      return this.assignments.push(new AssignedResource(0, this.selectedRelease().id, "", this.selectedResource().id, this.selectedResource().firstName, this.selectedResource().middleName, this.selectedResource().lastName, this.selectedProject().id, "", this.newAssignment.focusFactor));
+    };
+
     PlanResourcesViewmodel.prototype.closeForm = function() {
       return this.canShowForm(false);
     };
 
-    PlanResourcesViewmodel.prototype.saveAssignment = function() {
-      var _this = this;
-      this.newAssignment.phase = this.selectedRelease();
-      this.newAssignment.resource = this.selectedResource();
-      this.newAssignment.project = this.selectedProject();
-      return this.newAssignment.save("/planner/ResourceAssignment/Save", ko.toJSON(this.newAssignment), function(data) {
+    PlanResourcesViewmodel.prototype.saveAssignments = function() {
+      var dto,
+        _this = this;
+      dto = new ReleaseAssignments(this.selectedRelease().id, this.selectedProject().id, this.assignments());
+      console.log(ko.toJSON(dto));
+      return dto.save("/planner/ResourceAssignment/SaveAssignments", ko.toJSON(dto), function(data) {
         return console.log(data);
       });
     };

@@ -4,7 +4,7 @@
     ifuser.defaults.templateUrl = "/planner/templates";-->
     <div class="dialogTitleBorder">
         <span class="borderTitleText">New Resource Assignment</span>
-        <div class="closeIcon" data-bind="click:$root.closeForm()"></div>
+        <div class="closeIcon" data-bind="click:$root.closeForm"></div>
     </div>
     <!--<div class="photoContainer leftFloat">
         <img data-bind="visible: photoUrl, attr: { src: photoUrl, alt: shortDesc}" class="photoThumbnail"></img>
@@ -16,6 +16,6 @@
         <label>Focus factor: </label><input type="text" data-bind="value: focusFactor" />
     </div>
     <div>
-        <button data-bind="click: $root.saveAssignment.bind($data)">Save</button>
+        <button data-bind="click: $root.addAssignment.bind($data)">Save</button>
     </div>
 </div>

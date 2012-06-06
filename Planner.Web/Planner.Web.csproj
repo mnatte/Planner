@@ -116,6 +116,7 @@
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\PersonInputModel.cs" />
     <Compile Include="Models\ProjectInputModel.cs" />
+    <Compile Include="Models\ReleaseAssignmentsInputModel.cs" />
     <Compile Include="Models\ResourceAssignmentInputModel.cs" />
     <Compile Include="Models\ReleaseModels.cs" />
     <Compile Include="Models\ReleaseInputModel.cs" />

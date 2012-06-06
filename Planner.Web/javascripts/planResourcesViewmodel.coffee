@@ -6,7 +6,7 @@ root = global ? window
 
 class PlanResourcesViewmodel
 	constructor: (allReleases, allResources) ->
-		AssignedResource.extend(RCrud)
+		ReleaseAssignments.extend(RCrud)
 		@selectedProject = ko.observable()
 		@selectedRelease = ko.observable()
 		@selectedPhase = ko.observable()
@@ -45,19 +45,27 @@ class PlanResourcesViewmodel
 	addResource: ->
 		@canShowForm(true)
 
+	addAssignment: =>
+		#copy = @newAssignment
+		#copy.phase = @selectedRelease()
+		#copy.resource = @selectedResource()
+		#copy.project = @selectedProject()
+		#console.log ko.toJSON(copy)
+		@assignments.push new AssignedResource(0, @selectedRelease().id, "", @selectedResource().id, @selectedResource().firstName, @selectedResource().middleName, @selectedResource().lastName, @selectedProject().id, "", @newAssignment.focusFactor)
+
 	closeForm: =>
         @canShowForm(false)
 
-	saveAssignment: =>
+	saveAssignments: =>
 		#console.log(@selectedRelease())
-		@newAssignment.phase = @selectedRelease()
-		@newAssignment.resource = @selectedResource()
-		@newAssignment.project = @selectedProject()
+		
 		#console.log(@newAssignment.phase)
 		#console.log(@newAssignment.resource)
 		#console.log(@newAssignment.project)
-		#console.log(ko.toJSON(@newAssignment))
-		@newAssignment.save("/planner/ResourceAssignment/Save", ko.toJSON(@newAssignment), (data) => console.log(data))
+		dto = new ReleaseAssignments(@selectedRelease().id, @selectedProject().id, @assignments())
+		console.log(ko.toJSON(dto))
+		#TODO: Reload through callbacks
+		dto.save("/planner/ResourceAssignment/SaveAssignments", ko.toJSON(dto), (data) => console.log(data))
 
 # export to root object
 root.PlanResourcesViewmodel = PlanResourcesViewmodel

@@ -1,5 +1,5 @@
 (function() {
-  var AssignedResource, Feature, MileStone, Period, Phase, Project, Release, Resource, root,
+  var AssignedResource, Feature, MileStone, Period, Phase, Project, Release, ReleaseAssignments, Resource, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -334,6 +334,20 @@
 
   })(Mixin);
 
+  ReleaseAssignments = (function(_super) {
+
+    __extends(ReleaseAssignments, _super);
+
+    function ReleaseAssignments(phaseId, projectId, assignments) {
+      this.phaseId = phaseId;
+      this.projectId = projectId;
+      this.assignments = assignments;
+    }
+
+    return ReleaseAssignments;
+
+  })(Mixin);
+
   root.Period = Period;
 
   root.Phase = Phase;
@@ -349,5 +363,7 @@
   root.Project = Project;
 
   root.AssignedResource = AssignedResource;
+
+  root.ReleaseAssignments = ReleaseAssignments;
 
 }).call(this);

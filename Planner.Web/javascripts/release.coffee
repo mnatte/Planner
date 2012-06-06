@@ -203,7 +203,10 @@ class AssignedResource extends Mixin
 		copy.projectId = @project.id
 		#console.log(copy)
 		copy #return the copy to be serialized
-	
+
+class ReleaseAssignments extends Mixin
+	constructor: (@phaseId, @projectId, @assignments) ->
+
 # export to root object
 root.Period = Period
 root.Phase = Phase
@@ -213,4 +216,5 @@ root.Feature = Feature
 root.Resource = Resource
 root.Project = Project
 root.AssignedResource = AssignedResource
+root.ReleaseAssignments = ReleaseAssignments
 
