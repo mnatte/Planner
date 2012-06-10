@@ -1,19 +1,26 @@
 (function() {
   var PlanResourcesViewmodel, root,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; },
+    __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
-  PlanResourcesViewmodel = (function() {
+  PlanResourcesViewmodel = (function(_super) {
+
+    __extends(PlanResourcesViewmodel, _super);
 
     function PlanResourcesViewmodel(allReleases, allResources) {
       this.saveAssignments = __bind(this.saveAssignments, this);
       this.closeForm = __bind(this.closeForm, this);
       this.addAssignment = __bind(this.addAssignment, this);
+      this.availableResources = __bind(this.availableResources, this);
       this.setAssignments = __bind(this.setAssignments, this);
       this.selectPhase = __bind(this.selectPhase, this);
       this.selectProject = __bind(this.selectProject, this);
       this.selectRelease = __bind(this.selectRelease, this);      ReleaseAssignments.extend(RCrud);
+      PlanResourcesViewmodel.extend(RGroupBy);
       this.selectedProject = ko.observable();
       this.selectedRelease = ko.observable();
       this.selectedPhase = ko.observable();
@@ -58,8 +65,32 @@
       return this.canShowForm(true);
     };
 
+    PlanResourcesViewmodel.prototype.availableResources = function() {
+      var a, assigned, available, res, _i, _len, _ref;
+      assigned = [];
+      _ref = this.assignments();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        a = _ref[_i];
+        assigned.push(a.resource.id);
+      }
+      available = (function() {
+        var _j, _len2, _ref2, _ref3, _results;
+        _ref2 = this.allResources();
+        _results = [];
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          res = _ref2[_j];
+          if (_ref3 = res.id, __indexOf.call(assigned, _ref3) < 0) {
+            _results.push(res);
+          }
+        }
+        return _results;
+      }).call(this);
+      return available;
+    };
+
     PlanResourcesViewmodel.prototype.addAssignment = function() {
-      return this.assignments.push(new AssignedResource(0, this.selectedRelease().id, "", this.selectedResource().id, this.selectedResource().firstName, this.selectedResource().middleName, this.selectedResource().lastName, this.selectedProject().id, "", this.newAssignment.focusFactor));
+      this.assignments.push(new AssignedResource(0, this.selectedRelease().id, "", this.selectedResource().id, this.selectedResource().firstName, this.selectedResource().middleName, this.selectedResource().lastName, this.selectedProject().id, "", this.newAssignment.focusFactor));
+      return this.canShowForm(false);
     };
 
     PlanResourcesViewmodel.prototype.closeForm = function() {
@@ -78,7 +109,7 @@
 
     return PlanResourcesViewmodel;
 
-  })();
+  })(Mixin);
 
   root.PlanResourcesViewmodel = PlanResourcesViewmodel;
 

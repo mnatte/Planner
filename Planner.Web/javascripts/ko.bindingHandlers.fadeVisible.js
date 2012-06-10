@@ -9,7 +9,7 @@
             // On update, fade in/out
             var shouldDisplay = valueAccessor(),
                     allBindings = allBindingsAccessor(),
-                    duration = allBindings.fadeDuration || 200; // 500ms is default duration unless otherwise specified
+                    duration = allBindings.fadeDuration || 200; // 200ms is default duration unless otherwise specified
 
             shouldDisplay ? $(element).fadeIn(duration) : $(element).fadeOut(duration);
         }

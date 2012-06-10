@@ -1,21 +1,10 @@
-﻿<div>
-    <!--add these lines to javascript:
+﻿<section class="sixteen columns">
+    <!--add these lines to mainpage javascript:
     infuser.defaults.templateSuffix = ".tmpl.html";
     ifuser.defaults.templateUrl = "/planner/templates";-->
-    <div class="dialogTitleBorder">
+    <!--<div class="dialogTitleBorder">
         <span class="borderTitleText">New Resource Assignment</span>
         <div class="closeIcon" data-bind="click:$root.closeForm"></div>
-    </div>
-    <!--<div class="photoContainer leftFloat">
-        <img data-bind="visible: photoUrl, attr: { src: photoUrl, alt: shortDesc}" class="photoThumbnail"></img>
     </div>-->
-    <div>
-        <label>Resource: </label><select data-bind="options: $root.allResources, optionsText: function(item) { return item.fullName() }, value: $root.selectedResource, optionsCaption: 'Choose...'"></select>
-    </div>
-    <div>
-        <label>Focus factor: </label><input type="text" data-bind="value: focusFactor" />
-    </div>
-    <div>
-        <button data-bind="click: $root.addAssignment.bind($data)">Save</button>
-    </div>
-</div>
+        <select data-bind="options: $root.availableResources(), optionsText: function(item) { return item.fullName() }, value: $root.selectedResource, optionsCaption: 'Choose...'" style="display:inline" ></select> <input type="text" data-bind="value: focusFactor, event: { blur: $root.addAssignment.bind($data) }" style="display:inline; width:30px; height:30px"/>
+</section>

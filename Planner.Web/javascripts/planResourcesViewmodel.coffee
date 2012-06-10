@@ -4,9 +4,10 @@
 # access (for browser)
 root = global ? window
 
-class PlanResourcesViewmodel
+class PlanResourcesViewmodel extends Mixin
 	constructor: (allReleases, allResources) ->
 		ReleaseAssignments.extend(RCrud)
+		PlanResourcesViewmodel.extend(RGroupBy)
 		@selectedProject = ko.observable()
 		@selectedRelease = ko.observable()
 		@selectedPhase = ko.observable()
@@ -17,11 +18,6 @@ class PlanResourcesViewmodel
 		@assignments = ko.observableArray()
 		@canShowForm = ko.observable(false)
 
-		#for rel in @allReleases()
-		#	do (rel) ->
-		#		rel.phases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
-		#@allReleases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
-		
 		# setup nice 'remove' method for Array
 		Array::remove = (e) -> @[t..t] = [] if (t = @indexOf(e)) > -1
 
@@ -45,6 +41,15 @@ class PlanResourcesViewmodel
 	addResource: ->
 		@canShowForm(true)
 
+	# this way we need to refer from HTML as availableResources() - with '()'
+	# when using @allResources, in HTML this must be referred as allResources - without '()'
+	availableResources: =>
+		assigned = []
+		for a in @assignments()
+			assigned.push a.resource.id
+		available = (res for res in @allResources() when res.id not in assigned)
+		available
+
 	addAssignment: =>
 		#copy = @newAssignment
 		#copy.phase = @selectedRelease()
@@ -52,6 +57,8 @@ class PlanResourcesViewmodel
 		#copy.project = @selectedProject()
 		#console.log ko.toJSON(copy)
 		@assignments.push new AssignedResource(0, @selectedRelease().id, "", @selectedResource().id, @selectedResource().firstName, @selectedResource().middleName, @selectedResource().lastName, @selectedProject().id, "", @newAssignment.focusFactor)
+		#@allResources.remove @selectedResource()
+		@canShowForm(false)
 
 	closeForm: =>
         @canShowForm(false)

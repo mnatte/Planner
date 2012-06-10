@@ -89,7 +89,8 @@
             </div>
         </section>
 
-            <!-- ko if: $root.selectedProject() -->
+        <!-- ko if: $root.selectedProject() -->
+        <div id="assignedResources" class="sixteen columns">
             <ul data-bind="foreach: assignments">
                 <li>
                     <span data-bind="text: resource.fullName()"></span>
@@ -97,18 +98,17 @@
                 </li>
             </ul>
             <button data-bind="click: $root.addResource.bind($data)">+ Resource</button>
-            <!--/ko-->
+        </div>
+        <!--/ko-->
 
-            <!-- ko if: $root.selectedProject() -->
-            <div class="rightFloat" data-bind="fadeVisible: $root.canShowForm(), fadeDuration: 2000">
-                <div class="productDetailsArea">
-                    <!-- ko template: {name: 'addAssignment', data: $root.newAssignment} -->
-                    <!-- /ko -->
-                </div>
-            </div>
-            <!--/ko-->
-            <button data-bind="click: $root.saveAssignments.bind($data)">Save</button>
-        <div>
+        <!-- ko if: $root.selectedProject() -->
+        <section id="addAssignmentForm" class="sixteen columns" data-bind="fadeVisible: $root.canShowForm(), fadeDuration: 500">
+                <!-- ko template: {name: 'addAssignment', data: $root.newAssignment} -->
+                <!-- /ko -->
+        </section>
+        <!--/ko-->
+
+        <button data-bind="click: $root.saveAssignments.bind($data)">Save</button>
     </div>
 
 <script type="text/javascript">
