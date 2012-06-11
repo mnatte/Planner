@@ -60,6 +60,10 @@ class PlanResourcesViewmodel extends Mixin
 		#@allResources.remove @selectedResource()
 		@canShowForm(false)
 
+	removeAssignment: (ass) =>
+		@assignments.remove ass
+		
+
 	closeForm: =>
         @canShowForm(false)
 
@@ -73,6 +77,9 @@ class PlanResourcesViewmodel extends Mixin
 		console.log(ko.toJSON(dto))
 		#TODO: Reload through callbacks
 		dto.save("/planner/ResourceAssignment/SaveAssignments", ko.toJSON(dto), (data) => console.log(data))
+
+	openDetailsWindow: (model) =>
+		window.open "Release.htm?RelId=#{@selectedRelease().id}"
 
 # export to root object
 root.PlanResourcesViewmodel = PlanResourcesViewmodel

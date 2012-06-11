@@ -282,12 +282,27 @@
             var chart = new Highcharts.Chart(options);
         }
 
+        function getParams() {
+            var vars = [], hash;
+            var q = document.URL.split('?')[1];
+            if (q != undefined) {
+                q = q.split('&');
+                for (var i = 0; i < q.length; i++) {
+                    hash = q[i].split('=');
+                    vars.push(hash[1]);
+                    vars[hash[0]] = hash[1];
+                }
+            }
+            return vars;
+        }
+
 
         $(document).ready(function () {
             var ajax = new Ajax();
 
             var displayReleaseStatus = new UDisplayReleaseStatus();
-            ajax.load(displayReleaseStatus.execute);
+            var relId = getParams()['RelId'];
+            ajax.loadRelease(relId, displayReleaseStatus.execute);
 
             // add toggle function for tabs
             $("#tabSection > ul").on("click", "li > a", function (event) {

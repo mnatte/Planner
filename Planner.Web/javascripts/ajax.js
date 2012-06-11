@@ -7,9 +7,9 @@
 
     function Ajax() {}
 
-    Ajax.prototype.load = function(callback) {
+    Ajax.prototype.loadRelease = function(releaseId, callback) {
       var url;
-      url = "/planner/Release/GetRelease";
+      url = "/planner/Release/GetReleaseById/" + releaseId;
       return $.ajax(url, {
         dataType: "json",
         type: "GET",
@@ -94,7 +94,7 @@
 
     Ajax.prototype.getAssignedResources = function(phaseId, projectId, callback) {
       var url;
-      url = "/planner/ResourceAssignment/Assignments" + "/" + phaseId + "/" + projectId;
+      url = "/planner/ResourceAssignment/Assignments/" + phaseId + "/" + projectId;
       return $.ajax(url, {
         dataType: "json",
         type: "GET",

@@ -17,7 +17,7 @@ namespace MvcApplication1.Controllers
 
         protected override void ConfigureUpsertCommand(ResourceAssignmentInputModel model, System.Data.SqlClient.SqlCommand cmd)
         {
-            cmd.CommandText = "sp_upsert_resource_assignment";
+            cmd.CommandText = "sp_insert_resource_assignment";
             cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = model.Id;
             cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = model.PhaseId;
             cmd.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = model.ProjectId;
@@ -30,14 +30,16 @@ namespace MvcApplication1.Controllers
         public JsonResult SaveAssignments(ReleaseAssignmentsInputModel model)
         {
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
-            int newId = 0;
             int amount = 0;
             try
             {
                 using (conn)
                 {
                     conn.Open();
-                    var cmd = new SqlCommand("sp_upsert_resource_assignment", conn);
+                    var delCmd = new SqlCommand(string.Format("delete from ReleaseResources where ReleaseId = {0} and ProjectId = {1}", model.PhaseId, model.ProjectId), conn);
+                    delCmd.ExecuteNonQuery();
+
+                    var cmd = new SqlCommand("sp_insert_resource_assignment", conn);
                     cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = 0;
                     cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = model.PhaseId;
                     cmd.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = model.ProjectId;
@@ -57,7 +59,7 @@ namespace MvcApplication1.Controllers
             catch (Exception ex)
             {
             }
-            return this.Json(string.Format("{0} rows deleted", amount), JsonRequestBehavior.AllowGet); 
+            return this.Json(string.Format("{0} assignments saved", amount), JsonRequestBehavior.AllowGet); 
         }
 
         protected override void ConfigureSelectAllCommand(System.Data.SqlClient.SqlCommand cmd)

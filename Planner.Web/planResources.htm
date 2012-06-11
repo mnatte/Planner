@@ -95,6 +95,7 @@
                 <li>
                     <span data-bind="text: resource.fullName()"></span>
                     <span class="selectable" contenteditable="true" data-bind="text: focusFactor, editable: focusFactor"></span>
+                    <button data-bind="click: $root.removeAssignment.bind($data)">Remove</button>
                 </li>
             </ul>
             <button data-bind="click: $root.addResource.bind($data)">+ Resource</button>
@@ -109,6 +110,7 @@
         <!--/ko-->
 
         <button data-bind="click: $root.saveAssignments.bind($data)">Save</button>
+        <button data-bind="click: $root.openDetailsWindow.bind($data)">View Release</button>
     </div>
 
 <script type="text/javascript">

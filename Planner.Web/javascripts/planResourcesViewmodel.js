@@ -12,8 +12,10 @@
     __extends(PlanResourcesViewmodel, _super);
 
     function PlanResourcesViewmodel(allReleases, allResources) {
+      this.openDetailsWindow = __bind(this.openDetailsWindow, this);
       this.saveAssignments = __bind(this.saveAssignments, this);
       this.closeForm = __bind(this.closeForm, this);
+      this.removeAssignment = __bind(this.removeAssignment, this);
       this.addAssignment = __bind(this.addAssignment, this);
       this.availableResources = __bind(this.availableResources, this);
       this.setAssignments = __bind(this.setAssignments, this);
@@ -93,6 +95,10 @@
       return this.canShowForm(false);
     };
 
+    PlanResourcesViewmodel.prototype.removeAssignment = function(ass) {
+      return this.assignments.remove(ass);
+    };
+
     PlanResourcesViewmodel.prototype.closeForm = function() {
       return this.canShowForm(false);
     };
@@ -105,6 +111,10 @@
       return dto.save("/planner/ResourceAssignment/SaveAssignments", ko.toJSON(dto), function(data) {
         return console.log(data);
       });
+    };
+
+    PlanResourcesViewmodel.prototype.openDetailsWindow = function(model) {
+      return window.open("Release.htm?RelId=" + (this.selectedRelease().id));
     };
 
     return PlanResourcesViewmodel;

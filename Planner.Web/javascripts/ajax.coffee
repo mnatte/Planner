@@ -4,8 +4,8 @@ root = global ? window
 # requires jQuery 1.6.4 or later
 class Ajax
 	constructor: -> 
-	load: (callback) ->
-		url = "/planner/Release/GetRelease"
+	loadRelease: (releaseId, callback) ->
+		url = "/planner/Release/GetReleaseById/" + releaseId
 		$.ajax url,
 			dataType: "json"
 			type: "GET"
@@ -57,7 +57,7 @@ class Ajax
 			error: (XHR, status, errorThrown) ->
 				console.log "AJAX Releases error: #{status}"
 	getAssignedResources: (phaseId, projectId, callback) ->
-		url = "/planner/ResourceAssignment/Assignments" + "/" + phaseId + "/" + projectId
+		url = "/planner/ResourceAssignment/Assignments/" + phaseId + "/" + projectId
 		$.ajax url,
 			dataType: "json"
 			type: "GET"
