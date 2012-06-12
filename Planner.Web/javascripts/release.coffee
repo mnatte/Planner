@@ -108,10 +108,25 @@ class Period extends Mixin
 		# console.log nextWeek
 		nextWeek > @startDate.date
 	overlaps: (other) ->
-		# console.log "other: #{other}"
+		#console.log "this: #{@}"
+		#console.log "other: #{other}"
 		unless other is undefined
 			# console.log (@startDate >= other.startDate and @startDate < other.endDate) or (@endDate >= other.startDate and @endDate < other.endDate)
 			(@startDate.date >= other.startDate.date and @startDate.date < other.endDate.date) or (@endDate.date >= other.startDate.date and @endDate.date < other.endDate.date)
+	overlappingPeriod: (other) ->
+		console.log "this: #{@}"
+		console.log "other: #{other}"
+		unless other is undefined or not @overlaps(other)
+			if (@startDate.date > other.startDate.date) 
+					startDate = @startDate.date
+			else
+				startDate = other.startDate.date 	
+			if (@endDate.date < other.endDate.date)
+					endDate = @endDate.date
+			else 
+				endDate = other.endDate.date
+				
+			new Period(startDate, endDate, "overlapping period")
 	toJSON: ->
 		copy = ko.toJS(@) #get a clean copy
 		delete copy.startDate.date #remove property

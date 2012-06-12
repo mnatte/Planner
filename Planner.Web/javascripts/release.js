@@ -113,6 +113,25 @@
       }
     };
 
+    Period.prototype.overlappingPeriod = function(other) {
+      var endDate, startDate;
+      console.log("this: " + this);
+      console.log("other: " + other);
+      if (!(other === void 0 || !this.overlaps(other))) {
+        if (this.startDate.date > other.startDate.date) {
+          startDate = this.startDate.date;
+        } else {
+          startDate = other.startDate.date;
+        }
+        if (this.endDate.date < other.endDate.date) {
+          endDate = this.endDate.date;
+        } else {
+          endDate = other.endDate.date;
+        }
+        return new Period(startDate, endDate, "overlapping period");
+      }
+    };
+
     Period.prototype.toJSON = function() {
       var copy;
       copy = ko.toJS(this);

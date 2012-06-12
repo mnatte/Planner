@@ -52,7 +52,7 @@ class UDisplayReleaseStatus
 				for absence in member.PeriodsAway when DateFormatter.createJsDateFromJson(absence.EndDate) < @release.endDate.date or DateFormatter.createJsDateFromJson(absence.StartDate) >= @release.startDate.date
 					teamMember.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title))
 				@release.addResource teamMember
-				console.log teamMember
+				#console.log teamMember
 				# mark teamMember as added to project
 				projectMembers.push("#{member.Initials}_#{feat.Project.ShortName}")
 
@@ -71,7 +71,10 @@ class UDisplayReleaseStatus
 		# pattern matching
 		# {projectNames, remainingHours, availableHours, balanceHours} = @viewModel.hourBalance()
 		# showHoursChart(projectNames, remainingHours, availableHours, balanceHours)
-		showTableChart()
+		options = setUpHoursChart()
+		@viewModel.hoursChart = new Highcharts.Chart(options)
+		
+		
 
 
 class UGetAvailableHoursForTeamMemberFromNow
@@ -81,31 +84,26 @@ class UGetAvailableHoursForTeamMemberFromNow
 		if (today > @phase.endDate.date)
 			0
 		else
-			console.log @teamMember
+			#console.log @teamMember
 			console.log "available hours for: #{@teamMember.initials}"
 			console.log "in phase: #{@phase.toString()}"
 			# set start date of phase to Now
 			restPeriod = new Period(today, @phase.endDate.date, @phase.title)
-			console.log "period: #{restPeriod}"
-			console.log "periods away: #{@teamMember.periodsAway}"
+			#console.log "period from now: #{restPeriod}"
+			#console.log "periods away: #{@teamMember.periodsAway}"
 			absentHours = 0
-			for absence in @teamMember.periodsAway when (today <= absence.endDate.date) and (today >= absence.startDate.date)
-				console.log "today: " + today
-				console.log "absence startDate: " + absence.startDate.date
-				console.log "absence endDate: " + absence.endDate.date
-				console.log "endDate phase restperiod: " +restPeriod.endDate.date
-				# days away between today or startdate of phase and enddate of either absence or phase
-				if (absence.endDate.date < restPeriod.endDate.date) #absence.endDate.date <= today and 
-					endDate = absence.endDate.date 	
-				else 
-					endDate = restPeriod.endDate.date
-				if (absence.startDate.date > today) 
-					startDate = absence.startDate.date
-				else
-					startDate = today 	
-				periodAway = new Period(startDate, endDate, "Absence in phase")
+			for absence in @teamMember.periodsAway when (absence.overlaps @phase)
+				console.log "absence overlaps phase"
+				console.log absence
+				periodAway = absence.overlappingPeriod(@phase)
 				console.log "periodAway: #{periodAway.toString()}"
-				absentHours += periodAway.workingHours()
+				# days away between today or startdate of phase
+				if today > absence.startDate.date
+					start = today
+				else
+					start = absence.startDate.date
+				remainingAbsence = new Period(start, periodAway.endDate.date, 'remaining absence from now')
+				absentHours += remainingAbsence.workingHours()
 			console.log "absentHours: #{absentHours}"
 			availableHours = restPeriod.workingHours() - absentHours
 			console.log "availableHours: #{availableHours}"

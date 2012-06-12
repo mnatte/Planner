@@ -12,6 +12,7 @@ class ReleaseViewmodel
 		@projects = []
 		@statuses = []
 		@currentPhases = []
+		@hoursChart
 
 		for statusgroup in @release.sets when statusgroup.groupedBy == "state"
 			@statuses.push(statusgroup.label)
@@ -24,71 +25,37 @@ class ReleaseViewmodel
 		# console.log ("first phase: " + @phases()[0])
 		phaseId = @phases()[0].id
 		@selectedPhaseId = ko.observable(phaseId)
+		@selectedPhaseId.subscribe((newValue) ->
+			options = setUpHoursChart()
+			x = new Highcharts.Chart(options)
+		)
 			
 		# observable for selecting what to exclude from calculations
 		@disgardedStatuses = ko.observableArray()
+		@disgardedStatuses.subscribe((newValue) ->
+			options = setUpHoursChart()
+			x = new Highcharts.Chart(options)
+		)
 		@loadProjects()
 		
-		@displaySelected = ko.computed(=> 
-				console.log @
-				console.log @disgardedStatuses()
-				showTableChart()
-				s = ""
-				s += "#{item} - " for item in @disgardedStatuses()
-				s 
-			, this)
+		#@refreshHoursChart = ko.computed(=> 
+		#		options = setUpHoursChart()
+		#		x = new Highcharts.Chart(options)
 
-		@displaySelectedPhaseId = ko.computed(=> 
-			console.log @
-			console.log @selectedPhaseId()
-		, this)
+		#		console.log 'refreshHoursChart'
+		#		a = @disgardedStatuses()
+		#		b = @selectedPhaseId()
+		#		#unless @hoursChart is undefined
+		#			# trigger this function by doing some subscription to observables
+		#			#console.log "hoursChart: " + @hoursChart
+		#		
+		#			#@hoursChart.redraw
+		#	, this)
 
-		# hours balance chart
-		@hourBalance = ko.computed( => 
-				#console.log @
-				#console.log @selectedPhaseId()
-				phaseId = @selectedPhaseId()
-				releasePhases = @release.phases
-				projs = []
-				#use '+' sign to convert string to int (standard javascript)
-				phase = (item for item in releasePhases when item.id is +phaseId)[0]
-				console.log phase
-				for set in @release.sets when set.groupedBy == "memberProject"
-					projectHours = {}
-					#console.log "memberProject: #{set.label} #{set.items.length} members"
-					# get development phase TODO: select from UI
-					# console.log @selectedPhaseId()
-					set.availableHours = 0
-					for member in set.items
-						# console.log member
-						#console.log "#{member.initials} hours per week: #{member.hoursPerWeek}"
-						uGetHours = new UGetAvailableHoursForTeamMemberFromNow(member, phase)
-						set.availableHours += uGetHours.execute()
-					projectHours.project = set.label 
-					projectHours.available = Math.round set.availableHours 
-					# lookup project in groupedBy project set for remaining hours
-					for projset in @projects when projset.projectname == set.label
-						# console.log "projset: #{projset.totalHours()}"
-						projectHours.workload = Math.round projset.totalHours()
-			
-					projs.push(projectHours)
-				# console.log projs
-
-				# projectNames = []
-				# remainingHours = []
-				# availableHours = []
-				balanceHours = []
-				for item in projs
-					# pattern matching, works only when pattern vars have same name as properties of item
-					{project, workload, available} = item
-					# projectNames.push(project)
-					# remainingHours.push(workload)
-					# availableHours.push(available)
-					balanceHours.push({projectname: project, availableHours: available, workload: workload, balance: Math.round available - workload})
-				# {projectNames: projectNames, remainingHours: remainingHours, availableHours: availableHours, balanceHours: balanceHours}
-				#console.log ("balanceHours: " + balanceHours)
-				balanceHours
-			, this)
+		#@displaySelectedPhaseId = ko.computed(=> 
+			#console.log @
+			#console.log @selectedPhaseId()
+		#, this)
 
 	# release overview info
 	releaseTitle: -> @release.title
@@ -112,6 +79,55 @@ class ReleaseViewmodel
 			proj.totalHours = do (proj) => ko.computed( => t = 0; $.each(proj.items, (n,l) => t += l.remainingHours unless (l.state in @disgardedStatuses())); t)
 			# console.log "end loadProjects()"
 			@projects.push(proj)
+
+	# hours balance chart
+	hourBalance: =>
+			#console.log @
+			#console.log @selectedPhaseId()
+			#console.log "@selectedPhaseId(): " + @selectedPhaseId()
+			phaseId = @selectedPhaseId()
+			releasePhases = @release.phases
+			projs = []
+			#use '+' sign to convert string to int (standard javascript)
+			#console.log "phaseId: " + phaseId
+			phase = (item for item in releasePhases when +item.id is +phaseId)[0]
+			#console.log "releasePhases: " + releasePhases
+			#console.log "phase: " + phase
+			for set in @release.sets when set.groupedBy == "memberProject"
+				projectHours = {}
+				#console.log "memberProject: #{set.label} #{set.items.length} members"
+				# get development phase TODO: select from UI
+				# console.log @selectedPhaseId()
+				set.availableHours = 0
+				for member in set.items
+					# console.log member
+					#console.log "#{member.initials} hours per week: #{member.hoursPerWeek}"
+					uGetHours = new UGetAvailableHoursForTeamMemberFromNow(member, phase)
+					set.availableHours += uGetHours.execute()
+				projectHours.project = set.label 
+				projectHours.available = Math.round set.availableHours 
+				# lookup project in groupedBy project set for remaining hours
+				for projset in @projects when projset.projectname == set.label
+					# console.log "projset: #{projset.totalHours()}"
+					projectHours.workload = Math.round projset.totalHours()
+			
+				projs.push(projectHours)
+			# console.log projs
+
+			# projectNames = []
+			# remainingHours = []
+			# availableHours = []
+			balanceHours = []
+			for item in projs
+				# pattern matching, works only when pattern vars have same name as properties of item
+				{project, workload, available} = item
+				# projectNames.push(project)
+				# remainingHours.push(workload)
+				# availableHours.push(available)
+				balanceHours.push({projectname: project, availableHours: available, workload: workload, balance: Math.round available - workload})
+			# {projectNames: projectNames, remainingHours: remainingHours, availableHours: availableHours, balanceHours: balanceHours}
+			console.log ("balanceHours: " + ko.toJSON(balanceHours))
+			balanceHours
 
 	# pie chart, count by status (x under dev, y ready for system test, etc.)
 	# format: [ ["Ready For Dev", 2], ["Ready For Test", 3] ]
