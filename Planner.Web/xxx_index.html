@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Knockout stuff</title>
+    <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
+</head>
+    <body>
+        <div role="application">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Activity</th>
+                        <th>Hours</th>
+                        <th>Amount Tasks</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <td colspan="4">Total</td>
+                        <td aria-live="polite" data-bind="text: total()"></td>
+                    </tr>
+                </tfoot>
+                <!-- render tbody for each report item-->
+                <tbody data-bind="foreach: reportitems">
+                    <tr aria-live="polite">
+                        <td data-bind="text: activity"></td>
+                        <td data-bind="text: hours"></td>
+                        <td>
+                            <input type="text" name="amount_tasks" data-bind='value: amount_tasks, valueUpdate: "keyUp"'>
+                        </td>
+                        <td>
+                            <!-- bind to event and function instead of data-->
+                            <button data-bind="click: function() { viewModel.remove(this) }">Remove</button>
+                        </td>
+                        <td data-bind="text: subTotal"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <script type="text/javascript">
+            // function is object ctor in javascript
+            var ReportItem = function (activity, hours) {
+                this.activity = activity;
+                this.hours = hours;
+                this.amount_tasks = ko.observable(1);
+                // first argument is function that runs after observable changes
+                // second argument is context for properties
+                this.subTotal = ko.dependentObservable(function () {
+                    // this property depends on observable amount_tasks
+                    // it automatically watches the properties that are used below (amount_tasks and hours)
+                    return (this.hours * parseInt("0" + this.amount_tasks(), 10));
+                }, this);
+            }
+            // create ReportItem instance as our viewmodel. then it is a global, visible object.
+            // its properties are now available to our HTML markup
+            //var item = new ReportItem("Development", 82);
+            //ko.applyBindings(item);
+
+            // data loaded by AJAX or serverside code
+            var items =
+            [
+                {activity: "Development", hours:12},
+                {activity: "Testing", hours:8},
+                {activity: "Documentation", hours:20},
+                {activity: "Analysis", hours:4}
+            ];
+
+            var Report = function (items) {
+                // observableArray makes adding and removing visible to all subscribers
+                this.reportitems = ko.observableArray();
+                // items is provided externally, it can contain other items than ReportItem items and their properties are extracted here for creation of ReportItem array
+                for (var i in items) {
+                    var item = new ReportItem(items[i].activity, items[i].hours);
+                    this.reportitems.push(item);
+                }
+                // total property is also depending on observables
+                this.total = ko.dependentObservable(function () {
+                    var total = 0;
+                    for (itm in this.reportitems()) {
+                        total += this.reportitems()[itm].subTotal();
+                    }
+                    return total;
+                }, this);
+                this.remove = function (item) {
+                    this.reportitems.remove(item);
+                }
+            }
+
+            var viewModel = new Report(items);
+            ko.applyBindings(viewModel);
+        </script>
+    </body>
+</html>

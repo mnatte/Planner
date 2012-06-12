@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+	<title>Test</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="stylesheets/base.css">
+	<link rel="stylesheet" href="stylesheets/skeleton.css">
+	<link rel="stylesheet" href="stylesheets/layout.css">
+    <link rel="stylesheet" href="stylesheets/tables.css">
+
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
+    <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.dateFormat-1.0.js"></script>
+    <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
+    <script type="text/javascript" src="Scripts/knockout-array-filter.js"></script>
+
+    <script type="text/javascript" src="javascripts/Mixin.js"></script>
+        
+    <script type="text/javascript" src="Scripts/highcharts.js"></script>
+</head>
+<body>
+<!-- Primary Page Layout
+	================================================== -->
+
+	<!-- Delete everything in this .container and get started on your own site! -->
+
+	<div class="container">
+		<header class="sixteen columns">
+            <div id="releasetitle" class="eight columns alpha">
+                <h1 data-bind="text: releaseTitle"></h1>
+            </div>
+            <div id="releaseperiod" class="eight columns omega">
+                <h2><data data-bind="text: DateFormatter.formatJsDate(releaseStartdate, 'dd/MM/yyyy')"></data> - <data data-bind="text: DateFormatter.formatJsDate(releaseEnddate, 'dd/MM/yyyy')"></data></h2>
+            </div>
+        </header>
+        <section id="overview" class="sixteen columns">
+            <div id="chart-hours"></div>
+           <div id="remaininghours" class="eight columns omega">
+                <div class="eight columns omega">
+                    <div id="pie-pbis"></div>
+                    <!--<h5>Technical design: <data data-bind="text: PBI.remaininghours()"></data> 16 hrs needed, 40 hrs available, 10 hrs used</h5>
+                    <h5>Development: <data data-bind="text: PBI.remaininghours()"></data> 140 hrs needed, 200 hrs available, 20 hrs used</h5>
+                    <h5>Documentation: <data data-bind="text: PBI.remaininghours()"></data> 20 hrs needed, 10 hrs available, 40 hrs used</h5>-->
+                </div>
+            </div>
+        </section>
+
+        <section class="sixteen columns">
+            <div>
+                <div><input type="checkbox" value="banaan" data-bind="checked: disgardedStatuses" /> Banaan</div>
+                <div><input type="checkbox" value="Under Development" data-bind="checked: disgardedStatuses" /> Under Development</div>
+            </div>
+            <div>
+                Selected: <span data-bind="text: displaySelected()"></span>
+            </div>
+        </section>
+
+	</div><!-- container -->
+    <script type="text/javascript">
+        // see http://www.highcharts.com/ref/#plotOptions-pie-dataLabels--formatter
+        var pieChartOptions = {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            size: "40%",
+            dataLabels: {
+                enabled: true,
+                connectorPadding: 5,
+                style: {
+                    fontSize: 8
+                },
+                connectorWidth: 0.5,
+                formatter: function () {
+                    //                    var label = "<b>" + this.point.name + "</b> : " + this.percentage;
+                    //                    return label;
+                    return "<b>" + this.point.name + "</b>:" + this.y;
+                }
+            }
+        };
+
+        function showHoursChart(projectNames, remainingHours, availableHours, balanceHours) {
+            var chart = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'chart-hours',
+                    defaultSeriesType: 'column'
+                },
+                title: {
+                    text: 'Overview hours'
+                },
+                xAxis: {
+                    categories: projectNames
+                },
+                tooltip: {
+                    formatter: function () {
+                        return '' + this.series.name + ': ' + this.y + '';
+                    }
+                },
+                credits: {
+                    enabled: false
+                },
+                series: [{
+                    name: 'Hours Available',
+                    data: availableHours
+                },
+                {
+                    name: 'Workload',
+                    data: remainingHours
+                },
+                {
+                    name: 'Balance',
+                    data: balanceHours
+                }]
+            })
+        }
+
+        function showStatusChart(statusdata) {
+            var chartOptions = {};
+            chartOptions.chart = {
+                // set to div id
+                renderTo: "pie-pbis",
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            };
+            chartOptions.title = { text: "Status Features" };
+            chartOptions.series = [{
+                type: "pie",
+                name: "amount",
+                data: statusdata
+            }];
+            chartOptions.plotOptions = {
+                pie: pieChartOptions
+            };
+            var chart2 = new Highcharts.Chart(chartOptions);
+        }
+
+
+        $(document).ready(function () {
+
+            var viewModel = function () {
+                var _this = this;
+
+                this.releaseTitle = "Test release",
+                this.releaseStartdate = new Date(),
+                this.releaseEnddate = new Date(2012, 6, 4),
+                this.disgardedStatuses = ko.observableArray(),
+                this.displaySelected = ko.computed(function () {
+                    var item, s, _i, _len, _ref;
+                    //                    console.log(_this);
+                    //                    console.log(_this.disgardedStatuses());
+                    s = "";
+                    _ref = _this.disgardedStatuses();
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        item = _ref[_i];
+                        s += "" + item + " - ";
+                    }
+                    return s;// this.disgardedStatuses;
+                }, this)
+            };
+
+            ko.applyBindings(new viewModel());
+            // add toggle function for tabs
+            $("#tabSection > ul").on("click", "li > a", function (event) {
+                // set active tab and content to inactive
+                $(".active").removeClass("active");
+                // set clicked tab to active
+                $(this).addClass("active");
+
+                // set content for clicked tab to active
+                var tag = $(this).parent().attr('tag');
+                $("#tabsContent").find("#" + tag).addClass("active");
+            });
+
+        });
+    </script>
+
+</body>
+</html>

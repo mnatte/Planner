@@ -57,12 +57,19 @@
 <div class="container">
 	<div class="band navigation">
         <nav class="primary container">
-            <ul>
-                <li><a href="#">Release</a></li>
-                <li><a href="Phases.htm">Phases</a></li>
-                <li><a href="addRelease.htm">Add Release</a></li>
-            </ul>
-        </nav>
+			    <ul>
+				    <li><a href="Release.htm">Release Status</a></li>
+				    <li><a href="Phases.htm">Phases Overview</a></li>
+				    <li><a href="#">Administration</a>
+						    <ul>
+							    <li><a href="addRelease.htm"><span>- </span>Admin Release</a></li>
+							    <li><a href="adminProject.htm"><span>- </span>Admin Project</a></li>
+                                <li><a href="adminResource.htm"><span>- </span>Admin Resource</a></li>
+						    </ul>
+				    </li>
+				    <li><a href="planResources.htm"><span>- </span>Plan Resources</a></li>
+			    </ul>
+		    </nav>
     </div>
 		<header class="sixteen columns">
             <div id="releasetitle" class="eight columns alpha">
@@ -73,16 +80,18 @@
             </div>
         </header>
         <section id="overview" class="sixteen columns">
-            <div id="phases" class="eight columns alpha">
-                <ul data-bind="foreach: phases()">
+            <div id="phases" class="eight columns alpha" data-bind="foreach: phases()">
+                <div><input type="radio" name="selectedPhase" data-bind="value: id, checked: $root.selectedPhaseId" /><label data-bind="text: title" style="display:inline" /></div>
+                <!--<ul data-bind="foreach: phases()">
                     <li class="price"><h5 data-bind="text: toString()"></h5></li>
-                </ul>
-                <ul data-bind="foreach: currentPhases">
-                    <li class="price"><h6><data data-bind="text: title"></data> <data data-bind="text: DateFormatter.formatJsDate($parent.currentDate(), 'dd/MM/yyyy')"></data> - <data data-bind="text: endDate.dateString"></data>: <data data-bind="text: workingDaysRemaining"></data> days remaining</h6></li>
-                </ul>
-                
-                <div id="chart-hours"></div>
+                </ul>-->
             </div>
+            <!--<div>
+                <ul data-bind="foreach: $root.currentPhases">
+                    <li class="price"><h6><data data-bind="text: title"></data> <data data-bind="text: DateFormatter.formatJsDate($root.currentDate(), 'dd/MM/yyyy')"></data> - <data data-bind="text: endDate.dateString"></data>: <data data-bind="text: workingDaysRemaining"></data> days remaining</h6></li>
+                </ul>
+            </div>                -->
+            <div id="chart-hours"></div>
             <div id="remaininghours" class="eight columns omega">
                 <div class="eight columns omega">
                     <div id="pie-pbis"></div>
@@ -110,9 +119,9 @@
                             <div><input type="checkbox" data-bind="checked: $parent.disgardedStatuses, value: $data" /><data data-bind="text: $data"></data></div>
                         </div>
                     </div>
-                    <!--<div>
-                        Selected: <span data-bind="text: displaySelected()"></span>
-                    </div>-->
+                    <div>
+                        Selected: <span data-bind="text: displaySelectedPhaseId()"></span>
+                    </div>
                     </div>
             </div>
         </section>

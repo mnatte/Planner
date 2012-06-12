@@ -24,6 +24,7 @@ RGroupBy =
 					addedSets = []
 					# iterate over collection
 					for item in collection
+						# console.log item
 						# add set (with label) to set collection when no set with label propertyValue exists
 						unless "#{property}_#{item[property]}" in addedSets
 							# console.log("add set with label #{item[property]} and groupedBy #{property}")

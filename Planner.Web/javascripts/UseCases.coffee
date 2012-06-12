@@ -33,6 +33,7 @@ class UDisplayReleaseStatus
 
 		# fill release object
 		@release = new Release(data.Id, DateFormatter.createJsDateFromJson(data.StartDate), DateFormatter.createJsDateFromJson(data.EndDate), data.Title, data.TfsIterationPath)
+		document.title = data.Title
 		# add phases
 		for phase in data.Phases
 			@release.addPhase new Phase(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath)
@@ -43,13 +44,15 @@ class UDisplayReleaseStatus
 			# add team member per project through backlog per project
 			for member in feat.Project.ProjectTeam.TeamMembers when "#{member.Initials}_#{feat.Project.ShortName}" not in projectMembers
 				# console.log("ADD TEAMMEMBERS TO PROJECT")
-				teamMember = new Resource(member.FirstName, member.MiddleName, member.LastName, member.Initials, member.AvailableHoursPerWeek, member.Email, member.PhoneNumber, member.Company, member.Function)
+				# teamMember = new Resource(member.FirstName, member.MiddleName, member.LastName, member.Initials, member.AvailableHoursPerWeek, member.Email, member.PhoneNumber, member.Company, member.Function)
+				teamMember = Resource.create member
 				teamMember.focusFactor = member.FocusFactor
 				teamMember.memberProject = feat.Project.ShortName
 				# add team member absences
-				for absence in member.PeriodsAway when DateFormatter.createJsDateFromJson(absence.EndDate) < @release.endDate or DateFormatter.createJsDateFromJson(absence.StartDate) >= @release.startDate
+				for absence in member.PeriodsAway when DateFormatter.createJsDateFromJson(absence.EndDate) < @release.endDate.date or DateFormatter.createJsDateFromJson(absence.StartDate) >= @release.startDate.date
 					teamMember.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title))
 				@release.addResource teamMember
+				console.log teamMember
 				# mark teamMember as added to project
 				projectMembers.push("#{member.Initials}_#{feat.Project.ShortName}")
 
@@ -74,32 +77,40 @@ class UDisplayReleaseStatus
 class UGetAvailableHoursForTeamMemberFromNow
 	constructor: (@teamMember, @phase) ->
 	execute: ->
-		# console.log "available hours for: #{@teamMember.initials}"
-		# console.log "in phase: #{@phase.toString()}"
-		# set start date of phase to Now
 		today = new Date()
-		restPeriod = new Period(today, @phase.endDate.date, @phase.title)
-		# console.log "period: #{restPeriod}"
-		# TODO: subtract absence days
-		absentHours = 0
-		for absence in @teamMember.periodsAway
-			# days away between today or startdate of phase and enddate of either absence or phase
-			if (absence.endDate.date < restPeriod.endDate.date) 
-				endDate = absence.endDate.date 	
-			else 
-				endDate = restPeriod.endDate.date
-			if (absence.startDate.date > today) 
-				startDate = absence.startDate.date
-			else
-				startDate = today 	
-			periodAway = new Period(startDate, endDate, "Absence in phase")
-			# console.log "periodAway: #{periodAway.toString()}"
-			absentHours += periodAway.workingHours()
-		# console.log "absentHours: #{absentHours}"
-		availableHours = restPeriod.workingHours() - absentHours
-		# console.log "availableHours: #{availableHours}"
-		# console.log "corrected with focusfactor #{@teamMember.focusFactor}: #{@teamMember.focusFactor * availableHours}"
-		@teamMember.focusFactor * availableHours
+		if (today > @phase.endDate.date)
+			0
+		else
+			console.log @teamMember
+			console.log "available hours for: #{@teamMember.initials}"
+			console.log "in phase: #{@phase.toString()}"
+			# set start date of phase to Now
+			restPeriod = new Period(today, @phase.endDate.date, @phase.title)
+			console.log "period: #{restPeriod}"
+			console.log "periods away: #{@teamMember.periodsAway}"
+			absentHours = 0
+			for absence in @teamMember.periodsAway when (today <= absence.endDate.date) and (today >= absence.startDate.date)
+				console.log "today: " + today
+				console.log "absence startDate: " + absence.startDate.date
+				console.log "absence endDate: " + absence.endDate.date
+				console.log "endDate phase restperiod: " +restPeriod.endDate.date
+				# days away between today or startdate of phase and enddate of either absence or phase
+				if (absence.endDate.date < restPeriod.endDate.date) #absence.endDate.date <= today and 
+					endDate = absence.endDate.date 	
+				else 
+					endDate = restPeriod.endDate.date
+				if (absence.startDate.date > today) 
+					startDate = absence.startDate.date
+				else
+					startDate = today 	
+				periodAway = new Period(startDate, endDate, "Absence in phase")
+				console.log "periodAway: #{periodAway.toString()}"
+				absentHours += periodAway.workingHours()
+			console.log "absentHours: #{absentHours}"
+			availableHours = restPeriod.workingHours() - absentHours
+			console.log "availableHours: #{availableHours}"
+			# console.log "corrected with focusfactor #{@teamMember.focusFactor}: #{@teamMember.focusFactor * availableHours}"
+			@teamMember.focusFactor * availableHours
 
 class UDisplayPhases
 	constructor: ->

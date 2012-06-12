@@ -71,12 +71,19 @@
 	<div class="container">
     <div class="band navigation">
         <nav class="primary container">
-            <ul>
-                <li><a href="Release.htm">Release</a></li>
-                <li><a href="#">Phases</a></li>
-                <li><a href="addRelease.htm">Add Release</a></li>
-            </ul>
-        </nav>
+			    <ul>
+				    <li><a href="Release.htm">Release Status</a></li>
+				    <li><a href="Phases.htm">Phases Overview</a></li>
+				    <li><a href="#">Administration</a>
+						    <ul>
+							    <li><a href="addRelease.htm"><span>- </span>Admin Release</a></li>
+							    <li><a href="adminProject.htm"><span>- </span>Admin Project</a></li>
+                                <li><a href="adminResource.htm"><span>- </span>Admin Resource</a></li>
+						    </ul>
+				    </li>
+				    <li><a href="planResources.htm"><span>- </span>Plan Resources</a></li>
+			    </ul>
+		    </nav>
     </div>
         <section id="overview" class="sixteen columns">
             <!-- ko if: $root.selectedPhase() -->
