@@ -71,8 +71,9 @@ class UDisplayReleaseStatus
 		# pattern matching
 		# {projectNames, remainingHours, availableHours, balanceHours} = @viewModel.hourBalance()
 		# showHoursChart(projectNames, remainingHours, availableHours, balanceHours)
-		options = setUpHoursChart()
-		@viewModel.hoursChart = new Highcharts.Chart(options)
+		# options.xAxis.categories = setUpHoursChart()
+		#options = setUpHoursChart(@viewModel.categories())
+		#@viewModel.hoursChart = new Highcharts.Chart(options)
 		
 		
 
@@ -87,16 +88,20 @@ class UGetAvailableHoursForTeamMemberFromNow
 			#console.log @teamMember
 			console.log "available hours for: #{@teamMember.initials}"
 			console.log "in phase: #{@phase.toString()}"
-			# set start date of phase to Now
-			restPeriod = new Period(today, @phase.endDate.date, @phase.title)
-			#console.log "period from now: #{restPeriod}"
+			# set start date of phase to Now when startdate of phase is already passed
+			if today > @phase.startDate.date and today 
+				startDate = today
+			else
+				startDate = @phase.startDate.date
+			restPeriod = new Period(startDate, @phase.endDate.date, @phase.title)
+			console.log "period from now: #{restPeriod}"
 			#console.log "periods away: #{@teamMember.periodsAway}"
 			absentHours = 0
 			for absence in @teamMember.periodsAway when (absence.overlaps @phase)
-				console.log "absence overlaps phase"
-				console.log absence
+				#console.log "absence overlaps phase"
+				#console.log absence
 				periodAway = absence.overlappingPeriod(@phase)
-				console.log "periodAway: #{periodAway.toString()}"
+				#console.log "periodAway: #{periodAway.toString()}"
 				# days away between today or startdate of phase
 				if today > absence.startDate.date
 					start = today
@@ -104,7 +109,7 @@ class UGetAvailableHoursForTeamMemberFromNow
 					start = absence.startDate.date
 				remainingAbsence = new Period(start, periodAway.endDate.date, 'remaining absence from now')
 				absentHours += remainingAbsence.workingHours()
-			console.log "absentHours: #{absentHours}"
+			#console.log "absentHours: #{absentHours}"
 			availableHours = restPeriod.workingHours() - absentHours
 			console.log "availableHours: #{availableHours}"
 			# console.log "corrected with focusfactor #{@teamMember.focusFactor}: #{@teamMember.focusFactor * availableHours}"

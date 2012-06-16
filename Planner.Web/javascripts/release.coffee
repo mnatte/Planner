@@ -114,8 +114,8 @@ class Period extends Mixin
 			# console.log (@startDate >= other.startDate and @startDate < other.endDate) or (@endDate >= other.startDate and @endDate < other.endDate)
 			(@startDate.date >= other.startDate.date and @startDate.date < other.endDate.date) or (@endDate.date >= other.startDate.date and @endDate.date < other.endDate.date)
 	overlappingPeriod: (other) ->
-		console.log "this: #{@}"
-		console.log "other: #{other}"
+		#console.log "this: #{@}"
+		#console.log "other: #{other}"
 		unless other is undefined or not @overlaps(other)
 			if (@startDate.date > other.startDate.date) 
 					startDate = @startDate.date

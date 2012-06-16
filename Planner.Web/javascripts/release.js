@@ -115,8 +115,6 @@
 
     Period.prototype.overlappingPeriod = function(other) {
       var endDate, startDate;
-      console.log("this: " + this);
-      console.log("other: " + other);
       if (!(other === void 0 || !this.overlaps(other))) {
         if (this.startDate.date > other.startDate.date) {
           startDate = this.startDate.date;

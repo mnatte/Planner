@@ -81,7 +81,7 @@
         </header>
         <section id="overview" class="sixteen columns">
             <div id="phases" class="eight columns alpha" data-bind="foreach: phases()">
-                <div><input type="radio" name="selectedPhase" data-bind="value: id, checked: $root.selectedPhaseId" /><label data-bind="text: title" style="display:inline" /></div>
+                <div><input type="radio" name="selectedPhase" data-bind="value: id, checked: $root.selectedPhaseId" /><label data-bind="text: toString()" style="display:inline" /></div>
                 <!--<ul data-bind="foreach: phases()">
                     <li class="price"><h5 data-bind="text: toString()"></h5></li>
                 </ul>-->
@@ -104,7 +104,7 @@
                                 <th>Balance</th>
                             </tr>
                         </thead>
-                        <tbody data-bind="foreach: hourBalance()">
+                        <tbody data-bind="foreach: hourBalance($root.selectedPhaseId())">
                             <tr>
                                 <th data-bind="text: projectname"></th>
                                 <td data-bind="text: availableHours"></td>
@@ -226,7 +226,7 @@
             var chart2 = new Highcharts.Chart(chartOptions);
         }
 
-        function setUpHoursChart() {
+        function setUpHoursChart(cats) {
             /**
             * Visualize an HTML table using Highcharts. The top (horizontal) header
             * is used for series names, and the left (vertical) header is used
@@ -240,13 +240,15 @@
 
                 // the categories
                 //options.xAxis.categories = [];
-                options.xAxis.categories = ['TR', 'EU', 'RU'];
+                //options.xAxis.categories = ['TR', 'EU', 'RU'];
+                //console.log(this);
+                options.xAxis.categories = cats;
                 // the data series
                 //options.series = [];
                 options.series = [{
-                            name: 'Hrs Available',
-                            data: [50, 22, 39]
-                        },
+                    name: 'Hrs Available',
+                    data: [50, 22, 39]
+                },
                         {
                             name: 'Hrs Remaining',
                             data: [34, 30, 29]
@@ -254,7 +256,7 @@
                         {
                             name: 'Balance',
                             data: [16, -8, 10]
-                }];
+                        }];
 
                 /*$('tbody th', table).each(function (i) {
                 options.xAxis.categories.push(this.innerHTML);

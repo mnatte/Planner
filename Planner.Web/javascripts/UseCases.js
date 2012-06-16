@@ -41,7 +41,7 @@
     }
 
     UDisplayReleaseStatus.prototype.execute = function(data) {
-      var absence, feat, member, options, phase, projectMembers, teamMember, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4, _ref5;
+      var absence, feat, member, phase, projectMembers, teamMember, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4, _ref5;
       projectMembers = [];
       this.release = new Release(data.Id, DateFormatter.createJsDateFromJson(data.StartDate), DateFormatter.createJsDateFromJson(data.EndDate), data.Title, data.TfsIterationPath);
       document.title = data.Title;
@@ -80,9 +80,7 @@
       this.release.group('memberProject', this.release.resources);
       this.viewModel = new ReleaseViewmodel(this.release);
       ko.applyBindings(this.viewModel);
-      showStatusChart(this.viewModel.statusData());
-      options = setUpHoursChart();
-      return this.viewModel.hoursChart = new Highcharts.Chart(options);
+      return showStatusChart(this.viewModel.statusData());
     };
 
     return UDisplayReleaseStatus;
@@ -97,23 +95,26 @@
     }
 
     UGetAvailableHoursForTeamMemberFromNow.prototype.execute = function() {
-      var absence, absentHours, availableHours, periodAway, remainingAbsence, restPeriod, start, today, _i, _len, _ref;
+      var absence, absentHours, availableHours, periodAway, remainingAbsence, restPeriod, start, startDate, today, _i, _len, _ref;
       today = new Date();
       if (today > this.phase.endDate.date) {
         return 0;
       } else {
         console.log("available hours for: " + this.teamMember.initials);
         console.log("in phase: " + (this.phase.toString()));
-        restPeriod = new Period(today, this.phase.endDate.date, this.phase.title);
+        if (today > this.phase.startDate.date && today) {
+          startDate = today;
+        } else {
+          startDate = this.phase.startDate.date;
+        }
+        restPeriod = new Period(startDate, this.phase.endDate.date, this.phase.title);
+        console.log("period from now: " + restPeriod);
         absentHours = 0;
         _ref = this.teamMember.periodsAway;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           absence = _ref[_i];
           if (!(absence.overlaps(this.phase))) continue;
-          console.log("absence overlaps phase");
-          console.log(absence);
           periodAway = absence.overlappingPeriod(this.phase);
-          console.log("periodAway: " + (periodAway.toString()));
           if (today > absence.startDate.date) {
             start = today;
           } else {
@@ -122,7 +123,6 @@
           remainingAbsence = new Period(start, periodAway.endDate.date, 'remaining absence from now');
           absentHours += remainingAbsence.workingHours();
         }
-        console.log("absentHours: " + absentHours);
         availableHours = restPeriod.workingHours() - absentHours;
         console.log("availableHours: " + availableHours);
         return this.teamMember.focusFactor * availableHours;
