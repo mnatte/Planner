@@ -66,6 +66,8 @@ namespace MvcApplication1.Models
             public ReleaseModels.Phase Phase { get; set; }
             public ReleaseModels.Project Project { get; set; }
             public double FocusFactor { get; set; }
+            public DateTime StartDate { get; set; }
+            public DateTime EndDate { get; set; }
         }
 
         public class Release : Phase

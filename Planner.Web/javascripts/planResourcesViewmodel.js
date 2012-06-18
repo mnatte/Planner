@@ -27,7 +27,9 @@
       this.selectedRelease = ko.observable();
       this.selectedPhase = ko.observable();
       this.selectedResource = ko.observable();
-      this.newAssignment = new AssignedResource(0, "", "", "", "", "", "", "", "", 0.8);
+      this.assignedStartDate = ko.observable();
+      this.assignedEndDate = ko.observable();
+      this.newAssignment = new AssignedResource(0, "", "", "", "", "", "", "", "", 0.8, new Date(), new Date());
       this.allReleases = ko.observableArray(allReleases);
       this.allResources = ko.observableArray(allResources);
       this.assignments = ko.observableArray();
@@ -91,7 +93,10 @@
     };
 
     PlanResourcesViewmodel.prototype.addAssignment = function() {
-      this.assignments.push(new AssignedResource(0, this.selectedRelease().id, "", this.selectedResource().id, this.selectedResource().firstName, this.selectedResource().middleName, this.selectedResource().lastName, this.selectedProject().id, "", this.newAssignment.focusFactor));
+      console.log("addAssignment");
+      console.log(this.newAssignment.assignedPeriod.startDate);
+      console.log(this.newAssignment.assignedPeriod.endDate.dateString);
+      this.assignments.push(new AssignedResource(0, this.selectedRelease().id, "", this.selectedResource().id, this.selectedResource().firstName, this.selectedResource().middleName, this.selectedResource().lastName, this.selectedProject().id, "", this.newAssignment.focusFactor, this.newAssignment.assignedPeriod.startDate.date, this.newAssignment.assignedPeriod.endDate.date));
       return this.canShowForm(false);
     };
 

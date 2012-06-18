@@ -13,5 +13,7 @@ namespace MvcApplication1.Models
         public int ProjectId { get; set; }
         public int PhaseId { get; set; }
         public double FocusFactor { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
     }
 }

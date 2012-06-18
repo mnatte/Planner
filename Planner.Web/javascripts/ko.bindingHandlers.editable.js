@@ -12,7 +12,7 @@
                     if (allBindings['_ko_property_writers'] && allBindings['_ko_property_writers'].editable) {
                         allBindings['_ko_property_writers'].editable(elementValue);
                     }
-                    //console.log(dataContext);
+                    console.log(dataContext);
                 }
             })
         },

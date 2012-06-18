@@ -194,12 +194,13 @@ class Project extends Mixin
 		projects
 
 class AssignedResource extends Mixin
-	constructor: (@id, phaseId, phaseTitle, resourceId, firstName, middleName, lastName, projectId, projectTitle, @focusFactor) ->
+	constructor: (@id, phaseId, phaseTitle, resourceId, firstName, middleName, lastName, projectId, projectTitle, @focusFactor, startDate, endDate) ->
 		@resource = new Resource(resourceId, firstName, middleName, lastName)
 		@project = new Project(projectId, projectTitle)
 		@phase = new Phase(phaseId, "", "", phaseTitle)
+		@assignedPeriod = new Period(startDate, endDate, "")
 	@create: (jsonData) ->
-		new AssignedResource(jsonData.Id, jsonData.Phase.Id, jsonData.Phase.Title, jsonData.Resource.Id, jsonData.Resource.FirstName, jsonData.Resource.MiddleName, jsonData.Resource.LastName, jsonData.Project.Id, jsonData.Project.Title, jsonData.FocusFactor)
+		new AssignedResource(jsonData.Id, jsonData.Phase.Id, jsonData.Phase.Title, jsonData.Resource.Id, jsonData.Resource.FirstName, jsonData.Resource.MiddleName, jsonData.Resource.LastName, jsonData.Project.Id, jsonData.Project.Title, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate))
 	@createCollection: (jsonData) ->
 		assignments = []
 		for assignment in jsonData
@@ -212,10 +213,13 @@ class AssignedResource extends Mixin
 		delete copy.phase #remove property
 		delete copy.resource #remove property
 		delete copy.project #remove property
+		delete copy.assignedPeriod
 		#console.log(@resource)
 		copy.resourceId = @resource.id
 		copy.phaseId = @phase.id
 		copy.projectId = @project.id
+		copy.startDate = @assignedPeriod.startDate.dateString
+		copy.endDate = @assignedPeriod.endDate.dateString
 		#console.log(copy)
 		copy #return the copy to be serialized
 

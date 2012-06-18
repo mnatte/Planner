@@ -312,16 +312,17 @@
 
     __extends(AssignedResource, _super);
 
-    function AssignedResource(id, phaseId, phaseTitle, resourceId, firstName, middleName, lastName, projectId, projectTitle, focusFactor) {
+    function AssignedResource(id, phaseId, phaseTitle, resourceId, firstName, middleName, lastName, projectId, projectTitle, focusFactor, startDate, endDate) {
       this.id = id;
       this.focusFactor = focusFactor;
       this.resource = new Resource(resourceId, firstName, middleName, lastName);
       this.project = new Project(projectId, projectTitle);
       this.phase = new Phase(phaseId, "", "", phaseTitle);
+      this.assignedPeriod = new Period(startDate, endDate, "");
     }
 
     AssignedResource.create = function(jsonData) {
-      return new AssignedResource(jsonData.Id, jsonData.Phase.Id, jsonData.Phase.Title, jsonData.Resource.Id, jsonData.Resource.FirstName, jsonData.Resource.MiddleName, jsonData.Resource.LastName, jsonData.Project.Id, jsonData.Project.Title, jsonData.FocusFactor);
+      return new AssignedResource(jsonData.Id, jsonData.Phase.Id, jsonData.Phase.Title, jsonData.Resource.Id, jsonData.Resource.FirstName, jsonData.Resource.MiddleName, jsonData.Resource.LastName, jsonData.Project.Id, jsonData.Project.Title, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate));
     };
 
     AssignedResource.createCollection = function(jsonData) {
@@ -341,9 +342,12 @@
       delete copy.phase;
       delete copy.resource;
       delete copy.project;
+      delete copy.assignedPeriod;
       copy.resourceId = this.resource.id;
       copy.phaseId = this.phase.id;
       copy.projectId = this.project.id;
+      copy.startDate = this.assignedPeriod.startDate.dateString;
+      copy.endDate = this.assignedPeriod.endDate.dateString;
       return copy;
     };
 

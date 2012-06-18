@@ -66,7 +66,7 @@
 				    <li><a href="Phases.htm">Phases Overview</a></li>
 				    <li><a href="#">Administration</a>
 						    <ul>
-							    <li><a href="addRelease.htm"><span>- </span>Admin Release</a></li>
+							    <li><a href="adminRelease.htm"><span>- </span>Admin Release</a></li>
 							    <li><a href="adminProject.htm"><span>- </span>Admin Project</a></li>
                                 <li><a href="adminResource.htm"><span>- </span>Admin Resource</a></li>
 						    </ul>
@@ -96,6 +96,8 @@
                 <li>
                     <span data-bind="text: resource.fullName()"></span>
                     <span class="selectable" contenteditable="true" data-bind="text: focusFactor, editable: focusFactor"></span>
+                    <span class="selectable" contenteditable="true" data-bind="text: assignedPeriod.startDate.dateString, editable: assignedPeriod.startDate.dateString"></span>
+                    <span class="selectable" contenteditable="true" data-bind="text: assignedPeriod.endDate.dateString, editable: assignedPeriod.endDate.dateString"></span>
                     <button data-bind="click: $root.removeAssignment.bind($data)">Remove</button>
                 </li>
             </ul>

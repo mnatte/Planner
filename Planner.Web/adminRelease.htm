@@ -10,7 +10,7 @@
 	<!-- Basic Page Needs
   ================================================== -->
 	<meta charset="utf-8">
-	<title>Project</title>
+	<title>Add Release</title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 	<!--[if lt IE 9]>
@@ -42,8 +42,7 @@
         
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
-    <script type="text/javascript" src="javascripts/simpleCrudViewmodel.js"></script>
-    <script type="text/javascript" src="javascripts/adminResourceViewmodel.js"></script>
+    <script type="text/javascript" src="javascripts/adminReleaseViewmodel.js"></script>
     <script type="text/javascript" src="javascripts/ajax.js"></script>
     <script type="text/javascript" src="javascripts/Roles.js"></script>
     <script type="text/javascript" src="javascripts/UseCases.js"></script>
@@ -76,22 +75,26 @@
         <div class="band">
             <div class="sixteen columns omega">
                 <div class="six columns omega">
-                    <form data-bind="with: selectedItem()">
-                        <label>First name:</label><input type="text" data-bind="value: firstName, valueUpdate: 'afterkeydown'" />
-                        <label>Middle name:</label><input type="text" data-bind="value: middleName" />
-                        <label>Last name:</label><input type="text" data-bind="value: lastName" />
-                        <label>Initials:</label><input type="text" data-bind="value: initials" />
-                        <label>Email:</label><input type="text" data-bind="value: email" />
-                        <label>Phone number:</label><input type="text" data-bind="value: phoneNumber" />
-                        <label>Available hours per week:</label><input type="text" data-bind="value: hoursPerWeek" />
+                    <form data-bind="with: selectedRelease()">
+                        <label>Release title:</label><input type="text" data-bind="value: title, valueUpdate: 'afterkeydown'" />
+                        <label>Start date (dd-mm-yyyy):</label><input type="text" data-bind="value: startDate.dateString" />
+                        <label>End date (dd-mm-yyyy):</label><input type="text" data-bind="value: endDate.dateString" />
+                        <label>Tfs IterationPath:</label><input type="text" data-bind="value: tfsIterationPath" />
+                        <label>Projects:</label><select data-bind="options: $root.allProjects(), optionsText: 'title', selectedOptions: projects", size="5" multiple="multiple"></select>
+                        <!--<p>Selected Projects: <span data-bind="text: projects()"></span></p>--> <!-- updates in real-time -->
                         <button data-bind="click: $parent.saveSelected.bind($data)">Submit</button>
                     </form>
                 </div>
                 <div class="ten columns omega">
-                    <ul data-bind="foreach: allItems">
+                    <ul data-bind="foreach: allReleases">
                         <li>
-                            <span class="selectable" data-bind="text: fullName(), click: $root.selectItem.bind($data), style: { color: $data.id == $root.selectedItem().id ? 'red' : 'black' }"></span>
-                            <button data-bind="click: $root.deleteItem.bind($data)">Delete</button>
+                            <span class="selectable" data-bind="text: title, click: $root.selectRelease.bind($data), style: { color: $data.id == $root.selectedRelease().id ? 'red' : 'black' }"></span>
+                            <button data-bind="click: $root.addPhase.bind($data)">Add Phase</button>
+                            <button data-bind="click: $root.deleteRelease.bind($data)">Delete</button>
+                            <ul data-bind="foreach: phases">
+                                <li class="selectable" data-bind="text: title, click: $root.selectRelease.bind($data), style: { color: $data.id == $root.selectedRelease().id ? 'red' : 'black' }"></li>
+                                <button data-bind="click: $root.deleteRelease.bind($data)">Delete</button>
+                            </ul>
                         </li>
                     </ul>
                     <button data-bind="click: clear.bind($data)">New</button>
@@ -101,10 +104,23 @@
     </div>
 
 <script type="text/javascript">
+    // 'projects' is callback data provided by former Ajax call
+    function loadReleases(projects) {
+        var uc = new ULoadAdminReleases();
+        var ajx = new Ajax();
+        // use closure around execute method to pass 'projects' argument as well as 'data' from getReleaseSummaries callback
+        // function(data) is callback so data is available from callback while 'projects' is available from closure construction
+        ajx.getReleaseSummaries(function (data) { uc.execute(data, projects) });
+    }
+
+    // load all projects, afterwards load releases
     $(document).ready(function () {
-        var uc = new ULoadAdminResources();
+//        var uc = new ULoadAdminReleases();
+//        var ajax = new Ajax();
+//        ajax.getReleaseSummaries(uc.execute);
         var ajax = new Ajax();
-        ajax.getResources(uc.execute);
+        // callback 'loadReleases' provided, callback jsonData automatically supplied as argument
+        ajax.getProjects(loadReleases);
     });
 </script>    
 </body>

@@ -23,7 +23,6 @@
       this.selectedRelease = ko.observable();
       this.allReleases = ko.observableArray(allReleases);
       this.allProjects = ko.observableArray(allProjects);
-      this.allNumbers = ko.observableArray([1, 2, 3, 4, 5]);
       this.testNumbers = ko.observableArray([]);
       _ref = this.allReleases();
       _fn = function(rel) {

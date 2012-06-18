@@ -135,7 +135,7 @@
     </Content>
     <Content Include="planResources.htm" />
     <Content Include="images\bg_nav.PNG" />
-    <Content Include="addRelease.htm" />
+    <Content Include="adminRelease.htm" />
     <Content Include="javascripts\adminProjectViewmodel.js">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

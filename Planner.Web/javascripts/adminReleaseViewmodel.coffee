@@ -14,7 +14,7 @@ class AdminReleaseViewmodel
 		@allReleases = ko.observableArray(allReleases)
 		@allProjects = ko.observableArray(allProjects)
 
-		@allNumbers = ko.observableArray([1,2,3,4,5])
+		#@allNumbers = ko.observableArray([1,2,3,4,5])
 		@testNumbers = ko.observableArray([])
 		#@selectedProjectIds = ko.observableArray([])
 		for rel in @allReleases()

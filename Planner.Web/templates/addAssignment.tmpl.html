@@ -1,10 +1,8 @@
 ﻿<section class="sixteen columns">
     <!--add these lines to mainpage javascript:
     infuser.defaults.templateSuffix = ".tmpl.html";
-    ifuser.defaults.templateUrl = "/planner/templates";-->
-    <!--<div class="dialogTitleBorder">
-        <span class="borderTitleText">New Resource Assignment</span>
-        <div class="closeIcon" data-bind="click:$root.closeForm"></div>
-    </div>-->
-        <select data-bind="options: $root.availableResources(), optionsText: function(item) { return item.fullName() }, value: $root.selectedResource, optionsCaption: 'Choose...'" style="display:inline" ></select> <input type="text" data-bind="value: focusFactor, event: { blur: $root.addAssignment.bind($data) }" style="display:inline; width:30px; height:30px"/>
+    infuser.defaults.templateUrl = "/planner/templates";-->
+
+        <!--data context is $root.newAssignment-->
+        <select data-bind="options: $root.availableResources(), optionsText: function(item) { return item.fullName() }, value: $root.selectedResource, optionsCaption: 'Choose...'" style="display:inline" ></select> <input type="text" data-bind="value: focusFactor" style="display:inline; width:30px; height:30px"/><input type="text" data-bind="value: assignedPeriod.startDate.dateString" style="display:inline; width:100px; height:30px"/><input type="text" data-bind="value: assignedPeriod.endDate.dateString, event: { blur: $root.addAssignment.bind($data) }" style="display:inline; width:100px; height:30px"/>
 </section>

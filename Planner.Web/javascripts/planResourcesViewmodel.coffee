@@ -12,7 +12,9 @@ class PlanResourcesViewmodel extends Mixin
 		@selectedRelease = ko.observable()
 		@selectedPhase = ko.observable()
 		@selectedResource = ko.observable()
-		@newAssignment = new AssignedResource(0, "", "", "", "", "", "", "", "", 0.8)
+		@assignedStartDate = ko.observable()
+		@assignedEndDate = ko.observable()
+		@newAssignment = new AssignedResource(0, "", "", "", "", "", "", "", "", 0.8, new Date(), new Date())
 		@allReleases = ko.observableArray(allReleases)
 		@allResources = ko.observableArray(allResources)
 		@assignments = ko.observableArray()
@@ -51,12 +53,15 @@ class PlanResourcesViewmodel extends Mixin
 		available
 
 	addAssignment: =>
+		console.log "addAssignment"
 		#copy = @newAssignment
 		#copy.phase = @selectedRelease()
 		#copy.resource = @selectedResource()
 		#copy.project = @selectedProject()
 		#console.log ko.toJSON(copy)
-		@assignments.push new AssignedResource(0, @selectedRelease().id, "", @selectedResource().id, @selectedResource().firstName, @selectedResource().middleName, @selectedResource().lastName, @selectedProject().id, "", @newAssignment.focusFactor)
+		console.log @newAssignment.assignedPeriod.startDate
+		console.log @newAssignment.assignedPeriod.endDate.dateString
+		@assignments.push new AssignedResource(0, @selectedRelease().id, "", @selectedResource().id, @selectedResource().firstName, @selectedResource().middleName, @selectedResource().lastName, @selectedProject().id, "", @newAssignment.focusFactor, @newAssignment.assignedPeriod.startDate.date, @newAssignment.assignedPeriod.endDate.date)
 		#@allResources.remove @selectedResource()
 		@canShowForm(false)
 
