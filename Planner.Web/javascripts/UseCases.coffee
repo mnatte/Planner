@@ -42,6 +42,8 @@ class UDisplayReleaseStatus
 		for feat in data.Backlog
 			@release.addFeature new Feature(feat.BusinessId, feat.ContactPerson, feat.EstimatedHours, feat.HoursWorked, feat.Priority, feat.Project.ShortName, feat.RemainingHours, feat.Title, feat.Status)
 			# add team member per project through backlog per project
+
+			# TODO: simply get assignment list. determine assignments per resource for the release and sum all assigned hours. subtract absences in the period of the release and multiply by focusfactor
 			for member in feat.Project.ProjectTeam.TeamMembers when "#{member.Initials}_#{feat.Project.ShortName}" not in projectMembers
 				# console.log("ADD TEAMMEMBERS TO PROJECT")
 				# teamMember = new Resource(member.FirstName, member.MiddleName, member.LastName, member.Initials, member.AvailableHoursPerWeek, member.Email, member.PhoneNumber, member.Company, member.Function)
@@ -75,9 +77,6 @@ class UDisplayReleaseStatus
 		#options = setUpHoursChart(@viewModel.categories())
 		#@viewModel.hoursChart = new Highcharts.Chart(options)
 		
-		
-
-
 class UGetAvailableHoursForTeamMemberFromNow
 	constructor: (@teamMember, @phase) ->
 	execute: ->

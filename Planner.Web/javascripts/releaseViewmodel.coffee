@@ -26,19 +26,6 @@ class ReleaseViewmodel
 			tooltip:
 				formatter: ->
 					'<b>' + this.series.name + '</b><br/>' + this.y + ' ' + this.x.toLowerCase()
-			#series: [
-			#	{
-			#		name: 'Aap',
-			#		data: [1,2,3]
-			#	},
-			#	{
-			#		name: 'Noot',
-			#		data: [4,5,6]
-			#	},
-			#	{
-			#		name: 'Mies',
-			#		data: [4,2,7]
-			#	}]
 
 		@hoursChart = new Highcharts.Chart(@hoursChartOptions) 
 		@categories = ko.observableArray(['aap', 'noot', 'mies'])
@@ -91,25 +78,6 @@ class ReleaseViewmodel
 		)
 		@loadProjects()
 		
-		#@refreshHoursChart = ko.computed(=> 
-		#		options = setUpHoursChart()
-		#		x = new Highcharts.Chart(options)
-
-		#		console.log 'refreshHoursChart'
-		#		a = @disgardedStatuses()
-		#		b = @selectedPhaseId()
-		#		#unless @hoursChart is undefined
-		#			# trigger this function by doing some subscription to observables
-		#			#console.log "hoursChart: " + @hoursChart
-		#		
-		#			#@hoursChart.redraw
-		#	, this)
-
-		#@displaySelectedPhaseId = ko.computed(=> 
-			#console.log @
-			#console.log @selectedPhaseId()
-		#, this)
-
 	# release overview info
 	releaseTitle: -> @release.title
 	releaseStartdate: -> @release.startDate.date
@@ -142,6 +110,7 @@ class ReleaseViewmodel
 			phase = (item for item in releasePhases when +item.id is +phaseId)[0]
 			#console.log "releasePhases: " + releasePhases
 			#console.log "phase: " + phase
+			# TODO: use logic as described in use case UGetAvailableHoursForTeamMemberFromNow
 			for set in @release.sets when set.groupedBy == "memberProject"
 				projectHours = {}
 				#console.log "memberProject: #{set.label} #{set.items.length} members"
