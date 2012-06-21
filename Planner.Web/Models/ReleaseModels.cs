@@ -133,7 +133,16 @@ namespace MvcApplication1.Models
             public string Description { get; set; }
             public string TfsIterationPath { get; set; }
             public string TfsDevBranch { get; set; }
-            public Team ProjectTeam { get; set; }
+            private List<ResourceAssignment> _assignedResources;
+            public IList<ResourceAssignment> AssignedResources
+            {
+                get
+                {
+                    if (_assignedResources == null)
+                        _assignedResources = new List<ResourceAssignment>();
+                    return _assignedResources;
+                }
+            }
         }
 
         public class Team

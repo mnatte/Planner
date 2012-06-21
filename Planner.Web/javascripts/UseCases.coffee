@@ -33,6 +33,7 @@ class UDisplayReleaseStatus
 
 		# fill release object
 		@release = new Release(data.Id, DateFormatter.createJsDateFromJson(data.StartDate), DateFormatter.createJsDateFromJson(data.EndDate), data.Title, data.TfsIterationPath)
+		# set HTML page title
 		document.title = data.Title
 		# add phases
 		for phase in data.Phases
@@ -43,12 +44,16 @@ class UDisplayReleaseStatus
 			@release.addFeature new Feature(feat.BusinessId, feat.ContactPerson, feat.EstimatedHours, feat.HoursWorked, feat.Priority, feat.Project.ShortName, feat.RemainingHours, feat.Title, feat.Status)
 			# add team member per project through backlog per project
 
-			# TODO: simply get assignment list. determine assignments per resource for the release and sum all assigned hours. subtract absences in the period of the release and multiply by focusfactor
-			for member in feat.Project.ProjectTeam.TeamMembers when "#{member.Initials}_#{feat.Project.ShortName}" not in projectMembers
+		# TODO: simply get assignment list. determine assignments per resource for the release and sum all assigned hours. subtract absences in the period of the release and multiply by focusfactor
+		# for member in feat.Project.ProjectTeam.TeamMembers when "#{member.Initials}_#{feat.Project.ShortName}" not in projectMembers
+		for proj in data.Projects
+			console.log ko.toJSON proj
+			for member in proj.AssignedResources
+				console.log ko.toJSON member
 				# console.log("ADD TEAMMEMBERS TO PROJECT")
 				# teamMember = new Resource(member.FirstName, member.MiddleName, member.LastName, member.Initials, member.AvailableHoursPerWeek, member.Email, member.PhoneNumber, member.Company, member.Function)
 				teamMember = Resource.create member
-				teamMember.focusFactor = member.FocusFactor
+				teamMember.focusFactor = member.FocusFactor # FocusFactor comes from ReleaseResources, so is an assignment
 				teamMember.memberProject = feat.Project.ShortName
 				# add team member absences
 				for absence in member.PeriodsAway when DateFormatter.createJsDateFromJson(absence.EndDate) < @release.endDate.date or DateFormatter.createJsDateFromJson(absence.StartDate) >= @release.startDate.date
@@ -88,7 +93,7 @@ class UGetAvailableHoursForTeamMemberFromNow
 			console.log "available hours for: #{@teamMember.initials}"
 			console.log "in phase: #{@phase.toString()}"
 			# set start date of phase to Now when startdate of phase is already passed
-			if today > @phase.startDate.date and today 
+			if today > @phase.startDate.date and today > member.
 				startDate = today
 			else
 				startDate = @phase.startDate.date

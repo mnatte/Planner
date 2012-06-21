@@ -1,6 +1,5 @@
 (function() {
-  var HLoadReleases, UDisplayPhases, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, root,
-    __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+  var HLoadReleases, UDisplayPhases, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -41,7 +40,7 @@
     }
 
     UDisplayReleaseStatus.prototype.execute = function(data) {
-      var absence, feat, member, phase, projectMembers, teamMember, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4, _ref5;
+      var absence, feat, member, phase, proj, projectMembers, teamMember, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref, _ref2, _ref3, _ref4, _ref5;
       projectMembers = [];
       this.release = new Release(data.Id, DateFormatter.createJsDateFromJson(data.StartDate), DateFormatter.createJsDateFromJson(data.EndDate), data.Title, data.TfsIterationPath);
       document.title = data.Title;
@@ -55,18 +54,21 @@
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         feat = _ref2[_j];
         this.release.addFeature(new Feature(feat.BusinessId, feat.ContactPerson, feat.EstimatedHours, feat.HoursWorked, feat.Priority, feat.Project.ShortName, feat.RemainingHours, feat.Title, feat.Status));
-        _ref3 = feat.Project.ProjectTeam.TeamMembers;
-        for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
-          member = _ref3[_k];
-          if (!(_ref4 = "" + member.Initials + "_" + feat.Project.ShortName, __indexOf.call(projectMembers, _ref4) < 0)) {
-            continue;
-          }
+      }
+      _ref3 = data.Projects;
+      for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+        proj = _ref3[_k];
+        console.log(ko.toJSON(proj));
+        _ref4 = proj.AssignedResources;
+        for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
+          member = _ref4[_l];
+          console.log(ko.toJSON(member));
           teamMember = Resource.create(member);
           teamMember.focusFactor = member.FocusFactor;
           teamMember.memberProject = feat.Project.ShortName;
           _ref5 = member.PeriodsAway;
-          for (_l = 0, _len4 = _ref5.length; _l < _len4; _l++) {
-            absence = _ref5[_l];
+          for (_m = 0, _len5 = _ref5.length; _m < _len5; _m++) {
+            absence = _ref5[_m];
             if (DateFormatter.createJsDateFromJson(absence.EndDate) < this.release.endDate.date || DateFormatter.createJsDateFromJson(absence.StartDate) >= this.release.startDate.date) {
               teamMember.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title));
             }
@@ -102,9 +104,7 @@
       } else {
         console.log("available hours for: " + this.teamMember.initials);
         console.log("in phase: " + (this.phase.toString()));
-        if (today > this.phase.startDate.date && today) {
-          startDate = today;
-        } else {
+        if (today > this.phase.startDate.date && today > (member.startDate = today)) {} else {
           startDate = this.phase.startDate.date;
         }
         restPeriod = new Period(startDate, this.phase.endDate.date, this.phase.title);
