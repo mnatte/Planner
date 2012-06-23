@@ -40,35 +40,26 @@
     }
 
     UDisplayReleaseStatus.prototype.execute = function(data) {
-      var absence, feat, member, phase, proj, projectMembers, teamMember, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref, _ref2, _ref3, _ref4, _ref5;
+      var absence, member, proj, projectMembers, teamMember, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
       projectMembers = [];
-      this.release = new Release(data.Id, DateFormatter.createJsDateFromJson(data.StartDate), DateFormatter.createJsDateFromJson(data.EndDate), data.Title, data.TfsIterationPath);
+      console.log(data);
+      this.release = Release.create(data);
       document.title = data.Title;
-      _ref = data.Phases;
+      console.log(this.release.backlog);
+      _ref = data.Projects;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        phase = _ref[_i];
-        this.release.addPhase(new Phase(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath));
-      }
-      console.log(this.release);
-      _ref2 = data.Backlog;
-      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-        feat = _ref2[_j];
-        this.release.addFeature(new Feature(feat.BusinessId, feat.ContactPerson, feat.EstimatedHours, feat.HoursWorked, feat.Priority, feat.Project.ShortName, feat.RemainingHours, feat.Title, feat.Status));
-      }
-      _ref3 = data.Projects;
-      for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
-        proj = _ref3[_k];
+        proj = _ref[_i];
         console.log(ko.toJSON(proj));
-        _ref4 = proj.AssignedResources;
-        for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
-          member = _ref4[_l];
+        _ref2 = proj.AssignedResources;
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          member = _ref2[_j];
           console.log(ko.toJSON(member));
           teamMember = Resource.create(member);
           teamMember.focusFactor = member.FocusFactor;
           teamMember.memberProject = feat.Project.ShortName;
-          _ref5 = member.PeriodsAway;
-          for (_m = 0, _len5 = _ref5.length; _m < _len5; _m++) {
-            absence = _ref5[_m];
+          _ref3 = member.PeriodsAway;
+          for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+            absence = _ref3[_k];
             if (DateFormatter.createJsDateFromJson(absence.EndDate) < this.release.endDate.date || DateFormatter.createJsDateFromJson(absence.StartDate) >= this.release.startDate.date) {
               teamMember.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title));
             }

@@ -157,6 +157,21 @@
       Phase.__super__.constructor.call(this, this.startDate, this.endDate, this.title);
     }
 
+    Phase.create = function(jsonData) {
+      return new Phase(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId);
+    };
+
+    Phase.createCollection = function(jsonData) {
+      var phase, phases, _i, _len;
+      phases = [];
+      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
+        phase = jsonData[_i];
+        this.phase = Phase.create(phase);
+        phases.push(this.phase);
+      }
+      return phases;
+    };
+
     return Phase;
 
   })(Period);
@@ -206,6 +221,23 @@
       return this.projects.push(project);
     };
 
+    Release.create = function(jsonData) {
+      var feat, phase, release, _i, _j, _len, _len2, _ref, _ref2;
+      release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId);
+      _ref = jsonData.Phases;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        phase = _ref[_i];
+        release.addPhase(Phase.create(phase));
+      }
+      _ref2 = jsonData.Backlog;
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        feat = _ref2[_j];
+        console.log(feat);
+        release.addFeature(Feature.create(feat));
+      }
+      return release;
+    };
+
     return Release;
 
   })(Phase);
@@ -223,6 +255,13 @@
       this.title = title;
       this.state = state;
     }
+
+    Feature.create = function(jsonData) {
+      var feature;
+      feature = new Feature(jsonData.BusinessId, jsonData.ContactPerson, jsonData.EstimatedHours, jsonData.HoursWorked, jsonData.Priority, "", jsonData.RemainingHours, jsonData.Title, jsonData.Status);
+      feature.project = Project.create(jsonData.Project);
+      return feature;
+    };
 
     return Feature;
 

@@ -138,6 +138,14 @@ class Phase extends Period
 	# attach seperate startDate, endDate and title properties to each instance
 	constructor: (@id, @startDate, @endDate, @title, @tfsIterationPath, @parentId) ->
 		super @startDate, @endDate, @title
+	@create: (jsonData) ->
+		new Phase(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId)
+	@createCollection: (jsonData) ->
+		phases = []
+		for phase in jsonData
+			@phase = Phase.create(phase)
+			phases.push @phase
+		phases
 
 class MileStone
 	constructor: (@date, @title) ->
@@ -159,9 +167,21 @@ class Release extends Phase
 		@resources.push(resource)
 	addProject: (project) ->
 		@projects.push(project)
+	@create: (jsonData) ->
+		release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId)
+		for phase in jsonData.Phases
+			release.addPhase Phase.create(phase)
+		for feat in jsonData.Backlog
+			console.log feat
+			release.addFeature Feature.create(feat)
+		release
 
 class Feature
 	constructor: (@businessId, @contactPerson, @estimatedHours, @hoursWorked, @priority, @project, @remainingHours, @title, @state) ->
+	@create: (jsonData) ->
+		feature = new Feature(jsonData.BusinessId, jsonData.ContactPerson, jsonData.EstimatedHours, jsonData.HoursWorked, jsonData.Priority, "", jsonData.RemainingHours, jsonData.Title, jsonData.Status)
+		feature.project = Project.create jsonData.Project
+		feature
 	
 class Resource extends Mixin
 	constructor: (@id, @firstName, @middleName, @lastName, @initials, @hoursPerWeek, @email, @phoneNumber, @company, @function) ->
