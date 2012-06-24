@@ -200,8 +200,6 @@
       this.parentId = parentId;
       Release.__super__.constructor.apply(this, arguments);
       this.phases = [];
-      this.backlog = [];
-      this.resources = [];
       this.projects = [];
     }
 
@@ -209,20 +207,12 @@
       return this.phases.push(phase);
     };
 
-    Release.prototype.addFeature = function(feature) {
-      return this.backlog.push(feature);
-    };
-
-    Release.prototype.addResource = function(resource) {
-      return this.resources.push(resource);
-    };
-
     Release.prototype.addProject = function(project) {
       return this.projects.push(project);
     };
 
     Release.create = function(jsonData) {
-      var feat, phase, release, _i, _j, _len, _len2, _ref, _ref2;
+      var feat, phase, project, release, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
       release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId);
       _ref = jsonData.Phases;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -234,6 +224,11 @@
         feat = _ref2[_j];
         console.log(feat);
         release.addFeature(Feature.create(feat));
+      }
+      _ref3 = jsonData.Projects;
+      for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+        project = _ref3[_k];
+        release.addProject(Project.create(project));
       }
       return release;
     };
@@ -256,10 +251,9 @@
       this.state = state;
     }
 
-    Feature.create = function(jsonData) {
+    Feature.create = function(jsonData, project) {
       var feature;
-      feature = new Feature(jsonData.BusinessId, jsonData.ContactPerson, jsonData.EstimatedHours, jsonData.HoursWorked, jsonData.Priority, "", jsonData.RemainingHours, jsonData.Title, jsonData.Status);
-      feature.project = Project.create(jsonData.Project);
+      feature = new Feature(jsonData.BusinessId, jsonData.ContactPerson, jsonData.EstimatedHours, jsonData.HoursWorked, jsonData.Priority, project, jsonData.RemainingHours, jsonData.Title, jsonData.Status);
       return feature;
     };
 
@@ -326,10 +320,24 @@
       this.descr = descr;
       this.tfsIterationPath = tfsIterationPath;
       this.tfsDevBranch = tfsDevBranch;
+      this.resources = [];
+      this.backlog = [];
     }
 
     Project.create = function(jsonData) {
-      return new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch);
+      var feature, project, res, _i, _j, _len, _len2, _ref, _ref2;
+      project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch);
+      _ref = jsonData.AssignedResources;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        res = _ref[_i];
+        this.resources.push(AssignedResource.create(res, project));
+      }
+      _ref2 = jsonData.Backlog;
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        feature = _ref2[_j];
+        this.backlog.push(Feature.create(feature, project));
+      }
+      return project;
     };
 
     Project.createCollection = function(jsonData) {
@@ -351,7 +359,7 @@
 
     __extends(AssignedResource, _super);
 
-    function AssignedResource(id, phaseId, phaseTitle, resourceId, firstName, middleName, lastName, projectId, projectTitle, focusFactor, startDate, endDate) {
+    function AssignedResource(id, phaseId, phaseTitle, resourceId, firstName, middleName, lastName, project, focusFactor, startDate, endDate) {
       this.id = id;
       this.focusFactor = focusFactor;
       this.resource = new Resource(resourceId, firstName, middleName, lastName);
@@ -360,8 +368,8 @@
       this.assignedPeriod = new Period(startDate, endDate, "");
     }
 
-    AssignedResource.create = function(jsonData) {
-      return new AssignedResource(jsonData.Id, jsonData.Phase.Id, jsonData.Phase.Title, jsonData.Resource.Id, jsonData.Resource.FirstName, jsonData.Resource.MiddleName, jsonData.Resource.LastName, jsonData.Project.Id, jsonData.Project.Title, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate));
+    AssignedResource.create = function(jsonData, project) {
+      return new AssignedResource(jsonData.Id, jsonData.Phase.Id, jsonData.Phase.Title, jsonData.Resource.Id, jsonData.Resource.FirstName, jsonData.Resource.MiddleName, jsonData.Resource.LastName, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate));
     };
 
     AssignedResource.createCollection = function(jsonData) {

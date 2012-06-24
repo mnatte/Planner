@@ -155,16 +155,16 @@ class Release extends Phase
 		# pass along all args to parent ctor by using 'super' instead of 'super()'
 		super
 		@phases = [] # ko.observableArray()
-		@backlog = []
-		@resources = []
+		#@backlog = []
+		#@resources = []
 		@projects = []
 	addPhase: (phase) ->
 		@phases.push(phase)
-	addFeature: (feature) ->
-		@backlog.push(feature)
-	addResource: (resource) ->
+	#addFeature: (feature) ->
+		#@backlog.push(feature)
+	#addResource: (resource) ->
 		# console.log resource.initials + "->" + resource.memberProject
-		@resources.push(resource)
+		#@resources.push(resource)
 	addProject: (project) ->
 		@projects.push(project)
 	@create: (jsonData) ->
@@ -174,13 +174,15 @@ class Release extends Phase
 		for feat in jsonData.Backlog
 			console.log feat
 			release.addFeature Feature.create(feat)
+		for project in jsonData.Projects
+			release.addProject Project.create(project)
 		release
 
 class Feature
 	constructor: (@businessId, @contactPerson, @estimatedHours, @hoursWorked, @priority, @project, @remainingHours, @title, @state) ->
-	@create: (jsonData) ->
-		feature = new Feature(jsonData.BusinessId, jsonData.ContactPerson, jsonData.EstimatedHours, jsonData.HoursWorked, jsonData.Priority, "", jsonData.RemainingHours, jsonData.Title, jsonData.Status)
-		feature.project = Project.create jsonData.Project
+	@create: (jsonData, project) ->
+		# create under given project
+		feature = new Feature(jsonData.BusinessId, jsonData.ContactPerson, jsonData.EstimatedHours, jsonData.HoursWorked, jsonData.Priority, project, jsonData.RemainingHours, jsonData.Title, jsonData.Status)
 		feature
 	
 class Resource extends Mixin
@@ -204,8 +206,15 @@ class Resource extends Mixin
 
 class Project extends Mixin
 	constructor: (@id, @title, @shortName, @descr, @tfsIterationPath, @tfsDevBranch) ->
+		@resources = []
+		@backlog = []
 	@create: (jsonData) ->
-		new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch)
+		project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch)
+		for res in jsonData.AssignedResources
+			@resources.push AssignedResource.create(res, project)
+		for feature in jsonData.Backlog
+			@backlog.push Feature.create(feature, project)
+		project
 	@createCollection: (jsonData) ->
 		projects = []
 		for project in jsonData
@@ -214,13 +223,15 @@ class Project extends Mixin
 		projects
 
 class AssignedResource extends Mixin
-	constructor: (@id, phaseId, phaseTitle, resourceId, firstName, middleName, lastName, projectId, projectTitle, @focusFactor, startDate, endDate) ->
+	constructor: (@id, phaseId, phaseTitle, resourceId, firstName, middleName, lastName, project, @focusFactor, startDate, endDate) ->
+		#TODO: provide resource, project and phase through ctor
 		@resource = new Resource(resourceId, firstName, middleName, lastName)
 		@project = new Project(projectId, projectTitle)
 		@phase = new Phase(phaseId, "", "", phaseTitle)
 		@assignedPeriod = new Period(startDate, endDate, "")
-	@create: (jsonData) ->
-		new AssignedResource(jsonData.Id, jsonData.Phase.Id, jsonData.Phase.Title, jsonData.Resource.Id, jsonData.Resource.FirstName, jsonData.Resource.MiddleName, jsonData.Resource.LastName, jsonData.Project.Id, jsonData.Project.Title, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate))
+	@create: (jsonData, project) ->
+		# create under given project
+		new AssignedResource(jsonData.Id, jsonData.Phase.Id, jsonData.Phase.Title, jsonData.Resource.Id, jsonData.Resource.FirstName, jsonData.Resource.MiddleName, jsonData.Resource.LastName, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate))
 	@createCollection: (jsonData) ->
 		assignments = []
 		for assignment in jsonData
