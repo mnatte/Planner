@@ -10,15 +10,16 @@ class HLoadReleases
 		releases = []
 		# fill release collection
 		for release in data
-			@release = new Release(release.Id, DateFormatter.createJsDateFromJson(release.StartDate), DateFormatter.createJsDateFromJson(release.EndDate), release.Title, release.TfsIterationPath)
+			# @release = new Release(release.Id, DateFormatter.createJsDateFromJson(release.StartDate), DateFormatter.createJsDateFromJson(release.EndDate), release.Title, release.TfsIterationPath)
+			Release.create data
 			# add phases
-			for phase in release.Phases
+			# for phase in release.Phases
 				#console.log phase
-				@release.addPhase new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, release.Id)
+				# @release.addPhase new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, release.Id)
 			# add projects
-			for project in release.Projects
+			#for project in release.Projects
 				#console.log phase
-				@release.addProject new Project(project.Id, project.Title, project.ShortName)
+				# @release.addProject new Project(project.Id, project.Title, project.ShortName)
 			releases.push @release
 		releases
 
@@ -50,7 +51,7 @@ class UDisplayReleaseStatus
 		# TODO: simply get assignment list. determine assignments per resource for the release and sum all assigned hours. subtract absences in the period of the release and multiply by focusfactor
 		# for member in feat.Project.ProjectTeam.TeamMembers when "#{member.Initials}_#{feat.Project.ShortName}" not in projectMembers
 		for proj in data.Projects
-			console.log ko.toJSON proj
+			# console.log ko.toJSON proj
 			for member in proj.AssignedResources
 				console.log ko.toJSON member
 				# console.log("ADD TEAMMEMBERS TO PROJECT")

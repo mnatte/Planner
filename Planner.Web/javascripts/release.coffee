@@ -171,9 +171,9 @@ class Release extends Phase
 		release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId)
 		for phase in jsonData.Phases
 			release.addPhase Phase.create(phase)
-		for feat in jsonData.Backlog
-			console.log feat
-			release.addFeature Feature.create(feat)
+		# for feat in jsonData.Backlog
+			# console.log feat
+			# release.addFeature Feature.create(feat)
 		for project in jsonData.Projects
 			release.addProject Project.create(project)
 		release
@@ -181,6 +181,7 @@ class Release extends Phase
 class Feature
 	constructor: (@businessId, @contactPerson, @estimatedHours, @hoursWorked, @priority, @project, @remainingHours, @title, @state) ->
 	@create: (jsonData, project) ->
+		console.log "create feature"
 		# create under given project
 		feature = new Feature(jsonData.BusinessId, jsonData.ContactPerson, jsonData.EstimatedHours, jsonData.HoursWorked, jsonData.Priority, project, jsonData.RemainingHours, jsonData.Title, jsonData.Status)
 		feature
@@ -196,7 +197,12 @@ class Resource extends Mixin
 		@firstName + middle + @lastName
 	# @ to create a static method, attach to class object itself
 	@create: (jsonData) ->
-		new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials, jsonData.AvailableHoursPerWeek, jsonData.Email, jsonData.PhoneNumber)
+		console.log "create Resource"
+		res = new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials, jsonData.AvailableHoursPerWeek, jsonData.Email, jsonData.PhoneNumber)
+		for absence in jsonData.PeriodsAway
+			res.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title))
+		console.log res
+		res
 	@createCollection: (jsonData) ->
 		resources = []
 		for resource in jsonData
@@ -204,34 +210,42 @@ class Resource extends Mixin
 			resources.push @resource
 		resources
 
+# Release - Projects - Features & AssignedResources
 class Project extends Mixin
-	constructor: (@id, @title, @shortName, @descr, @tfsIterationPath, @tfsDevBranch) ->
+	constructor: (@id, @title, @shortName, @descr, @tfsIterationPath, @tfsDevBranch, @release) ->
 		@resources = []
 		@backlog = []
-	@create: (jsonData) ->
-		project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch)
+	@create: (jsonData, release) ->
+		console.log "create project"
+		console.log jsonData
+		project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch, release)
+		console.log project
 		for res in jsonData.AssignedResources
-			@resources.push AssignedResource.create(res, project)
+			project.resources.push AssignedResource.create(res, project, release)
 		for feature in jsonData.Backlog
-			@backlog.push Feature.create(feature, project)
+			project.backlog.push Feature.create(feature, project)
 		project
-	@createCollection: (jsonData) ->
+	@createCollection: (jsonData, release) ->
 		projects = []
 		for project in jsonData
-			@project = Project.create project
+			@project = Project.create(project, release)
 			projects.push @project
 		projects
 
 class AssignedResource extends Mixin
-	constructor: (@id, phaseId, phaseTitle, resourceId, firstName, middleName, lastName, project, @focusFactor, startDate, endDate) ->
-		#TODO: provide resource, project and phase through ctor
-		@resource = new Resource(resourceId, firstName, middleName, lastName)
-		@project = new Project(projectId, projectTitle)
-		@phase = new Phase(phaseId, "", "", phaseTitle)
+	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate) ->
+		#@resource = new Resource(resourceId, firstName, middleName, lastName)
+		#@project = new Project(projectId, projectTitle)
+		#@phase = new Phase(phaseId, "", "", phaseTitle)
 		@assignedPeriod = new Period(startDate, endDate, "")
-	@create: (jsonData, project) ->
+	@create: (jsonData, project, release) ->
+		console.log "create AssignedResource"
+		# create resource from json
+		resource = Resource.create jsonData.Resource
 		# create under given project
-		new AssignedResource(jsonData.Id, jsonData.Phase.Id, jsonData.Phase.Title, jsonData.Resource.Id, jsonData.Resource.FirstName, jsonData.Resource.MiddleName, jsonData.Resource.LastName, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate))
+		ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate))
+		console.log ass
+		ass
 	@createCollection: (jsonData) ->
 		assignments = []
 		for assignment in jsonData

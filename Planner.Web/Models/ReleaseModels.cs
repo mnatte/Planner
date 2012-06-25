@@ -84,20 +84,6 @@ namespace MvcApplication1.Models
             }
 
             /// <summary>
-            /// Use Backlog to access Features to Projects to Teams (to Resources)
-            /// </summary>
-            private List<Feature> _backlog;
-            public IList<Feature> Backlog
-            {
-                get
-                {
-                    if (_backlog == null)
-                        _backlog = new List<Feature>();
-                    return _backlog;
-                }
-            }
-
-            /// <summary>
             /// Enable coupling of Projects to Releases to resources 
             /// </summary>
             private List<Project> _projects;
@@ -141,6 +127,20 @@ namespace MvcApplication1.Models
                     if (_assignedResources == null)
                         _assignedResources = new List<ResourceAssignment>();
                     return _assignedResources;
+                }
+            }
+
+            /// <summary>
+            /// Use Backlog to access Features to Projects to Teams (to Resources)
+            /// </summary>
+            private List<Feature> _backlog;
+            public IList<Feature> Backlog
+            {
+                get
+                {
+                    if (_backlog == null)
+                        _backlog = new List<Feature>();
+                    return _backlog;
                 }
             }
         }

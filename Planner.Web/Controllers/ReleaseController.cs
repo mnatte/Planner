@@ -131,50 +131,50 @@ namespace MvcApplication1.Controllers
                     }
                 }
 
-                // Backlog
-                var cmd3 = new SqlCommand(string.Format("Select i.BusinessId, i.ContactPerson, i.WorkRemaining, i.Title, i.State, p.Id AS ProjectId, p.ShortName as ProjectShortName from TfsImport i INNER JOIN Phases r ON i.IterationPath LIKE r.TfsIterationPath + '%' INNER JOIN Projects p on i.IterationPath LIKE p.TfsIterationPath + '%' WHERE r.Id = {0}", id), conn);
-                using (var featuresReader = cmd3.ExecuteReader())
+                // Projects
+                using (var cmdProjects = new SqlCommand(string.Format("SELECT rp.id, rp.PhaseId as ReleaseId, rp.ProjectId, p.Title, p.[Description], p.TfsIterationPath, p.TfsDevBranch, p.ShortName FROM ReleaseProjects rp INNER JOIN Projects p on rp.ProjectId = p.Id WHERE rp.PhaseId = {0}", id), conn))
                 {
-                    while (featuresReader.Read())
+                    using (var projectsReader = cmdProjects.ExecuteReader())
                     {
-                        var feature = new ReleaseModels.Feature { BusinessId = featuresReader["BusinessId"].ToString(), ContactPerson = featuresReader["ContactPerson"].ToString(), RemainingHours = int.Parse(featuresReader["WorkRemaining"].ToString()), Title = featuresReader["Title"].ToString(), Status = featuresReader["State"].ToString() };
-
-                        feature.Project = new ReleaseModels.Project { ShortName = featuresReader["ProjectShortName"].ToString(), Id = int.Parse(featuresReader["ProjectId"].ToString()) };
-
-                        release.Backlog.Add(feature);
-                    }
-                }
-
-                // Eerste param zorgt voor de key (key selector), de tweede is een element selector (iedere key levert een enumerable van feature businessid's)
-                // derde is een result selector die dus de uiteindelijke result objecten teruggeeft; in dit geval het aantal taken per teammember (naam als key)
-                var distinctProjects = release.Backlog
-                    .GroupBy(f => f.Project.Id)
-                    .Select(g => g.First().Project);
-
-
-                foreach(var project in distinctProjects.ToList())
-                {
-                    var cmdReleaseResources = new SqlCommand(String.Format("Select rr.*, p.Initials, p.HoursPerWeek from ReleaseResources rr INNER JOIN Persons p on rr.PersonId = p.Id where rr.ReleaseId = {0} and rr.ProjectId = {1}", id, project.Id), conn);
-                    using (var releaseResourcesReader = cmdReleaseResources.ExecuteReader())
-                    {
-                        while (releaseResourcesReader.Read())
+                        while (projectsReader.Read())
                         {
-                            var assignment = new ReleaseModels.ResourceAssignment { EndDate = DateTime.Parse(releaseResourcesReader["EndDate"].ToString()), StartDate = DateTime.Parse(releaseResourcesReader["StartDate"].ToString()), FocusFactor = double.Parse(releaseResourcesReader["FocusFactor"].ToString()), Resource = new ReleaseModels.Resource { AvailableHoursPerWeek = int.Parse(releaseResourcesReader["HoursPerWeek"].ToString()), Initials = releaseResourcesReader["Initials"].ToString() } };
-                            // get absences
-                            var cmdAbsences = new SqlCommand(String.Format("Select * from Absences where PersonId = {0}", releaseResourcesReader["PersonId"].ToString()), conn);
-                            using (var absencesReader = cmdAbsences.ExecuteReader())
+                            var project = new ReleaseModels.Project { ShortName = projectsReader["ShortName"].ToString(), Id = int.Parse(projectsReader["ProjectId"].ToString()) };
+
+                            // Backlog
+                            var cmd3 = new SqlCommand(string.Format("Select i.BusinessId, i.ContactPerson, i.WorkRemaining, i.Title, i.State, p.Id AS ProjectId, p.ShortName as ProjectShortName from TfsImport i INNER JOIN Phases r ON i.IterationPath LIKE r.TfsIterationPath + '%' INNER JOIN Projects p on i.IterationPath LIKE p.TfsIterationPath + '%' WHERE r.Id = {0}", id), conn);
+                            using (var featuresReader = cmd3.ExecuteReader())
                             {
-                                while (absencesReader.Read())
+                                while (featuresReader.Read())
                                 {
-                                    assignment.Resource.PeriodsAway.Add(new ReleaseModels.Phase { Id = int.Parse(absencesReader["Id"].ToString()), EndDate = DateTime.Parse(absencesReader["EndDate"].ToString()), StartDate = DateTime.Parse(absencesReader["StartDate"].ToString()), Title = absencesReader["Title"].ToString() });
+                                    var feature = new ReleaseModels.Feature { BusinessId = featuresReader["BusinessId"].ToString(), ContactPerson = featuresReader["ContactPerson"].ToString(), RemainingHours = int.Parse(featuresReader["WorkRemaining"].ToString()), Title = featuresReader["Title"].ToString(), Status = featuresReader["State"].ToString() };
+                                    project.Backlog.Add(feature);
                                 }
                             }
-                            project.AssignedResources.Add(assignment);
+
+                            // Assigned Resources
+                            var cmdReleaseResources = new SqlCommand(String.Format("Select rr.*, p.Initials, p.HoursPerWeek from ReleaseResources rr INNER JOIN Persons p on rr.PersonId = p.Id where rr.ReleaseId = {0} and rr.ProjectId = {1}", id, project.Id), conn);
+                            using (var releaseResourcesReader = cmdReleaseResources.ExecuteReader())
+                            {
+                                while (releaseResourcesReader.Read())
+                                {
+                                    var assignment = new ReleaseModels.ResourceAssignment { EndDate = DateTime.Parse(releaseResourcesReader["EndDate"].ToString()), StartDate = DateTime.Parse(releaseResourcesReader["StartDate"].ToString()), FocusFactor = double.Parse(releaseResourcesReader["FocusFactor"].ToString()), Resource = new ReleaseModels.Resource { AvailableHoursPerWeek = int.Parse(releaseResourcesReader["HoursPerWeek"].ToString()), Initials = releaseResourcesReader["Initials"].ToString() } };
+                                    // get absences
+                                    var cmdAbsences = new SqlCommand(String.Format("Select * from Absences where PersonId = {0}", releaseResourcesReader["PersonId"].ToString()), conn);
+                                    using (var absencesReader = cmdAbsences.ExecuteReader())
+                                    {
+                                        while (absencesReader.Read())
+                                        {
+                                            assignment.Resource.PeriodsAway.Add(new ReleaseModels.Phase { Id = int.Parse(absencesReader["Id"].ToString()), EndDate = DateTime.Parse(absencesReader["EndDate"].ToString()), StartDate = DateTime.Parse(absencesReader["StartDate"].ToString()), Title = absencesReader["Title"].ToString() });
+                                        }
+                                    }
+                                    project.AssignedResources.Add(assignment);
+                                }
+                            }
+
+                            release.Projects.Add(project);
                         }
                     }
-                    release.Projects.Add(project);
                 }
-                    
             }
 
             conn.Close();

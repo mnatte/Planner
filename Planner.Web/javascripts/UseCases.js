@@ -8,21 +8,11 @@
     function HLoadReleases() {}
 
     HLoadReleases.prototype.execute = function(data) {
-      var phase, project, release, releases, _i, _j, _k, _len, _len2, _len3, _ref, _ref2;
+      var release, releases, _i, _len;
       releases = [];
       for (_i = 0, _len = data.length; _i < _len; _i++) {
         release = data[_i];
-        this.release = new Release(release.Id, DateFormatter.createJsDateFromJson(release.StartDate), DateFormatter.createJsDateFromJson(release.EndDate), release.Title, release.TfsIterationPath);
-        _ref = release.Phases;
-        for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
-          phase = _ref[_j];
-          this.release.addPhase(new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, release.Id));
-        }
-        _ref2 = release.Projects;
-        for (_k = 0, _len3 = _ref2.length; _k < _len3; _k++) {
-          project = _ref2[_k];
-          this.release.addProject(new Project(project.Id, project.Title, project.ShortName));
-        }
+        Release.create(data);
         releases.push(this.release);
       }
       return releases;
@@ -49,7 +39,6 @@
       _ref = data.Projects;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         proj = _ref[_i];
-        console.log(ko.toJSON(proj));
         _ref2 = proj.AssignedResources;
         for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
           member = _ref2[_j];
