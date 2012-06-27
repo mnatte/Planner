@@ -53,9 +53,10 @@ class Period extends Mixin
 		@workingDays() * 8
 	toString: ->
 		"#{@title} #{@startDate.dateString} - #{@endDate.dateString} (#{@workingDays()} working days)"
+	containsDate: (date) ->
+		date >= @startDate.date and date < @endDate.date
 	isCurrent: ->
-		today = new Date()
-		today >= @startDate.date and today < @endDate.date
+		@containsDate(new Date())
 	isFuture: ->
 		today = new Date()
 		today < @startDate.date
@@ -101,7 +102,7 @@ class Period extends Mixin
 		days = days - 2 if (startDay - endDay > 1)
 		days = days - 1 if (startDay == 0 and endDay != 6)
 		days = days - 1 if (endDay == 6 and startDay != 0)
-		days
+		if days < 0 then 0 else days
 	comingUpThisWeek: ->
 		today = new Date()
 		nextWeek = today.setDate(today.getDate()+7)
@@ -181,7 +182,7 @@ class Release extends Phase
 class Feature
 	constructor: (@businessId, @contactPerson, @estimatedHours, @hoursWorked, @priority, @project, @remainingHours, @title, @state) ->
 	@create: (jsonData, project) ->
-		console.log "create feature"
+		#console.log "create feature"
 		# create under given project
 		feature = new Feature(jsonData.BusinessId, jsonData.ContactPerson, jsonData.EstimatedHours, jsonData.HoursWorked, jsonData.Priority, project, jsonData.RemainingHours, jsonData.Title, jsonData.Status)
 		feature
@@ -195,6 +196,15 @@ class Resource extends Mixin
 		middle = " " if (@middleName.length is 0)
 		middle = " " + @middleName + " " if (@middleName.length > 0)
 		@firstName + middle + @lastName
+	isPresent: (date) ->
+		away = absence for absence in @periodsAway when absence.containsDate(date)
+		away.length is 0
+	hoursAvailable: (period) ->
+		# somehow "reduce (x,y)" needs a space between name ('reduce') and args
+		console.log period.toString()
+		absent = (absence.overlappingPeriod(period).workingDaysRemaining() for absence in @periodsAway when absence.overlaps(period)).reduce (init, x) -> console.log "total: " + init;console.log x;init + x
+		console.log "absent days: " + absent
+		(period.workingDaysRemaining() - absent) * 8
 	# @ to create a static method, attach to class object itself
 	@create: (jsonData) ->
 		console.log "create Resource"

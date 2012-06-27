@@ -30,36 +30,11 @@
     }
 
     UDisplayReleaseStatus.prototype.execute = function(data) {
-      var absence, member, proj, projectMembers, teamMember, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
+      var projectMembers;
       projectMembers = [];
       console.log(data);
       this.release = Release.create(data);
       document.title = data.Title;
-      console.log(this.release.backlog);
-      _ref = data.Projects;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        proj = _ref[_i];
-        _ref2 = proj.AssignedResources;
-        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-          member = _ref2[_j];
-          console.log(ko.toJSON(member));
-          teamMember = Resource.create(member);
-          teamMember.focusFactor = member.FocusFactor;
-          teamMember.memberProject = feat.Project.ShortName;
-          _ref3 = member.PeriodsAway;
-          for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
-            absence = _ref3[_k];
-            if (DateFormatter.createJsDateFromJson(absence.EndDate) < this.release.endDate.date || DateFormatter.createJsDateFromJson(absence.StartDate) >= this.release.startDate.date) {
-              teamMember.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title));
-            }
-          }
-          this.release.addResource(teamMember);
-          projectMembers.push("" + member.Initials + "_" + feat.Project.ShortName);
-        }
-      }
-      this.release.group('project', this.release.backlog);
-      this.release.group('state', this.release.backlog);
-      this.release.group('memberProject', this.release.resources);
       this.viewModel = new ReleaseViewmodel(this.release);
       ko.applyBindings(this.viewModel);
       return showStatusChart(this.viewModel.statusData());

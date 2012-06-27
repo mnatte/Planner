@@ -41,10 +41,12 @@
       return "" + this.title + " " + this.startDate.dateString + " - " + this.endDate.dateString + " (" + (this.workingDays()) + " working days)";
     };
 
+    Period.prototype.containsDate = function(date) {
+      return date >= this.startDate.date && date < this.endDate.date;
+    };
+
     Period.prototype.isCurrent = function() {
-      var today;
-      today = new Date();
-      return today >= this.startDate.date && today < this.endDate.date;
+      return this.containsDate(new Date());
     };
 
     Period.prototype.isFuture = function() {
@@ -97,7 +99,11 @@
       if (startDay - endDay > 1) days = days - 2;
       if (startDay === 0 && endDay !== 6) days = days - 1;
       if (endDay === 6 && startDay !== 0) days = days - 1;
-      return days;
+      if (days < 0) {
+        return 0;
+      } else {
+        return days;
+      }
     };
 
     Period.prototype.comingUpThisWeek = function() {
@@ -247,7 +253,6 @@
 
     Feature.create = function(jsonData, project) {
       var feature;
-      console.log("create feature");
       feature = new Feature(jsonData.BusinessId, jsonData.ContactPerson, jsonData.EstimatedHours, jsonData.HoursWorked, jsonData.Priority, project, jsonData.RemainingHours, jsonData.Title, jsonData.Status);
       return feature;
     };
@@ -283,6 +288,39 @@
       if (this.middleName.length === 0) middle = " ";
       if (this.middleName.length > 0) middle = " " + this.middleName + " ";
       return this.firstName + middle + this.lastName;
+    };
+
+    Resource.prototype.isPresent = function(date) {
+      var absence, away, _i, _len, _ref;
+      _ref = this.periodsAway;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        absence = _ref[_i];
+        if (absence.containsDate(date)) away = absence;
+      }
+      return away.length === 0;
+    };
+
+    Resource.prototype.hoursAvailable = function(period) {
+      var absence, absent;
+      console.log(period.toString());
+      absent = ((function() {
+        var _i, _len, _ref, _results;
+        _ref = this.periodsAway;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          absence = _ref[_i];
+          if (absence.overlaps(period)) {
+            _results.push(absence.overlappingPeriod(period).workingDaysRemaining());
+          }
+        }
+        return _results;
+      }).call(this)).reduce(function(init, x) {
+        console.log("total: " + init);
+        console.log(x);
+        return init + x;
+      });
+      console.log("absent days: " + absent);
+      return (period.workingDaysRemaining() - absent) * 8;
     };
 
     Resource.create = function(jsonData) {

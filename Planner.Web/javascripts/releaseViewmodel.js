@@ -156,7 +156,7 @@
     };
 
     ReleaseViewmodel.prototype.hourBalance = function(selectedPhaseId) {
-      var available, balanceHours, cats, item, member, phase, phaseId, project, projectHours, projs, projset, releasePhases, set, uGetHours, workload, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3;
+      var available, balanceHours, cats, item, phase, phaseId, proj, project, projs, releasePhases, res, workload, _i, _j, _k, _len, _len2, _len3, _ref, _ref2;
       phaseId = selectedPhaseId;
       releasePhases = this.release.phases;
       projs = [];
@@ -169,33 +169,21 @@
         }
         return _results;
       })())[0];
-      _ref = this.release.sets;
+      _ref = this.release.projects;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        set = _ref[_i];
-        if (!(set.groupedBy === "memberProject")) continue;
-        projectHours = {};
-        set.availableHours = 0;
-        _ref2 = set.items;
+        proj = _ref[_i];
+        console.log(proj);
+        _ref2 = proj.resources;
         for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-          member = _ref2[_j];
-          uGetHours = new UGetAvailableHoursForTeamMemberFromNow(member, phase);
-          set.availableHours += uGetHours.execute();
+          res = _ref2[_j];
+          console.log(res);
+          console.log(res.resource.hoursAvailable(this.release));
         }
-        projectHours.project = set.label;
-        projectHours.available = Math.round(set.availableHours);
-        _ref3 = this.projects;
-        for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
-          projset = _ref3[_k];
-          if (projset.projectname === set.label) {
-            projectHours.workload = Math.round(projset.totalHours());
-          }
-        }
-        projs.push(projectHours);
       }
       balanceHours = [];
       cats = [];
-      for (_l = 0, _len4 = projs.length; _l < _len4; _l++) {
-        item = projs[_l];
+      for (_k = 0, _len3 = projs.length; _k < _len3; _k++) {
+        item = projs[_k];
         project = item.project, workload = item.workload, available = item.available;
         balanceHours.push({
           projectname: project,

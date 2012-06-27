@@ -110,26 +110,32 @@ class ReleaseViewmodel
 			phase = (item for item in releasePhases when +item.id is +phaseId)[0]
 			#console.log "releasePhases: " + releasePhases
 			#console.log "phase: " + phase
+
+			for proj in @release.projects
+				console.log proj
+				for res in proj.resources
+					console.log res
+					console.log res.resource.hoursAvailable @release
+
 			# TODO: use logic as described in use case UGetAvailableHoursForTeamMemberFromNow
-			for set in @release.sets when set.groupedBy == "memberProject"
-				projectHours = {}
+			# for set in @release.sets when set.groupedBy == "memberProject"
+				#projectHours = {}
 				#console.log "memberProject: #{set.label} #{set.items.length} members"
-				# get development phase TODO: select from UI
 				# console.log @selectedPhaseId()
-				set.availableHours = 0
-				for member in set.items
+				#set.availableHours = 0
+				#for member in set.items
 					# console.log member
 					#console.log "#{member.initials} hours per week: #{member.hoursPerWeek}"
-					uGetHours = new UGetAvailableHoursForTeamMemberFromNow(member, phase)
-					set.availableHours += uGetHours.execute()
-				projectHours.project = set.label 
-				projectHours.available = Math.round set.availableHours 
+				#	uGetHours = new UGetAvailableHoursForTeamMemberFromNow(member, phase)
+				#	set.availableHours += uGetHours.execute()
+				#projectHours.project = set.label 
+				#projectHours.available = Math.round set.availableHours 
 				# lookup project in groupedBy project set for remaining hours
-				for projset in @projects when projset.projectname == set.label
-					# console.log "projset: #{projset.totalHours()}"
-					projectHours.workload = Math.round projset.totalHours()
+				#for projset in @projects when projset.projectname == set.label
+				#	# console.log "projset: #{projset.totalHours()}"
+				#	projectHours.workload = Math.round projset.totalHours()
 			
-				projs.push(projectHours)
+				#projs.push(projectHours)
 			# console.log projs
 
 			# projectNames = []

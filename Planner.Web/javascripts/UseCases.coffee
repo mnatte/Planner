@@ -46,34 +46,34 @@ class UDisplayReleaseStatus
 			#@release.addFeature new Feature(feat.BusinessId, feat.ContactPerson, feat.EstimatedHours, feat.HoursWorked, feat.Priority, feat.Project.ShortName, feat.RemainingHours, feat.Title, feat.Status)
 			# add team member per project through backlog per project
 
-		console.log @release.backlog
+		#console.log @release.backlog
 
 		# TODO: simply get assignment list. determine assignments per resource for the release and sum all assigned hours. subtract absences in the period of the release and multiply by focusfactor
 		# for member in feat.Project.ProjectTeam.TeamMembers when "#{member.Initials}_#{feat.Project.ShortName}" not in projectMembers
-		for proj in data.Projects
+		#for proj in data.Projects
 			# console.log ko.toJSON proj
-			for member in proj.AssignedResources
-				console.log ko.toJSON member
+			#for member in proj.AssignedResources
+				#console.log ko.toJSON member
 				# console.log("ADD TEAMMEMBERS TO PROJECT")
 				# teamMember = new Resource(member.FirstName, member.MiddleName, member.LastName, member.Initials, member.AvailableHoursPerWeek, member.Email, member.PhoneNumber, member.Company, member.Function)
-				teamMember = Resource.create member
-				teamMember.focusFactor = member.FocusFactor # FocusFactor comes from ReleaseResources, so is an assignment
-				teamMember.memberProject = feat.Project.ShortName
+				#teamMember = Resource.create member
+				#teamMember.focusFactor = member.FocusFactor # FocusFactor comes from ReleaseResources, so is an assignment
+				#teamMember.memberProject = feat.Project.ShortName
 				# add team member absences
-				for absence in member.PeriodsAway when DateFormatter.createJsDateFromJson(absence.EndDate) < @release.endDate.date or DateFormatter.createJsDateFromJson(absence.StartDate) >= @release.startDate.date
-					teamMember.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title))
-				@release.addResource teamMember
+				#for absence in member.PeriodsAway when DateFormatter.createJsDateFromJson(absence.EndDate) < @release.endDate.date or DateFormatter.createJsDateFromJson(absence.StartDate) >= @release.startDate.date
+					#teamMember.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title))
+				#@release.addResource teamMember
 				#console.log teamMember
 				# mark teamMember as added to project
-				projectMembers.push("#{member.Initials}_#{feat.Project.ShortName}")
+				#projectMembers.push("#{member.Initials}_#{feat.Project.ShortName}")
 
 				# console.log(projectMembers)
 				# console.log(teamMember.memberProject)
 
 		# create aggregations by RGroupBy role
-		@release.group 'project', @release.backlog
-		@release.group 'state', @release.backlog
-		@release.group 'memberProject', @release.resources
+		#@release.group 'project', @release.backlog
+		#@release.group 'state', @release.backlog
+		#@release.group 'memberProject', @release.resources
 
 		@viewModel = new ReleaseViewmodel(@release)
 		ko.applyBindings(@viewModel)
