@@ -1,5 +1,5 @@
 (function() {
-  var AssignedResource, Feature, MileStone, Period, Phase, Project, Release, ReleaseAssignments, Resource, root,
+  var AssignedResource, Feature, MileStone, Period, Phase, Project, Release, Resource, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -237,6 +237,115 @@
 
   })(Phase);
 
+  Project = (function(_super) {
+
+    __extends(Project, _super);
+
+    function Project(id, title, shortName, descr, tfsIterationPath, tfsDevBranch, release) {
+      this.id = id;
+      this.title = title;
+      this.shortName = shortName;
+      this.descr = descr;
+      this.tfsIterationPath = tfsIterationPath;
+      this.tfsDevBranch = tfsDevBranch;
+      this.release = release;
+      this.resources = [];
+      this.backlog = [];
+    }
+
+    Project.create = function(jsonData, release) {
+      var feature, project, res, _i, _j, _len, _len2, _ref, _ref2;
+      project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch, release);
+      _ref = jsonData.AssignedResources;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        res = _ref[_i];
+        project.resources.push(AssignedResource.create(res, project, release));
+      }
+      _ref2 = jsonData.Backlog;
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        feature = _ref2[_j];
+        project.backlog.push(Feature.create(feature, project));
+      }
+      return project;
+    };
+
+    Project.createCollection = function(jsonData, release) {
+      var project, projects, _i, _len;
+      projects = [];
+      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
+        project = jsonData[_i];
+        this.project = Project.create(project, release);
+        projects.push(this.project);
+      }
+      return projects;
+    };
+
+    return Project;
+
+  })(Mixin);
+
+  AssignedResource = (function(_super) {
+
+    __extends(AssignedResource, _super);
+
+    function AssignedResource(id, release, resource, project, focusFactor, startDate, endDate) {
+      this.id = id;
+      this.release = release;
+      this.resource = resource;
+      this.project = project;
+      this.focusFactor = focusFactor;
+      this.assignedPeriod = new Period(startDate, endDate, "");
+      console.log("create AssignedResource:" + ko.toJSON(this.assignedPeriod));
+    }
+
+    AssignedResource.create = function(jsonData, project, release) {
+      var ass, resource;
+      resource = Resource.create(jsonData.Resource);
+      ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate));
+      return ass;
+    };
+
+    AssignedResource.createCollection = function(jsonData, project, release) {
+      var assignment, assignments, _i, _len;
+      assignments = [];
+      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
+        assignment = jsonData[_i];
+        this.assignment = AssignedResource.create(assignment, project, release);
+        assignments.push(this.assignment);
+      }
+      return assignments;
+    };
+
+    AssignedResource.prototype.availableHours = function() {
+      var available, hoursPresent;
+      console.log("assigned period " + this.assignedPeriod);
+      console.log("resource " + this.resource.initials);
+      hoursPresent = this.resource.hoursAvailable(this.assignedPeriod);
+      console.log("hours present " + hoursPresent);
+      available = Math.round(hoursPresent * this.focusFactor);
+      console.log("hours available corrected with assignment focus factor " + this.focusFactor + ": " + available);
+      return available;
+    };
+
+    AssignedResource.prototype.toJSON = function() {
+      var copy;
+      copy = ko.toJS(this);
+      delete copy.phase;
+      delete copy.resource;
+      delete copy.project;
+      delete copy.assignedPeriod;
+      copy.resourceId = this.resource.id;
+      copy.phaseId = this.phase.id;
+      copy.projectId = this.project.id;
+      copy.startDate = this.assignedPeriod.startDate.dateString;
+      copy.endDate = this.assignedPeriod.endDate.dateString;
+      return copy;
+    };
+
+    return AssignedResource;
+
+  })(Mixin);
+
   Feature = (function() {
 
     function Feature(businessId, contactPerson, estimatedHours, hoursWorked, priority, project, remainingHours, title, state) {
@@ -301,38 +410,43 @@
     };
 
     Resource.prototype.hoursAvailable = function(period) {
-      var absence, absent;
+      var absence, absent, available, overlappingAbsences, _i, _len, _ref;
       console.log(period.toString());
-      absent = ((function() {
-        var _i, _len, _ref, _results;
-        _ref = this.periodsAway;
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          absence = _ref[_i];
-          if (absence.overlaps(period)) {
+      absent = 0;
+      _ref = this.periodsAway;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        absence = _ref[_i];
+        if (absence.overlaps(period)) overlappingAbsences = absence;
+      }
+      if (typeof overlappingAbsences === !"undefined" && overlappingAbsences === !null) {
+        absent = ((function() {
+          var _j, _len2, _results;
+          _results = [];
+          for (_j = 0, _len2 = overlappingAbsences.length; _j < _len2; _j++) {
+            absence = overlappingAbsences[_j];
             _results.push(absence.overlappingPeriod(period).workingDaysRemaining());
           }
-        }
-        return _results;
-      }).call(this)).reduce(function(init, x) {
-        console.log("total: " + init);
-        console.log(x);
-        return init + x;
-      });
+          return _results;
+        })()).reduce(function(init, x) {
+          console.log(x);
+          return init + x;
+        });
+      }
       console.log("absent days: " + absent);
-      return (period.workingDaysRemaining() - absent) * 8;
+      console.log("period working days remaining: " + period.workingDaysRemaining());
+      available = (period.workingDaysRemaining() - absent) * 8;
+      console.log("available hours: " + available);
+      return available;
     };
 
     Resource.create = function(jsonData) {
       var absence, res, _i, _len, _ref;
-      console.log("create Resource");
       res = new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials, jsonData.AvailableHoursPerWeek, jsonData.Email, jsonData.PhoneNumber);
       _ref = jsonData.PeriodsAway;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         absence = _ref[_i];
         res.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title));
       }
-      console.log(res);
       return res;
     };
 
@@ -351,122 +465,6 @@
 
   })(Mixin);
 
-  Project = (function(_super) {
-
-    __extends(Project, _super);
-
-    function Project(id, title, shortName, descr, tfsIterationPath, tfsDevBranch, release) {
-      this.id = id;
-      this.title = title;
-      this.shortName = shortName;
-      this.descr = descr;
-      this.tfsIterationPath = tfsIterationPath;
-      this.tfsDevBranch = tfsDevBranch;
-      this.release = release;
-      this.resources = [];
-      this.backlog = [];
-    }
-
-    Project.create = function(jsonData, release) {
-      var feature, project, res, _i, _j, _len, _len2, _ref, _ref2;
-      console.log("create project");
-      console.log(jsonData);
-      project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch, release);
-      console.log(project);
-      _ref = jsonData.AssignedResources;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        res = _ref[_i];
-        project.resources.push(AssignedResource.create(res, project, release));
-      }
-      _ref2 = jsonData.Backlog;
-      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-        feature = _ref2[_j];
-        project.backlog.push(Feature.create(feature, project));
-      }
-      return project;
-    };
-
-    Project.createCollection = function(jsonData, release) {
-      var project, projects, _i, _len;
-      projects = [];
-      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
-        project = jsonData[_i];
-        this.project = Project.create(project, release);
-        projects.push(this.project);
-      }
-      return projects;
-    };
-
-    return Project;
-
-  })(Mixin);
-
-  AssignedResource = (function(_super) {
-
-    __extends(AssignedResource, _super);
-
-    function AssignedResource(id, release, resource, project, focusFactor, startDate, endDate) {
-      this.id = id;
-      this.release = release;
-      this.resource = resource;
-      this.project = project;
-      this.focusFactor = focusFactor;
-      this.assignedPeriod = new Period(startDate, endDate, "");
-    }
-
-    AssignedResource.create = function(jsonData, project, release) {
-      var ass, resource;
-      console.log("create AssignedResource");
-      resource = Resource.create(jsonData.Resource);
-      ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate));
-      console.log(ass);
-      return ass;
-    };
-
-    AssignedResource.createCollection = function(jsonData) {
-      var assignment, assignments, _i, _len;
-      assignments = [];
-      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
-        assignment = jsonData[_i];
-        this.assignment = AssignedResource.create(assignment);
-        assignments.push(this.assignment);
-      }
-      return assignments;
-    };
-
-    AssignedResource.prototype.toJSON = function() {
-      var copy;
-      copy = ko.toJS(this);
-      delete copy.phase;
-      delete copy.resource;
-      delete copy.project;
-      delete copy.assignedPeriod;
-      copy.resourceId = this.resource.id;
-      copy.phaseId = this.phase.id;
-      copy.projectId = this.project.id;
-      copy.startDate = this.assignedPeriod.startDate.dateString;
-      copy.endDate = this.assignedPeriod.endDate.dateString;
-      return copy;
-    };
-
-    return AssignedResource;
-
-  })(Mixin);
-
-  ReleaseAssignments = (function(_super) {
-
-    __extends(ReleaseAssignments, _super);
-
-    function ReleaseAssignments(phaseId, projectId, assignments) {
-      this.phaseId = phaseId;
-      this.projectId = projectId;
-      this.assignments = assignments;
-    }
-
-    return ReleaseAssignments;
-
-  })(Mixin);
-
   root.Period = Period;
 
   root.Phase = Phase;
@@ -482,7 +480,5 @@
   root.Project = Project;
 
   root.AssignedResource = AssignedResource;
-
-  root.ReleaseAssignments = ReleaseAssignments;
 
 }).call(this);

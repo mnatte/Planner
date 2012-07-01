@@ -8,7 +8,7 @@
   ReleaseViewmodel = (function() {
 
     function ReleaseViewmodel(release) {
-      var ph, phase, phaseId, statusgroup, _i, _j, _len, _len2, _ref, _ref2,
+      var ph, phase, statusgroup, _i, _j, _len, _len2, _ref, _ref2,
         _this = this;
       this.release = release;
       this.hourBalance = __bind(this.hourBalance, this);
@@ -56,8 +56,7 @@
         phase.workingDaysRemaining = ph.workingDays();
         this.currentPhases.push(phase);
       }
-      phaseId = this.phases()[0].id;
-      this.selectedPhaseId = ko.observable(phaseId);
+      this.selectedPhaseId = ko.observable();
       this.selectedPhaseId.subscribe(function(newValue) {
         var available, balance, hours, proj, projHours, projects, work, _k, _len3;
         projHours = _this.hourBalance(newValue);
@@ -156,10 +155,11 @@
     };
 
     ReleaseViewmodel.prototype.hourBalance = function(selectedPhaseId) {
-      var available, balanceHours, cats, item, phase, phaseId, proj, project, projs, releasePhases, res, workload, _i, _j, _k, _len, _len2, _len3, _ref, _ref2;
+      var available, balanceHours, feat, item, phase, phaseId, proj, projs, releasePhases, remainingHours, res, _i, _len, _ref;
       phaseId = selectedPhaseId;
       releasePhases = this.release.phases;
       projs = [];
+      balanceHours = [];
       phase = ((function() {
         var _i, _len, _results;
         _results = [];
@@ -173,25 +173,44 @@
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         proj = _ref[_i];
         console.log(proj);
-        _ref2 = proj.resources;
-        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-          res = _ref2[_j];
-          console.log(res);
-          console.log(res.resource.hoursAvailable(this.release));
-        }
-      }
-      balanceHours = [];
-      cats = [];
-      for (_k = 0, _len3 = projs.length; _k < _len3; _k++) {
-        item = projs[_k];
-        project = item.project, workload = item.workload, available = item.available;
-        balanceHours.push({
-          projectname: project,
-          availableHours: available,
-          workload: workload,
-          balance: Math.round(available - workload)
+        remainingHours = ((function() {
+          var _j, _len2, _ref2, _results;
+          _ref2 = proj.backlog;
+          _results = [];
+          for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+            feat = _ref2[_j];
+            _results.push(feat.remainingHours);
+          }
+          return _results;
+        })()).reduce(function(acc, x) {
+          return acc + x;
         });
-        cats.push(project);
+        console.log("remainingHours: " + remainingHours);
+        available = 0;
+        console.log(proj.resources);
+        if (proj.resources.length > 0) {
+          console.log("proj.resources not empty");
+          available = ((function() {
+            var _j, _len2, _ref2, _results;
+            _ref2 = proj.resources;
+            _results = [];
+            for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+              res = _ref2[_j];
+              _results.push(res.availableHours());
+            }
+            return _results;
+          })()).reduce(function(acc, x) {
+            console.log(x);
+            return acc + x;
+          });
+        }
+        console.log("available: " + available);
+        balanceHours.push({
+          projectname: proj.shortName,
+          availableHours: available,
+          workload: remainingHours,
+          balance: Math.round(available - remainingHours)
+        });
       }
       console.log("balanceHours: " + ko.toJSON(balanceHours));
       return balanceHours;

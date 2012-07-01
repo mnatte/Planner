@@ -77,6 +77,7 @@ class UDisplayReleaseStatus
 
 		@viewModel = new ReleaseViewmodel(@release)
 		ko.applyBindings(@viewModel)
+		@viewModel.selectedPhaseId @viewModel.phases()[0].id
 		# show charts
 		showStatusChart(@viewModel.statusData())
 		# pattern matching

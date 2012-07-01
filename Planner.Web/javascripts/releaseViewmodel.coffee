@@ -39,8 +39,7 @@ class ReleaseViewmodel
 			@currentPhases.push(phase)
 
 		# console.log ("first phase: " + @phases()[0])
-		phaseId = @phases()[0].id
-		@selectedPhaseId = ko.observable(phaseId)
+		@selectedPhaseId = ko.observable()
 		@selectedPhaseId.subscribe((newValue) =>
 			projHours = @hourBalance newValue
 			console.log ("from subscription: " + ko.toJSON(projHours))
@@ -106,6 +105,7 @@ class ReleaseViewmodel
 			phaseId = selectedPhaseId
 			releasePhases = @release.phases
 			projs = []
+			balanceHours = []
 			#use '+' sign to convert string to int (standard javascript)
 			phase = (item for item in releasePhases when +item.id is +phaseId)[0]
 			#console.log "releasePhases: " + releasePhases
@@ -113,9 +113,20 @@ class ReleaseViewmodel
 
 			for proj in @release.projects
 				console.log proj
-				for res in proj.resources
-					console.log res
-					console.log res.resource.hoursAvailable @release
+				#for res in proj.resources
+				#	console.log res.resource
+				#	console.log ((res.resource.hoursAvailable res.assignedPeriod) * res.focusFactor)
+				#	console.log res.availableHours()
+				remainingHours = (feat.remainingHours for feat in proj.backlog).reduce (acc, x) -> acc + x
+				console.log "remainingHours: #{remainingHours}"
+
+				available = 0
+				console.log proj.resources
+				if proj.resources.length > 0
+					console.log "proj.resources not empty"
+					available = (res.availableHours() for res in proj.resources).reduce (acc, x) -> console.log x; acc + x
+				console.log "available: #{available}"
+				balanceHours.push({projectname: proj.shortName, availableHours: available, workload: remainingHours, balance: Math.round available - remainingHours})
 
 			# TODO: use logic as described in use case UGetAvailableHoursForTeamMemberFromNow
 			# for set in @release.sets when set.groupedBy == "memberProject"
@@ -141,16 +152,15 @@ class ReleaseViewmodel
 			# projectNames = []
 			# remainingHours = []
 			# availableHours = []
-			balanceHours = []
-			cats = []
-			for item in projs
+			#cats = []
+			#for item in projs
 				# pattern matching, works only when pattern vars have same name as properties of item
-				{project, workload, available} = item
+				#{project, workload, available} = item
 				# projectNames.push(project)
 				# remainingHours.push(workload)
 				# availableHours.push(available)
-				balanceHours.push({projectname: project, availableHours: available, workload: workload, balance: Math.round available - workload})
-				cats.push project
+				# balanceHours.push({projectname: project, availableHours: available, workload: workload, balance: Math.round available - workload})
+				#cats.push project
 				#@categories.push project
 			# {projectNames: projectNames, remainingHours: remainingHours, availableHours: availableHours, balanceHours: balanceHours}
 			console.log ("balanceHours: " + ko.toJSON(balanceHours))

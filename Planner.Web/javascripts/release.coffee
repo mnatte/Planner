@@ -179,6 +179,73 @@ class Release extends Phase
 			release.addProject Project.create(project)
 		release
 
+# Release - Projects - Features & AssignedResources
+class Project extends Mixin
+	constructor: (@id, @title, @shortName, @descr, @tfsIterationPath, @tfsDevBranch, @release) ->
+		@resources = []
+		@backlog = []
+	@create: (jsonData, release) ->
+		# console.log "create project"
+		# console.log jsonData
+		project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch, release)
+		# console.log project
+		for res in jsonData.AssignedResources
+			project.resources.push AssignedResource.create(res, project, release)
+		for feature in jsonData.Backlog
+			project.backlog.push Feature.create(feature, project)
+		project
+	@createCollection: (jsonData, release) ->
+		projects = []
+		for project in jsonData
+			@project = Project.create(project, release)
+			projects.push @project
+		projects
+
+class AssignedResource extends Mixin
+	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate) ->
+		#@resource = new Resource(resourceId, firstName, middleName, lastName)
+		#@project = new Project(projectId, projectTitle)
+		#@phase = new Phase(phaseId, "", "", phaseTitle)
+		@assignedPeriod = new Period(startDate, endDate, "")
+		console.log "create AssignedResource:" + ko.toJSON(@assignedPeriod)
+	@create: (jsonData, project, release) ->
+		#console.log "create AssignedResource:" + ko.toJSON(jsonData.Resource)
+		# create resource from json
+		resource = Resource.create jsonData.Resource
+		# create under given project
+		ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate))
+		# console.log ass
+		ass
+	@createCollection: (jsonData, project, release) ->
+		assignments = []
+		for assignment in jsonData
+			#console.log assignment
+			@assignment = AssignedResource.create(assignment, project, release)
+			assignments.push @assignment
+		assignments
+	availableHours: ->
+		console.log "assigned period #{@assignedPeriod}"
+		console.log "resource #{@resource.initials}"
+		hoursPresent = @resource.hoursAvailable @assignedPeriod
+		console.log "hours present #{hoursPresent}"
+		available = Math.round(hoursPresent * @focusFactor)
+		console.log "hours available corrected with assignment focus factor #{@focusFactor}: #{available}"
+		available
+	toJSON: ->
+		copy = ko.toJS(@) #get a clean copy
+		delete copy.phase #remove property
+		delete copy.resource #remove property
+		delete copy.project #remove property
+		delete copy.assignedPeriod
+		#console.log(@resource)
+		copy.resourceId = @resource.id
+		copy.phaseId = @phase.id
+		copy.projectId = @project.id
+		copy.startDate = @assignedPeriod.startDate.dateString
+		copy.endDate = @assignedPeriod.endDate.dateString
+		#console.log(copy)
+		copy #return the copy to be serialized
+
 class Feature
 	constructor: (@businessId, @contactPerson, @estimatedHours, @hoursWorked, @priority, @project, @remainingHours, @title, @state) ->
 	@create: (jsonData, project) ->
@@ -202,16 +269,22 @@ class Resource extends Mixin
 	hoursAvailable: (period) ->
 		# somehow "reduce (x,y)" needs a space between name ('reduce') and args
 		console.log period.toString()
-		absent = (absence.overlappingPeriod(period).workingDaysRemaining() for absence in @periodsAway when absence.overlaps(period)).reduce (init, x) -> console.log "total: " + init;console.log x;init + x
+		absent = 0
+		overlappingAbsences = absence for absence in @periodsAway when absence.overlaps(period)
+		if(typeof(overlappingAbsences) is not "undefined" && overlappingAbsences is not null)
+			absent = (absence.overlappingPeriod(period).workingDaysRemaining() for absence in overlappingAbsences).reduce (init, x) -> console.log x; init + x
 		console.log "absent days: " + absent
-		(period.workingDaysRemaining() - absent) * 8
+		console.log "period working days remaining: " + period.workingDaysRemaining()
+		available = (period.workingDaysRemaining() - absent) * 8
+		console.log "available hours: " + available
+		available
 	# @ to create a static method, attach to class object itself
 	@create: (jsonData) ->
-		console.log "create Resource"
+		#console.log "create Resource"
 		res = new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials, jsonData.AvailableHoursPerWeek, jsonData.Email, jsonData.PhoneNumber)
 		for absence in jsonData.PeriodsAway
 			res.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title))
-		console.log res
+		#console.log res
 		res
 	@createCollection: (jsonData) ->
 		resources = []
@@ -220,66 +293,10 @@ class Resource extends Mixin
 			resources.push @resource
 		resources
 
-# Release - Projects - Features & AssignedResources
-class Project extends Mixin
-	constructor: (@id, @title, @shortName, @descr, @tfsIterationPath, @tfsDevBranch, @release) ->
-		@resources = []
-		@backlog = []
-	@create: (jsonData, release) ->
-		console.log "create project"
-		console.log jsonData
-		project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch, release)
-		console.log project
-		for res in jsonData.AssignedResources
-			project.resources.push AssignedResource.create(res, project, release)
-		for feature in jsonData.Backlog
-			project.backlog.push Feature.create(feature, project)
-		project
-	@createCollection: (jsonData, release) ->
-		projects = []
-		for project in jsonData
-			@project = Project.create(project, release)
-			projects.push @project
-		projects
 
-class AssignedResource extends Mixin
-	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate) ->
-		#@resource = new Resource(resourceId, firstName, middleName, lastName)
-		#@project = new Project(projectId, projectTitle)
-		#@phase = new Phase(phaseId, "", "", phaseTitle)
-		@assignedPeriod = new Period(startDate, endDate, "")
-	@create: (jsonData, project, release) ->
-		console.log "create AssignedResource"
-		# create resource from json
-		resource = Resource.create jsonData.Resource
-		# create under given project
-		ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate))
-		console.log ass
-		ass
-	@createCollection: (jsonData) ->
-		assignments = []
-		for assignment in jsonData
-			#console.log assignment
-			@assignment = AssignedResource.create assignment
-			assignments.push @assignment
-		assignments
-	toJSON: ->
-		copy = ko.toJS(@) #get a clean copy
-		delete copy.phase #remove property
-		delete copy.resource #remove property
-		delete copy.project #remove property
-		delete copy.assignedPeriod
-		#console.log(@resource)
-		copy.resourceId = @resource.id
-		copy.phaseId = @phase.id
-		copy.projectId = @project.id
-		copy.startDate = @assignedPeriod.startDate.dateString
-		copy.endDate = @assignedPeriod.endDate.dateString
-		#console.log(copy)
-		copy #return the copy to be serialized
 
-class ReleaseAssignments extends Mixin
-	constructor: (@phaseId, @projectId, @assignments) ->
+#class ReleaseAssignments extends Mixin
+	#constructor: (@phaseId, @projectId, @assignments) ->
 
 # export to root object
 root.Period = Period
@@ -290,5 +307,5 @@ root.Feature = Feature
 root.Resource = Resource
 root.Project = Project
 root.AssignedResource = AssignedResource
-root.ReleaseAssignments = ReleaseAssignments
+#root.ReleaseAssignments = ReleaseAssignments
 

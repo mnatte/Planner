@@ -34,7 +34,7 @@ class PlanResourcesViewmodel extends Mixin
 
 	setAssignments: (jsonData) =>
 		@assignments.removeAll()
-		@assignments (AssignedResource.createCollection jsonData)
+		@assignments (AssignedResource.createCollection(jsonData, @selectedProject(), @selectedRelease())
 
 	loadAssignments: ->
         ajax = new Ajax()
