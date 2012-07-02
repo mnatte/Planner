@@ -10,16 +10,7 @@ class HLoadReleases
 		releases = []
 		# fill release collection
 		for release in data
-			# @release = new Release(release.Id, DateFormatter.createJsDateFromJson(release.StartDate), DateFormatter.createJsDateFromJson(release.EndDate), release.Title, release.TfsIterationPath)
 			Release.create data
-			# add phases
-			# for phase in release.Phases
-				#console.log phase
-				# @release.addPhase new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, release.Id)
-			# add projects
-			#for project in release.Projects
-				#console.log phase
-				# @release.addProject new Project(project.Id, project.Title, project.ShortName)
 			releases.push @release
 		releases
 
@@ -29,63 +20,21 @@ class UDisplayReleaseStatus
 		Resource.extend(RTeamMember)
 	# use AJAX data in executing use case
 	execute: (data) ->
-		# track added teammembers per project
-		projectMembers = []
-		console.log data
-		# fill release object
-		#@release = new Release(data.Id, DateFormatter.createJsDateFromJson(data.StartDate), DateFormatter.createJsDateFromJson(data.EndDate), data.Title, data.TfsIterationPath)
 		@release = Release.create data
 		# set HTML page title
 		document.title = data.Title
-		# add phases
-		# for phase in data.Phases
-			# @release.addPhase new Phase(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath)
-		# add backlog
-		#for feat in data.Backlog
-			#console.log feat
-			#@release.addFeature new Feature(feat.BusinessId, feat.ContactPerson, feat.EstimatedHours, feat.HoursWorked, feat.Priority, feat.Project.ShortName, feat.RemainingHours, feat.Title, feat.Status)
-			# add team member per project through backlog per project
-
-		#console.log @release.backlog
-
-		# TODO: simply get assignment list. determine assignments per resource for the release and sum all assigned hours. subtract absences in the period of the release and multiply by focusfactor
-		# for member in feat.Project.ProjectTeam.TeamMembers when "#{member.Initials}_#{feat.Project.ShortName}" not in projectMembers
-		#for proj in data.Projects
-			# console.log ko.toJSON proj
-			#for member in proj.AssignedResources
-				#console.log ko.toJSON member
-				# console.log("ADD TEAMMEMBERS TO PROJECT")
-				# teamMember = new Resource(member.FirstName, member.MiddleName, member.LastName, member.Initials, member.AvailableHoursPerWeek, member.Email, member.PhoneNumber, member.Company, member.Function)
-				#teamMember = Resource.create member
-				#teamMember.focusFactor = member.FocusFactor # FocusFactor comes from ReleaseResources, so is an assignment
-				#teamMember.memberProject = feat.Project.ShortName
-				# add team member absences
-				#for absence in member.PeriodsAway when DateFormatter.createJsDateFromJson(absence.EndDate) < @release.endDate.date or DateFormatter.createJsDateFromJson(absence.StartDate) >= @release.startDate.date
-					#teamMember.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title))
-				#@release.addResource teamMember
-				#console.log teamMember
-				# mark teamMember as added to project
-				#projectMembers.push("#{member.Initials}_#{feat.Project.ShortName}")
-
-				# console.log(projectMembers)
-				# console.log(teamMember.memberProject)
-
-		# create aggregations by RGroupBy role
-		#@release.group 'project', @release.backlog
-		#@release.group 'state', @release.backlog
-		#@release.group 'memberProject', @release.resources
+		
+		# create aggregation of all feature states through RGroupBy role
+		releaseBacklog = []
+		for proj in @release.projects
+			releaseBacklog = releaseBacklog.concat proj.backlog
+		@release.group 'state', releaseBacklog
 
 		@viewModel = new ReleaseViewmodel(@release)
 		ko.applyBindings(@viewModel)
-		@viewModel.selectedPhaseId @viewModel.phases()[0].id
+		@viewModel.selectedPhaseId @viewModel.release.phases[0].id
 		# show charts
 		showStatusChart(@viewModel.statusData())
-		# pattern matching
-		# {projectNames, remainingHours, availableHours, balanceHours} = @viewModel.hourBalance()
-		# showHoursChart(projectNames, remainingHours, availableHours, balanceHours)
-		# options.xAxis.categories = setUpHoursChart()
-		#options = setUpHoursChart(@viewModel.categories())
-		#@viewModel.hoursChart = new Highcharts.Chart(options)
 		
 class UGetAvailableHoursForTeamMemberFromNow
 	constructor: (@teamMember, @phase) ->

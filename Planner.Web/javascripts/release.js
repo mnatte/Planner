@@ -295,7 +295,6 @@
       this.project = project;
       this.focusFactor = focusFactor;
       this.assignedPeriod = new Period(startDate, endDate, "");
-      console.log("create AssignedResource:" + ko.toJSON(this.assignedPeriod));
     }
 
     AssignedResource.create = function(jsonData, project, release) {
@@ -318,12 +317,8 @@
 
     AssignedResource.prototype.availableHours = function() {
       var available, hoursPresent;
-      console.log("assigned period " + this.assignedPeriod);
-      console.log("resource " + this.resource.initials);
       hoursPresent = this.resource.hoursAvailable(this.assignedPeriod);
-      console.log("hours present " + hoursPresent);
       available = Math.round(hoursPresent * this.focusFactor);
-      console.log("hours available corrected with assignment focus factor " + this.focusFactor + ": " + available);
       return available;
     };
 
@@ -411,7 +406,6 @@
 
     Resource.prototype.hoursAvailable = function(period) {
       var absence, absent, available, overlappingAbsences, _i, _len, _ref;
-      console.log(period.toString());
       absent = 0;
       _ref = this.periodsAway;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -432,10 +426,7 @@
           return init + x;
         });
       }
-      console.log("absent days: " + absent);
-      console.log("period working days remaining: " + period.workingDaysRemaining());
       available = (period.workingDaysRemaining() - absent) * 8;
-      console.log("available hours: " + available);
       return available;
     };
 

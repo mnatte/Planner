@@ -207,7 +207,7 @@ class AssignedResource extends Mixin
 		#@project = new Project(projectId, projectTitle)
 		#@phase = new Phase(phaseId, "", "", phaseTitle)
 		@assignedPeriod = new Period(startDate, endDate, "")
-		console.log "create AssignedResource:" + ko.toJSON(@assignedPeriod)
+		# console.log "create AssignedResource:" + ko.toJSON(@assignedPeriod)
 	@create: (jsonData, project, release) ->
 		#console.log "create AssignedResource:" + ko.toJSON(jsonData.Resource)
 		# create resource from json
@@ -224,12 +224,12 @@ class AssignedResource extends Mixin
 			assignments.push @assignment
 		assignments
 	availableHours: ->
-		console.log "assigned period #{@assignedPeriod}"
-		console.log "resource #{@resource.initials}"
+		#console.log "assigned period #{@assignedPeriod}"
+		#console.log "resource #{@resource.initials}"
 		hoursPresent = @resource.hoursAvailable @assignedPeriod
-		console.log "hours present #{hoursPresent}"
+		#console.log "hours present #{hoursPresent}"
 		available = Math.round(hoursPresent * @focusFactor)
-		console.log "hours available corrected with assignment focus factor #{@focusFactor}: #{available}"
+		#console.log "hours available corrected with assignment focus factor #{@focusFactor}: #{available}"
 		available
 	toJSON: ->
 		copy = ko.toJS(@) #get a clean copy
@@ -268,15 +268,15 @@ class Resource extends Mixin
 		away.length is 0
 	hoursAvailable: (period) ->
 		# somehow "reduce (x,y)" needs a space between name ('reduce') and args
-		console.log period.toString()
+		#console.log period.toString()
 		absent = 0
 		overlappingAbsences = absence for absence in @periodsAway when absence.overlaps(period)
 		if(typeof(overlappingAbsences) is not "undefined" && overlappingAbsences is not null)
 			absent = (absence.overlappingPeriod(period).workingDaysRemaining() for absence in overlappingAbsences).reduce (init, x) -> console.log x; init + x
-		console.log "absent days: " + absent
-		console.log "period working days remaining: " + period.workingDaysRemaining()
+		#console.log "absent days: " + absent
+		#console.log "period working days remaining: " + period.workingDaysRemaining()
 		available = (period.workingDaysRemaining() - absent) * 8
-		console.log "available hours: " + available
+		#console.log "available hours: " + available
 		available
 	# @ to create a static method, attach to class object itself
 	@create: (jsonData) ->

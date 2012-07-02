@@ -26,7 +26,7 @@
           text: 'Workload overview'
         },
         xAxis: {
-          categories: ['Pief', 'Paf', 'Poef']
+          categories: []
         },
         yAxis: {
           title: {
@@ -40,7 +40,6 @@
         }
       };
       this.hoursChart = new Highcharts.Chart(this.hoursChartOptions);
-      this.categories = ko.observableArray(['aap', 'noot', 'mies']);
       _ref = this.release.sets;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         statusgroup = _ref[_i];
@@ -48,7 +47,7 @@
           this.statuses.push(statusgroup.label);
         }
       }
-      _ref2 = this.phases();
+      _ref2 = this.release.phases;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         phase = _ref2[_j];
         if (!(phase.isCurrent())) continue;
@@ -58,56 +57,15 @@
       }
       this.selectedPhaseId = ko.observable();
       this.selectedPhaseId.subscribe(function(newValue) {
-        var available, balance, hours, proj, projHours, projects, work, _k, _len3;
-        projHours = _this.hourBalance(newValue);
-        console.log("from subscription: " + ko.toJSON(projHours));
-        projects = [];
-        available = [];
-        work = [];
-        balance = [];
-        hours = [];
-        for (_k = 0, _len3 = projHours.length; _k < _len3; _k++) {
-          proj = projHours[_k];
-          projects.push(proj.projectname);
-          available.push(proj.availableHours);
-          work.push(proj.workload);
-          balance.push(proj.balance);
-        }
-        hours.push({
-          name: 'Available Hrs',
-          data: available
-        });
-        hours.push({
-          name: 'Work Remaining',
-          data: work
-        });
-        hours.push({
-          name: 'Balance',
-          data: balance
-        });
-        console.log(projects);
-        console.log(ko.toJSON(hours));
-        _this.hoursChartOptions.xAxis.categories = projects;
-        _this.hoursChartOptions.series = hours;
-        _this.hoursChart.destroy;
-        return _this.hoursChart = new Highcharts.Chart(_this.hoursChartOptions);
+        console.log(newValue);
+        return _this.redrawChart(newValue);
       });
       this.disgardedStatuses = ko.observableArray();
-      this.disgardedStatuses.subscribe(function(newValue) {});
+      this.disgardedStatuses.subscribe(function(newValue) {
+        return _this.redrawChart(_this.selectedPhaseId);
+      });
       this.loadProjects();
     }
-
-    ReleaseViewmodel.prototype.releaseTitle = function() {
-      return this.release.title;
-    };
-
-    ReleaseViewmodel.prototype.releaseStartdate = function() {
-      return this.release.startDate.date;
-    };
-
-    ReleaseViewmodel.prototype.releaseEnddate = function() {
-      return this.release.endDate.date;
-    };
 
     ReleaseViewmodel.prototype.releaseWorkingDays = function() {
       return this.release.workingDays();
@@ -117,30 +75,59 @@
       return new Date();
     };
 
-    ReleaseViewmodel.prototype.phases = function() {
-      return this.release.phases;
-    };
-
     ReleaseViewmodel.prototype.releaseWorkingDaysRemaining = function() {
       return this.fromNowTillEnd.workingDays();
     };
 
+    ReleaseViewmodel.prototype.redrawChart = function(phaseId) {
+      var available, balance, hours, proj, projHours, projects, work, _i, _len;
+      projHours = this.hourBalance(phaseId);
+      projects = [];
+      available = [];
+      work = [];
+      balance = [];
+      hours = [];
+      for (_i = 0, _len = projHours.length; _i < _len; _i++) {
+        proj = projHours[_i];
+        projects.push(proj.projectname);
+        available.push(proj.availableHours);
+        work.push(proj.workload);
+        balance.push(proj.balance);
+      }
+      hours.push({
+        name: 'Available Hrs',
+        data: available
+      });
+      hours.push({
+        name: 'Work Remaining',
+        data: work
+      });
+      hours.push({
+        name: 'Balance',
+        data: balance
+      });
+      this.hoursChartOptions.xAxis.categories = projects;
+      this.hoursChartOptions.series = hours;
+      this.hoursChart.destroy;
+      return this.hoursChart = new Highcharts.Chart(this.hoursChartOptions);
+    };
+
     ReleaseViewmodel.prototype.loadProjects = function() {
-      var proj, set, _i, _len, _ref, _results,
+      var proj, project, _i, _len, _ref, _results,
         _this = this;
-      _ref = this.release.sets;
+      _ref = this.release.projects;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        set = _ref[_i];
-        if (!(set.groupedBy === "project")) continue;
-        proj = set;
-        proj.projectname = set.label;
-        proj.link = "#" + set.label;
+        project = _ref[_i];
+        proj = {};
+        proj.projectname = project.shortName;
+        proj.link = "#" + project.shortName;
+        proj.backlog = project.backlog;
         proj.totalHours = (function(proj) {
           return ko.computed(function() {
             var t;
             t = 0;
-            $.each(proj.items, function(n, l) {
+            $.each(proj.backlog, function(n, l) {
               var _ref2;
               if (!(_ref2 = l.state, __indexOf.call(_this.disgardedStatuses(), _ref2) >= 0)) {
                 return t += l.remainingHours;
@@ -172,24 +159,22 @@
       _ref = this.release.projects;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         proj = _ref[_i];
-        console.log(proj);
         remainingHours = ((function() {
-          var _j, _len2, _ref2, _results;
+          var _j, _len2, _ref2, _ref3, _results;
           _ref2 = proj.backlog;
           _results = [];
           for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
             feat = _ref2[_j];
-            _results.push(feat.remainingHours);
+            if ((_ref3 = feat.state, __indexOf.call(this.disgardedStatuses(), _ref3) < 0)) {
+              _results.push(feat.remainingHours);
+            }
           }
           return _results;
-        })()).reduce(function(acc, x) {
+        }).call(this)).reduce(function(acc, x) {
           return acc + x;
         });
-        console.log("remainingHours: " + remainingHours);
         available = 0;
-        console.log(proj.resources);
         if (proj.resources.length > 0) {
-          console.log("proj.resources not empty");
           available = ((function() {
             var _j, _len2, _ref2, _results;
             _ref2 = proj.resources;
@@ -200,11 +185,9 @@
             }
             return _results;
           })()).reduce(function(acc, x) {
-            console.log(x);
             return acc + x;
           });
         }
-        console.log("available: " + available);
         balanceHours.push({
           projectname: proj.shortName,
           availableHours: available,
@@ -212,7 +195,6 @@
           balance: Math.round(available - remainingHours)
         });
       }
-      console.log("balanceHours: " + ko.toJSON(balanceHours));
       return balanceHours;
     };
 
