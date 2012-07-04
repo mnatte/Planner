@@ -169,6 +169,8 @@ class Release extends Phase
 	addProject: (project) ->
 		@projects.push(project)
 	@create: (jsonData) ->
+		console.log jsonData
+		#console.log "#{jsonData.StartDate} #{jsonData.EndDate}"
 		release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId)
 		for phase in jsonData.Phases
 			release.addPhase Phase.create(phase)
@@ -177,6 +179,7 @@ class Release extends Phase
 			# release.addFeature Feature.create(feat)
 		for project in jsonData.Projects
 			release.addProject Project.create(project)
+		console.log release
 		release
 
 # Release - Projects - Features & AssignedResources
@@ -233,17 +236,19 @@ class AssignedResource extends Mixin
 		available
 	toJSON: ->
 		copy = ko.toJS(@) #get a clean copy
+		console.log copy
+		delete copy.release #remove property
 		delete copy.phase #remove property
 		delete copy.resource #remove property
 		delete copy.project #remove property
 		delete copy.assignedPeriod
 		#console.log(@resource)
 		copy.resourceId = @resource.id
-		copy.phaseId = @phase.id
+		copy.phaseId = @release.id
 		copy.projectId = @project.id
 		copy.startDate = @assignedPeriod.startDate.dateString
 		copy.endDate = @assignedPeriod.endDate.dateString
-		#console.log(copy)
+		console.log(copy)
 		copy #return the copy to be serialized
 
 class Feature
@@ -287,6 +292,7 @@ class Resource extends Mixin
 		#console.log res
 		res
 	@createCollection: (jsonData) ->
+		#console.log jsonData
 		resources = []
 		for resource in jsonData
 			@resource = Resource.create(resource)
@@ -294,9 +300,9 @@ class Resource extends Mixin
 		resources
 
 
-
-#class ReleaseAssignments extends Mixin
-	#constructor: (@phaseId, @projectId, @assignments) ->
+# datastructure for submitting all assignements with release
+class ReleaseAssignments extends Mixin
+	constructor: (@phaseId, @projectId, @assignments) ->
 
 # export to root object
 root.Period = Period
@@ -307,5 +313,5 @@ root.Feature = Feature
 root.Resource = Resource
 root.Project = Project
 root.AssignedResource = AssignedResource
-#root.ReleaseAssignments = ReleaseAssignments
+root.ReleaseAssignments = ReleaseAssignments
 

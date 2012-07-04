@@ -29,9 +29,14 @@ class DateFormatter
 		console.log "formatJsonDate: #{dateJson} with format #{format}"
 		$.format.date(@createJsDateFromJson(dateJson), format)
 	@createJsDateFromJson: (dateJson) ->
+		#console.log dateJson
 		eval("new " + dateJson.slice(1, -1))
 	@formatJsDate: (date, format) ->
 		$.format.date(date, format)
+	@createFromString: (string) ->
+		#yyyy,mm,dd
+		#new Date(2011,10,30)
+		new Date(getDateFromFormat(string, "dd/MM/yyyy"))
 
 class DatePlus
 	constructor: (@date) ->

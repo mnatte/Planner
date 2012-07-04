@@ -7,11 +7,12 @@ root = global ? window
 
 class HLoadReleases
 	execute: (data) ->
+		# console.log data
 		releases = []
 		# fill release collection
 		for release in data
-			Release.create data
-			releases.push @release
+			rel = Release.create release
+			releases.push rel
 		releases
 
 class UDisplayReleaseStatus
@@ -44,15 +45,15 @@ class UGetAvailableHoursForTeamMemberFromNow
 			0
 		else
 			#console.log @teamMember
-			console.log "available hours for: #{@teamMember.initials}"
-			console.log "in phase: #{@phase.toString()}"
+			# console.log "available hours for: #{@teamMember.initials}"
+			# console.log "in phase: #{@phase.toString()}"
 			# set start date of phase to Now when startdate of phase is already passed
 			if today > @phase.startDate.date and today > member.
 				startDate = today
 			else
 				startDate = @phase.startDate.date
 			restPeriod = new Period(startDate, @phase.endDate.date, @phase.title)
-			console.log "period from now: #{restPeriod}"
+			# console.log "period from now: #{restPeriod}"
 			#console.log "periods away: #{@teamMember.periodsAway}"
 			absentHours = 0
 			for absence in @teamMember.periodsAway when (absence.overlaps @phase)
@@ -69,7 +70,7 @@ class UGetAvailableHoursForTeamMemberFromNow
 				absentHours += remainingAbsence.workingHours()
 			#console.log "absentHours: #{absentHours}"
 			availableHours = restPeriod.workingHours() - absentHours
-			console.log "availableHours: #{availableHours}"
+			# console.log "availableHours: #{availableHours}"
 			# console.log "corrected with focusfactor #{@teamMember.focusFactor}: #{@teamMember.focusFactor * availableHours}"
 			@teamMember.focusFactor * availableHours
 
@@ -110,11 +111,11 @@ class ULoadPlanResources
 	constructor: ->
 	execute: (releases, resources) ->
 	#execute: (releases) ->
-		#console.log releases
-		#console.log projects
 		loadReleases = new HLoadReleases()
 		releases = loadReleases.execute(releases)
+		console.log releases
 		resources = Resource.createCollection resources
+		# console.log resources
 		@viewModel = new PlanResourcesViewmodel(releases, resources)
 		#@viewModel = new PlanResourcesViewmodel(releases)
 		@viewModel.selectRelease @viewModel.allReleases()[0]

@@ -8,12 +8,12 @@
     function HLoadReleases() {}
 
     HLoadReleases.prototype.execute = function(data) {
-      var release, releases, _i, _len;
+      var rel, release, releases, _i, _len;
       releases = [];
       for (_i = 0, _len = data.length; _i < _len; _i++) {
         release = data[_i];
-        Release.create(data);
-        releases.push(this.release);
+        rel = Release.create(release);
+        releases.push(rel);
       }
       return releases;
     };
@@ -63,13 +63,10 @@
       if (today > this.phase.endDate.date) {
         return 0;
       } else {
-        console.log("available hours for: " + this.teamMember.initials);
-        console.log("in phase: " + (this.phase.toString()));
         if (today > this.phase.startDate.date && today > (member.startDate = today)) {} else {
           startDate = this.phase.startDate.date;
         }
         restPeriod = new Period(startDate, this.phase.endDate.date, this.phase.title);
-        console.log("period from now: " + restPeriod);
         absentHours = 0;
         _ref = this.teamMember.periodsAway;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -85,7 +82,6 @@
           absentHours += remainingAbsence.workingHours();
         }
         availableHours = restPeriod.workingHours() - absentHours;
-        console.log("availableHours: " + availableHours);
         return this.teamMember.focusFactor * availableHours;
       }
     };
@@ -168,6 +164,7 @@
       var loadReleases;
       loadReleases = new HLoadReleases();
       releases = loadReleases.execute(releases);
+      console.log(releases);
       resources = Resource.createCollection(resources);
       this.viewModel = new PlanResourcesViewmodel(releases, resources);
       this.viewModel.selectRelease(this.viewModel.allReleases()[0]);

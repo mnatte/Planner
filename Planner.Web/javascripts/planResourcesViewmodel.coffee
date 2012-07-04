@@ -7,6 +7,7 @@ root = global ? window
 class PlanResourcesViewmodel extends Mixin
 	constructor: (allReleases, allResources) ->
 		ReleaseAssignments.extend(RCrud)
+		# console.log allReleases
 		PlanResourcesViewmodel.extend(RGroupBy)
 		@selectedProject = ko.observable()
 		@selectedRelease = ko.observable()
@@ -34,7 +35,7 @@ class PlanResourcesViewmodel extends Mixin
 
 	setAssignments: (jsonData) =>
 		@assignments.removeAll()
-		@assignments (AssignedResource.createCollection(jsonData, @selectedProject(), @selectedRelease())
+		@assignments AssignedResource.createCollection(jsonData, @selectedProject(), @selectedRelease())
 
 	loadAssignments: ->
         ajax = new Ajax()
@@ -59,9 +60,13 @@ class PlanResourcesViewmodel extends Mixin
 		#copy.resource = @selectedResource()
 		#copy.project = @selectedProject()
 		#console.log ko.toJSON(copy)
+		#assignedPeriod.startDate.dateString databinding in htmlform automatically transforms to underlying DatePlus type 
 		console.log @newAssignment.assignedPeriod.startDate
 		console.log @newAssignment.assignedPeriod.endDate.dateString
-		@assignments.push new AssignedResource(0, @selectedRelease().id, "", @selectedResource().id, @selectedResource().firstName, @selectedResource().middleName, @selectedResource().lastName, @selectedProject().id, "", @newAssignment.focusFactor, @newAssignment.assignedPeriod.startDate.date, @newAssignment.assignedPeriod.endDate.date)
+		console.log @newAssignment.assignedPeriod.endDate.date
+		ass = new AssignedResource(0, @selectedRelease(), @selectedResource(), @selectedProject(), @newAssignment.focusFactor, DateFormatter.createFromString(@newAssignment.assignedPeriod.startDate.dateString), DateFormatter.createFromString(@newAssignment.assignedPeriod.endDate.dateString))
+		console.log ass
+		@assignments.push ass
 		#@allResources.remove @selectedResource()
 		@canShowForm(false)
 

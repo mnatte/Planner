@@ -51,6 +51,10 @@
       return $.format.date(date, format);
     };
 
+    DateFormatter.createFromString = function(string) {
+      return new Date(getDateFromFormat(string, "dd/MM/yyyy"));
+    };
+
     return DateFormatter;
 
   })();
