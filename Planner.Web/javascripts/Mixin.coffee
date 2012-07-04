@@ -34,8 +34,7 @@ class DateFormatter
 	@formatJsDate: (date, format) ->
 		$.format.date(date, format)
 	@createFromString: (string) ->
-		#yyyy,mm,dd
-		#new Date(2011,10,30)
+		# relies on datehelper.js
 		new Date(getDateFromFormat(string, "dd/MM/yyyy"))
 
 class DatePlus
