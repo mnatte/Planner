@@ -30,6 +30,8 @@
     <link rel="stylesheet" href="stylesheets/jquery-ui-1.8.19.custom.css">
     <link rel="stylesheet" href="stylesheets/jquery.tooltip.css">
 
+    <link rel="stylesheet" href="stylesheets/jquery.ui.progressbar.css">
+
 	<!-- Favicons
 	================================================== -->
 	<link rel="shortcut icon" href="images/favicon.ico">
@@ -52,6 +54,7 @@
     <script type="text/javascript" src="Scripts/jquery.delegate.js"></script>
     <script type="text/javascript" src="Scripts/jquery.bgiframe.js"></script>
     <script type="text/javascript" src="Scripts/jquery.tooltip.min.js"></script>
+    <script type="text/javascript" src="Scripts/datehelper.js"></script>
         
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
@@ -61,6 +64,7 @@
     <script type="text/javascript" src="javascripts/UseCases.js"></script>
     <script type="text/javascript" src="javascripts/ko.bindingHandlers.fadeVisible.js"></script>
     <script type="text/javascript" src="javascripts/ko.bindingHandlers.period2.js"></script>
+    <script type="text/javascript" src="javascripts/ko.bindingHandlers.period.js"></script>
 
     <script type="text/javascript" src="Scripts/highcharts.js"></script>
 </head>
@@ -110,6 +114,26 @@
                         </ul>
                     </li>
                 </ul>
+                <div class="timeline">
+                    <ul class="events" data-bind="foreach: currentPhases()">
+                        <li data-bind="text: toString(), period: workingDays()"></li>
+                        <ul data-bind="foreach: phases">
+                                <li style="width: 60%; left: 38%;" data-bind="text: toString()">
+                        </ul>
+                        
+                        <!--<li style="width: 56.68%; left: 43%;">Photography <em>(2006 - 2009)</em></li>
+                        <li style="width: 71.3%; left: 28.4%;">Object Oriented Programming <em>(2005 - 2009)</em></li>
+                        <li style="width: 85.5%; left: 14.2%;">Web Development <em>(2004 - 2009)</em></li>
+                        <li style="width: 42.75%; left: 0;">3D Modeling and Rendering <em>(2003 - 2006)</em></li>
+                        <li style="width: 99.5%; left: 0;">Drawing &amp; Illustration <em>(2003 - 2009)</em></li>
+                        <li style="width: 50%; left: 50%;">Drawing &amp; Illustration <em>(2003 - 2009)</em></li>-->
+                    </ul> <!-- end .events -->
+
+                    <!--max 7 units because of available space-->
+                    <ul class="intervals" data-bind="foreach: viewPeriod().weeks()">
+                        <li class="first"><span data-bind="text: 'w' + $data"></span></li>
+                    </ul> <!-- end .intervals -->
+                </div> <!-- end .timeline -->
                 <!--<ul data-bind="foreach: currentAbsences()">
                     <li class="price"><h6 data data-bind="text: toString()"></h6></li>
                 </ul>-->

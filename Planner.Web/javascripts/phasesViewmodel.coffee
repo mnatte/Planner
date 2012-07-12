@@ -9,6 +9,7 @@ class PhasesViewmodel
 		# ctor is executed in context of INSTANCE. Therfore @ refers here to CURRENT INSTANCE and attaches selectedPhase to all instances (since object IS ctor)
 		@selectedPhase = ko.observable()
 		@canShowDetails = ko.observable(false)
+		@periodToView = new Period(new Date(2012, 06, 16), new Date(2012, 07, 30), "View Period")
 	load: (data) ->
 		# all properties besides ctor are ATTACHED to prototype. these are EXECUTED in context of INSTANCE.
 		# therefore @ refers to INSTANCE here 
@@ -46,12 +47,18 @@ class PhasesViewmodel
 			
 	currentPhases: ->
 		current = []
-		for phase in @releases when phase.isCurrent()
+		for phase in @releases when phase.overlaps(@viewPeriod())
+			#console.log @periodToView
+			#console.log @viewPeriod()
+			#console.log phase
 			current.push phase
 		current
 
 	closeDetails: =>
         @canShowDetails(false)
+
+	viewPeriod: ->
+		@periodToView
 
 	currentAbsences: ->
 		current = []

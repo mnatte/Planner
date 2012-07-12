@@ -12,6 +12,7 @@ root = global ? window
 	# functions attached to the prototype are invoked in the context of the individual object
 	# @-variables within those functions refer to the instance properties because the '@' context IS the object instance: e.g. phase.workingHours()
 
+#relies on datehelper.js
 class Period extends Mixin
 	# attach seperate startDate, endDate and title properties to each instance
 	constructor: (startDate, endDate, @title) ->
@@ -109,11 +110,12 @@ class Period extends Mixin
 		# console.log nextWeek
 		nextWeek > @startDate.date
 	overlaps: (other) ->
-		#console.log "this: #{@}"
-		#console.log "other: #{other}"
+		console.log "this: #{@}"
+		console.log "other: #{other}"
 		unless other is undefined
-			# console.log (@startDate >= other.startDate and @startDate < other.endDate) or (@endDate >= other.startDate and @endDate < other.endDate)
-			(@startDate.date >= other.startDate.date and @startDate.date < other.endDate.date) or (@endDate.date >= other.startDate.date and @endDate.date < other.endDate.date)
+			overlap = (@startDate.date >= other.startDate.date and @startDate.date <= other.endDate.date) or (@endDate.date >= other.startDate.date and @endDate.date <= other.endDate.date)
+			console.log overlap
+			overlap
 	overlappingPeriod: (other) ->
 		#console.log "this: #{@}"
 		#console.log "other: #{other}"
@@ -128,6 +130,10 @@ class Period extends Mixin
 				endDate = other.endDate.date
 				
 			new Period(startDate, endDate, "overlapping period")
+	weeks: ->
+		startWeek = getWeek(@startDate.date)
+		endWeek = getWeek(@endDate.date)
+		[startWeek..endWeek]
 	toJSON: ->
 		copy = ko.toJS(@) #get a clean copy
 		delete copy.startDate.date #remove property

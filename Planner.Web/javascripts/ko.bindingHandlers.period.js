@@ -1,16 +1,7 @@
-﻿ko.bindingHandlers.period = {
-    init: function (element, valueAccessor) {
-        $(element).progressbar({
-            value: valueAccessor()
-        });
-    },
-
-    update: function (element, valueAccessor) {
-        $(element).progressbar({
-            value: valueAccessor()
-        });
-    }
-}
-/*$('#phases ul li div').progressbar({
-    value: 37
-});*/
+﻿(function () {
+    ko.bindingHandlers.period = {
+        init: function (element, valueAccessor, allBindingsAccessor, viewModel) {
+            $(element).css("width", "85%").css("left", "13%");
+        }
+    };
+})();

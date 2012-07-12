@@ -10,6 +10,7 @@
       this.selectPhase = __bind(this.selectPhase, this);
       this.closeDetails = __bind(this.closeDetails, this);      this.selectedPhase = ko.observable();
       this.canShowDetails = ko.observable(false);
+      this.periodToView = new Period(new Date(2012, 06, 16), new Date(2012, 07, 30), "View Period");
     }
 
     PhasesViewmodel.prototype.load = function(data) {
@@ -70,13 +71,17 @@
       _ref = this.releases;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         phase = _ref[_i];
-        if (phase.isCurrent()) current.push(phase);
+        if (phase.overlaps(this.viewPeriod())) current.push(phase);
       }
       return current;
     };
 
     PhasesViewmodel.prototype.closeDetails = function() {
       return this.canShowDetails(false);
+    };
+
+    PhasesViewmodel.prototype.viewPeriod = function() {
+      return this.periodToView;
     };
 
     PhasesViewmodel.prototype.currentAbsences = function() {

@@ -114,8 +114,13 @@
     };
 
     Period.prototype.overlaps = function(other) {
+      var overlap;
+      console.log("this: " + this);
+      console.log("other: " + other);
       if (other !== void 0) {
-        return (this.startDate.date >= other.startDate.date && this.startDate.date < other.endDate.date) || (this.endDate.date >= other.startDate.date && this.endDate.date < other.endDate.date);
+        overlap = (this.startDate.date >= other.startDate.date && this.startDate.date <= other.endDate.date) || (this.endDate.date >= other.startDate.date && this.endDate.date <= other.endDate.date);
+        console.log(overlap);
+        return overlap;
       }
     };
 
@@ -134,6 +139,17 @@
         }
         return new Period(startDate, endDate, "overlapping period");
       }
+    };
+
+    Period.prototype.weeks = function() {
+      var endWeek, startWeek, _i, _results;
+      startWeek = getWeek(this.startDate.date);
+      endWeek = getWeek(this.endDate.date);
+      return (function() {
+        _results = [];
+        for (var _i = startWeek; startWeek <= endWeek ? _i <= endWeek : _i >= endWeek; startWeek <= endWeek ? _i++ : _i--){ _results.push(_i); }
+        return _results;
+      }).apply(this);
     };
 
     Period.prototype.toJSON = function() {

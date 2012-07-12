@@ -169,7 +169,7 @@
     <Content Include="images\apple-touch-icon-72x72.png" />
     <Content Include="images\apple-touch-icon.png" />
     <Content Include="images\favicon.ico" />
-    <Content Include="Scripts\stuff.js" />
+    <Content Include="Scripts\datehelper.js" />
     <Content Include="xxx_index.html" />
     <Content Include="xxx_index_skel.html" />
     <Content Include="javascripts\ajax.coffee">
