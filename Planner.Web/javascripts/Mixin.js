@@ -66,6 +66,10 @@
       this.dateString = $.format.date(date, 'dd/MM/yyyy');
     }
 
+    DatePlus.prototype.format = function(formatString) {
+      return $.format.date(this.date, formatString);
+    };
+
     return DatePlus;
 
   })();

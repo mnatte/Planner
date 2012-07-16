@@ -24,6 +24,15 @@ class Period extends Mixin
 	# FOR MAKING title OBSERVABLE IN PARENT VIEWMODELS USE:
 	# constructor: (startDate, endDate, title) ->
 		# @title = ko.observable(title)
+	days: ->
+		days = 0
+		msPerDay = 86400 * 1000
+		@startDate.date.setHours(0,0,0,1)
+		@endDate.date.setHours(23,59,59,59,999)
+		diff = @endDate.date - @startDate.date
+		days = Math.ceil(diff / msPerDay)
+		# console.log "days: #{days}"
+		days
 	workingDays: ->
 		days = 0
 		# console.log "days: #{days}"
@@ -54,6 +63,8 @@ class Period extends Mixin
 		@workingDays() * 8
 	toString: ->
 		"#{@title} #{@startDate.dateString} - #{@endDate.dateString} (#{@workingDays()} working days)"
+	toShortString: ->
+		"#{@startDate.format('dd/MM')} - #{@endDate.format('dd/MM')}"
 	containsDate: (date) ->
 		date >= @startDate.date and date < @endDate.date
 	isCurrent: ->
@@ -133,7 +144,12 @@ class Period extends Mixin
 	weeks: ->
 		startWeek = getWeek(@startDate.date)
 		endWeek = getWeek(@endDate.date)
-		[startWeek..endWeek]
+		yrstring = @startDate.date.getFullYear().toString()
+		wks = []
+		for wk in [startWeek..endWeek]
+			wks.push new Week(yrstring + wk.toString())
+		console.log wks
+		wks
 	toJSON: ->
 		copy = ko.toJS(@) #get a clean copy
 		delete copy.startDate.date #remove property
@@ -156,6 +172,22 @@ class Phase extends Period
 
 class MileStone
 	constructor: (@date, @title) ->
+
+class Week
+	# format weekNr: YYYYww, e.g. 201248 (week 48 in 2012)
+	constructor: (@weekNr) ->
+	period: ->
+		year=parseInt(@weekNr.substring(0,4),10)
+		week=parseInt(@weekNr.substring(4,6),10)
+		# JavaScript weekdays: Sun=0..Sat=6
+		jan10=new Date(year,0,10,12,0,0)
+		jan4=new Date(year,0,4,12,0,0)
+		wk1mon=new Date(jan4.getTime()-(jan10.getDay())*86400000)
+		startdate=new Date(wk1mon.getTime()+(week-1)*604800000)
+		enddate=new Date(startdate.getTime()+518400000)
+		new Period(startdate, enddate, "week " + @weekNr)
+	shortNumber: ->
+		parseInt(@weekNr.substring(4,6),10)
 
 class Release extends Phase
 	constructor: (@id, @startDate, @endDate, @title, @tfsIterationPath, @parentId) ->
@@ -312,6 +344,7 @@ class ReleaseAssignments extends Mixin
 
 # export to root object
 root.Period = Period
+root.Week = Week
 root.Phase = Phase
 root.MileStone = MileStone
 root.Release = Release

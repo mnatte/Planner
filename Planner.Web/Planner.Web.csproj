@@ -126,6 +126,7 @@
     <Content Include="404.html" />
     <Content Include="adminProject.htm" />
     <Content Include="adminResource.htm" />
+    <Content Include="javascripts\ko.bindingHandlers.period.js" />
     <Content Include="javascripts\ko.bindingHandlers.fadeVisible.js" />
     <Content Include="javascripts\ko.bindingHandlers.editable.js" />
     <Content Include="javascripts\planResourcesViewmodel.js">

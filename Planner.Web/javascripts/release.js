@@ -1,5 +1,5 @@
 (function() {
-  var AssignedResource, Feature, MileStone, Period, Phase, Project, Release, ReleaseAssignments, Resource, root,
+  var AssignedResource, Feature, MileStone, Period, Phase, Project, Release, ReleaseAssignments, Resource, Week, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -14,6 +14,17 @@
       this.startDate = new DatePlus(startDate);
       this.endDate = new DatePlus(endDate);
     }
+
+    Period.prototype.days = function() {
+      var days, diff, msPerDay;
+      days = 0;
+      msPerDay = 86400 * 1000;
+      this.startDate.date.setHours(0, 0, 0, 1);
+      this.endDate.date.setHours(23, 59, 59, 59, 999);
+      diff = this.endDate.date - this.startDate.date;
+      days = Math.ceil(diff / msPerDay);
+      return days;
+    };
 
     Period.prototype.workingDays = function() {
       var days, diff, endDay, msPerDay, startDay, weeks;
@@ -39,6 +50,10 @@
 
     Period.prototype.toString = function() {
       return "" + this.title + " " + this.startDate.dateString + " - " + this.endDate.dateString + " (" + (this.workingDays()) + " working days)";
+    };
+
+    Period.prototype.toShortString = function() {
+      return "" + (this.startDate.format('dd/MM')) + " - " + (this.endDate.format('dd/MM'));
     };
 
     Period.prototype.containsDate = function(date) {
@@ -142,14 +157,16 @@
     };
 
     Period.prototype.weeks = function() {
-      var endWeek, startWeek, _i, _results;
+      var endWeek, startWeek, wk, wks, yrstring;
       startWeek = getWeek(this.startDate.date);
       endWeek = getWeek(this.endDate.date);
-      return (function() {
-        _results = [];
-        for (var _i = startWeek; startWeek <= endWeek ? _i <= endWeek : _i >= endWeek; startWeek <= endWeek ? _i++ : _i--){ _results.push(_i); }
-        return _results;
-      }).apply(this);
+      yrstring = this.startDate.date.getFullYear().toString();
+      wks = [];
+      for (wk = startWeek; startWeek <= endWeek ? wk <= endWeek : wk >= endWeek; startWeek <= endWeek ? wk++ : wk--) {
+        wks.push(new Week(yrstring + wk.toString()));
+      }
+      console.log(wks);
+      return wks;
     };
 
     Period.prototype.toJSON = function() {
@@ -206,6 +223,32 @@
     }
 
     return MileStone;
+
+  })();
+
+  Week = (function() {
+
+    function Week(weekNr) {
+      this.weekNr = weekNr;
+    }
+
+    Week.prototype.period = function() {
+      var enddate, jan10, jan4, startdate, week, wk1mon, year;
+      year = parseInt(this.weekNr.substring(0, 4), 10);
+      week = parseInt(this.weekNr.substring(4, 6), 10);
+      jan10 = new Date(year, 0, 10, 12, 0, 0);
+      jan4 = new Date(year, 0, 4, 12, 0, 0);
+      wk1mon = new Date(jan4.getTime() - (jan10.getDay()) * 86400000);
+      startdate = new Date(wk1mon.getTime() + (week - 1) * 604800000);
+      enddate = new Date(startdate.getTime() + 518400000);
+      return new Period(startdate, enddate, "week " + this.weekNr);
+    };
+
+    Week.prototype.shortNumber = function() {
+      return parseInt(this.weekNr.substring(4, 6), 10);
+    };
+
+    return Week;
 
   })();
 
@@ -492,6 +535,8 @@
   })(Mixin);
 
   root.Period = Period;
+
+  root.Week = Week;
 
   root.Phase = Phase;
 

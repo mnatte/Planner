@@ -102,7 +102,6 @@
                 <ul data-bind="foreach: currentPhases()">
                     <li class="price">
                         <span data-bind="text: toString(), style: { color: isCurrent() ? 'red' : 'black' }"></span>
-                        <div data-bind="period: workingDays()"></div>
                         <!--<button data-bind="click: $parent.selectPhase">Details</button>-->
     
                         <ul data-bind="foreach: phases">
@@ -116,9 +115,9 @@
                 </ul>
                 <div class="timeline">
                     <ul class="events" data-bind="foreach: currentPhases()">
-                        <li data-bind="text: toString(), period: workingDays()"></li>
+                        <li data-bind="text: title, period: $root.viewPeriod()"></li>
                         <ul data-bind="foreach: phases">
-                                <li style="width: 60%; left: 38%;" data-bind="text: toString()">
+                            <li data-bind="text: title, period: $root.viewPeriod()"></li>
                         </ul>
                         
                         <!--<li style="width: 56.68%; left: 43%;">Photography <em>(2006 - 2009)</em></li>
@@ -131,7 +130,7 @@
 
                     <!--max 7 units because of available space-->
                     <ul class="intervals" data-bind="foreach: viewPeriod().weeks()">
-                        <li class="first"><span data-bind="text: 'w' + $data"></span></li>
+                        <li class="first"><span data-bind="text: $data.shortNumber() + ':' + $data.period().toShortString()"></span></li>
                     </ul> <!-- end .intervals -->
                 </div> <!-- end .timeline -->
                 <!--<ul data-bind="foreach: currentAbsences()">
