@@ -2,8 +2,8 @@
     ko.bindingHandlers.period = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel) {
             // valueAccessor is viewPeriod, viewModel is phase to determine width and offset for
-            console.log("viewModel: " + viewModel.toString());
-            console.log("valueAccessor: " + valueAccessor());
+            console.log("viewModel (phase): " + viewModel.toString());
+            console.log("valueAccessor (periodToView): " + valueAccessor());
             // TODO: set filter in HTML page already
             if (!viewModel.overlaps(valueAccessor())) {
                 $(element).remove();

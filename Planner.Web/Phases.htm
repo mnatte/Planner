@@ -110,7 +110,7 @@
 
                     <!--max 7 units because of available space-->
                     <ul class="intervals" data-bind="foreach: periodToView().weeks()">
-                        <li class="first"><span data-bind="text: $data.shortNumber() + ':' + $data.period().toShortString()"></span></li>
+                        <li class="first"><span data-bind="text: $data.shortNumber() + ':' + $data.period().toShortString(), style: { color: $data.period().containsDate(new Date()) ? 'red' : 'black' }"></span></li>
                     </ul> <!-- end .intervals -->
                 </div> <!-- end .timeline -->
                 <!--<ul data-bind="foreach: currentAbsences()">
