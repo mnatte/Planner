@@ -99,43 +99,25 @@
             </div>
             <!--/ko-->
             <div id="phases" class="sixteen columns">
-                <ul data-bind="foreach: currentPhases()">
-                    <li class="price">
-                        <span data-bind="text: toString(), style: { color: isCurrent() ? 'red' : 'black' }"></span>
-                        <!--<button data-bind="click: $parent.selectPhase">Details</button>-->
-    
-                        <ul data-bind="foreach: phases">
-                            <li class="price">
-                                <span data-bind="text: toString(), style: { color: isCurrent() ? 'red' : 'black' }"></span>
-                                <div data-bind="period2: workingDays(), click:$root.selectPhase"></div>
-                                <!--<button data-bind="click: $root.selectPhase">Details</button>-->
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+                
                 <div class="timeline">
                     <ul class="events" data-bind="foreach: currentPhases()">
-                        <li data-bind="text: title, period: $root.viewPeriod()"></li>
+                        <li data-bind="text: title, period: $root.periodToView()"></li>
                         <ul data-bind="foreach: phases">
-                            <li data-bind="text: title, period: $root.viewPeriod()"></li>
+                            <li data-bind="text: title, period: $root.periodToView()"></li>
                         </ul>
-                        
-                        <!--<li style="width: 56.68%; left: 43%;">Photography <em>(2006 - 2009)</em></li>
-                        <li style="width: 71.3%; left: 28.4%;">Object Oriented Programming <em>(2005 - 2009)</em></li>
-                        <li style="width: 85.5%; left: 14.2%;">Web Development <em>(2004 - 2009)</em></li>
-                        <li style="width: 42.75%; left: 0;">3D Modeling and Rendering <em>(2003 - 2006)</em></li>
-                        <li style="width: 99.5%; left: 0;">Drawing &amp; Illustration <em>(2003 - 2009)</em></li>
-                        <li style="width: 50%; left: 50%;">Drawing &amp; Illustration <em>(2003 - 2009)</em></li>-->
                     </ul> <!-- end .events -->
 
                     <!--max 7 units because of available space-->
-                    <ul class="intervals" data-bind="foreach: viewPeriod().weeks()">
+                    <ul class="intervals" data-bind="foreach: periodToView().weeks()">
                         <li class="first"><span data-bind="text: $data.shortNumber() + ':' + $data.period().toShortString()"></span></li>
                     </ul> <!-- end .intervals -->
                 </div> <!-- end .timeline -->
                 <!--<ul data-bind="foreach: currentAbsences()">
                     <li class="price"><h6 data data-bind="text: toString()"></h6></li>
                 </ul>-->
+                <button data-bind="click: $root.prevViewPeriod.bind($data)">Prev</button>
+                <button data-bind="click: $root.nextViewPeriod.bind($data)">Next</button>
             </div>
             </section>
             <section class="sixteen columns" alpha>

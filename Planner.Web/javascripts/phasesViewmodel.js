@@ -8,9 +8,15 @@
 
     function PhasesViewmodel() {
       this.selectPhase = __bind(this.selectPhase, this);
-      this.closeDetails = __bind(this.closeDetails, this);      this.selectedPhase = ko.observable();
+      this.closeDetails = __bind(this.closeDetails, this);
+      var endDate, startDate;
+      this.selectedPhase = ko.observable();
       this.canShowDetails = ko.observable(false);
-      this.periodToView = new Period(new Date(2012, 06, 16), new Date(2012, 07, 30), "View Period");
+      this.centerDate = ko.observable(new Date());
+      startDate = new Date(this.centerDate().getTime() - (24 * 60 * 60 * 1000 * 14));
+      endDate = new Date(this.centerDate().getTime() + (24 * 60 * 60 * 1000 * 28));
+      this.periodToView = ko.observable(new Period(new Date(this.centerDate().getTime() - (24 * 60 * 60 * 1000 * 14)), new Date(this.centerDate().getTime() + (24 * 60 * 60 * 1000 * 28)), "View Period"));
+      console.log(this.periodToView());
     }
 
     PhasesViewmodel.prototype.load = function(data) {
@@ -67,11 +73,12 @@
 
     PhasesViewmodel.prototype.currentPhases = function() {
       var current, phase, _i, _len, _ref;
+      console.log("currentPhases");
       current = [];
       _ref = this.releases;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         phase = _ref[_i];
-        if (phase.overlaps(this.viewPeriod())) current.push(phase);
+        if (phase.overlaps(this.periodToView())) current.push(phase);
       }
       return current;
     };
@@ -80,8 +87,20 @@
       return this.canShowDetails(false);
     };
 
-    PhasesViewmodel.prototype.viewPeriod = function() {
-      return this.periodToView;
+    PhasesViewmodel.prototype.nextViewPeriod = function() {
+      this.centerDate(new Date(this.centerDate().getTime() + (24 * 60 * 60 * 1000 * 49)));
+      console.log(this.centerDate());
+      console.log(this.periodToView());
+      this.periodToView(new Period(new Date(this.centerDate().getTime() - (24 * 60 * 60 * 1000 * 14)), new Date(this.centerDate().getTime() + (24 * 60 * 60 * 1000 * 28)), "View Period"));
+      return console.log(this.periodToView());
+    };
+
+    PhasesViewmodel.prototype.prevViewPeriod = function() {
+      this.centerDate(new Date(this.centerDate().getTime() - (24 * 60 * 60 * 1000 * 49)));
+      console.log(this.centerDate());
+      console.log(this.periodToView());
+      this.periodToView(new Period(new Date(this.centerDate().getTime() - (24 * 60 * 60 * 1000 * 14)), new Date(this.centerDate().getTime() + (24 * 60 * 60 * 1000 * 28)), "View Period"));
+      return console.log(this.periodToView());
     };
 
     PhasesViewmodel.prototype.currentAbsences = function() {

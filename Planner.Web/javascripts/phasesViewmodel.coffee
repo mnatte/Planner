@@ -9,7 +9,12 @@ class PhasesViewmodel
 		# ctor is executed in context of INSTANCE. Therfore @ refers here to CURRENT INSTANCE and attaches selectedPhase to all instances (since object IS ctor)
 		@selectedPhase = ko.observable()
 		@canShowDetails = ko.observable(false)
-		@periodToView = new Period(new Date(2012, 06, 16), new Date(2012, 07, 30), "View Period")
+		@centerDate = ko.observable(new Date())
+		#console.log new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 14) )
+		startDate = new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 14) )
+		endDate =  new Date(@centerDate().getTime() + (24 * 60 * 60 * 1000 * 28) )
+		@periodToView = ko.observable(new Period(new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 14) ), new Date(@centerDate().getTime() + (24 * 60 * 60 * 1000 * 28) ), "View Period"))
+		console.log @periodToView()
 	load: (data) ->
 		# all properties besides ctor are ATTACHED to prototype. these are EXECUTED in context of INSTANCE.
 		# therefore @ refers to INSTANCE here 
@@ -46,8 +51,9 @@ class PhasesViewmodel
 		# console.log "this.absences: #{@absences}"
 			
 	currentPhases: ->
+		console.log "currentPhases"
 		current = []
-		for phase in @releases when phase.overlaps(@viewPeriod())
+		for phase in @releases when phase.overlaps(@periodToView())
 			#console.log @periodToView
 			#console.log @viewPeriod()
 			#console.log phase
@@ -57,8 +63,22 @@ class PhasesViewmodel
 	closeDetails: =>
         @canShowDetails(false)
 
-	viewPeriod: ->
-		@periodToView
+	nextViewPeriod: ->
+		@centerDate (new Date(@centerDate().getTime() + (24 * 60 * 60 * 1000 * 49)) )
+		console.log @centerDate()
+		console.log @periodToView()
+		@periodToView new Period(new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 14) ), new Date(@centerDate().getTime() + (24 * 60 * 60 * 1000 * 28) ), "View Period")
+		console.log @periodToView()
+
+	prevViewPeriod: ->
+		@centerDate (new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 49)) )
+		console.log @centerDate()
+		console.log @periodToView()
+		@periodToView new Period(new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 14) ), new Date(@centerDate().getTime() + (24 * 60 * 60 * 1000 * 28) ), "View Period")
+		console.log @periodToView()
+
+	#viewPeriod: ->
+		#@periodToView
 
 	currentAbsences: ->
 		current = []
