@@ -101,6 +101,7 @@
             <div id="phases" class="sixteen columns">
                 
                 <div class="timeline">
+                    <!--todo: fix alignment, use only phases on same level (no releases with child-phases in new loop)-->
                     <ul class="events" data-bind="foreach: currentPhases()">
                         <li data-bind="text: title, period: $root.periodToView()"></li>
                         <ul data-bind="foreach: phases">

@@ -12,7 +12,9 @@ class PhasesViewmodel
 		@centerDate = ko.observable(new Date())
 		@currentPhases = ko.observableArray()
 		#console.log new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 14) )
+		# centerDate minus 2 weeks
 		startDate = new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 14) )
+		# centerDate plus 4 weeks
 		endDate =  new Date(@centerDate().getTime() + (24 * 60 * 60 * 1000 * 28) )
 		@periodToView = ko.observable(new Period(new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 14) ), new Date(@centerDate().getTime() + (24 * 60 * 60 * 1000 * 28) ), "View Period"))
 		console.log @periodToView()
