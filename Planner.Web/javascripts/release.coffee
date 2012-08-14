@@ -121,11 +121,11 @@ class Period extends Mixin
 		# console.log nextWeek
 		nextWeek > @startDate.date
 	overlaps: (other) ->
-		console.log "this: #{@}"
-		console.log "other: #{other}"
+		#console.log "this: #{@}"
+		#console.log "other: #{other}"
 		unless other is undefined
-			overlap = (@startDate.date >= other.startDate.date and @startDate.date <= other.endDate.date) or (@endDate.date >= other.startDate.date and @endDate.date <= other.endDate.date)
-			console.log overlap
+			overlap = (@startDate.date >= other.startDate.date and @startDate.date <= other.endDate.date) or (@endDate.date >= other.startDate.date and @endDate.date <= other.endDate.date) or (other.startDate.date >= @startDate.date and other.startDate.date <= @endDate.date) or (other.endDate.date >= @startDate.date and other.endDate.date <= @endDate.date)
+			#console.log overlap
 			overlap
 	overlappingPeriod: (other) ->
 		#console.log "this: #{@}"
@@ -148,7 +148,7 @@ class Period extends Mixin
 		wks = []
 		for wk in [startWeek..endWeek]
 			wks.push new Week(yrstring + wk.toString())
-		console.log wks
+		#console.log wks
 		wks
 	toJSON: ->
 		copy = ko.toJS(@) #get a clean copy

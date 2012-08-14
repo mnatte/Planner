@@ -10,6 +10,7 @@ class PhasesViewmodel
 		@selectedPhase = ko.observable()
 		@canShowDetails = ko.observable(false)
 		@centerDate = ko.observable(new Date())
+		@currentPhases = ko.observableArray()
 		#console.log new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 14) )
 		startDate = new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 14) )
 		endDate =  new Date(@centerDate().getTime() + (24 * 60 * 60 * 1000 * 28) )
@@ -31,6 +32,8 @@ class PhasesViewmodel
 			@releases.push rl
 			# console.log "this.releases: #{@releases}"
 		@releases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
+		for phase in @releases when phase.overlaps(@periodToView())
+			@currentPhases.push phase
 
 		@absences = []
 		for absence in data.Absences
@@ -50,32 +53,40 @@ class PhasesViewmodel
 
 		# console.log "this.absences: #{@absences}"
 			
-	currentPhases: ->
-		console.log "currentPhases"
-		current = []
-		for phase in @releases when phase.overlaps(@periodToView())
-			#console.log @periodToView
-			#console.log @viewPeriod()
-			#console.log phase
-			current.push phase
-		current
+		#@currentPhases = ko.computed(=>
+		#		console.log "currentPhases"
+		#		current = []
+		#		#console.log current
+		#		for phase in @releases when phase.overlaps(@periodToView())
+		#			#console.log @periodToView
+		#			#console.log @viewPeriod()
+		#			#console.log phase
+		#			current.push phase
+		#		current
+		#, this)
 
 	closeDetails: =>
         @canShowDetails(false)
 
 	nextViewPeriod: ->
 		@centerDate (new Date(@centerDate().getTime() + (24 * 60 * 60 * 1000 * 49)) )
-		console.log @centerDate()
-		console.log @periodToView()
+		#console.log @centerDate()
+		#console.log @periodToView()
 		@periodToView new Period(new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 14) ), new Date(@centerDate().getTime() + (24 * 60 * 60 * 1000 * 28) ), "View Period")
-		console.log @periodToView()
+		#console.log @periodToView()
+		@currentPhases.removeAll()
+		for phase in @releases when phase.overlaps(@periodToView())
+			@currentPhases.push phase
 
 	prevViewPeriod: ->
 		@centerDate (new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 49)) )
-		console.log @centerDate()
-		console.log @periodToView()
+		#console.log @centerDate()
+		#console.log @periodToView()
 		@periodToView new Period(new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 14) ), new Date(@centerDate().getTime() + (24 * 60 * 60 * 1000 * 28) ), "View Period")
-		console.log @periodToView()
+		#console.log @periodToView()
+		@currentPhases.removeAll()
+		for phase in @releases when phase.overlaps(@periodToView())
+			@currentPhases.push phase
 
 	#viewPeriod: ->
 		#@periodToView

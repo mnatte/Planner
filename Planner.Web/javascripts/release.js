@@ -130,11 +130,8 @@
 
     Period.prototype.overlaps = function(other) {
       var overlap;
-      console.log("this: " + this);
-      console.log("other: " + other);
       if (other !== void 0) {
-        overlap = (this.startDate.date >= other.startDate.date && this.startDate.date <= other.endDate.date) || (this.endDate.date >= other.startDate.date && this.endDate.date <= other.endDate.date);
-        console.log(overlap);
+        overlap = (this.startDate.date >= other.startDate.date && this.startDate.date <= other.endDate.date) || (this.endDate.date >= other.startDate.date && this.endDate.date <= other.endDate.date) || (other.startDate.date >= this.startDate.date && other.startDate.date <= this.endDate.date) || (other.endDate.date >= this.startDate.date && other.endDate.date <= this.endDate.date);
         return overlap;
       }
     };
@@ -165,7 +162,6 @@
       for (wk = startWeek; startWeek <= endWeek ? wk <= endWeek : wk >= endWeek; startWeek <= endWeek ? wk++ : wk--) {
         wks.push(new Week(yrstring + wk.toString()));
       }
-      console.log(wks);
       return wks;
     };
 

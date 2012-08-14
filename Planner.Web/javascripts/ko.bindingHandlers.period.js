@@ -8,7 +8,7 @@
             if (!viewModel.overlaps(valueAccessor())) {
                 $(element).remove();
             } else {
-                // get overlapping period
+                // get overlapping period between phase (viewModel) and view period (valueAccessor)
                 var overlap = viewModel.overlappingPeriod(valueAccessor());
                 console.log(overlap.toString());
                 console.log("overlapping days: " + overlap.days());
