@@ -11,6 +11,9 @@ class AdminReleaseViewmodel
 
 		Release.extend(RCrud)
 		@selectedRelease = ko.observable()
+		@selectedPhase = ko.observable()
+		@selectedMilestone = ko.observable()
+		@formType = ko.observable("release")
 		@allReleases = ko.observableArray(allReleases)
 		@allProjects = ko.observableArray(allProjects)
 
@@ -40,8 +43,10 @@ class AdminReleaseViewmodel
 					#console.log "assign project #{p.title}"
 					rel.projects.push p		
 
+	# functions for observable necessary to pass view model data to it from html
 	selectRelease: (data) =>
 		console.log "selectRelease - function"
+		@formType "release"
 		# console.log @
 		# console.log data
 		@selectedRelease data
@@ -50,6 +55,10 @@ class AdminReleaseViewmodel
 			#@selectedProjectIds.push(proj.id)
 		console.log @selectedRelease().projects()
 		#console.log "selectRelease after selection: " + @selectedRelease().title + ", parentId: " +  @selectedRelease().parentId
+
+	selectPhase: (data) =>
+		@formType "phase"
+		@selectedPhase data
 
 	refreshRelease: (index, jsonData) =>
 		# use given index or take new index ('length' is one larger than max index) when item is not in @allReleases (value is -1). 
@@ -85,12 +94,18 @@ class AdminReleaseViewmodel
 			@allReleases.splice i, 0, rel
 
 	clear: ->
-		console.log "clear: selectedRelease: #{@selectedRelease().title}"
+		@formType "release"
+		#console.log "clear: selectedRelease: #{@selectedRelease().title}"
 		@selectRelease new Release(0, new Date(), new Date(), "", "")
 
 	addPhase: (data) =>
+		@formType "phase"
 		@selectRelease new Release(0, new Date(), new Date(), "", "", data.id)
 		console.log "selectedRelease parentId: #{@selectedRelease().parentId}"
+
+	addNewMilestone: (data) =>
+		@formType "milestone"
+		@selectedMilestone new Milestone(0, new Date(), "0:00", "", "", data.id)
 
 	saveSelected: =>
 		console.log "saveSelected: selectedRelease: #{@selectedRelease()}"

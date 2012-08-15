@@ -1,5 +1,5 @@
 (function() {
-  var AssignedResource, Feature, MileStone, Period, Phase, Project, Release, ReleaseAssignments, Resource, Week, root,
+  var AssignedResource, Feature, Milestone, Period, Phase, Project, Release, ReleaseAssignments, Resource, Week, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -178,6 +178,38 @@
 
   })(Mixin);
 
+  Milestone = (function(_super) {
+
+    __extends(Milestone, _super);
+
+    function Milestone(id, date, time, title, description, phaseId) {
+      this.id = id;
+      this.date = date;
+      this.time = time;
+      this.title = title;
+      this.description = description;
+      this.phaseId = phaseId;
+    }
+
+    Milestone.create = function(jsonData) {
+      return new Milestone(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.Date), jsonData.Time, jsonData.Title, jsonData.Description, jsonData.PhaseId);
+    };
+
+    Milestone.createCollection = function(jsonData) {
+      var milestones, ms, _i, _len;
+      milestones = [];
+      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
+        ms = jsonData[_i];
+        this.ms = Milestone.create(ms);
+        milestones.push(this.ms);
+      }
+      return milestones;
+    };
+
+    return Milestone;
+
+  })(Mixin);
+
   Phase = (function(_super) {
 
     __extends(Phase, _super);
@@ -210,17 +242,6 @@
     return Phase;
 
   })(Period);
-
-  MileStone = (function() {
-
-    function MileStone(date, title) {
-      this.date = date;
-      this.title = title;
-    }
-
-    return MileStone;
-
-  })();
 
   Week = (function() {
 
@@ -536,7 +557,7 @@
 
   root.Phase = Phase;
 
-  root.MileStone = MileStone;
+  root.Milestone = Milestone;
 
   root.Release = Release;
 

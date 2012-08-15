@@ -171,6 +171,9 @@
     <Content Include="images\apple-touch-icon.png" />
     <Content Include="images\favicon.ico" />
     <Content Include="Scripts\datehelper.js" />
+    <Content Include="templates\phaseForm.tmpl.html" />
+    <Content Include="templates\milestoneForm.tmpl.html" />
+    <Content Include="templates\releaseForm.tmpl.html" />
     <Content Include="xxx_index.html" />
     <Content Include="xxx_index_skel.html" />
     <Content Include="javascripts\ajax.coffee">

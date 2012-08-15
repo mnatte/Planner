@@ -39,7 +39,9 @@
     <script type="text/javascript" src="Scripts/jquery.dateFormat-1.0.js"></script>
     <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
     <script type="text/javascript" src="Scripts/knockout-array-filter.js"></script>
-        
+    <script type="text/javascript" src="Scripts/koExternalTemplateEngine_all.min.js"></script>
+     
+    <script type="text/javascript" src="javascripts/ko.bindingHandlers.fadeVisible.js"></script>   
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
     <script type="text/javascript" src="javascripts/adminReleaseViewmodel.js"></script>
@@ -75,25 +77,38 @@
         <div class="band">
             <div class="sixteen columns omega">
                 <div class="six columns omega">
-                    <form data-bind="with: selectedRelease()">
-                        <label>Release title:</label><input type="text" data-bind="value: title, valueUpdate: 'afterkeydown'" />
-                        <label>Start date (dd-mm-yyyy):</label><input type="text" data-bind="value: startDate.dateString" />
-                        <label>End date (dd-mm-yyyy):</label><input type="text" data-bind="value: endDate.dateString" />
-                        <label>Tfs IterationPath:</label><input type="text" data-bind="value: tfsIterationPath" />
-                        <label>Projects:</label><select data-bind="options: $root.allProjects(), optionsText: 'title', selectedOptions: projects", size="5" multiple="multiple"></select>
-                        <!--<p>Selected Projects: <span data-bind="text: projects()"></span></p>--> <!-- updates in real-time -->
-                        <button data-bind="click: $parent.saveSelected.bind($data)">Submit</button>
-                    </form>
+                    <!-- ko if: $root.formType() == "release" -->
+                    <section id="releaseFormSection" class="sixteen columns" data-bind="fadeVisible: $root.selectedRelease(), fadeDuration: 500">
+                            <!-- ko template: {name: 'releaseForm', data: $root.selectedRelease()} -->
+                            <!-- /ko -->
+                    </section>
+                    <!--/ko-->
+                    <!-- ko if: $root.formType() == "phase" -->
+                    <section id="phaseFormSection" class="sixteen columns" data-bind="fadeVisible: $root.selectedRelease(), fadeDuration: 500">
+                            <!-- ko template: {name: 'phaseForm', data: $root.selectedPhase()} -->
+                            <!-- /ko -->
+                    </section>
+                    <!--/ko-->
+                    <!-- ko if: $root.formType() == "milestone" -->
+                    <section id="milestoneFormSection" class="sixteen columns" data-bind="fadeVisible: $root.selectedRelease(), fadeDuration: 500">
+                            <!-- ko template: {name: 'milestoneForm', data: $root.selectedMilestone()} -->
+                            <!-- /ko -->
+                    </section>
+                    <!--/ko-->
                 </div>
                 <div class="ten columns omega">
                     <ul data-bind="foreach: allReleases">
                         <li>
-                            <span class="selectable" data-bind="text: title, click: $root.selectRelease.bind($data), style: { color: $data.id == $root.selectedRelease().id ? 'red' : 'black' }"></span>
+                            <span class="selectable" data-bind="text: title, click: $root.selectRelease.bind($data), style: { color: $root.formType() == 'release' && $data.id == $root.selectedRelease().id ? 'red' : 'black' }"></span>
                             <button data-bind="click: $root.addPhase.bind($data)">Add Phase</button>
+                            <button data-bind="click: $root.addNewMilestone.bind($data)">Add New Milestone</button>
+                            <button data-bind="click: $root.addPhase.bind($data)">Add Standard Milestone</button>
                             <button data-bind="click: $root.deleteRelease.bind($data)">Delete</button>
                             <ul data-bind="foreach: phases">
-                                <li class="selectable" data-bind="text: title, click: $root.selectRelease.bind($data), style: { color: $data.id == $root.selectedRelease().id ? 'red' : 'black' }"></li>
-                                <button data-bind="click: $root.deleteRelease.bind($data)">Delete</button>
+                                <li>
+                                    <span class="selectable" data-bind="text: title, click: $root.selectPhase.bind($data), style: { color: $root.formType() == 'phase' && $data.id == $root.selectedPhase().id ? 'red' : 'black' }"></span>
+                                    <button data-bind="click: $root.deleteRelease.bind($data)">Delete</button>
+                                </li>
                             </ul>
                         </li>
                     </ul>
@@ -115,9 +130,9 @@
 
     // load all projects, afterwards load releases
     $(document).ready(function () {
-//        var uc = new ULoadAdminReleases();
-//        var ajax = new Ajax();
-//        ajax.getReleaseSummaries(uc.execute);
+        infuser.defaults.templateSuffix = ".tmpl.html";
+        infuser.defaults.templateUrl = "/planner/templates";
+
         var ajax = new Ajax();
         // callback 'loadReleases' provided, callback jsonData automatically supplied as argument
         ajax.getProjects(loadReleases);

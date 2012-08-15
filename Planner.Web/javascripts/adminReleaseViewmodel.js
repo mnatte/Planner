@@ -9,8 +9,10 @@
     function AdminReleaseViewmodel(allReleases, allProjects) {
       this.deleteRelease = __bind(this.deleteRelease, this);
       this.saveSelected = __bind(this.saveSelected, this);
+      this.addNewMilestone = __bind(this.addNewMilestone, this);
       this.addPhase = __bind(this.addPhase, this);
       this.refreshRelease = __bind(this.refreshRelease, this);
+      this.selectPhase = __bind(this.selectPhase, this);
       this.selectRelease = __bind(this.selectRelease, this);
       var rel, _fn, _i, _len, _ref;
       Array.prototype.remove = function(e) {
@@ -21,6 +23,9 @@
       };
       Release.extend(RCrud);
       this.selectedRelease = ko.observable();
+      this.selectedPhase = ko.observable();
+      this.selectedMilestone = ko.observable();
+      this.formType = ko.observable("release");
       this.allReleases = ko.observableArray(allReleases);
       this.allProjects = ko.observableArray(allProjects);
       this.testNumbers = ko.observableArray([]);
@@ -76,8 +81,14 @@
 
     AdminReleaseViewmodel.prototype.selectRelease = function(data) {
       console.log("selectRelease - function");
+      this.formType("release");
       this.selectedRelease(data);
       return console.log(this.selectedRelease().projects());
+    };
+
+    AdminReleaseViewmodel.prototype.selectPhase = function(data) {
+      this.formType("phase");
+      return this.selectedPhase(data);
     };
 
     AdminReleaseViewmodel.prototype.refreshRelease = function(index, jsonData) {
@@ -107,13 +118,19 @@
     };
 
     AdminReleaseViewmodel.prototype.clear = function() {
-      console.log("clear: selectedRelease: " + (this.selectedRelease().title));
+      this.formType("release");
       return this.selectRelease(new Release(0, new Date(), new Date(), "", ""));
     };
 
     AdminReleaseViewmodel.prototype.addPhase = function(data) {
+      this.formType("phase");
       this.selectRelease(new Release(0, new Date(), new Date(), "", "", data.id));
       return console.log("selectedRelease parentId: " + (this.selectedRelease().parentId));
+    };
+
+    AdminReleaseViewmodel.prototype.addNewMilestone = function(data) {
+      this.formType("milestone");
+      return this.selectedMilestone(new Milestone(0, new Date(), "0:00", "", "", data.id));
     };
 
     AdminReleaseViewmodel.prototype.saveSelected = function() {

@@ -89,6 +89,7 @@ class ULoadAdminReleases
 		projects = Project.createCollection jsonProjects
 		@viewModel = new AdminReleaseViewmodel(releases, projects)
 		@viewModel.selectRelease @viewModel.allReleases()[0]
+		#@viewModel.selectPhase @viewModel.allReleases()[0].phases[0]
 		ko.applyBindings(@viewModel, null, {independentBindings: true})
 
 class ULoadAdminProjects

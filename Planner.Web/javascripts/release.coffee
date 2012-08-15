@@ -157,6 +157,17 @@ class Period extends Mixin
 		copy.endDate = @endDate.dateString
 		copy #return the copy to be serialized
 
+class Milestone extends Mixin
+	constructor: (@id, @date, @time, @title, @description, @phaseId) ->
+	@create: (jsonData) ->
+		new Milestone(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.Date), jsonData.Time, jsonData.Title, jsonData.Description, jsonData.PhaseId)
+	@createCollection: (jsonData) ->
+		milestones = []
+		for ms in jsonData
+			@ms = Milestone.create(ms)
+			milestones.push @ms
+		milestones
+
 class Phase extends Period
 	# attach seperate startDate, endDate and title properties to each instance
 	constructor: (@id, @startDate, @endDate, @title, @tfsIterationPath, @parentId) ->
@@ -169,9 +180,6 @@ class Phase extends Period
 			@phase = Phase.create(phase)
 			phases.push @phase
 		phases
-
-class MileStone
-	constructor: (@date, @title) ->
 
 class Week
 	# format weekNr: YYYYww, e.g. 201248 (week 48 in 2012)
@@ -346,7 +354,7 @@ class ReleaseAssignments extends Mixin
 root.Period = Period
 root.Week = Week
 root.Phase = Phase
-root.MileStone = MileStone
+root.Milestone = Milestone
 root.Release = Release
 root.Feature = Feature
 root.Resource = Resource
