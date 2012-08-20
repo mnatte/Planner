@@ -10,7 +10,7 @@
 	<!-- Basic Page Needs
   ================================================== -->
 	<meta charset="utf-8">
-	<title>Add Release</title>
+	<title>Admin Release</title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 	<!--[if lt IE 9]>
@@ -108,6 +108,13 @@
                                 <li>
                                     <span class="selectable" data-bind="text: title, click: $root.selectPhase.bind($data), style: { color: $root.formType() == 'phase' && $data.id == $root.selectedPhase().id ? 'red' : 'black' }"></span>
                                     <button data-bind="click: $root.deleteRelease.bind($data)">Delete</button>
+                                </li>
+                            </ul>
+                            <ul data-bind="foreach: milestones">
+                                <li>
+                                    <span class="selectable" data-bind="text: title, click: $root.selectMilestone.bind($data), style: { color: $root.formType() == 'milestone' && $data.id == $root.selectedMilestone().id ? 'red' : 'black' }"></span>
+                                    <button data-bind="click: $root.unAssignMilestone.bind($data)">Unassign</button>
+                                    <!--<button data-bind="click: $root.deleteMilestone.bind($data)">Delete</button>-->
                                 </li>
                             </ul>
                         </li>

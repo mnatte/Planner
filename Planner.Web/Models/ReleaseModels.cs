@@ -59,6 +59,16 @@ namespace MvcApplication1.Models
             public ReleaseModels.Resource Person { get; set; }
         }
 
+        public class Milestone
+        {
+            public int Id { get; set; }
+            public string Title { get; set; }
+            public string Description { get; set; }
+            public DateTime Date { get; set; }
+            public string Time { get; set; }
+        }
+
+
         public class ResourceAssignment
         {
             public int Id { get; set; }
@@ -94,6 +104,17 @@ namespace MvcApplication1.Models
                     if (_projects == null)
                         _projects = new List<Project>();
                     return _projects;
+                }
+            }
+
+            private List<Milestone> _milestones;
+            public IList<Milestone> Milestones
+            {
+                get
+                {
+                    if (_milestones == null)
+                        _milestones = new List<Milestone>();
+                    return _milestones;
                 }
             }
         }

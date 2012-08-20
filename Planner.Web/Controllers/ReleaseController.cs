@@ -18,6 +18,24 @@ namespace MvcApplication1.Controllers
             return View();
         }
 
+        protected List<ReleaseModels.Milestone> GetMilestonesForRelease(ReleaseModels.Release release, SqlConnection conn)
+        {
+            var cmd = new SqlCommand("sp_get_phase_milestones", conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.Add("@PhaseId", System.Data.SqlDbType.Int).Value = release.Id;
+            var lst = new List<ReleaseModels.Milestone>();
+
+            using (var reader4 = cmd.ExecuteReader())
+            {
+                while (reader4.Read())
+                {
+                    var p = new ReleaseModels.Milestone { Id = int.Parse(reader4["MilestoneId"].ToString()), Title = reader4["Title"].ToString(), Date = DateTime.Parse(reader4["Date"].ToString()), Time = reader4["Time"].ToString(), Description = reader4["Description"].ToString() };
+                    lst.Add(p);
+                }
+            }
+            return lst;
+        }
+
         public JsonResult GetReleaseSummaries()
         {
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
@@ -45,6 +63,7 @@ namespace MvcApplication1.Controllers
                             }
                         }
 
+                        // Projects
                         var projs = new SqlCommand(string.Format("Select rp.ProjectId, p.Title, p.ShortName from ReleaseProjects rp inner join Projects p on rp.ProjectId = p.Id where PhaseId = {0}", rel.Id), conn);
                         using (var reader3 = projs.ExecuteReader())
                         {
@@ -54,6 +73,12 @@ namespace MvcApplication1.Controllers
                                 rel.Projects.Add(p);
                             }
                         }
+
+                        // Milestones
+                        var milestones = GetMilestonesForRelease(rel, conn);
+                        foreach (var ms in milestones)
+                            rel.Milestones.Add(ms);
+
                         releases.Add(rel);
                     }
                 }
@@ -97,6 +122,11 @@ namespace MvcApplication1.Controllers
                                 release.Projects.Add(p);
                             }
                         }
+
+                        // Milestones
+                        var milestones = GetMilestonesForRelease(release, conn);
+                        foreach (var ms in milestones)
+                            release.Milestones.Add(ms);
                     }
                 }
             }
@@ -283,6 +313,72 @@ namespace MvcApplication1.Controllers
                 return GetReleaseSummaryById(newId);
             }
             catch(Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public JsonResult SaveMilestone(MilestoneInputModel obj)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            int milestoneId = 0;
+            try
+            {
+                using (conn)
+                {
+                    conn.Open();
+
+                    var cmd = new SqlCommand("sp_upsert_milestone", conn);
+                    cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = obj.Id;
+                    cmd.Parameters.Add("@Title", System.Data.SqlDbType.VarChar).Value = obj.Title;
+                    cmd.Parameters.Add("@Description", System.Data.SqlDbType.VarChar).Value = obj.Description ?? "";
+                    cmd.Parameters.Add("@Date", System.Data.SqlDbType.VarChar).Value = obj.Date.ToDateTimeFromDutchString();
+                    cmd.Parameters.Add("@Time", System.Data.SqlDbType.VarChar).Value = obj.Time ?? "";
+                    cmd.Parameters.Add("@PhaseId", System.Data.SqlDbType.Int).Value = obj.PhaseId;
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    var result = cmd.ExecuteNonQuery();
+
+                    //if (result == string.Empty)
+                    //// it's an update
+                    //{
+                    //    milestoneId = obj.Id;
+                    //}
+                    //else if (result != string.Empty)
+                    //// it's an insert
+                    //{
+                    //    milestoneId = int.Parse(result);
+                    //}
+
+                }
+
+                return GetReleaseSummaryById(obj.PhaseId);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public JsonResult UnassignMilestone(MilestoneInputModel obj)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            try
+            {
+                using (conn)
+                {
+                    conn.Open();
+
+                    var cmd = new SqlCommand(string.Format("delete from PhaseMilestones where PhaseId = {0} AND MilestoneId = {1}", obj.PhaseId, obj.Id), conn);
+                    var result = cmd.ExecuteNonQuery();
+
+                }
+
+                return GetReleaseSummaryById(obj.PhaseId);
+            }
+            catch (Exception ex)
             {
                 throw;
             }

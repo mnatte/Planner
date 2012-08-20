@@ -9,7 +9,8 @@ class AdminReleaseViewmodel
 		# setup nice 'remove' method for Array
 		Array::remove = (e) -> @[t..t] = [] if (t = @indexOf(e)) > -1
 
-		Release.extend(RCrud)
+		Phase.extend(RCrud)
+		Milestone.extend(RCrud)
 		@selectedRelease = ko.observable()
 		@selectedPhase = ko.observable()
 		@selectedMilestone = ko.observable()
@@ -60,12 +61,16 @@ class AdminReleaseViewmodel
 		@formType "phase"
 		@selectedPhase data
 
+	selectMilestone: (data) =>
+		@formType "milestone"
+		@selectedMilestone data
+
 	refreshRelease: (index, jsonData) =>
 		# use given index or take new index ('length' is one larger than max index) when item is not in @allReleases (value is -1). 
 		# when not in @allReleases, the item is new and will be inserted at the end. no item will be removed prior to adding it.
 		i = if index >= 0 then index else @allReleases().length
-		# console.log "index: #{index}"
-		# console.log "i: #{i}"
+		console.log "index: #{index}"
+		console.log "i: #{i}"
 		
 		# i = index of item to remove, 1 is amount to be removed
 		@allReleases.splice(i,1)
@@ -76,8 +81,11 @@ class AdminReleaseViewmodel
 			rel = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath)
 			for phase in jsonData.Phases
 				rel.addPhase new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, rel.id)
+			for milestone in jsonData.Milestones
+				rel.addMilestone Milestone.create(milestone, rel.id)
 			# index = index of item to remove, 0 is amount to be removed, rel is item to be inserted there
 			rel.phases.sort((a,b)->a.startDate.date - b.startDate.date)
+			rel.milestones.sort((a,b)->a.date.date - b.date.date)
 
 			for project in jsonData.Projects
 				rel.addProject new Project(project.Id, project.Title, project.ShortName)
@@ -103,9 +111,19 @@ class AdminReleaseViewmodel
 		@selectRelease new Release(0, new Date(), new Date(), "", "", data.id)
 		console.log "selectedRelease parentId: #{@selectedRelease().parentId}"
 
-	addNewMilestone: (data) =>
+	addNewMilestone: (release) =>
 		@formType "milestone"
-		@selectedMilestone new Milestone(0, new Date(), "0:00", "", "", data.id)
+		@selectedMilestone new Milestone(0, new Date(), "0:00", "", "", release.id)
+		#console.log release
+
+	unAssignMilestone: (milestone) =>
+		#@formType "milestone"
+		@selectedMilestone milestone
+		console.log milestone
+		console.log @selectedMilestone()
+		parentrel = (a for a in @allReleases() when a.id is @selectedMilestone().phaseId)[0]
+		i = @allReleases().indexOf(parentrel)
+		@selectedMilestone().save("/planner/Release/UnAssignMilestone", ko.toJSON(@selectedMilestone()), (data) => @refreshRelease(i, data))
 
 	saveSelected: =>
 		console.log "saveSelected: selectedRelease: #{@selectedRelease()}"
@@ -115,6 +133,25 @@ class AdminReleaseViewmodel
 		parentrel = (a for a in @allReleases() when a.id is @selectedRelease().parentId)[0]
 		i = if @allReleases().indexOf(rel) is -1 then @allReleases().indexOf(parentrel) else @allReleases().indexOf(rel)
 		@selectedRelease().save("/planner/Release/Save", ko.toJSON(@selectedRelease()), (data) => @refreshRelease(i, data))
+
+	saveSelectedPhase: =>
+		console.log "saveSelectedPhase: selectedRelease: #{@selectedRelease()}"
+		console.log "saveSelectedPhase: selectedPhase: #{@selectedPhase()}"
+		console.log ko.toJSON(@selectedPhase())
+		console.log ko.toJSON(@selectedPhase().parentId)
+		# rel = (a for a in @allReleases() when a.id is @selectedRelease().id)[0]
+		parentrel = (a for a in @allReleases() when a.id is @selectedPhase().parentId)[0]
+		i = @allReleases().indexOf(parentrel) #if @allReleases().indexOf(rel) is -1 then @allReleases().indexOf(parentrel) else @allReleases().indexOf(rel)
+		@selectedPhase().save("/planner/Release/Save", ko.toJSON(@selectedPhase()), (data) => @refreshRelease(i, data))
+
+	saveSelectedMilestone: =>
+		console.log "saveSelectedMilestone: selectedRelease: #{@selectedRelease()}"
+		console.log "saveSelectedMilestone: selectedMilestone: #{@selectedMilestone()}"
+		console.log ko.toJSON(@selectedMilestone())
+		console.log ko.toJSON(@selectedMilestone().phaseId)
+		parentrel = (a for a in @allReleases() when a.id is @selectedMilestone().phaseId)[0]
+		i = @allReleases().indexOf(parentrel)
+		@selectedMilestone().save("/planner/Release/SaveMilestone", ko.toJSON(@selectedMilestone()), (data) => @refreshRelease(i, data))
 	
 	deleteRelease: (data) =>
 		if data.parentId is undefined

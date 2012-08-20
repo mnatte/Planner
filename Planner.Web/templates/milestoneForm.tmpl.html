@@ -1,7 +1,7 @@
 ﻿<form>
     <label>Title:</label><input type="text" data-bind="value: title, valueUpdate: 'afterkeydown'" />
     <label>Description:</label><input type="text" data-bind="value: description" />
-    <label>Date (dd-mm-yyyy):</label><input type="text" data-bind="value: date.dateString" />
+    <label>Date (dd/mm/yyyy):</label><input type="text" data-bind="value: date.dateString" />
     <label>Time:</label><input type="text" data-bind="value: time" />
-    <button data-bind="click: $parent.saveSelected.bind($data)">Submit</button>
+    <button data-bind="click: $parent.saveSelectedMilestone.bind($data)">Submit</button>
 </form>

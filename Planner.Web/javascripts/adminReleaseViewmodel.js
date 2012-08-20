@@ -8,10 +8,14 @@
 
     function AdminReleaseViewmodel(allReleases, allProjects) {
       this.deleteRelease = __bind(this.deleteRelease, this);
+      this.saveSelectedMilestone = __bind(this.saveSelectedMilestone, this);
+      this.saveSelectedPhase = __bind(this.saveSelectedPhase, this);
       this.saveSelected = __bind(this.saveSelected, this);
+      this.unAssignMilestone = __bind(this.unAssignMilestone, this);
       this.addNewMilestone = __bind(this.addNewMilestone, this);
       this.addPhase = __bind(this.addPhase, this);
       this.refreshRelease = __bind(this.refreshRelease, this);
+      this.selectMilestone = __bind(this.selectMilestone, this);
       this.selectPhase = __bind(this.selectPhase, this);
       this.selectRelease = __bind(this.selectRelease, this);
       var rel, _fn, _i, _len, _ref;
@@ -21,7 +25,8 @@
           return ([].splice.apply(this, [t, t - t + 1].concat(_ref = [])), _ref);
         }
       };
-      Release.extend(RCrud);
+      Phase.extend(RCrud);
+      Milestone.extend(RCrud);
       this.selectedRelease = ko.observable();
       this.selectedPhase = ko.observable();
       this.selectedMilestone = ko.observable();
@@ -91,9 +96,16 @@
       return this.selectedPhase(data);
     };
 
+    AdminReleaseViewmodel.prototype.selectMilestone = function(data) {
+      this.formType("milestone");
+      return this.selectedMilestone(data);
+    };
+
     AdminReleaseViewmodel.prototype.refreshRelease = function(index, jsonData) {
-      var i, phase, project, rel, _i, _j, _len, _len2, _ref, _ref2;
+      var i, milestone, phase, project, rel, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
       i = index >= 0 ? index : this.allReleases().length;
+      console.log("index: " + index);
+      console.log("i: " + i);
       this.allReleases.splice(i, 1);
       console.log(jsonData);
       if (jsonData !== null && jsonData !== void 0) {
@@ -104,12 +116,20 @@
           phase = _ref[_i];
           rel.addPhase(new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, rel.id));
         }
+        _ref2 = jsonData.Milestones;
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          milestone = _ref2[_j];
+          rel.addMilestone(Milestone.create(milestone, rel.id));
+        }
         rel.phases.sort(function(a, b) {
           return a.startDate.date - b.startDate.date;
         });
-        _ref2 = jsonData.Projects;
-        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-          project = _ref2[_j];
+        rel.milestones.sort(function(a, b) {
+          return a.date.date - b.date.date;
+        });
+        _ref3 = jsonData.Projects;
+        for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+          project = _ref3[_k];
           rel.addProject(new Project(project.Id, project.Title, project.ShortName));
           this.setReleaseProjects(rel);
         }
@@ -128,9 +148,31 @@
       return console.log("selectedRelease parentId: " + (this.selectedRelease().parentId));
     };
 
-    AdminReleaseViewmodel.prototype.addNewMilestone = function(data) {
+    AdminReleaseViewmodel.prototype.addNewMilestone = function(release) {
       this.formType("milestone");
-      return this.selectedMilestone(new Milestone(0, new Date(), "0:00", "", "", data.id));
+      return this.selectedMilestone(new Milestone(0, new Date(), "0:00", "", "", release.id));
+    };
+
+    AdminReleaseViewmodel.prototype.unAssignMilestone = function(milestone) {
+      var a, i, parentrel,
+        _this = this;
+      this.selectedMilestone(milestone);
+      console.log(milestone);
+      console.log(this.selectedMilestone());
+      parentrel = ((function() {
+        var _i, _len, _ref, _results;
+        _ref = this.allReleases();
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          a = _ref[_i];
+          if (a.id === this.selectedMilestone().phaseId) _results.push(a);
+        }
+        return _results;
+      }).call(this))[0];
+      i = this.allReleases().indexOf(parentrel);
+      return this.selectedMilestone().save("/planner/Release/UnAssignMilestone", ko.toJSON(this.selectedMilestone()), function(data) {
+        return _this.refreshRelease(i, data);
+      });
     };
 
     AdminReleaseViewmodel.prototype.saveSelected = function() {
@@ -161,6 +203,52 @@
       }).call(this))[0];
       i = this.allReleases().indexOf(rel) === -1 ? this.allReleases().indexOf(parentrel) : this.allReleases().indexOf(rel);
       return this.selectedRelease().save("/planner/Release/Save", ko.toJSON(this.selectedRelease()), function(data) {
+        return _this.refreshRelease(i, data);
+      });
+    };
+
+    AdminReleaseViewmodel.prototype.saveSelectedPhase = function() {
+      var a, i, parentrel,
+        _this = this;
+      console.log("saveSelectedPhase: selectedRelease: " + (this.selectedRelease()));
+      console.log("saveSelectedPhase: selectedPhase: " + (this.selectedPhase()));
+      console.log(ko.toJSON(this.selectedPhase()));
+      console.log(ko.toJSON(this.selectedPhase().parentId));
+      parentrel = ((function() {
+        var _i, _len, _ref, _results;
+        _ref = this.allReleases();
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          a = _ref[_i];
+          if (a.id === this.selectedPhase().parentId) _results.push(a);
+        }
+        return _results;
+      }).call(this))[0];
+      i = this.allReleases().indexOf(parentrel);
+      return this.selectedPhase().save("/planner/Release/Save", ko.toJSON(this.selectedPhase()), function(data) {
+        return _this.refreshRelease(i, data);
+      });
+    };
+
+    AdminReleaseViewmodel.prototype.saveSelectedMilestone = function() {
+      var a, i, parentrel,
+        _this = this;
+      console.log("saveSelectedMilestone: selectedRelease: " + (this.selectedRelease()));
+      console.log("saveSelectedMilestone: selectedMilestone: " + (this.selectedMilestone()));
+      console.log(ko.toJSON(this.selectedMilestone()));
+      console.log(ko.toJSON(this.selectedMilestone().phaseId));
+      parentrel = ((function() {
+        var _i, _len, _ref, _results;
+        _ref = this.allReleases();
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          a = _ref[_i];
+          if (a.id === this.selectedMilestone().phaseId) _results.push(a);
+        }
+        return _results;
+      }).call(this))[0];
+      i = this.allReleases().indexOf(parentrel);
+      return this.selectedMilestone().save("/planner/Release/SaveMilestone", ko.toJSON(this.selectedMilestone()), function(data) {
         return _this.refreshRelease(i, data);
       });
     };

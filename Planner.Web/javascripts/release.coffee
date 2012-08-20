@@ -158,22 +158,28 @@ class Period extends Mixin
 		copy #return the copy to be serialized
 
 class Milestone extends Mixin
-	constructor: (@id, @date, @time, @title, @description, @phaseId) ->
-	@create: (jsonData) ->
-		new Milestone(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.Date), jsonData.Time, jsonData.Title, jsonData.Description, jsonData.PhaseId)
+	constructor: (@id, date, @time, @title, @description, @phaseId) ->
+		@date = new DatePlus(date)
+	@create: (jsonData, phaseId) ->
+		new Milestone(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.Date), jsonData.Time, jsonData.Title, jsonData.Description, phaseId)
 	@createCollection: (jsonData) ->
 		milestones = []
 		for ms in jsonData
 			@ms = Milestone.create(ms)
 			milestones.push @ms
 		milestones
+	toJSON: ->
+		copy = ko.toJS(@) #get a clean copy
+		delete copy.date.date #remove property
+		copy.date = @date.dateString
+		copy #return the copy to be serialized
 
 class Phase extends Period
 	# attach seperate startDate, endDate and title properties to each instance
 	constructor: (@id, @startDate, @endDate, @title, @tfsIterationPath, @parentId) ->
 		super @startDate, @endDate, @title
-	@create: (jsonData) ->
-		new Phase(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId)
+	@create: (jsonData, parentId) ->
+		new Phase(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, parentId)
 	@createCollection: (jsonData) ->
 		phases = []
 		for phase in jsonData
@@ -205,6 +211,7 @@ class Release extends Phase
 		#@backlog = []
 		#@resources = []
 		@projects = []
+		@milestones = []
 	addPhase: (phase) ->
 		@phases.push(phase)
 	#addFeature: (feature) ->
@@ -214,17 +221,21 @@ class Release extends Phase
 		#@resources.push(resource)
 	addProject: (project) ->
 		@projects.push(project)
+	addMilestone: (milestone) ->
+		@milestones.push(milestone)
 	@create: (jsonData) ->
 		console.log jsonData
 		#console.log "#{jsonData.StartDate} #{jsonData.EndDate}"
 		release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId)
 		for phase in jsonData.Phases
-			release.addPhase Phase.create(phase)
+			release.addPhase Phase.create(phase, jsonData.Id)
 		# for feat in jsonData.Backlog
 			# console.log feat
 			# release.addFeature Feature.create(feat)
 		for project in jsonData.Projects
 			release.addProject Project.create(project)
+		for milestone in jsonData.Milestones
+			release.addMilestone Milestone.create(milestone, jsonData.Id)
 		console.log release
 		release
 

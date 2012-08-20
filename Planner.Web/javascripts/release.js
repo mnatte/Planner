@@ -184,15 +184,15 @@
 
     function Milestone(id, date, time, title, description, phaseId) {
       this.id = id;
-      this.date = date;
       this.time = time;
       this.title = title;
       this.description = description;
       this.phaseId = phaseId;
+      this.date = new DatePlus(date);
     }
 
-    Milestone.create = function(jsonData) {
-      return new Milestone(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.Date), jsonData.Time, jsonData.Title, jsonData.Description, jsonData.PhaseId);
+    Milestone.create = function(jsonData, phaseId) {
+      return new Milestone(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.Date), jsonData.Time, jsonData.Title, jsonData.Description, phaseId);
     };
 
     Milestone.createCollection = function(jsonData) {
@@ -204,6 +204,14 @@
         milestones.push(this.ms);
       }
       return milestones;
+    };
+
+    Milestone.prototype.toJSON = function() {
+      var copy;
+      copy = ko.toJS(this);
+      delete copy.date.date;
+      copy.date = this.date.dateString;
+      return copy;
     };
 
     return Milestone;
@@ -224,8 +232,8 @@
       Phase.__super__.constructor.call(this, this.startDate, this.endDate, this.title);
     }
 
-    Phase.create = function(jsonData) {
-      return new Phase(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId);
+    Phase.create = function(jsonData, parentId) {
+      return new Phase(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, parentId);
     };
 
     Phase.createCollection = function(jsonData) {
@@ -283,6 +291,7 @@
       Release.__super__.constructor.apply(this, arguments);
       this.phases = [];
       this.projects = [];
+      this.milestones = [];
     }
 
     Release.prototype.addPhase = function(phase) {
@@ -293,19 +302,28 @@
       return this.projects.push(project);
     };
 
+    Release.prototype.addMilestone = function(milestone) {
+      return this.milestones.push(milestone);
+    };
+
     Release.create = function(jsonData) {
-      var phase, project, release, _i, _j, _len, _len2, _ref, _ref2;
+      var milestone, phase, project, release, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
       console.log(jsonData);
       release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId);
       _ref = jsonData.Phases;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         phase = _ref[_i];
-        release.addPhase(Phase.create(phase));
+        release.addPhase(Phase.create(phase, jsonData.Id));
       }
       _ref2 = jsonData.Projects;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         project = _ref2[_j];
         release.addProject(Project.create(project));
+      }
+      _ref3 = jsonData.Milestones;
+      for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+        milestone = _ref3[_k];
+        release.addMilestone(Milestone.create(milestone, jsonData.Id));
       }
       console.log(release);
       return release;

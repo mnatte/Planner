@@ -114,6 +114,7 @@
     </Compile>
     <Compile Include="Helpers.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\MilestoneInputModel.cs" />
     <Compile Include="Models\PersonInputModel.cs" />
     <Compile Include="Models\ProjectInputModel.cs" />
     <Compile Include="Models\ReleaseAssignmentsInputModel.cs" />
