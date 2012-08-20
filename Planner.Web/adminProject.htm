@@ -34,6 +34,8 @@
 	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
 	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+    <link rel="stylesheet" href="images/Sprites/silk-bullets-sprite.css">
+    <link rel="stylesheet" href="images/Sprites/silk-sprite.css">
 
     <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="Scripts/jquery.dateFormat-1.0.js"></script>
@@ -83,14 +85,16 @@
                         <label>TFS Iteration Path:</label><input type="text" data-bind="value: tfsIterationPath" />
                         <label>TFS Development Branch:</label><input type="text" data-bind="value: tfsDevBranch" />
                         <!--<p>Release Title: <span data-bind="text: title"></span></p>--> <!-- updates in real-time -->
-                        <button data-bind="click: $parent.saveSelected.bind($data)">Submit</button>
+                        <!--<button data-bind="click: $parent.saveSelected.bind($data)">Submit</button>-->
+                        <span class="ui-silk ui-silk-disk interact" data-bind="click: $parent.saveSelected.bind($data)"></span>
                     </form>
                 </div>
                 <div class="ten columns omega">
                     <ul data-bind="foreach: allItems">
                         <li>
                             <span class="selectable" data-bind="text: title, click: $root.selectItem.bind($data), style: { color: $data.id == $root.selectedItem().id ? 'red' : 'black' }"></span>
-                            <button data-bind="click: $root.deleteItem.bind($data)">Delete</button>
+                            <!--<button data-bind="click: $root.deleteItem.bind($data)">Delete</button>-->
+                            <span class="ui-silk ui-silk-delete interact" data-bind="click: $root.deleteItem.bind($data)"></span>
                         </li>
                     </ul>
                     <button data-bind="click: clear.bind($data)">New</button>

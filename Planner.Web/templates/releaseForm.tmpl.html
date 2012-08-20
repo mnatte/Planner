@@ -5,5 +5,6 @@
     <label>Tfs IterationPath:</label><input type="text" data-bind="value: tfsIterationPath" />
     <label>Projects:</label><select data-bind="options: $root.allProjects(), optionsText: 'title', selectedOptions: projects", size="5" multiple="multiple"></select>
     <!--<p>Selected Projects: <span data-bind="text: projects()"></span></p>--> <!-- updates in real-time -->
-    <button data-bind="click: $parent.saveSelected.bind($data)">Submit</button>
+    <!--<button data-bind="click: $parent.saveSelected.bind($data)">Submit</button>-->
+    <span class="ui-silk ui-silk-disk interact" data-bind="click: $parent.saveSelected.bind($data)"></span>
 </form>

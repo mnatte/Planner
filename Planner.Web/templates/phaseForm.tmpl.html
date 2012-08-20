@@ -3,5 +3,5 @@
     <label>Start date (dd-mm-yyyy):</label><input type="text" data-bind="value: startDate.dateString" />
     <label>End date (dd-mm-yyyy):</label><input type="text" data-bind="value: endDate.dateString" />
     <label>Tfs IterationPath:</label><input type="text" data-bind="value: tfsIterationPath" />
-    <button data-bind="click: $parent.saveSelectedPhase.bind($data)">Submit</button>
+    <span class="ui-silk ui-silk-disk interact" data-bind="click: $parent.saveSelectedPhase.bind($data)"></span>
 </form>
