@@ -100,8 +100,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\SimpleCrudController.cs" />
-    <Compile Include="Controllers\IBasicCrudUsable.cs" />
+    <Compile Include="Controllers\DeliverableController.cs" />
+    <Compile Include="DataAccess\DeliverableRepository.cs" />
+    <Compile Include="DataAccess\IBasicCrudUsable.cs" />
     <Compile Include="Controllers\ResourceAssignmentController.cs" />
     <Compile Include="Controllers\ResourceController.cs" />
     <Compile Include="Controllers\PhasesController.cs" />
@@ -109,11 +110,15 @@
     <Compile Include="Controllers\ProjectController.cs" />
     <Compile Include="Controllers\ReleaseController.cs" />
     <Compile Include="Controllers\BaseCrudController.cs" />
+    <Compile Include="DataAccess\BaseCrudRepository.cs" />
+    <Compile Include="DataAccess\ResourceRepository.cs" />
+    <Compile Include="DataAccess\SimpleCrudRepository.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\DeliverableInputModel.cs" />
     <Compile Include="Models\MilestoneInputModel.cs" />
     <Compile Include="Models\PersonInputModel.cs" />
     <Compile Include="Models\ProjectInputModel.cs" />
@@ -127,6 +132,29 @@
     <Content Include="404.html" />
     <Content Include="adminProject.htm" />
     <Content Include="adminResource.htm" />
+    <Content Include="images\icons\1day.png" />
+    <Content Include="images\icons\7days.png" />
+    <Content Include="images\icons\add-user.png" />
+    <Content Include="images\icons\alert-calender.png" />
+    <Content Include="images\icons\cancel.png" />
+    <Content Include="images\icons\check.png" />
+    <Content Include="images\icons\edit-user.png" />
+    <Content Include="images\icons\exec.png" />
+    <Content Include="images\icons\month.png" />
+    <Content Include="images\icons\next.png" />
+    <Content Include="images\icons\prev.png" />
+    <Content Include="images\icons\remove-user.png" />
+    <Content Include="images\icons\save.png" />
+    <Content Include="images\icons\today.png" />
+    <Content Include="images\icons\todo.png" />
+    <Content Include="images\icons\zoom.png" />
+    <Content Include="images\Sprites\Read Me.html" />
+    <Content Include="images\Sprites\silk-bullets-sprite.css" />
+    <Content Include="images\Sprites\silk-bullets-sprite.png" />
+    <Content Include="images\Sprites\silk-sprite-gray.png" />
+    <Content Include="images\Sprites\silk-sprite.css" />
+    <Content Include="images\Sprites\silk-sprite.png" />
+    <Content Include="javascripts\ko.bindingHandlers.tooltip.js" />
     <Content Include="javascripts\ko.bindingHandlers.period.js" />
     <Content Include="javascripts\ko.bindingHandlers.fadeVisible.js" />
     <Content Include="javascripts\ko.bindingHandlers.editable.js" />
@@ -172,6 +200,9 @@
     <Content Include="images\apple-touch-icon.png" />
     <Content Include="images\favicon.ico" />
     <Content Include="Scripts\datehelper.js" />
+    <Content Include="Scripts\jquery.qtip.min.js" />
+    <Content Include="stylesheets\base_no_buttons.css" />
+    <Content Include="stylesheets\icon_styles.css" />
     <Content Include="templates\phaseForm.tmpl.html" />
     <Content Include="templates\milestoneForm.tmpl.html" />
     <Content Include="templates\releaseForm.tmpl.html" />

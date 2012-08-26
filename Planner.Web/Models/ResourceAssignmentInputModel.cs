@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using MvcApplication1.Controllers;
+using MvcApplication1.DataAccess;
 
 namespace MvcApplication1.Models
 {

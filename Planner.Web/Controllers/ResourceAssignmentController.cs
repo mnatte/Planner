@@ -10,21 +10,26 @@ namespace MvcApplication1.Controllers
 {
     public class ResourceAssignmentController : BaseCrudController<ReleaseModels.ResourceAssignment, ResourceAssignmentInputModel>
     {
-        protected override string ConnectionString
-        {
-            get { return "Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true"; }
-        }
+        // TODO: refactor to ResourceAssignment being a child of the Resource aggregate root
+        public ResourceAssignmentController()
+            : base(null)
+        { }
 
-        protected override void ConfigureUpsertCommand(ResourceAssignmentInputModel model, System.Data.SqlClient.SqlCommand cmd)
-        {
-            cmd.CommandText = "sp_insert_resource_assignment";
-            cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = model.Id;
-            cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = model.PhaseId;
-            cmd.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = model.ProjectId;
-            cmd.Parameters.Add("@PersonId", System.Data.SqlDbType.Int).Value = model.ResourceId;
-            cmd.Parameters.Add("@FocusFactor", System.Data.SqlDbType.Decimal).Value = model.FocusFactor;
-            cmd.CommandType = System.Data.CommandType.StoredProcedure;
-        }
+        //protected override string ConnectionString
+        //{
+        //    get { return "Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true"; }
+        //}
+
+        //protected override void ConfigureUpsertCommand(ResourceAssignmentInputModel model, System.Data.SqlClient.SqlCommand cmd)
+        //{
+        //    cmd.CommandText = "sp_insert_resource_assignment";
+        //    cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = model.Id;
+        //    cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = model.PhaseId;
+        //    cmd.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = model.ProjectId;
+        //    cmd.Parameters.Add("@PersonId", System.Data.SqlDbType.Int).Value = model.ResourceId;
+        //    cmd.Parameters.Add("@FocusFactor", System.Data.SqlDbType.Decimal).Value = model.FocusFactor;
+        //    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+        //}
 
         [HttpPost]
         public JsonResult SaveAssignments(ReleaseAssignmentsInputModel model)
@@ -67,25 +72,25 @@ namespace MvcApplication1.Controllers
             return this.Json(string.Format("{0} assignments saved", amount), JsonRequestBehavior.AllowGet); 
         }
 
-        protected override void ConfigureSelectAllCommand(System.Data.SqlClient.SqlCommand cmd)
-        {
-            cmd.CommandText = "sp_get_release_resources";
-            cmd.CommandType = System.Data.CommandType.StoredProcedure;
-        }
+        //protected override void ConfigureSelectAllCommand(System.Data.SqlClient.SqlCommand cmd)
+        //{
+        //    cmd.CommandText = "sp_get_release_resources";
+        //    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+        //}
 
-        protected override void ConfigureSelectItemCommand(System.Data.SqlClient.SqlCommand cmd, int id)
-        {
-            cmd.CommandText = "sp_get_release_resource";
-            cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = id;
-            cmd.CommandType = System.Data.CommandType.StoredProcedure;
-        }
+        //protected override void ConfigureSelectItemCommand(System.Data.SqlClient.SqlCommand cmd, int id)
+        //{
+        //    cmd.CommandText = "sp_get_release_resource";
+        //    cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = id;
+        //    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+        //}
 
-        protected override void ConfigureDeleteCommand(System.Data.SqlClient.SqlCommand cmd, int id)
-        {
-            cmd.CommandText = string.Format("delete from ReleaseResources where id = {0}", id);
-        }
+        //protected override void ConfigureDeleteCommand(System.Data.SqlClient.SqlCommand cmd, int id)
+        //{
+        //    cmd.CommandText = string.Format("delete from ReleaseResources where id = {0}", id);
+        //}
 
-        protected override ReleaseModels.ResourceAssignment CreateItemByDbRow(System.Data.SqlClient.SqlDataReader reader)
+        protected ReleaseModels.ResourceAssignment CreateItemByDbRow(System.Data.SqlClient.SqlDataReader reader)
         {
             return new ReleaseModels.ResourceAssignment
             {
@@ -102,7 +107,7 @@ namespace MvcApplication1.Controllers
         [HttpGet]
         public JsonResult GetAssignmentsByPhaseIdAndProjectId(int phaseId, int projectId)
         {
-            var conn = new SqlConnection(this.ConnectionString);
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
             var items = new List<ReleaseModels.ResourceAssignment>();
 
             using (conn)

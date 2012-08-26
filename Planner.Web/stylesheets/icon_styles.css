@@ -1,0 +1,24 @@
+.icon128 { width: 128px; height: 128px; background: transparent url(../Sprites/silk-sprite.png?634021826077603114) no-repeat; text-indent: 99999px; overflow: hidden; }
+.icon48 { width: 48px; height: 48px; background: transparent url(../Sprites/silk-sprite.png?634021826077603114) no-repeat; text-indent: 99999px; overflow: hidden; }
+.icon { width: 32px; height: 32px; background: transparent url(../Sprites/silk-sprite.png?634021826077603114) no-repeat; text-indent: 99999px; overflow: hidden; }
+.icon22 { width: 22px; height: 22px; background: transparent url(../Sprites/silk-sprite.png?634021826077603114) no-repeat; text-indent: 99999px; overflow: hidden; }
+.icon16 { width: 16px; height: 16px; background: transparent url(../Sprites/silk-sprite.png?634021826077603114) no-repeat; text-indent: 99999px; overflow: hidden; }
+a.icon, input.icon, span.icon, 
+a.icon22, input.icon22, span.icon22, 
+a.icon16, input.icon16, span.icon16, 
+a.icon48, input.icon48, span.icon48,
+a.icon128, input.icon128, span.icon128
+{ display: inline-block; vertical-align: middle; border: 0; outline: 0; }
+
+.icon-new-release { background:url('../images/icons/month.png'); }
+.icon-phase { background:url('../images/icons/7days2.png'); }
+.icon-milestone { background:url('../images/icons/alert-calendar2.png'); }
+.icon-delete { background:url('../images/icons/trash2.png'); }
+.icon-delete22 { background:url('../images/icons/trash22.png'); }
+.icon-remove { background:url('../images/icons/delete3.png'); }
+.icon-remove16 { background:url('../images/icons/minus16.png'); }
+.icon-save { background:url('../images/icons/save.png'); }
+.icon-project { background:url('../images/icons/project.png'); }
+.icon-add-user48 { background:url('../images/icons/add-user.png'); }
+.icon-remove-user22 { background:url('../images/icons/remove-user22.png'); }
+.icon-zoom48 { background:url('../images/icons/zoom.png'); }

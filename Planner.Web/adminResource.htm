@@ -27,6 +27,7 @@
 	<link rel="stylesheet" href="stylesheets/skeleton.css">
 	<link rel="stylesheet" href="stylesheets/layout.css">
     <link rel="stylesheet" href="stylesheets/tables.css">
+    <link rel="stylesheet" href="stylesheets/icon_styles.css">
 
 	<!-- Favicons
 	================================================== -->
@@ -87,7 +88,8 @@
                         <label>Phone number:</label><input type="text" data-bind="value: phoneNumber" />
                         <label>Available hours per week:</label><input type="text" data-bind="value: hoursPerWeek" />
                         <!--<button data-bind="click: $parent.saveSelected.bind($data)">Submit</button>-->
-                        <span class="ui-silk ui-silk-disk interact" data-bind="click: $parent.saveSelected.bind($data)"></span>
+                        <!--<span class="ui-silk ui-silk-disk interact" data-bind="click: $parent.saveSelected.bind($data)"></span>-->
+                        <span class="icon48 icon-save interact" data-bind="click: $parent.saveSelected.bind($data)"></span>
                     </form>
                 </div>
                 <div class="ten columns omega">
@@ -95,11 +97,13 @@
                         <li>
                             <span class="selectable" data-bind="text: fullName(), click: $root.selectItem.bind($data), style: { color: $data.id == $root.selectedItem().id ? 'red' : 'black' }"></span>
                             <!--<button data-bind="click: $root.deleteItem.bind($data)">Delete</button>-->
-                            <span class="ui-silk ui-silk-delete interact" data-bind="click: $root.deleteItem.bind($data)"></span>
+                            <!--<span class="ui-silk ui-silk-delete interact" data-bind="click: $root.deleteItem.bind($data)"></span>-->
+                            <span class="icon22 icon-delete22 interact" data-bind="click: $root.deleteItem.bind($data)"></span>
                         </li>
                     </ul>
                     <!--<button data-bind="click: clear.bind($data)">New</button>-->
-                    <span class="ui-silk ui-silk-user-add interact" data-bind="click: clear.bind($data)"></span>
+                    <!--<span class="ui-silk ui-silk-user-add interact" data-bind="click: clear.bind($data)"></span>-->
+                    <span class="icon48 icon-add-user48 interact" data-bind="click: clear.bind($data)"></span>
                 </div>
             </div>
         </div>

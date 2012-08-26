@@ -29,6 +29,7 @@
     <link rel="stylesheet" href="stylesheets/tables.css">
     <link rel="stylesheet" href="images/Sprites/silk-bullets-sprite.css">
     <link rel="stylesheet" href="images/Sprites/silk-sprite.css">
+    <link rel="stylesheet" href="stylesheets/icon_styles.css">
 
 	<!-- Favicons
 	================================================== -->
@@ -103,17 +104,20 @@
                         <li>
                             <span class="selectable" data-bind="text: title, click: $root.selectRelease.bind($data), style: { color: $root.formType() == 'release' && $data.id == $root.selectedRelease().id ? 'red' : 'black' }"></span>
                             <!--<button data-bind="click: $root.addPhase.bind($data)">Add Phase</button>-->
-                            <span class="ui-silk ui-silk-date-add interact" data-bind="click: $root.addPhase.bind($data)"></span>
+                            <span class="icon icon-phase interact" data-bind="click: $root.addPhase.bind($data)"></span>
                             <!--<button data-bind="click: $root.addNewMilestone.bind($data)">Add New Milestone</button>-->
-                            <span class="ui-silk ui-silk-report-add interact" data-bind="click: $root.addNewMilestone.bind($data)"></span>
+                            <!--<span class="ui-silk ui-silk-report-add interact" data-bind="click: $root.addNewMilestone.bind($data)"></span>-->
+                            <span class="icon icon-milestone interact" data-bind="click: $root.addNewMilestone.bind($data)"></span>
                             <!--<button data-bind="click: $root.addPhase.bind($data)">Add Standard Milestone</button>-->
                             <!--<button data-bind="click: $root.deleteRelease.bind($data)">Delete</button>-->
-                            <span class="ui-silk ui-silk-delete interact" data-bind="click: $root.deleteRelease.bind($data)"></span>
+                            <!--<span class="ui-silk ui-silk-delete interact" data-bind="click: $root.deleteRelease.bind($data)"></span>-->
+                            <span class="icon icon-delete interact" data-bind="click: $root.deleteRelease.bind($data)"></span>
                             <ul data-bind="foreach: phases">
                                 <li>
                                     <span class="selectable" data-bind="text: title, click: $root.selectPhase.bind($data), style: { color: $root.formType() == 'phase' && $data.id == $root.selectedPhase().id ? 'red' : 'black' }"></span>
                                     <!--<button data-bind="click: $root.deleteRelease.bind($data)">Delete</button>-->
-                                    <span class="ui-silk ui-silk-delete interact" data-bind="click: $root.deleteRelease.bind($data)"></span>
+                                    <!--<span class="ui-silk ui-silk-delete interact" data-bind="click: $root.deleteRelease.bind($data)"></span>-->
+                                    <span class="icon16 icon-remove16 interact" data-bind="click: $root.deleteRelease.bind($data)"></span>
                                 </li>
                             </ul>
                             <ul data-bind="foreach: milestones">
@@ -125,7 +129,8 @@
                             </ul>
                         </li>
                     </ul>
-                    <button data-bind="click: clear.bind($data)">New</button>
+                    <!--<button data-bind="click: clear.bind($data)">New</button>-->
+                    <span class="icon48 icon-new-release interact" data-bind="click: $root.clear.bind($data)"></span>
                 </div>
             </div>
         </div>
