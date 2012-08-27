@@ -315,7 +315,18 @@ class Feature
 		# create under given project
 		feature = new Feature(jsonData.BusinessId, jsonData.ContactPerson, jsonData.EstimatedHours, jsonData.HoursWorked, jsonData.Priority, project, jsonData.RemainingHours, jsonData.Title, jsonData.Status)
 		feature
-	
+
+class Deliverable extends Mixin
+	constructor: (@id, @title, @description, @format, @location) ->
+	@create: (jsonData) ->
+		new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location)
+	@createCollection: (jsonData) ->
+		deliverables = []
+		for del in jsonData
+			@del = Deliverable.create(del)
+			deliverables.push @del
+		deliverables
+
 class Resource extends Mixin
 	constructor: (@id, @firstName, @middleName, @lastName, @initials, @hoursPerWeek, @email, @phoneNumber, @company, @function) ->
 		@periodsAway = []
@@ -370,6 +381,7 @@ root.Release = Release
 root.Feature = Feature
 root.Resource = Resource
 root.Project = Project
+root.Deliverable = Deliverable
 root.AssignedResource = AssignedResource
 root.ReleaseAssignments = ReleaseAssignments
 

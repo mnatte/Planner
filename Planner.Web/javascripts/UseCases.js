@@ -1,5 +1,5 @@
 (function() {
-  var HLoadReleases, UDisplayPhases, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, root;
+  var HLoadReleases, UDisplayPhases, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -156,6 +156,22 @@
 
   })();
 
+  ULoadAdminDeliverables = (function() {
+
+    function ULoadAdminDeliverables() {}
+
+    ULoadAdminDeliverables.prototype.execute = function(data) {
+      var deliverables;
+      deliverables = Deliverable.createCollection(data);
+      this.viewModel = new AdminDeliverableViewmodel(deliverables);
+      this.viewModel.selectItem(this.viewModel.allItems()[0]);
+      return ko.applyBindings(this.viewModel);
+    };
+
+    return ULoadAdminDeliverables;
+
+  })();
+
   ULoadPlanResources = (function() {
 
     function ULoadPlanResources() {}
@@ -188,6 +204,8 @@
   root.ULoadAdminProjects = ULoadAdminProjects;
 
   root.ULoadAdminResources = ULoadAdminResources;
+
+  root.ULoadAdminDeliverables = ULoadAdminDeliverables;
 
   root.ULoadPlanResources = ULoadPlanResources;
 

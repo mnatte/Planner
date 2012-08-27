@@ -132,6 +132,7 @@
     <Content Include="404.html" />
     <Content Include="adminProject.htm" />
     <Content Include="adminResource.htm" />
+    <Content Include="adminDeliverable.htm" />
     <Content Include="images\icons\1day.png" />
     <Content Include="images\icons\7days.png" />
     <Content Include="images\icons\add-user.png" />
@@ -154,6 +155,11 @@
     <Content Include="images\Sprites\silk-sprite-gray.png" />
     <Content Include="images\Sprites\silk-sprite.css" />
     <Content Include="images\Sprites\silk-sprite.png" />
+    <Content Include="javascripts\adminDeliverableViewmodel.js">
+      <DependentUpon>adminDeliverableViewmodel.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
     <Content Include="javascripts\ko.bindingHandlers.tooltip.js" />
     <Content Include="javascripts\ko.bindingHandlers.period.js" />
     <Content Include="javascripts\ko.bindingHandlers.fadeVisible.js" />
@@ -203,6 +209,7 @@
     <Content Include="Scripts\jquery.qtip.min.js" />
     <Content Include="stylesheets\base_no_buttons.css" />
     <Content Include="stylesheets\icon_styles.css" />
+    <Content Include="templates\navigation.tmpl.html" />
     <Content Include="templates\phaseForm.tmpl.html" />
     <Content Include="templates\milestoneForm.tmpl.html" />
     <Content Include="templates\releaseForm.tmpl.html" />
@@ -339,6 +346,10 @@
     <None Include="javascripts\adminResourceViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>adminResourceViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\adminDeliverableViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>adminDeliverableViewmodel.js</LastGenOutput>
     </None>
     <None Include="javascripts\phasesViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>

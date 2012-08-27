@@ -92,6 +92,22 @@
       });
     };
 
+    Ajax.prototype.getDeliverables = function(callback) {
+      var url;
+      url = "/planner/Deliverable/GetItems";
+      return $.ajax(url, {
+        dataType: "json",
+        type: "GET",
+        success: function(data, status, XHR) {
+          console.log("Deliverables data loaded");
+          return callback(data);
+        },
+        error: function(XHR, status, errorThrown) {
+          return console.log("AJAX Deliverables error: " + status);
+        }
+      });
+    };
+
     Ajax.prototype.getAssignedResources = function(phaseId, projectId, callback) {
       var url;
       url = "/planner/ResourceAssignment/Assignments/" + phaseId + "/" + projectId;

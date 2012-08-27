@@ -13,9 +13,6 @@ namespace MvcApplication1.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public string Location { get; set; }
-        public int OwnerId { get; set; }
         public string Format { get; set; }
-        public int InitialHoursEstimate { get; set; }
-        public int HoursRemaining { get; set; }
     }
 }

@@ -10,7 +10,7 @@
 	<!-- Basic Page Needs
   ================================================== -->
 	<meta charset="utf-8">
-	<title>Project</title>
+	<title>Admin Deliverables</title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 	<!--[if lt IE 9]>
@@ -47,7 +47,7 @@
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
     <script type="text/javascript" src="javascripts/simpleCrudViewmodel.js"></script>
-    <script type="text/javascript" src="javascripts/adminProjectViewmodel.js"></script>
+    <script type="text/javascript" src="javascripts/adminDeliverableViewmodel.js"></script>
     <script type="text/javascript" src="javascripts/ajax.js"></script>
     <script type="text/javascript" src="javascripts/Roles.js"></script>
     <script type="text/javascript" src="javascripts/UseCases.js"></script>
@@ -66,27 +66,32 @@
             <div class="sixteen columns omega">
                 <div class="six columns omega">
                     <form data-bind="with: selectedItem()">
-                        <label>Project title:</label><input type="text" data-bind="value: title, valueUpdate: 'afterkeydown'" />
-                        <label>Short Name:</label><input type="text" data-bind="value: shortName" />
-                        <label>Description:</label><input type="text" data-bind="value: descr" />
-                        <label>TFS Iteration Path:</label><input type="text" data-bind="value: tfsIterationPath" />
-                        <label>TFS Development Branch:</label><input type="text" data-bind="value: tfsDevBranch" />
-                        <!--<p>Release Title: <span data-bind="text: title"></span></p>--> <!-- updates in real-time -->
+                        <label>Title:</label><input type="text" data-bind="value: title" />
+                        <label>Description:</label><input type="text" data-bind="value: description" />
+                        <label>Format:</label><input type="text" data-bind="value: format" />
+                        <label>Location:</label><input type="text" data-bind="value: location" />
+                        <!--<label>Owner:</label><input type="text" data-bind="value: owner" />
+                        <label>Status:</label><input type="text" data-bind="value: status" />
+                        <label>Initial estimate:</label><input type="text" data-bind="value: initialEstimate" />
+                        <label>Hours remaining:</label><input type="text" data-bind="value: hoursRemaining" />-->
                         <!--<button data-bind="click: $parent.saveSelected.bind($data)">Submit</button>-->
                         <!--<span class="ui-silk ui-silk-disk interact" data-bind="click: $parent.saveSelected.bind($data)"></span>-->
                         <span class="icon48 icon-save interact" data-bind="click: $parent.saveSelected.bind($data)"></span>
                     </form>
                 </div>
+
                 <div class="ten columns omega">
                     <ul data-bind="foreach: allItems">
                         <li>
                             <span class="selectable" data-bind="text: title, click: $root.selectItem.bind($data), style: { color: $data.id == $root.selectedItem().id ? 'red' : 'black' }"></span>
                             <!--<button data-bind="click: $root.deleteItem.bind($data)">Delete</button>-->
+                            <!--<span class="ui-silk ui-silk-delete interact" data-bind="click: $root.deleteItem.bind($data)"></span>-->
                             <span class="icon22 icon-delete22 interact" data-bind="click: $root.deleteItem.bind($data)"></span>
                         </li>
                     </ul>
                     <!--<button data-bind="click: clear.bind($data)">New</button>-->
-                    <span class="icon128 icon-project interact" data-bind="click: $root.clear.bind($data)"></span>
+                    <!--<span class="ui-silk ui-silk-user-add interact" data-bind="click: clear.bind($data)"></span>-->
+                    <span class="icon48 icon-todo48 interact" data-bind="click: clear.bind($data)"></span>
                 </div>
             </div>
         </div>
@@ -97,9 +102,9 @@
         infuser.defaults.templateSuffix = ".tmpl.html";
         infuser.defaults.templateUrl = "/planner/templates";
 
-        var uc = new ULoadAdminProjects();
+        var uc = new ULoadAdminDeliverables();
         var ajax = new Ajax();
-        ajax.getProjects(uc.execute);
+        ajax.getDeliverables(uc.execute);
     });
 </script>    
 </body>

@@ -108,6 +108,14 @@ class ULoadAdminResources
 		@viewModel.selectItem @viewModel.allItems()[0]
 		ko.applyBindings(@viewModel)
 
+class ULoadAdminDeliverables
+	constructor: ->
+	execute: (data) ->
+		deliverables = Deliverable.createCollection data
+		@viewModel = new AdminDeliverableViewmodel(deliverables)
+		@viewModel.selectItem @viewModel.allItems()[0]
+		ko.applyBindings(@viewModel)
+
 class ULoadPlanResources
 	constructor: ->
 	execute: (releases, resources) ->
@@ -130,5 +138,6 @@ root.HLoadReleases = HLoadReleases
 root.ULoadAdminReleases = ULoadAdminReleases
 root.ULoadAdminProjects = ULoadAdminProjects
 root.ULoadAdminResources = ULoadAdminResources
+root.ULoadAdminDeliverables = ULoadAdminDeliverables
 root.ULoadPlanResources = ULoadPlanResources
 

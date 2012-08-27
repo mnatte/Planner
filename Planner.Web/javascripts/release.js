@@ -1,5 +1,5 @@
 (function() {
-  var AssignedResource, Feature, Milestone, Period, Phase, Project, Release, ReleaseAssignments, Resource, Week, root,
+  var AssignedResource, Deliverable, Feature, Milestone, Period, Phase, Project, Release, ReleaseAssignments, Resource, Week, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -464,6 +464,37 @@
 
   })();
 
+  Deliverable = (function(_super) {
+
+    __extends(Deliverable, _super);
+
+    function Deliverable(id, title, description, format, location) {
+      this.id = id;
+      this.title = title;
+      this.description = description;
+      this.format = format;
+      this.location = location;
+    }
+
+    Deliverable.create = function(jsonData) {
+      return new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location);
+    };
+
+    Deliverable.createCollection = function(jsonData) {
+      var del, deliverables, _i, _len;
+      deliverables = [];
+      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
+        del = jsonData[_i];
+        this.del = Deliverable.create(del);
+        deliverables.push(this.del);
+      }
+      return deliverables;
+    };
+
+    return Deliverable;
+
+  })(Mixin);
+
   Resource = (function(_super) {
 
     __extends(Resource, _super);
@@ -584,6 +615,8 @@
   root.Resource = Resource;
 
   root.Project = Project;
+
+  root.Deliverable = Deliverable;
 
   root.AssignedResource = AssignedResource;
 
