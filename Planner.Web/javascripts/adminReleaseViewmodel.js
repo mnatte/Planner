@@ -98,7 +98,8 @@
 
     AdminReleaseViewmodel.prototype.selectMilestone = function(data) {
       this.formType("milestone");
-      return this.selectedMilestone(data);
+      this.selectedMilestone(data);
+      return console.log(this.selectedMilestone());
     };
 
     AdminReleaseViewmodel.prototype.refreshRelease = function(index, jsonData) {
@@ -144,7 +145,7 @@
 
     AdminReleaseViewmodel.prototype.addPhase = function(data) {
       this.formType("phase");
-      this.selectRelease(new Release(0, new Date(), new Date(), "", "", data.id));
+      this.selectPhase(new Release(0, new Date(), new Date(), "", "", data.id));
       return console.log("selectedRelease parentId: " + (this.selectedRelease().parentId));
     };
 

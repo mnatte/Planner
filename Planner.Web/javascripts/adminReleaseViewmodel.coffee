@@ -64,6 +64,7 @@ class AdminReleaseViewmodel
 	selectMilestone: (data) =>
 		@formType "milestone"
 		@selectedMilestone data
+		console.log @selectedMilestone()
 
 	refreshRelease: (index, jsonData) =>
 		# use given index or take new index ('length' is one larger than max index) when item is not in @allReleases (value is -1). 
@@ -108,7 +109,7 @@ class AdminReleaseViewmodel
 
 	addPhase: (data) =>
 		@formType "phase"
-		@selectRelease new Release(0, new Date(), new Date(), "", "", data.id)
+		@selectPhase new Release(0, new Date(), new Date(), "", "", data.id)
 		console.log "selectedRelease parentId: #{@selectedRelease().parentId}"
 
 	addNewMilestone: (release) =>

@@ -102,7 +102,7 @@
                 <div class="ten columns omega">
                     <ul data-bind="foreach: allReleases">
                         <li>
-                            <span class="selectable" data-bind="text: title, click: $root.selectRelease.bind($data), style: { color: $root.formType() == 'release' && $data.id == $root.selectedRelease().id ? 'red' : 'black' }"></span>
+                            <span class="selectable" data-bind="text: title, click: $root.selectRelease.bind($data), style: { color: $root.formType() == 'release' && $root.selectedRelease() != undefined && $data.id == $root.selectedRelease().id ? 'red' : 'black' }"></span>
                             <!--<button data-bind="click: $root.addPhase.bind($data)">Add Phase</button>-->
                             <span class="icon icon-phase interact" data-bind="click: $root.addPhase.bind($data)"></span>
                             <!--<button data-bind="click: $root.addNewMilestone.bind($data)">Add New Milestone</button>-->
@@ -114,7 +114,7 @@
                             <span class="icon icon-delete interact" data-bind="click: $root.deleteRelease.bind($data)"></span>
                             <ul data-bind="foreach: phases">
                                 <li>
-                                    <span class="selectable" data-bind="text: title, click: $root.selectPhase.bind($data), style: { color: $root.formType() == 'phase' && $data.id == $root.selectedPhase().id ? 'red' : 'black' }"></span>
+                                    <span class="selectable" data-bind="text: title, click: $root.selectPhase.bind($data), style: { color: $root.formType() == 'phase' && $root.selectedPhase() != undefined && $data.id == $root.selectedPhase().id ? 'red' : 'black' }"></span>
                                     <!--<button data-bind="click: $root.deleteRelease.bind($data)">Delete</button>-->
                                     <!--<span class="ui-silk ui-silk-delete interact" data-bind="click: $root.deleteRelease.bind($data)"></span>-->
                                     <span class="icon16 icon-remove16 interact" data-bind="click: $root.deleteRelease.bind($data)"></span>
@@ -122,7 +122,7 @@
                             </ul>
                             <ul data-bind="foreach: milestones">
                                 <li>
-                                    <span class="selectable" data-bind="text: title, click: $root.selectMilestone.bind($data), style: { color: $root.formType() == 'milestone' && $data.id == $root.selectedMilestone().id ? 'red' : 'black' }"></span>
+                                    <span class="selectable" data-bind="text: title, click: $root.selectMilestone.bind($data), style: { color: $root.formType() == 'milestone' && $root.selectedMilestone() != undefined && $data.id == $root.selectedMilestone().id ? 'red' : 'black' }"></span>
                                     <button data-bind="click: $root.unAssignMilestone.bind($data)">Unassign</button>
                                     <!--<button data-bind="click: $root.deleteMilestone.bind($data)">Delete</button>-->
                                 </li>
