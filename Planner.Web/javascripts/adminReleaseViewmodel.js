@@ -6,7 +6,7 @@
 
   AdminReleaseViewmodel = (function() {
 
-    function AdminReleaseViewmodel(allReleases, allProjects) {
+    function AdminReleaseViewmodel(allReleases, allProjects, allDeliverables) {
       this.deleteRelease = __bind(this.deleteRelease, this);
       this.saveSelectedMilestone = __bind(this.saveSelectedMilestone, this);
       this.saveSelectedPhase = __bind(this.saveSelectedPhase, this);
@@ -33,6 +33,7 @@
       this.formType = ko.observable("release");
       this.allReleases = ko.observableArray(allReleases);
       this.allProjects = ko.observableArray(allProjects);
+      this.allDeliverables = ko.observableArray(allDeliverables);
       this.testNumbers = ko.observableArray([]);
       _ref = this.allReleases();
       _fn = function(rel) {
@@ -49,7 +50,6 @@
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         rel = _ref[_i];
         this.setReleaseProjects(rel);
-        console.log(ko.isWriteableObservable(rel.projects));
         _fn(rel);
       }
       this.allReleases.sort(function(a, b) {
@@ -84,6 +84,27 @@
       return _results;
     };
 
+    AdminReleaseViewmodel.prototype.setMilestoneDeliverables = function(ms) {
+      var del, m, msDels, _i, _len, _results;
+      msDels = ms.deliverables.slice();
+      ms.deliverables = ko.observableArray([]);
+      _results = [];
+      for (_i = 0, _len = msDels.length; _i < _len; _i++) {
+        del = msDels[_i];
+        _results.push((function() {
+          var _j, _len2, _ref, _results2;
+          _ref = this.allDeliverables();
+          _results2 = [];
+          for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
+            m = _ref[_j];
+            if (m.id === del.id) _results2.push(ms.deliverables.push(m));
+          }
+          return _results2;
+        }).call(this));
+      }
+      return _results;
+    };
+
     AdminReleaseViewmodel.prototype.selectRelease = function(data) {
       console.log("selectRelease - function");
       this.formType("release");
@@ -99,6 +120,7 @@
     AdminReleaseViewmodel.prototype.selectMilestone = function(data) {
       this.formType("milestone");
       this.selectedMilestone(data);
+      this.setMilestoneDeliverables(this.selectedMilestone());
       return console.log(this.selectedMilestone());
     };
 

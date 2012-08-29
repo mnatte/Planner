@@ -108,12 +108,13 @@
 
     function ULoadAdminReleases() {}
 
-    ULoadAdminReleases.prototype.execute = function(jsonRels, jsonProjects) {
-      var loadReleases, projects, releases;
+    ULoadAdminReleases.prototype.execute = function(jsonRels, jsonProjects, jsonDeliverables) {
+      var deliverables, loadReleases, projects, releases;
       loadReleases = new HLoadReleases();
       releases = loadReleases.execute(jsonRels);
       projects = Project.createCollection(jsonProjects);
-      this.viewModel = new AdminReleaseViewmodel(releases, projects);
+      deliverables = Deliverable.createCollection(jsonDeliverables);
+      this.viewModel = new AdminReleaseViewmodel(releases, projects, deliverables);
       this.viewModel.selectRelease(this.viewModel.allReleases()[0]);
       return ko.applyBindings(this.viewModel, null, {
         independentBindings: true

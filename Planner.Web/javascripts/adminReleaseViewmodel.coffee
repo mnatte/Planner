@@ -5,7 +5,7 @@
 root = global ? window
 
 class AdminReleaseViewmodel
-	constructor: (allReleases, allProjects) ->
+	constructor: (allReleases, allProjects, allDeliverables) ->
 		# setup nice 'remove' method for Array
 		Array::remove = (e) -> @[t..t] = [] if (t = @indexOf(e)) > -1
 
@@ -17,6 +17,7 @@ class AdminReleaseViewmodel
 		@formType = ko.observable("release")
 		@allReleases = ko.observableArray(allReleases)
 		@allProjects = ko.observableArray(allProjects)
+		@allDeliverables = ko.observableArray(allDeliverables)
 
 		#@allNumbers = ko.observableArray([1,2,3,4,5])
 		@testNumbers = ko.observableArray([])
@@ -25,7 +26,7 @@ class AdminReleaseViewmodel
 			@setReleaseProjects rel
 			# console.log rel.projects()
 			# console.log ko.isObservable(rel.projects)
-			console.log ko.isWriteableObservable(rel.projects)
+			# console.log ko.isWriteableObservable(rel.projects)
 			do (rel) ->
 				# console.log "ctor sort rel: #{rel}"
 				rel.phases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
@@ -35,14 +36,23 @@ class AdminReleaseViewmodel
 
 	setReleaseProjects: (rel) ->
 		# assign projects and transform projects array to observableArray so changes will be registered
-			# use slice to create independent copy instead of copying the reference by relprojs = rel.projects
-			relprojs = rel.projects.slice()
+			relprojs = rel.projects.slice() # use slice to create independent copy instead of copying the reference by relprojs = rel.projects
 			rel.projects = ko.observableArray([])
 			for proj in relprojs
 				#console.log proj
 				for p in @allProjects() when p.id is proj.id
 					#console.log "assign project #{p.title}"
 					rel.projects.push p		
+
+	setMilestoneDeliverables: (ms) ->
+		# assign deliverables and transform deliverables array to observableArray so changes will be registered
+			msDels = ms.deliverables.slice() # use slice to create independent copy instead of copying the reference through msDels = ms.deliverables
+			ms.deliverables = ko.observableArray([])
+			for del in msDels
+				#console.log del
+				for m in @allDeliverables() when m.id is del.id
+					#console.log "assign project #{p.title}"
+					ms.deliverables.push m		
 
 	# functions for observable necessary to pass view model data to it from html
 	selectRelease: (data) =>
@@ -64,6 +74,7 @@ class AdminReleaseViewmodel
 	selectMilestone: (data) =>
 		@formType "milestone"
 		@selectedMilestone data
+		@setMilestoneDeliverables @selectedMilestone()
 		console.log @selectedMilestone()
 
 	refreshRelease: (index, jsonData) =>

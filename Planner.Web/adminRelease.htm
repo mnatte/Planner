@@ -124,11 +124,19 @@
 <script type="text/javascript">
     // 'projects' is callback data provided by former Ajax call
     function loadReleases(projects) {
+        //var uc = new ULoadAdminReleases();
+        var ajx = new Ajax();
+        // callback 'loadDeliverables' provided, callback jsonData automatically supplied as argument as well as projects
+        ajx.getReleaseSummaries(function (data) { loadDeliverables(data, projects) });
+    }
+
+    // 'releases' is callback data provided by former Ajax call
+    function loadDeliverables(releases, projects) {
         var uc = new ULoadAdminReleases();
         var ajx = new Ajax();
-        // use closure around execute method to pass 'projects' argument as well as 'data' from getReleaseSummaries callback
-        // function(data) is callback so data is available from callback while 'projects' is available from closure construction
-        ajx.getReleaseSummaries(function (data) { uc.execute(data, projects) });
+        // use closure around execute method to pass 'projects' and 'releases' argument as well as 'data' from getDeliverables callback
+        // function(data) is callback so data is available from callback while 'projects' and 'releases' are available from closure construction
+        ajx.getDeliverables(function (data) { uc.execute(releases, projects, data) });
     }
 
     // load all projects, afterwards load releases

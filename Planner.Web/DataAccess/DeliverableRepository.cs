@@ -39,5 +39,12 @@ namespace MvcApplication1.DataAccess
 
             return item;
         }
+
+        // Deliverable is a member of the Milestone aggregate root. We use a "Milestone snapshot" object to prevent loading the whole Milestone graph
+        public ReleaseModels.Milestone GetMilestoneForDeliverable(ReleaseModels.Deliverable deliverable)
+        {
+            // mock, implement it as MilestonreRepository.
+            return new ReleaseModels.Milestone();
+        }
     }
 }

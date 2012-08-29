@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using MvcApplication1.Models;
 using System.Data.SqlClient;
+using MvcApplication1.DataAccess;
 
 namespace MvcApplication1.Controllers
 {
@@ -18,22 +19,11 @@ namespace MvcApplication1.Controllers
             return View();
         }
 
+        // Is Milestone an entity of the Release aggregate root?
         protected List<ReleaseModels.Milestone> GetMilestonesForRelease(ReleaseModels.Release release, SqlConnection conn)
         {
-            var cmd = new SqlCommand("sp_get_phase_milestones", conn);
-            cmd.CommandType = System.Data.CommandType.StoredProcedure;
-            cmd.Parameters.Add("@PhaseId", System.Data.SqlDbType.Int).Value = release.Id;
-            var lst = new List<ReleaseModels.Milestone>();
-
-            using (var reader4 = cmd.ExecuteReader())
-            {
-                while (reader4.Read())
-                {
-                    var p = new ReleaseModels.Milestone { Id = int.Parse(reader4["MilestoneId"].ToString()), Title = reader4["Title"].ToString(), Date = DateTime.Parse(reader4["Date"].ToString()), Time = reader4["Time"].ToString(), Description = reader4["Description"].ToString() };
-                    lst.Add(p);
-                }
-            }
-            return lst;
+            var repository = new MilestoneRepository();
+            return repository.GetMilestonesForRelease(release);
         }
 
         public JsonResult GetReleaseSummaries()
@@ -338,18 +328,38 @@ namespace MvcApplication1.Controllers
                     cmd.Parameters.Add("@PhaseId", System.Data.SqlDbType.Int).Value = obj.PhaseId;
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    var result = cmd.ExecuteNonQuery();
+                    var result = cmd.ExecuteScalar();
+                    var newId = result == null ? 0 : int.Parse(result.ToString());
 
-                    //if (result == string.Empty)
-                    //// it's an update
-                    //{
-                    //    milestoneId = obj.Id;
-                    //}
-                    //else if (result != string.Empty)
-                    //// it's an insert
-                    //{
-                    //    milestoneId = int.Parse(result);
-                    //}
+                   // it's an update (case 1) or an insert (case 2)
+                    milestoneId = newId == 0 ? obj.Id : newId;
+
+                    // completely renew the Deliverables for the Milestone as set in the client app
+                    var cmdDelCross = new SqlCommand(string.Format("Delete from MilestoneDeliverables where MilestoneId = {0}", milestoneId), conn);
+                    cmdDelCross.ExecuteNonQuery();
+
+                    if (obj.Deliverables != null && obj.Deliverables.Count > 0)
+                    {
+                        var cmdInserMilestoneDeliverable = new SqlCommand("sp_insert_milestonedeliverable", conn);
+                        cmdInserMilestoneDeliverable.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = milestoneId;
+                        cmdInserMilestoneDeliverable.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = 0;
+                        cmdInserMilestoneDeliverable.Parameters.Add("@HoursRemaining", System.Data.SqlDbType.Int).Value = 0;
+                        cmdInserMilestoneDeliverable.Parameters.Add("@InitialEstimate", System.Data.SqlDbType.Int).Value = 0;
+                        cmdInserMilestoneDeliverable.Parameters.Add("@Owner", System.Data.SqlDbType.VarChar).Value = string.Empty;
+                        cmdInserMilestoneDeliverable.Parameters.Add("@State", System.Data.SqlDbType.VarChar).Value = string.Empty;
+                        cmdInserMilestoneDeliverable.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        foreach (var itm in obj.Deliverables)
+                        {
+                            cmdInserMilestoneDeliverable.Parameters["@DeliverableId"].Value = itm.Id;
+                            cmdInserMilestoneDeliverable.Parameters["@HoursRemaining"].Value = itm.HoursRemaining;
+                            cmdInserMilestoneDeliverable.Parameters["@InitialEstimate"].Value = itm.InitialHoursEstimate;
+                            cmdInserMilestoneDeliverable.Parameters["@Owner"].Value = itm.Owner ?? "";
+                            cmdInserMilestoneDeliverable.Parameters["@State"].Value = itm.State ?? "";
+                            
+                            cmdInserMilestoneDeliverable.ExecuteNonQuery();
+                        }
+                    }
 
                 }
 

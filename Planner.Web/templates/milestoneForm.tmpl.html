@@ -3,7 +3,6 @@
     <label>Description:</label><input type="text" data-bind="value: description" />
     <label>Date (dd/mm/yyyy):</label><input type="text" data-bind="value: date.dateString" />
     <label>Time:</label><input type="text" data-bind="value: time" />
-    <!--<button data-bind="click: $parent.saveSelectedMilestone.bind($data)">Submit</button>-->
-    <!--<span class="ui-silk ui-silk-disk interact" data-bind="click: $parent.saveSelectedMilestone.bind($data)"></span>-->
+    <label>Deliverables:</label><select data-bind="options: $root.allDeliverables(), optionsText: 'title', selectedOptions: deliverables", size="5" multiple="multiple"></select>
     <span class="icon48 icon-save interact" data-bind="click: $parent.saveSelectedMilestone.bind($data)"></span>
 </form>

@@ -101,6 +101,7 @@
   <ItemGroup>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\DeliverableController.cs" />
+    <Compile Include="DataAccess\MilestoneRepository.cs" />
     <Compile Include="DataAccess\DeliverableRepository.cs" />
     <Compile Include="DataAccess\IBasicCrudUsable.cs" />
     <Compile Include="Controllers\ResourceAssignmentController.cs" />

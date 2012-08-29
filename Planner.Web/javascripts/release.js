@@ -189,10 +189,22 @@
       this.description = description;
       this.phaseId = phaseId;
       this.date = new DatePlus(date);
+      this.deliverables = [];
     }
 
+    Milestone.prototype.addDeliverable = function(deliverable) {
+      return this.deliverables.push(deliverable);
+    };
+
     Milestone.create = function(jsonData, phaseId) {
-      return new Milestone(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.Date), jsonData.Time, jsonData.Title, jsonData.Description, phaseId);
+      var deliverable, ms, _i, _len, _ref;
+      ms = new Milestone(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.Date), jsonData.Time, jsonData.Title, jsonData.Description, phaseId);
+      _ref = jsonData.Deliverables;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        deliverable = _ref[_i];
+        ms.addDeliverable(Deliverable.create(deliverable));
+      }
+      return ms;
     };
 
     Milestone.createCollection = function(jsonData) {

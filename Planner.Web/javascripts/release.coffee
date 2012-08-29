@@ -160,8 +160,14 @@ class Period extends Mixin
 class Milestone extends Mixin
 	constructor: (@id, date, @time, @title, @description, @phaseId) ->
 		@date = new DatePlus(date)
+		@deliverables = []
+	addDeliverable: (deliverable) ->
+		@deliverables.push(deliverable)
 	@create: (jsonData, phaseId) ->
-		new Milestone(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.Date), jsonData.Time, jsonData.Title, jsonData.Description, phaseId)
+		ms = new Milestone(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.Date), jsonData.Time, jsonData.Title, jsonData.Description, phaseId)
+		for deliverable in jsonData.Deliverables
+			ms.addDeliverable Deliverable.create(deliverable)
+		ms
 	@createCollection: (jsonData) ->
 		milestones = []
 		for ms in jsonData

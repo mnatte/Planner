@@ -66,6 +66,16 @@ namespace MvcApplication1.Models
             public string Description { get; set; }
             public DateTime Date { get; set; }
             public string Time { get; set; }
+            private List<Deliverable> _deliverables;
+            public IList<Deliverable> Deliverables
+            {
+                get
+                {
+                    if (_deliverables == null)
+                        _deliverables = new List<Deliverable>();
+                    return _deliverables;
+                }
+            }
         }
 
         public class Deliverable
@@ -74,7 +84,8 @@ namespace MvcApplication1.Models
             public string Title { get; set; }
             public string Description { get; set; }
             public string Location { get; set; }
-            public Resource Owner { get; set; }
+            public string State { get; set; }
+            public string Owner { get; set; }
             public string Format { get; set; }
             public int InitialHoursEstimate { get; set; }
             public int HoursRemaining { get; set; }
