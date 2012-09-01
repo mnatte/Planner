@@ -396,19 +396,22 @@
 
     __extends(AssignedResource, _super);
 
-    function AssignedResource(id, release, resource, project, focusFactor, startDate, endDate) {
+    function AssignedResource(id, release, resource, project, focusFactor, startDate, endDate, activity) {
       this.id = id;
       this.release = release;
       this.resource = resource;
       this.project = project;
       this.focusFactor = focusFactor;
+      this.activity = activity;
       this.assignedPeriod = new Period(startDate, endDate, "");
     }
 
     AssignedResource.create = function(jsonData, project, release) {
       var ass, resource;
+      console.log("create AssignedResource:" + ko.toJSON(jsonData));
       resource = Resource.create(jsonData.Resource);
-      ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate));
+      ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Activity);
+      console.log(ass);
       return ass;
     };
 

@@ -5,15 +5,19 @@ using System.Web;
 using MvcApplication1.Models;
 using System.Web.Mvc;
 using System.Data.SqlClient;
+using MvcApplication1.DataAccess;
 
 namespace MvcApplication1.Controllers
 {
     public class ResourceAssignmentController : BaseCrudController<ReleaseModels.ResourceAssignment, ResourceAssignmentInputModel>
     {
+        protected ResourceRepository ResourceRepository { get; set; }
         // TODO: refactor to ResourceAssignment being a child of the Resource aggregate root
         public ResourceAssignmentController()
             : base(null)
-        { }
+        {
+            this.ResourceRepository = new ResourceRepository();
+        }
 
         //protected override string ConnectionString
         //{
@@ -41,6 +45,9 @@ namespace MvcApplication1.Controllers
                 using (conn)
                 {
                     conn.Open();
+
+                    // DDD: We don't need to find assignments by Id, we can simply delete all items and add new ones. No history needed.
+                    // Therefore we might say that Assignment is an entity under the Release root since it is accessed as an IMMUTABLE collection: no updates, just new instances.
                     var delCmd = new SqlCommand(string.Format("delete from ReleaseResources where ReleaseId = {0} and ProjectId = {1}", model.PhaseId, model.ProjectId), conn);
                     delCmd.ExecuteNonQuery();
 
@@ -52,6 +59,7 @@ namespace MvcApplication1.Controllers
                     cmd.Parameters.Add("@FocusFactor", System.Data.SqlDbType.Decimal).Value = 0;
                     cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = 0;
                     cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = 0;
+                    cmd.Parameters.Add("@Activity", System.Data.SqlDbType.VarChar).Value = string.Empty;
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
                     foreach (var ass in model.Assignments)
@@ -61,6 +69,7 @@ namespace MvcApplication1.Controllers
                         cmd.Parameters["@FocusFactor"].Value = ass.FocusFactor;
                         cmd.Parameters["@StartDate"].Value = ass.StartDate.ToDateTimeFromDutchString();
                         cmd.Parameters["@EndDate"].Value = ass.EndDate.ToDateTimeFromDutchString();
+                        cmd.Parameters["@Activity"].Value = ass.Activity ?? string.Empty;
                         amount += cmd.ExecuteNonQuery();
                     }
                 }
@@ -100,7 +109,8 @@ namespace MvcApplication1.Controllers
                 Resource = new ReleaseModels.Resource { Id = int.Parse(reader["PersonId"].ToString()), FirstName = reader["FirstName"].ToString(), MiddleName = reader["MiddleName"].ToString(), LastName = reader["LastName"].ToString() },
                 Project = new ReleaseModels.Project { Id = int.Parse(reader["ProjectId"].ToString()), Title = reader["ProjectTitle"].ToString() },
                 StartDate = DateTime.Parse(reader["StartDate"].ToString()),
-                EndDate = DateTime.Parse(reader["EndDate"].ToString())
+                EndDate = DateTime.Parse(reader["EndDate"].ToString()),
+                Activity = reader["Activity"].ToString()
             };
         }
 
@@ -132,6 +142,13 @@ namespace MvcApplication1.Controllers
                 }
             }
             return this.Json(items, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult GetAssignmentsByResourceId(int resourceId)
+        {
+            var lst = this.ResourceRepository.GetAssignments(resourceId);
+            return this.Json(lst, JsonRequestBehavior.AllowGet);
         }
     }
 }

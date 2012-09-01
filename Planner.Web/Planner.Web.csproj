@@ -134,6 +134,12 @@
     <Content Include="adminProject.htm" />
     <Content Include="adminResource.htm" />
     <Content Include="adminDeliverable.htm" />
+    <Content Include="javascripts\planningOverviewViewmodel.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>planningOverviewViewmodel.coffee</DependentUpon>
+    </Content>
+    <Content Include="planningOverview.htm" />
     <Content Include="images\icons\1day.png" />
     <Content Include="images\icons\7days.png" />
     <Content Include="images\icons\add-user.png" />
@@ -355,6 +361,10 @@
     <None Include="javascripts\phasesViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>phasesViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\planningOverviewViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>planningOverviewViewmodel.js</LastGenOutput>
     </None>
     <None Include="javascripts\planResourcesViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>

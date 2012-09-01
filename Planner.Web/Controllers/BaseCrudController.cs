@@ -11,7 +11,6 @@ namespace MvcApplication1.Controllers
     public abstract class BaseCrudController<T, TInputModel> : Controller where TInputModel : IBasicCrudUsable
     {
         protected BaseCrudRepository<T, TInputModel> Repository;
-        private DeliverableRepository deliverableRepository;
 
         protected BaseCrudController(BaseCrudRepository<T, TInputModel> repository)
         {

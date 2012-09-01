@@ -64,7 +64,7 @@ class PlanResourcesViewmodel extends Mixin
 		console.log @newAssignment.assignedPeriod.startDate
 		console.log @newAssignment.assignedPeriod.endDate.dateString
 		console.log @newAssignment.assignedPeriod.endDate.date
-		ass = new AssignedResource(0, @selectedRelease(), @selectedResource(), @selectedProject(), @newAssignment.focusFactor, DateFormatter.createFromString(@newAssignment.assignedPeriod.startDate.dateString), DateFormatter.createFromString(@newAssignment.assignedPeriod.endDate.dateString))
+		ass = new AssignedResource(0, @selectedRelease(), @selectedResource(), @selectedProject(), @newAssignment.focusFactor, DateFormatter.createFromString(@newAssignment.assignedPeriod.startDate.dateString), DateFormatter.createFromString(@newAssignment.assignedPeriod.endDate.dateString), @newAssignment.activity)
 		console.log ass
 		@assignments.push ass
 		#@allResources.remove @selectedResource()

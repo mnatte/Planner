@@ -17,6 +17,12 @@ namespace MvcApplication1
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            // TODO: have clearer way of accessing of single resource assignments
+            routes.MapRoute(
+                "ResourceAssignmentsByResource", // Route name
+                "ResourceAssignment/Assignments/{resourceId}", // URL with parameters
+                new { controller = "ResourceAssignment", action = "GetAssignmentsByResourceId", param1 = UrlParameter.Optional } // Parameter defaults
+            );
             routes.MapRoute(
                 "Default", // Route name
                 "{controller}/{action}/{id}", // URL with parameters
@@ -27,7 +33,6 @@ namespace MvcApplication1
                 "ResourceAssignment/Assignments/{phaseId}/{projectId}", // URL with parameters
                 new { controller = "ResourceAssignment", action = "GetAssignmentsByPhaseIdAndProjectId", param1 = UrlParameter.Optional, param2 = UrlParameter.Optional } // Parameter defaults
             );
-
         }
 
         protected void Application_Start()

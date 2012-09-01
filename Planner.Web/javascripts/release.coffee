@@ -268,19 +268,19 @@ class Project extends Mixin
 		projects
 
 class AssignedResource extends Mixin
-	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate) ->
+	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate, @activity) ->
 		#@resource = new Resource(resourceId, firstName, middleName, lastName)
 		#@project = new Project(projectId, projectTitle)
 		#@phase = new Phase(phaseId, "", "", phaseTitle)
 		@assignedPeriod = new Period(startDate, endDate, "")
 		# console.log "create AssignedResource:" + ko.toJSON(@assignedPeriod)
 	@create: (jsonData, project, release) ->
-		#console.log "create AssignedResource:" + ko.toJSON(jsonData.Resource)
+		console.log "create AssignedResource:" + ko.toJSON(jsonData)
 		# create resource from json
 		resource = Resource.create jsonData.Resource
-		# create under given project
-		ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate))
-		# console.log ass
+		# create under given project and release
+		ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Activity)
+		console.log ass
 		ass
 	@createCollection: (jsonData, project, release) ->
 		assignments = []

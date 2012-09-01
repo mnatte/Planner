@@ -98,7 +98,7 @@
       console.log(this.newAssignment.assignedPeriod.startDate);
       console.log(this.newAssignment.assignedPeriod.endDate.dateString);
       console.log(this.newAssignment.assignedPeriod.endDate.date);
-      ass = new AssignedResource(0, this.selectedRelease(), this.selectedResource(), this.selectedProject(), this.newAssignment.focusFactor, DateFormatter.createFromString(this.newAssignment.assignedPeriod.startDate.dateString), DateFormatter.createFromString(this.newAssignment.assignedPeriod.endDate.dateString));
+      ass = new AssignedResource(0, this.selectedRelease(), this.selectedResource(), this.selectedProject(), this.newAssignment.focusFactor, DateFormatter.createFromString(this.newAssignment.assignedPeriod.startDate.dateString), DateFormatter.createFromString(this.newAssignment.assignedPeriod.endDate.dateString), this.newAssignment.activity);
       console.log(ass);
       this.assignments.push(ass);
       return this.canShowForm(false);
