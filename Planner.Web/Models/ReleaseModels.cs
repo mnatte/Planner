@@ -227,14 +227,37 @@ namespace MvcApplication1.Models
                     return _periodsAway;
                 }
             }
+
+            //TODO: Create as TeamMember mixin / DCI role
+            private List<ResourceAssignment> _assignments;
+            public IList<ResourceAssignment> Assignments
+            {
+                get
+                {
+                    if (_assignments == null)
+                        _assignments = new List<ResourceAssignment>();
+                    return _assignments;
+                }
+            }
+
         }
 
-        // DCI Role? Persist use case with release, project, team, teammembers, etc.
+        // TODO: DCI Role. Persist use case with assignments, role, etc.
         public class TeamMember : Resource
         {
             public double FocusFactor { get; set; }
             // Role in team is something else than official Function of resource
             public Role Role { get; set; }
+            private List<ResourceAssignment> _assignments;
+            public IList<ResourceAssignment> Assignments
+            {
+                get
+                {
+                    if (_assignments == null)
+                        _assignments = new List<ResourceAssignment>();
+                    return _assignments;
+                }
+            }
         }
 
         public class Role

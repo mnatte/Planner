@@ -4,13 +4,13 @@
 # access (for browser)
 root = global ? window
 
-class PhasesViewmodel
-	constructor: ->
+class PlanningOverviewViewmodel
+	constructor: (allResources) ->
 		# ctor is executed in context of INSTANCE. Therfore @ refers here to CURRENT INSTANCE and attaches selectedPhase to all instances (since object IS ctor)
+		@allResources = ko.observableArray(allResources)
 		@selectedPhase = ko.observable()
-		@canShowDetails = ko.observable(false)
+		# @canShowDetails = ko.observable(false)
 		@centerDate = ko.observable(new Date())
-		@currentPhases = ko.observableArray()
 		#console.log new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 14) )
 		# centerDate minus 2 weeks
 		startDate = new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 14) )
@@ -20,9 +20,9 @@ class PhasesViewmodel
 		console.log @periodToView()
 	load: (data) ->
 		# all properties besides ctor are ATTACHED to prototype. these are EXECUTED in context of INSTANCE.
-		# therefore @ refers to INSTANCE (this) here 
+		# therefore @ refers to INSTANCE here ('this' or '@')
 		@resources = []
-		for resources in data.Resources
+		for resource in data.Resources
 			# fill release object
 			# console.log release
 			res = new Resource(release.Id, DateFormatter.createJsDateFromJson(release.StartDate), DateFormatter.createJsDateFromJson(release.EndDate), release.Title)
@@ -55,43 +55,21 @@ class PhasesViewmodel
 
 		# console.log "this.absences: #{@absences}"
 			
-		#@currentPhases = ko.computed(=>
-		#		console.log "currentPhases"
-		#		current = []
-		#		#console.log current
-		#		for phase in @releases when phase.overlaps(@periodToView())
-		#			#console.log @periodToView
-		#			#console.log @viewPeriod()
-		#			#console.log phase
-		#			current.push phase
-		#		current
-		#, this)
-
-	closeDetails: =>
-        @canShowDetails(false)
-
-	nextViewPeriod: ->
+	
+	# in this context we need '=>' to get to root viewmodel's centerDate() function. With '->', the '@' would refer to the Resource since that is the binding context (foreach: resources)
+	nextViewPeriod: =>
 		@centerDate (new Date(@centerDate().getTime() + (24 * 60 * 60 * 1000 * 49)) )
 		#console.log @centerDate()
 		#console.log @periodToView()
 		@periodToView new Period(new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 14) ), new Date(@centerDate().getTime() + (24 * 60 * 60 * 1000 * 28) ), "View Period")
 		#console.log @periodToView()
-		@currentPhases.removeAll()
-		for phase in @releases when phase.overlaps(@periodToView())
-			@currentPhases.push phase
 
-	prevViewPeriod: ->
+	prevViewPeriod: =>
 		@centerDate (new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 49)) )
 		#console.log @centerDate()
 		#console.log @periodToView()
 		@periodToView new Period(new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 14) ), new Date(@centerDate().getTime() + (24 * 60 * 60 * 1000 * 28) ), "View Period")
 		#console.log @periodToView()
-		@currentPhases.removeAll()
-		for phase in @releases when phase.overlaps(@periodToView())
-			@currentPhases.push phase
-
-	#viewPeriod: ->
-		#@periodToView
 
 	currentAbsences: ->
 		current = []
@@ -99,13 +77,5 @@ class PhasesViewmodel
 			current.push abs
 		current
 
-	selectPhase: (data) =>
-		# console.log "selectPhase - function"
-		# console.log @
-		# console.log data
-		@selectedPhase(data)
-		@canShowDetails(true)
-		# console.log "selectPhase after selection: " + @selectedPhase()
-
 # export to root object
-root.PhasesViewmodel = PhasesViewmodel
+root.PlanningOverviewViewmodel = PlanningOverviewViewmodel

@@ -57,7 +57,7 @@
     };
 
     Period.prototype.containsDate = function(date) {
-      return date >= this.startDate.date && date < this.endDate.date;
+      return date.setHours(0, 0, 0, 0) >= this.startDate.date.setHours(0, 0, 0, 0) && date.setHours(0, 0, 0, 0) <= this.endDate.date.setHours(0, 0, 0, 0);
     };
 
     Period.prototype.isCurrent = function() {
@@ -526,10 +526,15 @@
       this.company = company;
       this["function"] = _function;
       this.periodsAway = [];
+      this.assignments = [];
     }
 
     Resource.prototype.addAbsence = function(period) {
       return this.periodsAway.push(period);
+    };
+
+    Resource.prototype.addAssignment = function(period) {
+      return this.assignments.push(period);
     };
 
     Resource.prototype.fullName = function() {
@@ -576,12 +581,17 @@
     };
 
     Resource.create = function(jsonData) {
-      var absence, res, _i, _len, _ref;
+      var absence, assignment, res, _i, _j, _len, _len2, _ref, _ref2;
       res = new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials, jsonData.AvailableHoursPerWeek, jsonData.Email, jsonData.PhoneNumber);
       _ref = jsonData.PeriodsAway;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         absence = _ref[_i];
         res.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title));
+      }
+      _ref2 = jsonData.Assignments;
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        assignment = _ref2[_j];
+        res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity + " " + assignment.Phase.Title));
       }
       return res;
     };

@@ -66,7 +66,10 @@ class Period extends Mixin
 	toShortString: ->
 		"#{@startDate.format('dd/MM')} - #{@endDate.format('dd/MM')}"
 	containsDate: (date) ->
-		date >= @startDate.date and date < @endDate.date
+		#console.log date
+		#console.log @startDate.date
+		#console.log @endDate.date
+		date.setHours(0,0,0,0) >= @startDate.date.setHours(0,0,0,0) and date.setHours(0,0,0,0) <= @endDate.date.setHours(0,0,0,0)
 	isCurrent: ->
 		@containsDate(new Date())
 	isFuture: ->
@@ -336,8 +339,11 @@ class Deliverable extends Mixin
 class Resource extends Mixin
 	constructor: (@id, @firstName, @middleName, @lastName, @initials, @hoursPerWeek, @email, @phoneNumber, @company, @function) ->
 		@periodsAway = []
+		@assignments = []
 	addAbsence: (period) ->
 		@periodsAway.push(period)
+	addAssignment: (period) ->
+		@assignments.push(period)
 	fullName: ->
 		middle = " " if (@middleName.length is 0)
 		middle = " " + @middleName + " " if (@middleName.length > 0)
@@ -363,6 +369,8 @@ class Resource extends Mixin
 		res = new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials, jsonData.AvailableHoursPerWeek, jsonData.Email, jsonData.PhoneNumber)
 		for absence in jsonData.PeriodsAway
 			res.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title))
+		for assignment in jsonData.Assignments
+			res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity + " " + assignment.Phase.Title))
 		#console.log res
 		res
 	@createCollection: (jsonData) ->

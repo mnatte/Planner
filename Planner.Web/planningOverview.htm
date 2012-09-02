@@ -10,7 +10,7 @@
 	<!-- Basic Page Needs
   ================================================== -->
 	<meta charset="utf-8">
-	<title>Phases</title>
+	<title>Planning Overview</title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 	<!--[if lt IE 9]>
@@ -58,7 +58,7 @@
         
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
-    <script type="text/javascript" src="javascripts/phasesViewmodel.js"></script>
+    <script type="text/javascript" src="javascripts/planningOverviewViewmodel.js"></script>
     <script type="text/javascript" src="javascripts/ajax.js"></script>
     <script type="text/javascript" src="javascripts/Roles.js"></script>
     <script type="text/javascript" src="javascripts/UseCases.js"></script>
@@ -77,46 +77,31 @@
         <!-- ko template: {name: 'navigation'} -->
         <!-- /ko -->
         <section id="overview" class="sixteen columns">
-            <!-- ko if: $root.selectedPhase() -->
-            <div class="leftFloat" data-bind="fadeVisible: $root.canShowDetails(), fadeDuration: 2000">
-                <div class="productDetailsArea">
-                    <!-- ko template: {name: 'releaseDetails', data: $root.selectedPhase} -->
-                    <!-- /ko -->
-                </div>
-            </div>
-            <!--/ko-->
-            <div id="phases" class="sixteen columns">
-                
-                <div class="timeline">
-                    <!--todo: fix alignment, use only phases on same level (no releases with child-phases in new loop)-->
-                    <ul class="events" data-bind="foreach: currentPhases()">
-                        <li data-bind="text: title, period: $root.periodToView()"></li>
-                        <ul data-bind="foreach: phases">
-                            <li data-bind="text: title, period: $root.periodToView()"></li>
-                        </ul>
-                    </ul> <!-- end .events -->
+            <div class="leftFloat" data-bind="foreach: allResources()">
+                <div class="productDetailsArea" id="resource name" data-bind="text: fullName()"></div>
 
-                    <!--max 7 units because of available space-->
-                    <ul class="intervals" data-bind="foreach: periodToView().weeks()">
-                        <li class="first"><span data-bind="text: $data.shortNumber() + ':' + $data.period().toShortString(), style: { color: $data.period().containsDate(new Date()) ? 'red' : 'black' }"></span></li>
-                    </ul> <!-- end .intervals -->
-                </div> <!-- end .timeline -->
-                <!--<ul data-bind="foreach: currentAbsences()">
-                    <li class="price"><h6 data data-bind="text: toString()"></h6></li>
-                </ul>-->
-                <button data-bind="click: $root.prevViewPeriod.bind($data)">Prev</button>
-                <button data-bind="click: $root.nextViewPeriod.bind($data)">Next</button>
-            </div>
-            </section>
-            <section class="sixteen columns" alpha>
-            <div>
-                <h4 data-bind="text: selectedPhase()"></h4>
-            </div>
-            <div class="one columns alpha">&nbsp;</div>
-            <div class="fifteen columns omega">
-                <ul data-bind="foreach: overlappingAbsences()">
-                    <li class="price"><h6 data data-bind="text: toString(), style: { color: isCurrent() ? 'red' : isPast() ? 'green' : comingUpThisWeek() ? 'orange' : 'black' }"></h6></li>
-                </ul>
+                <div id="phases" class="sixteen columns">
+                    <div class="timeline">
+                        <!--todo: fix alignment, use only phases on same level (no releases with child-phases in new loop)-->
+                        <ul class="events" data-bind="foreach: periodsAway">
+                            <!-- ko if: $data.overlaps($root.periodToView()) -->
+                            <li data-bind="text: toString(), period: $root.periodToView()"></li>
+                            <!-- /ko -->
+                        </ul> <!-- end .events -->
+                        <ul class="events" data-bind="foreach: assignments">
+                            <!-- ko if: $data.overlaps($root.periodToView()) -->
+                            <li data-bind="text: title, period: $root.periodToView()"></li>
+                            <!-- /ko -->
+                        </ul> <!-- end .events -->
+
+                        <!--max 7 units because of available space-->
+                        <ul class="intervals" data-bind="foreach: $root.periodToView().weeks()">
+                            <li class="first"><span data-bind="text: $data.shortNumber() + ':' + $data.period().toShortString(), style: { color: $data.period().containsDate(new Date()) ? 'red' : 'black' }"></span></li>
+                        </ul> <!-- end .intervals -->
+                    </div> <!-- end .timeline -->
+                    <button data-bind="click: $root.prevViewPeriod.bind($data)">Prev</button>
+                    <button data-bind="click: $root.nextViewPeriod.bind($data)">Next</button>
+                </div>
             </div>
         </section>
 	</div><!-- container -->
@@ -126,9 +111,9 @@
             infuser.defaults.templateSuffix = ".tmpl.html";
             infuser.defaults.templateUrl = "/planner/templates";
 
-            var uc = new UDisplayPhases();
+            var uc = new UDisplayPlanningOverview();
             var ajax = new Ajax();
-            ajax.loadPhases(uc.execute);
+            ajax.getResources(uc.execute);
         });
     </script>
 

@@ -1,5 +1,5 @@
 (function() {
-  var HLoadReleases, UDisplayPhases, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, root;
+  var HLoadReleases, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -141,6 +141,21 @@
 
   })();
 
+  UDisplayPlanningOverview = (function() {
+
+    function UDisplayPlanningOverview() {}
+
+    UDisplayPlanningOverview.prototype.execute = function(data) {
+      var resources;
+      resources = Resource.createCollection(data);
+      this.viewModel = new PlanningOverviewViewmodel(resources);
+      return ko.applyBindings(this.viewModel);
+    };
+
+    return UDisplayPlanningOverview;
+
+  })();
+
   ULoadAdminResources = (function() {
 
     function ULoadAdminResources() {}
@@ -197,6 +212,8 @@
   root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFromNow;
 
   root.UDisplayPhases = UDisplayPhases;
+
+  root.UDisplayPlanningOverview = UDisplayPlanningOverview;
 
   root.HLoadReleases = HLoadReleases;
 

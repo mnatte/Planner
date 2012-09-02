@@ -36,7 +36,18 @@ namespace MvcApplication1.DataAccess
 
         protected override ReleaseModels.Resource CreateItemByDbRow(System.Data.SqlClient.SqlDataReader reader)
         {
-            return new ReleaseModels.Resource { Id = int.Parse(reader["Id"].ToString()), FirstName = reader["FirstName"].ToString(), MiddleName = reader["MiddleName"].ToString(), LastName = reader["LastName"].ToString(), Initials = reader["Initials"].ToString(), Email = reader["Email"].ToString(), PhoneNumber = reader["PhoneNumber"].ToString(), AvailableHoursPerWeek = int.Parse(reader["HoursPerWeek"].ToString()) };
+            var res = new ReleaseModels.Resource { Id = int.Parse(reader["Id"].ToString()), FirstName = reader["FirstName"].ToString(), MiddleName = reader["MiddleName"].ToString(), LastName = reader["LastName"].ToString(), Initials = reader["Initials"].ToString(), Email = reader["Email"].ToString(), PhoneNumber = reader["PhoneNumber"].ToString(), AvailableHoursPerWeek = int.Parse(reader["HoursPerWeek"].ToString()) };
+            var absences = this.GetAbsences(res.Id);
+            foreach (var abs in absences)
+            {
+                res.PeriodsAway.Add(abs);
+            }
+            var assignments = this.GetAssignments(res.Id);
+            foreach (var ass in assignments)
+            {
+                res.Assignments.Add(ass);
+            }
+            return res;
         }
 
         // ResourceAssignment might be an entity under the Resource root so it should be an immutable collection. Maybe just lazy loaded? Or just retrieved as below?
@@ -57,6 +68,30 @@ namespace MvcApplication1.DataAccess
                     while (reader.Read())
                     {
                         var ass = new ReleaseModels.ResourceAssignment { Activity = reader["Activity"].ToString(), Resource = new ReleaseModels.Resource { FirstName = reader["FirstName"].ToString(), MiddleName = reader["MiddleName"].ToString(), LastName = reader["LastName"].ToString() }, FocusFactor = double.Parse(reader["FocusFactor"].ToString()), Phase = new ReleaseModels.Phase { Title = reader["PhaseTitle"].ToString() }, EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Project = new ReleaseModels.Project { Title = reader["projecttitle"].ToString() } };
+                        lst.Add(ass);
+                    }
+                }
+            }
+            return lst;
+        }
+
+        protected List<ReleaseModels.Absence> GetAbsences(int resourceId)
+        {
+            var conn = new SqlConnection(this.ConnectionString);
+
+            var cmd = new SqlCommand("sp_get_person_absences", conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.Add("@ResourceId", System.Data.SqlDbType.Int).Value = resourceId;
+            var lst = new List<ReleaseModels.Absence>();
+
+            using (conn)
+            {
+                conn.Open();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var ass = new ReleaseModels.Absence { Title = reader["Title"].ToString(), Person = new ReleaseModels.Resource { FirstName = reader["FirstName"].ToString(), MiddleName = reader["MiddleName"].ToString(), LastName = reader["LastName"].ToString() }, EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()) };
                         lst.Add(ass);
                     }
                 }

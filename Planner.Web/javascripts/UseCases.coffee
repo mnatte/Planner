@@ -101,6 +101,13 @@ class ULoadAdminProjects
 		@viewModel.selectItem @viewModel.allItems()[0]
 		ko.applyBindings(@viewModel)
 
+class UDisplayPlanningOverview
+	constructor: ->
+	execute: (data) ->
+		resources = Resource.createCollection data
+		@viewModel = new PlanningOverviewViewmodel(resources)
+		ko.applyBindings(@viewModel)
+
 class ULoadAdminResources
 	constructor: ->
 	execute: (data) ->
@@ -135,6 +142,7 @@ class ULoadPlanResources
 root.UDisplayReleaseStatus = UDisplayReleaseStatus
 root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFromNow
 root.UDisplayPhases = UDisplayPhases
+root.UDisplayPlanningOverview = UDisplayPlanningOverview
 root.HLoadReleases = HLoadReleases
 root.ULoadAdminReleases = ULoadAdminReleases
 root.ULoadAdminProjects = ULoadAdminProjects
