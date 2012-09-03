@@ -17,9 +17,9 @@ class PlanningOverviewViewmodel
 		# centerDate plus 4 weeks
 		endDate =  new Date(@centerDate().getTime() + (24 * 60 * 60 * 1000 * 28) )
 		@periodToView = ko.observable(new Period(new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 14) ), new Date(@centerDate().getTime() + (24 * 60 * 60 * 1000 * 28) ), "View Period"))
-		console.log @periodToView()
+		#console.log @periodToView()
 		@showResources = ko.observableArray()
-		#@resourcesToShow = ko.observableArray()
+		@showCheckboxes = ko.observable(true)
 		#@showResources.subscribe((newValue) =>
 			#last = newValue.slice(-1)[0]
 			#console.log last

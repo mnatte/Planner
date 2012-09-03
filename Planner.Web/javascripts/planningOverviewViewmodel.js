@@ -17,8 +17,8 @@
       startDate = new Date(this.centerDate().getTime() - (24 * 60 * 60 * 1000 * 14));
       endDate = new Date(this.centerDate().getTime() + (24 * 60 * 60 * 1000 * 28));
       this.periodToView = ko.observable(new Period(new Date(this.centerDate().getTime() - (24 * 60 * 60 * 1000 * 14)), new Date(this.centerDate().getTime() + (24 * 60 * 60 * 1000 * 28)), "View Period"));
-      console.log(this.periodToView());
       this.showResources = ko.observableArray();
+      this.showCheckboxes = ko.observable(true);
       this.resourcesToShow = ko.computed(function() {
         var id, res, show, _i, _j, _len, _len2, _ref, _ref2;
         show = [];
