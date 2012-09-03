@@ -591,7 +591,7 @@
       _ref2 = jsonData.Assignments;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         assignment = _ref2[_j];
-        res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity + " " + assignment.Phase.Title));
+        res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity + " " + assignment.Phase.Title + " (" + assignment.FocusFactor + ")"));
       }
       return res;
     };
@@ -605,6 +605,10 @@
         resources.push(this.resource);
       }
       return resources;
+    };
+
+    Resource.prototype.toString = function() {
+      return this.fullName();
     };
 
     return Resource;

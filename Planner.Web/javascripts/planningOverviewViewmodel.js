@@ -9,7 +9,8 @@
     function PlanningOverviewViewmodel(allResources) {
       this.prevViewPeriod = __bind(this.prevViewPeriod, this);
       this.nextViewPeriod = __bind(this.nextViewPeriod, this);
-      var endDate, startDate;
+      var endDate, startDate,
+        _this = this;
       this.allResources = ko.observableArray(allResources);
       this.selectedPhase = ko.observable();
       this.centerDate = ko.observable(new Date());
@@ -17,11 +18,25 @@
       endDate = new Date(this.centerDate().getTime() + (24 * 60 * 60 * 1000 * 28));
       this.periodToView = ko.observable(new Period(new Date(this.centerDate().getTime() - (24 * 60 * 60 * 1000 * 14)), new Date(this.centerDate().getTime() + (24 * 60 * 60 * 1000 * 28)), "View Period"));
       console.log(this.periodToView());
+      this.showResources = ko.observableArray();
+      this.resourcesToShow = ko.computed(function() {
+        var id, res, show, _i, _j, _len, _len2, _ref, _ref2;
+        show = [];
+        _ref = _this.showResources();
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          id = _ref[_i];
+          _ref2 = _this.allResources();
+          for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+            res = _ref2[_j];
+            if (+res.id === +id) show.push(res);
+          }
+        }
+        return show;
+      }, this);
     }
 
     PlanningOverviewViewmodel.prototype.load = function(data) {
-      var abs, absence, phase, res, resource, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4,
-        _this = this;
+      var abs, absence, phase, res, resource, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4, _results;
       this.resources = [];
       _ref = data.Resources;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -59,21 +74,13 @@
       }
       this.absences = [];
       _ref4 = data.Absences;
+      _results = [];
       for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
         absence = _ref4[_l];
         abs = new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title, absence.Person);
-        this.absences.push(abs);
+        _results.push(this.absences.push(abs));
       }
-      return this.overlappingAbsences = ko.computed(function() {
-        var a, abs, _len5, _m, _ref5;
-        a = [];
-        _ref5 = _this.absences;
-        for (_m = 0, _len5 = _ref5.length; _m < _len5; _m++) {
-          abs = _ref5[_m];
-          if (abs.overlaps(_this.selectedPhase())) a.push(abs);
-        }
-        return a;
-      }, this);
+      return _results;
     };
 
     PlanningOverviewViewmodel.prototype.nextViewPeriod = function() {

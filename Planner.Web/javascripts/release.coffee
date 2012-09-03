@@ -370,7 +370,7 @@ class Resource extends Mixin
 		for absence in jsonData.PeriodsAway
 			res.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title))
 		for assignment in jsonData.Assignments
-			res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity + " " + assignment.Phase.Title))
+			res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity + " " + assignment.Phase.Title + " (" + assignment.FocusFactor + ")"))
 		#console.log res
 		res
 	@createCollection: (jsonData) ->
@@ -380,6 +380,8 @@ class Resource extends Mixin
 			@resource = Resource.create(resource)
 			resources.push @resource
 		resources
+	toString: ->
+		@fullName()
 
 
 # datastructure for submitting all assignements with release

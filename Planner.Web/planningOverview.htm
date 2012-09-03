@@ -77,8 +77,15 @@
         <!-- ko template: {name: 'navigation'} -->
         <!-- /ko -->
         <section id="overview" class="sixteen columns">
-            <div class="leftFloat" data-bind="foreach: allResources()">
-                <div class="productDetailsArea" id="resource name" data-bind="text: fullName()"></div>
+            <div class="four columns omega">
+                <div data-bind="foreach: allResources()">
+                    <!--'value' sets the value to the array and matches on it. it is the toString() method of the object that is used-->
+                    <div><input type="checkbox" data-bind="checked: $root.showResources, value: $data.id" /><data data-bind="text: fullName()"></data></div>
+                </div>
+            </div>
+
+            <div class="leftFloat" data-bind="foreach: $root.resourcesToShow()">
+                <div class="productDetailsArea" id="resource name" data-bind="text: $data"></div>
 
                 <div id="phases" class="sixteen columns">
                     <div class="timeline">

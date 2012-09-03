@@ -18,6 +18,20 @@ class PlanningOverviewViewmodel
 		endDate =  new Date(@centerDate().getTime() + (24 * 60 * 60 * 1000 * 28) )
 		@periodToView = ko.observable(new Period(new Date(@centerDate().getTime() - (24 * 60 * 60 * 1000 * 14) ), new Date(@centerDate().getTime() + (24 * 60 * 60 * 1000 * 28) ), "View Period"))
 		console.log @periodToView()
+		@showResources = ko.observableArray()
+		#@resourcesToShow = ko.observableArray()
+		#@showResources.subscribe((newValue) =>
+			#last = newValue.slice(-1)[0]
+			#console.log last
+		#)
+		@resourcesToShow = ko.computed(=> 
+			show = []
+			for id in @showResources()
+				for res in @allResources() when +res.id is +id 
+					show.push res
+			show
+		, this)
+
 	load: (data) ->
 		# all properties besides ctor are ATTACHED to prototype. these are EXECUTED in context of INSTANCE.
 		# therefore @ refers to INSTANCE here ('this' or '@')
@@ -37,6 +51,8 @@ class PlanningOverviewViewmodel
 		for phase in @releases when phase.overlaps(@periodToView())
 			@currentPhases.push phase
 
+		
+
 		@absences = []
 		for absence in data.Absences
 			# fill release object
@@ -45,13 +61,6 @@ class PlanningOverviewViewmodel
 			@absences.push abs
 
 		# @selectedPhase(@releases[0])
-		@overlappingAbsences = ko.computed(=> 
-				a = []
-				for abs in @absences when abs.overlaps(@selectedPhase())
-					# console.log "overlaps: #{abs}"
-					a.push(abs)
-				a
-		, this)
 
 		# console.log "this.absences: #{@absences}"
 			
