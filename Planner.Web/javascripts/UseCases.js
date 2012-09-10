@@ -95,9 +95,21 @@
     function UDisplayPhases() {}
 
     UDisplayPhases.prototype.execute = function(data) {
-      this.viewModel = new PhasesViewmodel();
-      this.viewModel.load(data);
-      return ko.applyBindings(this.viewModel);
+      var loadReleases, releases;
+      loadReleases = new HLoadReleases();
+      releases = loadReleases.execute(data);
+      this.viewModel = new PhasesViewmodel(releases);
+      this.viewModel.load(releases.sort(function(a, b) {
+        if (a.endDate.date > b.endDate.date) {
+          return 1;
+        } else if (a.endDate.date < b.endDate.date) {
+          return -1;
+        } else {
+          return 0;
+        }
+      }));
+      ko.applyBindings(this.viewModel);
+      return drawTimeline(this.viewModel.showPhases);
     };
 
     return UDisplayPhases;

@@ -77,9 +77,13 @@ class UGetAvailableHoursForTeamMemberFromNow
 class UDisplayPhases
 	constructor: ->
 	execute: (data) ->
-		@viewModel = new PhasesViewmodel()
-		@viewModel.load data
+		loadReleases = new HLoadReleases()
+		releases = loadReleases.execute(data)
+		#console.log releases
+		@viewModel = new PhasesViewmodel(releases)
+		@viewModel.load releases.sort((a,b)-> if a.endDate.date > b.endDate.date then 1 else if a.endDate.date < b.endDate.date then -1 else 0)
 		ko.applyBindings(@viewModel)
+		drawTimeline(@viewModel.showPhases)
 
 class ULoadAdminReleases
 	constructor: ->

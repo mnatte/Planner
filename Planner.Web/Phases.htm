@@ -29,6 +29,8 @@
     <link rel="stylesheet" href="stylesheets/tables.css">
     <link rel="stylesheet" href="stylesheets/jquery-ui-1.8.19.custom.css">
     <link rel="stylesheet" href="stylesheets/jquery.tooltip.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/timeline.css" />
+    <link rel="stylesheet" href="stylesheets/icon_styles.css">
 
     <link rel="stylesheet" href="stylesheets/jquery.ui.progressbar.css">
 
@@ -55,6 +57,7 @@
     <script type="text/javascript" src="Scripts/jquery.bgiframe.js"></script>
     <script type="text/javascript" src="Scripts/jquery.tooltip.min.js"></script>
     <script type="text/javascript" src="Scripts/datehelper.js"></script>
+    <script type="text/javascript" src="Scripts/timeline-min.js"></script>
         
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
@@ -67,6 +70,51 @@
     <script type="text/javascript" src="javascripts/ko.bindingHandlers.period.js"></script>
 
     <script type="text/javascript" src="Scripts/highcharts.js"></script>
+
+        <script type="text/javascript">
+            var timeline;
+
+            // Called when the Visualization API is loaded.
+            function drawTimeline(data) {
+
+                // specify options
+                var options = {
+                    "width": "100%",
+                    "height": "500px",
+                    "style": "box",
+                    "eventMargin": 5, // minimal margin between events 
+                    "intervalMin": 1000 * 60 * 60 * 24,          // one day in milliseconds
+                    "intervalMax": 1000 * 60 * 60 * 24 * 31 * 3  // about three months in milliseconds
+                };
+
+                // Instantiate our timeline object.
+                timeline = new links.Timeline(document.getElementById('mytimeline'));
+
+                function onSelectedChanged(properties) {
+                    $('#details').html('');
+                    var sel = timeline.getSelection();
+                    if (sel.length) {
+                        if (sel[0] != undefined) {
+                            var item = data[sel[0].row];
+                            //$.each(item, function (name, value) {
+                            //document.getElementById('details').innerHTML += (name + ": " + value) + " selected";
+                            //});
+                            if (typeof item.info !== "undefined")
+                                $('#details').html(item.info);
+                        }
+                    }
+
+                    //document.getElementById('details').innerHTML = properties.info;
+                }
+
+                // attach an event listener using the links events handler
+                links.events.addListener(timeline, 'select', onSelectedChanged);
+
+
+                // Draw our timeline with the created data and options 
+                timeline.draw(data, options);
+            }
+   </script>
 </head>
 <body>
 <!-- Primary Page Layout
@@ -87,37 +135,14 @@
             </div>
             <!--/ko-->
             <div id="phases" class="sixteen columns">
-                
-                <div class="timeline">
-                    <!--todo: fix alignment, use only phases on same level (no releases with child-phases in new loop)-->
-                    <ul class="events" data-bind="foreach: currentPhases()">
-                        <li data-bind="text: title, period: $root.periodToView()"></li>
-                        <ul data-bind="foreach: phases">
-                            <li data-bind="text: title, period: $root.periodToView()"></li>
-                        </ul>
-                    </ul> <!-- end .events -->
+                <div id="mytimeline"></div>
+                <div id="details"></div>
 
-                    <!--max 7 units because of available space-->
-                    <ul class="intervals" data-bind="foreach: periodToView().weeks()">
-                        <li class="first"><span data-bind="text: $data.shortNumber() + ':' + $data.period().toShortString(), style: { color: $data.period().containsDate(new Date()) ? 'red' : 'black' }"></span></li>
-                    </ul> <!-- end .intervals -->
-                </div> <!-- end .timeline -->
-                <!--<ul data-bind="foreach: currentAbsences()">
-                    <li class="price"><h6 data data-bind="text: toString()"></h6></li>
-                </ul>-->
-                <button data-bind="click: $root.prevViewPeriod.bind($data)">Prev</button>
-                <button data-bind="click: $root.nextViewPeriod.bind($data)">Next</button>
-            </div>
+                
             </section>
             <section class="sixteen columns" alpha>
             <div>
                 <h4 data-bind="text: selectedPhase()"></h4>
-            </div>
-            <div class="one columns alpha">&nbsp;</div>
-            <div class="fifteen columns omega">
-                <ul data-bind="foreach: overlappingAbsences()">
-                    <li class="price"><h6 data data-bind="text: toString(), style: { color: isCurrent() ? 'red' : isPast() ? 'green' : comingUpThisWeek() ? 'orange' : 'black' }"></h6></li>
-                </ul>
             </div>
         </section>
 	</div><!-- container -->
@@ -129,7 +154,7 @@
 
             var uc = new UDisplayPhases();
             var ajax = new Ajax();
-            ajax.loadPhases(uc.execute);
+            ajax.getReleaseSummaries(uc.execute);
         });
     </script>
 

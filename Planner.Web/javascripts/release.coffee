@@ -233,7 +233,7 @@ class Release extends Phase
 	addMilestone: (milestone) ->
 		@milestones.push(milestone)
 	@create: (jsonData) ->
-		console.log jsonData
+		#console.log jsonData
 		#console.log "#{jsonData.StartDate} #{jsonData.EndDate}"
 		release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId)
 		for phase in jsonData.Phases
@@ -245,7 +245,7 @@ class Release extends Phase
 			release.addProject Project.create(project)
 		for milestone in jsonData.Milestones
 			release.addMilestone Milestone.create(milestone, jsonData.Id)
-		console.log release
+		#console.log release
 		release
 
 # Release - Projects - Features & AssignedResources

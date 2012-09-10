@@ -214,6 +214,8 @@
     <Content Include="images\favicon.ico" />
     <Content Include="Scripts\datehelper.js" />
     <Content Include="Scripts\jquery.qtip.min.js" />
+    <Content Include="Scripts\timeline-min.js" />
+    <Content Include="stylesheets\timeline.css" />
     <Content Include="stylesheets\base_no_buttons.css" />
     <Content Include="stylesheets\icon_styles.css" />
     <Content Include="templates\navigation.tmpl.html" />

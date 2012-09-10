@@ -320,7 +320,6 @@
 
     Release.create = function(jsonData) {
       var milestone, phase, project, release, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
-      console.log(jsonData);
       release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId);
       _ref = jsonData.Phases;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -337,7 +336,6 @@
         milestone = _ref3[_k];
         release.addMilestone(Milestone.create(milestone, jsonData.Id));
       }
-      console.log(release);
       return release;
     };
 

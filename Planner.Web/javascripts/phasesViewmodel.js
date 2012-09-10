@@ -6,7 +6,7 @@
 
   PhasesViewmodel = (function() {
 
-    function PhasesViewmodel() {
+    function PhasesViewmodel(allReleases) {
       this.selectPhase = __bind(this.selectPhase, this);
       this.closeDetails = __bind(this.closeDetails, this);
       var endDate, startDate;
@@ -17,64 +17,50 @@
       startDate = new Date(this.centerDate().getTime() - (24 * 60 * 60 * 1000 * 14));
       endDate = new Date(this.centerDate().getTime() + (24 * 60 * 60 * 1000 * 28));
       this.periodToView = ko.observable(new Period(new Date(this.centerDate().getTime() - (24 * 60 * 60 * 1000 * 14)), new Date(this.centerDate().getTime() + (24 * 60 * 60 * 1000 * 28)), "View Period"));
-      console.log(this.periodToView());
     }
 
     PhasesViewmodel.prototype.load = function(data) {
-      var abs, absence, phase, release, rl, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4,
-        _this = this;
+      var ms, obj, ph, rel, _i, _j, _k, _len, _len2, _len3, _ref, _ref2;
       this.releases = [];
-      _ref = data.Releases;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        release = _ref[_i];
-        rl = new Release(release.Id, DateFormatter.createJsDateFromJson(release.StartDate), DateFormatter.createJsDateFromJson(release.EndDate), release.Title);
-        _ref2 = release.Phases;
-        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-          phase = _ref2[_j];
-          rl.addPhase(new Phase(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title));
+      this.displayData = [];
+      console.log(data);
+      for (_i = 0, _len = data.length; _i < _len; _i++) {
+        rel = data[_i];
+        console.log(rel.title + ': ' + rel.endDate.dateString);
+        this.currentPhases.push(rel);
+        _ref = rel.phases;
+        for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
+          ph = _ref[_j];
+          obj = {
+            group: rel.title,
+            start: ph.startDate.date,
+            end: ph.endDate.date,
+            content: ph.title,
+            info: ph.toString()
+          };
+          this.displayData.push(obj);
         }
-        rl.phases.sort(function(a, b) {
-          if (a.startDate.date > b.startDate.date) {
-            return 1;
-          } else if (a.startDate.date < b.startDate.date) {
-            return -1;
-          } else {
-            return 0;
-          }
-        });
-        this.releases.push(rl);
+        _ref2 = rel.milestones;
+        for (_k = 0, _len3 = _ref2.length; _k < _len3; _k++) {
+          ms = _ref2[_k];
+          obj = {
+            group: rel.title,
+            start: ms.date.date,
+            content: ms.title + '<br /><span class="icon icon-milestone" />',
+            info: ms.date.dateString + '<br />' + ms.description
+          };
+          this.displayData.push(obj);
+        }
       }
-      this.releases.sort(function(a, b) {
-        if (a.startDate.date > b.startDate.date) {
+      return this.showPhases = this.displayData.sort(function(a, b) {
+        if (a.end > b.end) {
           return 1;
-        } else if (a.startDate.date < b.startDate.date) {
+        } else if (a.end < b.end) {
           return -1;
         } else {
           return 0;
         }
       });
-      _ref3 = this.releases;
-      for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
-        phase = _ref3[_k];
-        if (phase.overlaps(this.periodToView())) this.currentPhases.push(phase);
-      }
-      this.absences = [];
-      _ref4 = data.Absences;
-      for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
-        absence = _ref4[_l];
-        abs = new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title, absence.Person);
-        this.absences.push(abs);
-      }
-      return this.overlappingAbsences = ko.computed(function() {
-        var a, abs, _len5, _m, _ref5;
-        a = [];
-        _ref5 = _this.absences;
-        for (_m = 0, _len5 = _ref5.length; _m < _len5; _m++) {
-          abs = _ref5[_m];
-          if (abs.overlaps(_this.selectedPhase())) a.push(abs);
-        }
-        return a;
-      }, this);
     };
 
     PhasesViewmodel.prototype.closeDetails = function() {
@@ -111,17 +97,6 @@
         }
       }
       return _results;
-    };
-
-    PhasesViewmodel.prototype.currentAbsences = function() {
-      var abs, current, _i, _len, _ref;
-      current = [];
-      _ref = this.absences;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        abs = _ref[_i];
-        if (abs.isCurrent()) current.push(abs);
-      }
-      return current;
     };
 
     PhasesViewmodel.prototype.selectPhase = function(data) {
