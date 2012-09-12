@@ -21,15 +21,24 @@
       this.setAssignments = __bind(this.setAssignments, this);
       this.selectPhase = __bind(this.selectPhase, this);
       this.selectProject = __bind(this.selectProject, this);
-      this.selectRelease = __bind(this.selectRelease, this);      ReleaseAssignments.extend(RCrud);
+      this.selectRelease = __bind(this.selectRelease, this);
+      var _this = this;
+      ReleaseAssignments.extend(RCrud);
       PlanResourcesViewmodel.extend(RGroupBy);
       this.selectedProject = ko.observable();
       this.selectedRelease = ko.observable();
       this.selectedPhase = ko.observable();
+      this.selectedMilestone = ko.observable();
+      this.selectedDeliverable = ko.observable();
       this.selectedResource = ko.observable();
       this.assignedStartDate = ko.observable();
       this.assignedEndDate = ko.observable();
-      this.newAssignment = new AssignedResource(0, "", "", "", "", "", "", "", "", 0.8, new Date(), new Date());
+      this.selectedMilestone.subscribe(function(newValue) {
+        _this.newAssignment(new AssignedResource(0, "", "", "", 0.8, new Date(), newValue.date.date, "", new Milestone(), new Deliverable()));
+        return console.log(_this.newAssignment());
+      });
+      this.setEndDate = ko.observable(new Date());
+      this.newAssignment = ko.observable(new AssignedResource(0, "", "", "", 0.8, new Date(), new Date(), "", new Milestone(), new Deliverable()));
       this.allReleases = ko.observableArray(allReleases);
       this.allResources = ko.observableArray(allResources);
       this.assignments = ko.observableArray();
@@ -95,10 +104,10 @@
     PlanResourcesViewmodel.prototype.addAssignment = function() {
       var ass;
       console.log("addAssignment");
-      console.log(this.newAssignment.assignedPeriod.startDate);
-      console.log(this.newAssignment.assignedPeriod.endDate.dateString);
-      console.log(this.newAssignment.assignedPeriod.endDate.date);
-      ass = new AssignedResource(0, this.selectedRelease(), this.selectedResource(), this.selectedProject(), this.newAssignment.focusFactor, DateFormatter.createFromString(this.newAssignment.assignedPeriod.startDate.dateString), DateFormatter.createFromString(this.newAssignment.assignedPeriod.endDate.dateString), this.newAssignment.activity);
+      console.log(this.newAssignment().assignedPeriod.startDate);
+      console.log(this.newAssignment().assignedPeriod.endDate.dateString);
+      console.log(this.newAssignment().assignedPeriod.endDate.date);
+      ass = new AssignedResource(0, this.selectedRelease(), this.selectedResource(), this.selectedProject(), this.newAssignment().focusFactor, DateFormatter.createFromString(this.newAssignment().assignedPeriod.startDate.dateString), DateFormatter.createFromString(this.newAssignment().assignedPeriod.endDate.dateString), this.newAssignment().activity, this.selectedMilestone(), this.selectedDeliverable());
       console.log(ass);
       this.assignments.push(ass);
       return this.canShowForm(false);

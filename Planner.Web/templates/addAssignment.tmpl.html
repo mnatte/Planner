@@ -5,5 +5,14 @@
 
         <!--data context is $root.newAssignment-->
         <!--don't use availableResources() in select box since we need to be able to plan 1 resource multiple times (differing in period and / or activity)-->
-        <select data-bind="options: $root.allResources(), optionsText: function(item) { return item.fullName() }, value: $root.selectedResource, optionsCaption: 'Choose...'" style="display:inline" ></select> <input type="text" data-bind="value: focusFactor" style="display:inline; width:30px; height:30px"/><input type="text" data-bind="value: assignedPeriod.startDate.dateString" style="display:inline; width:100px; height:30px"/><input type="text" data-bind="value: assignedPeriod.endDate.dateString" style="display:inline; width:100px; height:30px"/><input type="text" data-bind="value: activity, event: { blur: $root.addAssignment.bind($data) }" style="display:inline; width:100px; height:30px"/>
+        <select data-bind="options: $root.allResources(), optionsText: function(item) { return item.fullName() }, value: $root.selectedResource, optionsCaption: 'Choose...'" style="display:inline" ></select>
+        <select data-bind="options: $root.selectedRelease().milestones, optionsText: 'title', value: $root.selectedMilestone, optionsCaption: 'Choose...'" style="display:inline"></select> 
+        <!-- ko if: $root.selectedMilestone() -->
+        <select data-bind="options: $root.selectedMilestone().deliverables, optionsText: 'title', value: $root.selectedDeliverable, optionsCaption: 'Choose...'" style="display:inline"></select>
+        <!--/ko-->
+        <input type="text" data-bind="value: focusFactor" style="display:inline; width:30px; height:30px"/>
+        <input type="text" data-bind="value: assignedPeriod.startDate.dateString" style="display:inline; width:100px; height:30px"/>
+        <input type="text" data-bind="value: assignedPeriod.endDate.dateString" style="display:inline; width:100px; height:30px"/>
+        <input type="text" data-bind="value: activity" style="display:inline; width:100px; height:30px"/> <!--, event: { blur: $root.addAssignment.bind($data) }-->
+        <span class="icon24 icon-add-user22 interact" data-bind="click: $root.addAssignment.bind($data)"></span>
 </section>

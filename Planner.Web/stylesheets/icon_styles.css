@@ -3,6 +3,8 @@
 .icon { width: 32px; height: 32px; background: transparent url(../Sprites/silk-sprite.png?634021826077603114) no-repeat; text-indent: 99999px; overflow: hidden; }
 .icon22 { width: 22px; height: 22px; background: transparent url(../Sprites/silk-sprite.png?634021826077603114) no-repeat; text-indent: 99999px; overflow: hidden; }
 .icon16 { width: 16px; height: 16px; background: transparent url(../Sprites/silk-sprite.png?634021826077603114) no-repeat; text-indent: 99999px; overflow: hidden; }
+.icon24 { width: 24px; height: 24px; background: transparent url(../Sprites/silk-sprite.png?634021826077603114) no-repeat; text-indent: 99999px; overflow: hidden; }
+a.icon24, input.icon24, span.icon24,
 a.icon, input.icon, span.icon, 
 a.icon22, input.icon22, span.icon22, 
 a.icon16, input.icon16, span.icon16, 
@@ -21,5 +23,7 @@ a.icon128, input.icon128, span.icon128
 .icon-project { background:url('../images/icons/project.png'); }
 .icon-add-user48 { background:url('../images/icons/add-user.png'); }
 .icon-remove-user22 { background:url('../images/icons/remove-user22.png'); }
+.icon-add-user22 { background:url('../images/icons/add.png'); }
 .icon-zoom48 { background:url('../images/icons/zoom.png'); }
 .icon-todo48 { background:url('../images/icons/todo.png'); }
+

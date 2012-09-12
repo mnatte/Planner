@@ -98,6 +98,8 @@ namespace MvcApplication1.Models
             public ReleaseModels.Resource Resource { get; set; }
             public ReleaseModels.Phase Phase { get; set; }
             public ReleaseModels.Project Project { get; set; }
+            public ReleaseModels.Deliverable Deliverable { get; set; }
+            public ReleaseModels.Milestone Milestone { get; set; }
             public double FocusFactor { get; set; }
             public DateTime StartDate { get; set; }
             public DateTime EndDate { get; set; }

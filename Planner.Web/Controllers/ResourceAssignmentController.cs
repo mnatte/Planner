@@ -56,6 +56,8 @@ namespace MvcApplication1.Controllers
                     cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = model.PhaseId;
                     cmd.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = model.ProjectId;
                     cmd.Parameters.Add("@PersonId", System.Data.SqlDbType.Int).Value = 0;
+                    cmd.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = 0;
+                    cmd.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = 0;
                     cmd.Parameters.Add("@FocusFactor", System.Data.SqlDbType.Decimal).Value = 0;
                     cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = 0;
                     cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = 0;
@@ -66,6 +68,8 @@ namespace MvcApplication1.Controllers
                     {
                         cmd.Parameters["@Id"].Value = ass.Id;
                         cmd.Parameters["@PersonId"].Value = ass.ResourceId;
+                        cmd.Parameters["@MilestoneId"].Value = ass.MilestoneId;
+                        cmd.Parameters["@DeliverableId"].Value = ass.DeliverableId;
                         cmd.Parameters["@FocusFactor"].Value = ass.FocusFactor;
                         cmd.Parameters["@StartDate"].Value = ass.StartDate.ToDateTimeFromDutchString();
                         cmd.Parameters["@EndDate"].Value = ass.EndDate.ToDateTimeFromDutchString();
@@ -108,6 +112,8 @@ namespace MvcApplication1.Controllers
                 Phase = new ReleaseModels.Phase { Id = int.Parse(reader["PhaseId"].ToString()), Title = reader["phasetitle"].ToString() },
                 Resource = new ReleaseModels.Resource { Id = int.Parse(reader["PersonId"].ToString()), FirstName = reader["FirstName"].ToString(), MiddleName = reader["MiddleName"].ToString(), LastName = reader["LastName"].ToString() },
                 Project = new ReleaseModels.Project { Id = int.Parse(reader["ProjectId"].ToString()), Title = reader["ProjectTitle"].ToString() },
+                Deliverable = new ReleaseModels.Deliverable { Id = int.Parse(reader["DeliverableId"].ToString()), Title = reader["DeliverableTitle"].ToString() },
+                Milestone = new ReleaseModels.Milestone { Id = int.Parse(reader["MilestoneId"].ToString()), Title = reader["MilestoneTitle"].ToString() },
                 StartDate = DateTime.Parse(reader["StartDate"].ToString()),
                 EndDate = DateTime.Parse(reader["EndDate"].ToString()),
                 Activity = reader["Activity"].ToString()

@@ -12,6 +12,8 @@ namespace MvcApplication1.Models
         public int Id { get; set ; }
         public int ResourceId { get; set; }
         public int ProjectId { get; set; }
+        public int MilestoneId { get; set; }
+        public int DeliverableId { get; set; }
         public int PhaseId { get; set; }
         public double FocusFactor { get; set; }
         public string StartDate { get; set; }

@@ -12,14 +12,30 @@ class PlanResourcesViewmodel extends Mixin
 		@selectedProject = ko.observable()
 		@selectedRelease = ko.observable()
 		@selectedPhase = ko.observable()
+		@selectedMilestone = ko.observable()
+		@selectedDeliverable = ko.observable()
 		@selectedResource = ko.observable()
 		@assignedStartDate = ko.observable()
 		@assignedEndDate = ko.observable()
-		@newAssignment = new AssignedResource(0, "", "", "", "", "", "", "", "", 0.8, new Date(), new Date())
+
+		@selectedMilestone.subscribe((newValue) => 
+			#@setEndDate newValue.date.date 
+			@newAssignment new AssignedResource(0, "", "", "", 0.8, new Date(), newValue.date.date, "", new Milestone(), new Deliverable())
+			console.log @newAssignment()
+			)
+		@setEndDate = ko.observable(new Date())
+		# @setEndDate = ko.computed(=> 
+		#	console.log @selectedMilestone()
+		#	dt = if @selectedMilestone() then @selectedMilestone().date.date else new Date()
+		#	console.log dt
+		#	dt
+		#, @)
+		@newAssignment = ko.observable(new AssignedResource(0, "", "", "", 0.8, new Date(), new Date(), "", new Milestone(), new Deliverable()))
 		@allReleases = ko.observableArray(allReleases)
 		@allResources = ko.observableArray(allResources)
 		@assignments = ko.observableArray()
 		@canShowForm = ko.observable(false)
+		
 
 		# setup nice 'remove' method for Array
 		Array::remove = (e) -> @[t..t] = [] if (t = @indexOf(e)) > -1
@@ -42,6 +58,9 @@ class PlanResourcesViewmodel extends Mixin
         ajax.getAssignedResources(@selectedRelease().id, @selectedProject().id, @setAssignments)
 
 	addResource: ->
+		#@newAssignment = new AssignedResource(0, "", "", "", 0.8, new Date(), dt, "", new Milestone(), new Deliverable())
+		#console.log @setEndDate()
+		#@newAssignment new AssignedResource(0, "", "", "", 0.8, new Date(), @setEndDate(), "", new Milestone(), new Deliverable())
 		@canShowForm(true)
 
 	# this way we need to refer from HTML as availableResources() - with '()'
@@ -61,10 +80,10 @@ class PlanResourcesViewmodel extends Mixin
 		#copy.project = @selectedProject()
 		#console.log ko.toJSON(copy)
 		#assignedPeriod.startDate.dateString databinding in htmlform automatically transforms to underlying DatePlus type 
-		console.log @newAssignment.assignedPeriod.startDate
-		console.log @newAssignment.assignedPeriod.endDate.dateString
-		console.log @newAssignment.assignedPeriod.endDate.date
-		ass = new AssignedResource(0, @selectedRelease(), @selectedResource(), @selectedProject(), @newAssignment.focusFactor, DateFormatter.createFromString(@newAssignment.assignedPeriod.startDate.dateString), DateFormatter.createFromString(@newAssignment.assignedPeriod.endDate.dateString), @newAssignment.activity)
+		console.log @newAssignment().assignedPeriod.startDate
+		console.log @newAssignment().assignedPeriod.endDate.dateString
+		console.log @newAssignment().assignedPeriod.endDate.date
+		ass = new AssignedResource(0, @selectedRelease(), @selectedResource(), @selectedProject(), @newAssignment().focusFactor, DateFormatter.createFromString(@newAssignment().assignedPeriod.startDate.dateString), DateFormatter.createFromString(@newAssignment().assignedPeriod.endDate.dateString), @newAssignment().activity, @selectedMilestone(), @selectedDeliverable())
 		console.log ass
 		@assignments.push ass
 		#@allResources.remove @selectedResource()

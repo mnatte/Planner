@@ -394,21 +394,25 @@
 
     __extends(AssignedResource, _super);
 
-    function AssignedResource(id, release, resource, project, focusFactor, startDate, endDate, activity) {
+    function AssignedResource(id, release, resource, project, focusFactor, startDate, endDate, activity, milestone, deliverable) {
       this.id = id;
       this.release = release;
       this.resource = resource;
       this.project = project;
       this.focusFactor = focusFactor;
       this.activity = activity;
+      this.milestone = milestone;
+      this.deliverable = deliverable;
       this.assignedPeriod = new Period(startDate, endDate, "");
     }
 
     AssignedResource.create = function(jsonData, project, release) {
-      var ass, resource;
+      var ass, deliverable, milestone, resource;
       console.log("create AssignedResource:" + ko.toJSON(jsonData));
       resource = Resource.create(jsonData.Resource);
-      ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Activity);
+      milestone = Milestone.create(jsonData.Milestone);
+      deliverable = Deliverable.create(jsonData.Deliverable);
+      ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Activity, milestone, deliverable);
       console.log(ass);
       return ass;
     };
@@ -440,11 +444,15 @@
       delete copy.resource;
       delete copy.project;
       delete copy.assignedPeriod;
+      delete copy.milestone;
+      delete copy.deliverable;
       copy.resourceId = this.resource.id;
       copy.phaseId = this.release.id;
       copy.projectId = this.project.id;
       copy.startDate = this.assignedPeriod.startDate.dateString;
       copy.endDate = this.assignedPeriod.endDate.dateString;
+      copy.milestoneId = this.milestone.id;
+      copy.deliverableId = this.deliverable.id;
       console.log(copy);
       return copy;
     };

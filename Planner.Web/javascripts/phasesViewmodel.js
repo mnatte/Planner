@@ -23,7 +23,6 @@
       var ms, obj, ph, rel, _i, _j, _k, _len, _len2, _len3, _ref, _ref2;
       this.releases = [];
       this.displayData = [];
-      console.log(data);
       for (_i = 0, _len = data.length; _i < _len; _i++) {
         rel = data[_i];
         console.log(rel.title + ': ' + rel.endDate.dateString);

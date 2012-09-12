@@ -271,7 +271,7 @@ class Project extends Mixin
 		projects
 
 class AssignedResource extends Mixin
-	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate, @activity) ->
+	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate, @activity, @milestone, @deliverable) ->
 		#@resource = new Resource(resourceId, firstName, middleName, lastName)
 		#@project = new Project(projectId, projectTitle)
 		#@phase = new Phase(phaseId, "", "", phaseTitle)
@@ -281,8 +281,10 @@ class AssignedResource extends Mixin
 		console.log "create AssignedResource:" + ko.toJSON(jsonData)
 		# create resource from json
 		resource = Resource.create jsonData.Resource
+		milestone = Milestone.create jsonData.Milestone
+		deliverable = Deliverable.create jsonData.Deliverable
 		# create under given project and release
-		ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Activity)
+		ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Activity, milestone, deliverable)
 		console.log ass
 		ass
 	@createCollection: (jsonData, project, release) ->
@@ -308,12 +310,16 @@ class AssignedResource extends Mixin
 		delete copy.resource #remove property
 		delete copy.project #remove property
 		delete copy.assignedPeriod
+		delete copy.milestone
+		delete copy.deliverable
 		#console.log(@resource)
 		copy.resourceId = @resource.id
 		copy.phaseId = @release.id
 		copy.projectId = @project.id
 		copy.startDate = @assignedPeriod.startDate.dateString
 		copy.endDate = @assignedPeriod.endDate.dateString
+		copy.milestoneId = @milestone.id
+		copy.deliverableId = @deliverable.id
 		console.log(copy)
 		copy #return the copy to be serialized
 
@@ -384,7 +390,7 @@ class Resource extends Mixin
 		@fullName()
 
 
-# datastructure for submitting all assignements with release
+# datastructure for submitting all assignments with release
 class ReleaseAssignments extends Mixin
 	constructor: (@phaseId, @projectId, @assignments) ->
 

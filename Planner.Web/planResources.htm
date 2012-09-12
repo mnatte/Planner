@@ -87,10 +87,14 @@
             <ul data-bind="foreach: assignments">
                 <li>
                     <span data-bind="text: resource.fullName()"></span>
-                    <span class="selectable" contenteditable="true" data-bind="text: focusFactor, editable: focusFactor, tooltip: { content: 'Test', style: { name: 'Cream' }, options: { hide: { event: 'unfocus' } } }"></span>
+                    <span data-bind="text: milestone.title"></span>
+                    <span data-bind="text: deliverable.title"></span>
+                    <span class="selectable" contenteditable="true" data-bind="text: activity, editable: activity"></span>
+                    <span class="selectable" contenteditable="true" data-bind="text: focusFactor, editable: focusFactor, tooltip: { content: 'Hallo', style: { name: 'Cream' }, options: { hide: { event: 'blur' } } }"></span>
                     <span class="selectable" contenteditable="true" data-bind="text: assignedPeriod.startDate.dateString, editable: assignedPeriod.startDate.dateString"></span>
                     <span class="selectable" contenteditable="true" data-bind="text: assignedPeriod.endDate.dateString, editable: assignedPeriod.endDate.dateString"></span>
-                    <span class="selectable" contenteditable="true" data-bind="text: activity, editable: activity"></span>
+                    <!--<select data-bind="options: $root.selectedRelease().milestones, optionsText: 'title', optionsValue: 'id', value: milestone.id, optionsCaption: 'Choose...'"></select>
+                    <select data-bind="options: $root.selectedRelease().milestones, optionsText: 'title', optionsValue: 'id', value: milestone.id, optionsCaption: 'Choose...'"></select>-->
                     <!--<button data-bind="click: $root.removeAssignment.bind($data)">Remove</button>-->
                     <!--<span class="ui-silk ui-silk-user-delete interact" data-bind="click: $root.removeAssignment.bind($data)"></span>-->
                     <span class="icon22 icon-remove-user22 interact" data-bind="click: $root.removeAssignment.bind($data)"></span>
