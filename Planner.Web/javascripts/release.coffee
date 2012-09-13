@@ -348,8 +348,8 @@ class Resource extends Mixin
 		@assignments = []
 	addAbsence: (period) ->
 		@periodsAway.push(period)
-	addAssignment: (period) ->
-		@assignments.push(period)
+	addAssignment: (per, rel, act) ->
+		@assignments.push({period: per, release: rel, activity: act})
 	fullName: ->
 		middle = " " if (@middleName.length is 0)
 		middle = " " + @middleName + " " if (@middleName.length > 0)
@@ -376,7 +376,7 @@ class Resource extends Mixin
 		for absence in jsonData.PeriodsAway
 			res.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title))
 		for assignment in jsonData.Assignments
-			res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity + " " + assignment.Phase.Title + " (" + assignment.FocusFactor + ")"))
+			res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity + " " + assignment.Phase.Title + " (" + assignment.FocusFactor + ")"), assignment.Phase.Title, assignment.Activity)
 		#console.log res
 		res
 	@createCollection: (jsonData) ->

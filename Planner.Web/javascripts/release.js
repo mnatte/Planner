@@ -539,8 +539,12 @@
       return this.periodsAway.push(period);
     };
 
-    Resource.prototype.addAssignment = function(period) {
-      return this.assignments.push(period);
+    Resource.prototype.addAssignment = function(per, rel, act) {
+      return this.assignments.push({
+        period: per,
+        release: rel,
+        activity: act
+      });
     };
 
     Resource.prototype.fullName = function() {
@@ -597,7 +601,7 @@
       _ref2 = jsonData.Assignments;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         assignment = _ref2[_j];
-        res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity + " " + assignment.Phase.Title + " (" + assignment.FocusFactor + ")"));
+        res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity + " " + assignment.Phase.Title + " (" + assignment.FocusFactor + ")"), assignment.Phase.Title, assignment.Activity);
       }
       return res;
     };

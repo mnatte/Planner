@@ -32,6 +32,8 @@
 
     <link rel="stylesheet" href="stylesheets/jquery.ui.progressbar.css">
 
+    <link rel="stylesheet" type="text/css" href="stylesheets/timeline.css" />
+
 	<!-- Favicons
 	================================================== -->
 	<link rel="shortcut icon" href="images/favicon.ico">
@@ -49,6 +51,7 @@
     <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
     <script type="text/javascript" src="Scripts/knockout-array-filter.js"></script>
     <script type="text/javascript" src="Scripts/koExternalTemplateEngine_all.min.js"></script>
+    <script type="text/javascript" src="Scripts/timeline-min.js"></script>
 
     <script type="text/javascript" src="Scripts/jquery.dimensions.js"></script>
     <script type="text/javascript" src="Scripts/jquery.delegate.js"></script>
@@ -63,8 +66,10 @@
     <script type="text/javascript" src="javascripts/Roles.js"></script>
     <script type="text/javascript" src="javascripts/UseCases.js"></script>
     <script type="text/javascript" src="javascripts/ko.bindingHandlers.fadeVisible.js"></script>
-    <script type="text/javascript" src="javascripts/ko.bindingHandlers.period2.js"></script>
-    <script type="text/javascript" src="javascripts/ko.bindingHandlers.period.js"></script>
+    <!--<script type="text/javascript" src="javascripts/ko.bindingHandlers.period2.js"></script>
+    <script type="text/javascript" src="javascripts/ko.bindingHandlers.period.js"></script>-->
+
+    <script type="text/javascript" src="javascripts/ko.bindingHandlers.periodoverview.js"></script>
 
     <script type="text/javascript" src="Scripts/highcharts.js"></script>
 </head>
@@ -91,27 +96,10 @@
                 <div class="productDetailsArea" id="resource name" data-bind="text: $data"></div>
 
                 <div id="phases" class="sixteen columns">
-                    <div class="timeline">
-                        <!--todo: fix alignment, use only phases on same level (no releases with child-phases in new loop)-->
-                        <ul class="events" data-bind="foreach: periodsAway">
-                            <!-- ko if: $data.overlaps($root.periodToView()) -->
-                            <li data-bind="text: toString(), period: $root.periodToView()"></li>
-                            <!-- /ko -->
-                        </ul> <!-- end .events -->
-                        <ul class="events" data-bind="foreach: assignments">
-                            <!-- ko if: $data.overlaps($root.periodToView()) -->
-                            <li data-bind="text: title, period: $root.periodToView()"></li>
-                            <!-- /ko -->
-                        </ul> <!-- end .events -->
-
-                        <!--max 7 units because of available space-->
-                        <ul class="intervals" data-bind="foreach: $root.periodToView().weeks()">
-                            <li class="first"><span data-bind="text: $data.shortNumber() + ':' + $data.period().toShortString(), style: { color: $data.period().containsDate(new Date()) ? 'red' : 'black' }"></span></li>
-                        </ul> <!-- end .intervals -->
-                    </div> <!-- end .timeline -->
-                    <button data-bind="click: $root.prevViewPeriod.bind($data)">Prev</button>
-                    <button data-bind="click: $root.nextViewPeriod.bind($data)">Next</button>
+                    <div id="mytimeline" data-bind="periodoverview: $data"></div>
+                    <div id="details" style="height: 200px" data-bind="eventDetails: timeline">&nbsp;</div>
                 </div>
+
             </div>
         </section>
 	</div><!-- container -->
