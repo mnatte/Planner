@@ -124,6 +124,12 @@
     <!--navigation-->
         <!-- ko template: {name: 'navigation'} -->
         <!-- /ko -->
+        <div id="space" style="height: 100px">&nbsp;</div>
+        <!--releases overview-->
+        <div id="phases" class="sixteen columns">
+            <div id="mytimeline"></div>
+            <div id="details"></div>
+        </div>
 
         <section id="overview" class="sixteen columns">
             <!-- ko if: $root.selectedPhase() -->
@@ -134,13 +140,8 @@
                 </div>
             </div>
             <!--/ko-->
-            <div id="phases" class="sixteen columns">
-                <div id="mytimeline"></div>
-                <div id="details"></div>
-            </div>
-                
             </section>
-            <section class="sixteen columns" alpha>
+        <section class="sixteen columns" alpha>
             <div>
                 <h4 data-bind="text: selectedPhase()"></h4>
             </div>

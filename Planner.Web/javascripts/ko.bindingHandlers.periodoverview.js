@@ -67,54 +67,28 @@
                 "intervalMax": 1000 * 60 * 60 * 24 * 31 * 3  // about three months in milliseconds
             };
 
-            //            function onSelectedChanged(properties) {
-            //                $('#details').html('');
-            //                var sel = timeline.getSelection();
-            //                if (sel.length) {
-            //                    if (sel[0] != undefined) {
-            //                        var item = data[sel[0].row];
-            //                        //$.each(item, function (name, value) {
-            //                        //document.getElementById('details').innerHTML += (name + ": " + value) + " selected";
-            //                        //});
-            //                        if (typeof item.info !== "undefined")
-            //                            $('#details').html(item.info);
-            //                    }
-            //                }
-            //            }
-
-            // attach an event listener using the links events handler
-            //            links.events.addListener(timeline, 'select', onSelectedChanged);
-
-
-            // Draw our timeline with the created data and options 
-            timeline.draw(periods, options);
-
-        }
-    };
-})();
-
-(function () {
-    ko.bindingHandlers.eventDetails = {
-        init: function (element, valueAccessor, allBindingsAccessor, viewModel) {
-            // valueAccessor is model passed to binding, viewModel is complete viewModel within scope
-            console.log("viewModel: " + viewModel.toString());
-            console.log("valueAccessor: " + valueAccessor());
-            resource = valueAccessor();
-
             function onSelectedChanged(properties) {
-                $(element).html('');
+                $(element).find('#details').html('');
                 var sel = timeline.getSelection();
                 if (sel.length) {
                     if (sel[0] != undefined) {
-                        var item = data[sel[0].row];
+                        var item = periods[sel[0].row];
+                        //$.each(item, function (name, value) {
+                        //document.getElementById('details').innerHTML += (name + ": " + value) + " selected";
+                        //});
                         if (typeof item.info !== "undefined")
-                            $(element).html(item.info);
+                            $(element).find('#details').html(item.info);
                     }
                 }
             }
 
             // attach an event listener using the links events handler
-            links.events.addListener(valueAccessor(), 'select', onSelectedChanged);
+            links.events.addListener(timeline, 'select', onSelectedChanged);
+
+
+            // Draw our timeline with the created data and options 
+            timeline.draw(periods, options);
+            $(element).append('<div id="details">');
         }
     };
 })();

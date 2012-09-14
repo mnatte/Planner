@@ -6,6 +6,13 @@
         <!--data context is $root.newAssignment-->
         <!--don't use availableResources() in select box since we need to be able to plan 1 resource multiple times (differing in period and / or activity)-->
         <select data-bind="options: $root.allResources(), optionsText: function(item) { return item.fullName() }, value: $root.selectedResource, optionsCaption: 'Choose...'" style="display:inline" ></select>
+        <!-- ko if: $root.selectedResource() -->
+        <div id="phases" class="sixteen columns">
+            <div id="mytimeline" data-bind="periodoverview: $root.selectedResource()"></div>
+            <div id="space" style="height: 200px">&nbsp;</div>
+        </div>
+        <!--/ko-->
+
         <select data-bind="options: $root.selectedRelease().milestones, optionsText: 'title', value: $root.selectedMilestone, optionsCaption: 'Choose...'" style="display:inline"></select> 
         <!-- ko if: $root.selectedMilestone() -->
         <select data-bind="options: $root.selectedMilestone().deliverables, optionsText: 'title', value: $root.selectedDeliverable, optionsCaption: 'Choose...'" style="display:inline"></select>
