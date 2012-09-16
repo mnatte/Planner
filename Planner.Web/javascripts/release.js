@@ -1,5 +1,5 @@
 (function() {
-  var AssignedResource, Deliverable, Feature, Milestone, Period, Phase, Project, Release, ReleaseAssignments, Resource, Week, root,
+  var Activity, AssignedResource, Deliverable, Feature, Milestone, Period, Phase, Project, Release, ReleaseAssignments, Resource, Week, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -495,10 +495,18 @@
       this.description = description;
       this.format = format;
       this.location = location;
+      this.activities = [];
     }
 
     Deliverable.create = function(jsonData) {
-      return new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location);
+      var act, deliverabale, _i, _len, _ref;
+      deliverabale = new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location);
+      _ref = jsonData.ActivitiesNeeded;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        act = _ref[_i];
+        deliverabale.activities.push(Activity.create(act));
+      }
+      return deliverabale;
     };
 
     Deliverable.createCollection = function(jsonData) {
@@ -513,6 +521,35 @@
     };
 
     return Deliverable;
+
+  })(Mixin);
+
+  Activity = (function(_super) {
+
+    __extends(Activity, _super);
+
+    function Activity(id, title, description) {
+      this.id = id;
+      this.title = title;
+      this.description = description;
+    }
+
+    Activity.create = function(jsonData) {
+      return new Activity(jsonData.Id, jsonData.Title, jsonData.Description);
+    };
+
+    Activity.createCollection = function(jsonData) {
+      var act, activities, _i, _len;
+      activities = [];
+      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
+        act = jsonData[_i];
+        this.act = Activity.create(act);
+        activities.push(this.act);
+      }
+      return activities;
+    };
+
+    return Activity;
 
   })(Mixin);
 
@@ -656,6 +693,8 @@
   root.Project = Project;
 
   root.Deliverable = Deliverable;
+
+  root.Activity = Activity;
 
   root.AssignedResource = AssignedResource;
 

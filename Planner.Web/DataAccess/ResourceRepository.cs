@@ -67,7 +67,7 @@ namespace MvcApplication1.DataAccess
                 {
                     while (reader.Read())
                     {
-                        var ass = new ReleaseModels.ResourceAssignment { Activity = reader["Activity"].ToString(), Resource = new ReleaseModels.Resource { FirstName = reader["FirstName"].ToString(), MiddleName = reader["MiddleName"].ToString(), LastName = reader["LastName"].ToString() }, FocusFactor = double.Parse(reader["FocusFactor"].ToString()), Phase = new ReleaseModels.Phase { Title = reader["PhaseTitle"].ToString() }, EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Project = new ReleaseModels.Project { Title = reader["projecttitle"].ToString() } };
+                        var ass = new ReleaseModels.ResourceAssignment { Activity = new ReleaseModels.Activity { Id = int.Parse(reader["ActivityId"].ToString()), Title = reader["ActivityTitle"].ToString() }, Resource = new ReleaseModels.Resource { FirstName = reader["FirstName"].ToString(), MiddleName = reader["MiddleName"].ToString(), LastName = reader["LastName"].ToString() }, FocusFactor = double.Parse(reader["FocusFactor"].ToString()), Phase = new ReleaseModels.Phase { Title = reader["PhaseTitle"].ToString() }, EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Project = new ReleaseModels.Project { Title = reader["projecttitle"].ToString() } };
                         lst.Add(ass);
                     }
                 }

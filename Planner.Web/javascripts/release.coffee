@@ -333,14 +333,30 @@ class Feature
 
 class Deliverable extends Mixin
 	constructor: (@id, @title, @description, @format, @location) ->
+		@activities = []
 	@create: (jsonData) ->
-		new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location)
+		deliverabale = new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location)
+		for act in jsonData.ActivitiesNeeded
+			deliverabale.activities.push Activity.create(act)
+		deliverabale
 	@createCollection: (jsonData) ->
 		deliverables = []
 		for del in jsonData
 			@del = Deliverable.create(del)
 			deliverables.push @del
 		deliverables
+
+
+class Activity extends Mixin
+	constructor: (@id, @title, @description) ->
+	@create: (jsonData) ->
+		new Activity(jsonData.Id, jsonData.Title, jsonData.Description)
+	@createCollection: (jsonData) ->
+		activities = []
+		for act in jsonData
+			@act = Activity.create(act)
+			activities.push @act
+		activities
 
 class Resource extends Mixin
 	constructor: (@id, @firstName, @middleName, @lastName, @initials, @hoursPerWeek, @email, @phoneNumber, @company, @function) ->
@@ -404,6 +420,7 @@ root.Feature = Feature
 root.Resource = Resource
 root.Project = Project
 root.Deliverable = Deliverable
+root.Activity = Activity
 root.AssignedResource = AssignedResource
 root.ReleaseAssignments = ReleaseAssignments
 

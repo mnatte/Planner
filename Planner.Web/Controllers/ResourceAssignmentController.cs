@@ -61,7 +61,7 @@ namespace MvcApplication1.Controllers
                     cmd.Parameters.Add("@FocusFactor", System.Data.SqlDbType.Decimal).Value = 0;
                     cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = 0;
                     cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = 0;
-                    cmd.Parameters.Add("@Activity", System.Data.SqlDbType.VarChar).Value = string.Empty;
+                    cmd.Parameters.Add("@ActivityId", System.Data.SqlDbType.Int).Value = 0;
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
                     foreach (var ass in model.Assignments)
@@ -73,7 +73,7 @@ namespace MvcApplication1.Controllers
                         cmd.Parameters["@FocusFactor"].Value = ass.FocusFactor;
                         cmd.Parameters["@StartDate"].Value = ass.StartDate.ToDateTimeFromDutchString();
                         cmd.Parameters["@EndDate"].Value = ass.EndDate.ToDateTimeFromDutchString();
-                        cmd.Parameters["@Activity"].Value = ass.Activity ?? string.Empty;
+                        cmd.Parameters["@ActivityId"].Value = ass.ActivityId;
                         amount += cmd.ExecuteNonQuery();
                     }
                 }
@@ -116,7 +116,7 @@ namespace MvcApplication1.Controllers
                 Milestone = new ReleaseModels.Milestone { Id = int.Parse(reader["MilestoneId"].ToString()), Title = reader["MilestoneTitle"].ToString() },
                 StartDate = DateTime.Parse(reader["StartDate"].ToString()),
                 EndDate = DateTime.Parse(reader["EndDate"].ToString()),
-                Activity = reader["Activity"].ToString()
+                Activity = new ReleaseModels.Activity { Id = int.Parse(reader["ActivityId"].ToString()), Title = reader["ActivityTitle"].ToString() }
             };
         }
 

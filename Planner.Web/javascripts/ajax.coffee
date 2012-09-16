@@ -66,6 +66,16 @@ class Ajax
 				callback data
 			error: (XHR, status, errorThrown) ->
 				console.log "AJAX Deliverables error: #{status}"
+	getActivities: (callback) ->
+		url = "/planner/Deliverable/GetAllActivities"
+		$.ajax url,
+			dataType: "json"
+			type: "GET"
+			success: (data, status, XHR) ->
+				console.log "Activities data loaded"
+				callback data
+			error: (XHR, status, errorThrown) ->
+				console.log "AJAX Deliverables error: #{status}"
 	getAssignedResources: (phaseId, projectId, callback) ->
 		url = "/planner/ResourceAssignment/Assignments/" + phaseId + "/" + projectId
 		$.ajax url,

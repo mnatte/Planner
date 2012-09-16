@@ -89,21 +89,31 @@ namespace MvcApplication1.Models
             public string Format { get; set; }
             public int InitialHoursEstimate { get; set; }
             public int HoursRemaining { get; set; }
+            public List<Activity> ActivitiesNeeded { get; set; }
+        }
+
+        public class Activity
+        {
+            public int Id { get; set; }
+            public string Title { get; set; }
+            public string Description { get; set; }
         }
 
 
         public class ResourceAssignment
         {
             public int Id { get; set; }
-            public ReleaseModels.Resource Resource { get; set; }
-            public ReleaseModels.Phase Phase { get; set; }
-            public ReleaseModels.Project Project { get; set; }
-            public ReleaseModels.Deliverable Deliverable { get; set; }
-            public ReleaseModels.Milestone Milestone { get; set; }
+            public Resource Resource { get; set; }
+            public Phase Phase { get; set; }
+
+            public Project Project { get; set; }
+            public Milestone Milestone { get; set; }
+            public Deliverable Deliverable { get; set; }
+            public Activity Activity { get; set; }
+
             public double FocusFactor { get; set; }
             public DateTime StartDate { get; set; }
             public DateTime EndDate { get; set; }
-            public string Activity { get; set; }
         }
 
         public class Release : Phase

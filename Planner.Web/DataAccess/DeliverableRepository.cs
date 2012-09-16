@@ -30,12 +30,19 @@ namespace MvcApplication1.DataAccess
 
         protected override ReleaseModels.Deliverable CreateItemByDbRow(System.Data.SqlClient.SqlDataReader reader)
         {
-            var item = new ReleaseModels.Deliverable { Id = int.Parse(reader["Id"].ToString()), Title = reader["Title"].ToString(), Description = reader["Description"].ToString(), Location = reader["Location"].ToString(), Format = reader["Format"].ToString() };
-            
-            // Resource / Person is not a child of a Deliverable root aggregate; Persons exist without deliverables.
-            // Probably we don't need this property
-            //var ownerId = int.Parse(reader["OwnerId"].ToString());
-            //item.Owner = null;
+            var item = new ReleaseModels.Deliverable
+            {
+                Id = int.Parse(reader["Id"].ToString()),
+                Title = reader["Title"].ToString(),
+                Description = reader["Description"].ToString(),
+                Location = reader["Location"].ToString(),
+                Format = reader["Format"].ToString(),
+            };
+
+            var actRepository = new ActivityRepository();
+            var activities = actRepository.GetDeliverableActivities(item);
+
+            item.ActivitiesNeeded = activities;
 
             return item;
         }

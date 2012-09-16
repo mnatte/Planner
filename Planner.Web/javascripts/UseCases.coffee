@@ -122,9 +122,18 @@ class ULoadAdminResources
 
 class ULoadAdminDeliverables
 	constructor: ->
-	execute: (data) ->
+	execute: (acts, data) ->
 		deliverables = Deliverable.createCollection data
-		@viewModel = new AdminDeliverableViewmodel(deliverables)
+		activities = Activity.createCollection acts
+		@viewModel = new AdminDeliverableViewmodel(deliverables, activities)
+		@viewModel.selectItem @viewModel.allItems()[0]
+		ko.applyBindings(@viewModel)
+
+class ULoadAdminActivities
+	constructor: ->
+	execute: (data) ->
+		items = Activity.createCollection data
+		@viewModel = new AdminActivityViewmodel(items)
 		@viewModel.selectItem @viewModel.allItems()[0]
 		ko.applyBindings(@viewModel)
 
@@ -152,5 +161,6 @@ root.ULoadAdminReleases = ULoadAdminReleases
 root.ULoadAdminProjects = ULoadAdminProjects
 root.ULoadAdminResources = ULoadAdminResources
 root.ULoadAdminDeliverables = ULoadAdminDeliverables
+root.ULoadAdminActivities = ULoadAdminActivities
 root.ULoadPlanResources = ULoadPlanResources
 

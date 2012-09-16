@@ -101,6 +101,7 @@
   <ItemGroup>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\DeliverableController.cs" />
+    <Compile Include="DataAccess\ActivityRepository.cs" />
     <Compile Include="DataAccess\MilestoneRepository.cs" />
     <Compile Include="DataAccess\DeliverableRepository.cs" />
     <Compile Include="DataAccess\IBasicCrudUsable.cs" />
@@ -119,6 +120,7 @@
     </Compile>
     <Compile Include="Helpers.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\ActivityInputModel.cs" />
     <Compile Include="Models\DeliverableInputModel.cs" />
     <Compile Include="Models\MilestoneInputModel.cs" />
     <Compile Include="Models\PersonInputModel.cs" />
@@ -134,6 +136,12 @@
     <Content Include="adminProject.htm" />
     <Content Include="adminResource.htm" />
     <Content Include="adminDeliverable.htm" />
+    <Content Include="adminActivity.htm" />
+    <Content Include="javascripts\adminActivityViewmodel.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>adminActivityViewmodel.coffee</DependentUpon>
+    </Content>
     <Content Include="javascripts\ko.bindingHandlers.periodoverview.js" />
     <Content Include="javascripts\planningOverviewViewmodel.js">
       <AutoGen>True</AutoGen>
@@ -344,6 +352,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="javascripts\adminActivityViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>adminActivityViewmodel.js</LastGenOutput>
+    </None>
     <None Include="javascripts\adminProjectViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>adminProjectViewmodel.js</LastGenOutput>

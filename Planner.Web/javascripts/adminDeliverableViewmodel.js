@@ -10,16 +10,17 @@
 
     __extends(AdminDeliverableViewmodel, _super);
 
-    function AdminDeliverableViewmodel(allResources) {
+    function AdminDeliverableViewmodel(allItems, allActivities) {
       this.createNewEmptyItem = __bind(this.createNewEmptyItem, this);
       this.createNewItem = __bind(this.createNewItem, this);      Deliverable.extend(RSimpleCrud);
       Deliverable.setSaveUrl("/planner/Deliverable/Save");
       Deliverable.setDeleteUrl("/planner/Deliverable/Delete");
+      this.allActivities = ko.observableArray(allActivities);
       AdminDeliverableViewmodel.__super__.constructor.apply(this, arguments);
     }
 
     AdminDeliverableViewmodel.prototype.createNewItem = function(jsonData) {
-      return new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location);
+      return Deliverable.create(jsonData);
     };
 
     AdminDeliverableViewmodel.prototype.createNewEmptyItem = function() {

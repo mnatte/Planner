@@ -1,5 +1,5 @@
 (function() {
-  var HLoadReleases, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, root;
+  var HLoadReleases, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -188,15 +188,32 @@
 
     function ULoadAdminDeliverables() {}
 
-    ULoadAdminDeliverables.prototype.execute = function(data) {
-      var deliverables;
+    ULoadAdminDeliverables.prototype.execute = function(acts, data) {
+      var activities, deliverables;
       deliverables = Deliverable.createCollection(data);
-      this.viewModel = new AdminDeliverableViewmodel(deliverables);
+      activities = Activity.createCollection(acts);
+      this.viewModel = new AdminDeliverableViewmodel(deliverables, activities);
       this.viewModel.selectItem(this.viewModel.allItems()[0]);
       return ko.applyBindings(this.viewModel);
     };
 
     return ULoadAdminDeliverables;
+
+  })();
+
+  ULoadAdminActivities = (function() {
+
+    function ULoadAdminActivities() {}
+
+    ULoadAdminActivities.prototype.execute = function(data) {
+      var items;
+      items = Activity.createCollection(data);
+      this.viewModel = new AdminActivityViewmodel(items);
+      this.viewModel.selectItem(this.viewModel.allItems()[0]);
+      return ko.applyBindings(this.viewModel);
+    };
+
+    return ULoadAdminActivities;
 
   })();
 
@@ -236,6 +253,8 @@
   root.ULoadAdminResources = ULoadAdminResources;
 
   root.ULoadAdminDeliverables = ULoadAdminDeliverables;
+
+  root.ULoadAdminActivities = ULoadAdminActivities;
 
   root.ULoadPlanResources = ULoadPlanResources;
 
