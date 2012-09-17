@@ -45,14 +45,17 @@ class AdminReleaseViewmodel
 					rel.projects.push p		
 
 	setMilestoneDeliverables: (ms) ->
+		console.log "setMilestoneDeliverables"
 		# assign deliverables and transform deliverables array to observableArray so changes will be registered
-			msDels = ms.deliverables.slice() # use slice to create independent copy instead of copying the reference through msDels = ms.deliverables
-			ms.deliverables = ko.observableArray([])
-			for del in msDels
-				#console.log del
-				for m in @allDeliverables() when m.id is del.id
-					#console.log "assign project #{p.title}"
-					ms.deliverables.push m		
+		msDels = ms.deliverables.slice() # use slice to create independent copy instead of copying the reference through msDels = ms.deliverables
+		console.log msDels
+		ms.deliverables = ko.observableArray([])
+		for del in msDels
+			#console.log del
+			for m in @allDeliverables() when m.id is del.id
+				console.log "assign deliverable #{m.title}"
+				ms.deliverables.push m
+		console.log ms
 
 	# functions for observable necessary to pass view model data to it from html
 	selectRelease: (data) =>
@@ -74,7 +77,7 @@ class AdminReleaseViewmodel
 	selectMilestone: (data) =>
 		@formType "milestone"
 		@selectedMilestone data
-		@setMilestoneDeliverables @selectedMilestone()
+		#@setMilestoneDeliverables @selectedMilestone()
 		console.log @selectedMilestone()
 
 	refreshRelease: (index, jsonData) =>
@@ -94,7 +97,9 @@ class AdminReleaseViewmodel
 			for phase in jsonData.Phases
 				rel.addPhase new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, rel.id)
 			for milestone in jsonData.Milestones
-				rel.addMilestone Milestone.create(milestone, rel.id)
+				ms = Milestone.create(milestone, rel.id)
+				@setMilestoneDeliverables ms
+				rel.addMilestone ms
 			# index = index of item to remove, 0 is amount to be removed, rel is item to be inserted there
 			rel.phases.sort((a,b)->a.startDate.date - b.startDate.date)
 			rel.milestones.sort((a,b)->a.date.date - b.date.date)
@@ -140,7 +145,7 @@ class AdminReleaseViewmodel
 	saveSelected: =>
 		console.log "saveSelected: selectedRelease: #{@selectedRelease()}"
 		console.log ko.toJSON(@selectedRelease())
-		console.log ko.isObservable(@selectedRelease().projects)
+		#console.log ko.isObservable(@selectedRelease().projects)
 		rel = (a for a in @allReleases() when a.id is @selectedRelease().id)[0]
 		parentrel = (a for a in @allReleases() when a.id is @selectedRelease().parentId)[0]
 		i = if @allReleases().indexOf(rel) is -1 then @allReleases().indexOf(parentrel) else @allReleases().indexOf(rel)

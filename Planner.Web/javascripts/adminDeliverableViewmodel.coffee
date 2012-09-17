@@ -13,13 +13,26 @@ class AdminDeliverableViewmodel extends SimpleCrudViewmodel
 		#Resource.setLoadUrl "/planner/Resource/Save"
 		@allActivities = ko.observableArray(allActivities)
 		super #shortcut for super(allItems)
+		for del in @allItems()
+			@setDeliverableActivities del
 
 	createNewItem: (jsonData) =>
 		#new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location)
-		Deliverable.create jsonData
+		del = Deliverable.create jsonData
+		@setDeliverableActivities del
+		del
 
 	createNewEmptyItem: =>
 		new Deliverable(0, "", "", "", "")
+
+	setDeliverableActivities: (del) ->
+		# assign activities and transform activities array to observableArray so changes will be registered
+		delacts = del.activities.slice() # use slice to create independent copy instead of copying the reference (by delacts = del.activities)
+		del.activities = ko.observableArray([])
+		for act in delacts
+			for a in @allActivities() when a.id is act.id
+				#console.log "assign project #{p.title}"
+				del.activities.push a		
 
 # export to root object
 root.AdminDeliverableViewmodel = AdminDeliverableViewmodel

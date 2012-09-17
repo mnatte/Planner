@@ -87,7 +87,6 @@ namespace MvcApplication1.DataAccess
 
                     using (cmd)
                     {
-
                         var result = cmd.ExecuteScalar().ToString();
 
                         if (result == string.Empty)
@@ -101,6 +100,7 @@ namespace MvcApplication1.DataAccess
                             newId = int.Parse(result);
                         }
                     }
+                    this.AddChildCollection(obj);
 
                 }
 
@@ -136,6 +136,14 @@ namespace MvcApplication1.DataAccess
             }
             return string.Format("{0} rows deleted", amount);
         }
+
+        /// <summary>
+        /// override when addition of child objects is needed
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="cmd"></param>
+        protected virtual void AddChildCollection(TInputModel obj)
+        { }
 
     }
 }

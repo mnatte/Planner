@@ -51,7 +51,13 @@ namespace MvcApplication1.DataAccess
                 {
                     while (delReader.Read())
                     {
-                        var itm = new ReleaseModels.Deliverable { Id = int.Parse(delReader["DeliverableId"].ToString()), Title = delReader["Title"].ToString(), Description = delReader["Description"].ToString(), Location = delReader["Location"].ToString(), Format = delReader["Format"].ToString(), Owner = delReader["Owner"].ToString(), State = delReader["State"].ToString(), HoursRemaining = int.Parse(delReader["HoursRemaining"].ToString()), InitialHoursEstimate = int.Parse(delReader["InitialEstimate"].ToString()) };
+                        var itm = new ReleaseModels.Deliverable { 
+                            Id = int.Parse(delReader["DeliverableId"].ToString()), Title = delReader["Title"].ToString(), Description = delReader["Description"].ToString(), 
+                            Location = delReader["Location"].ToString(), Format = delReader["Format"].ToString(), Owner = delReader["Owner"].ToString(), 
+                            State = delReader["State"].ToString(), HoursRemaining = int.Parse(delReader["HoursRemaining"].ToString()), 
+                            InitialHoursEstimate = int.Parse(delReader["InitialEstimate"].ToString()),
+                            ActivitiesNeeded = new List<ReleaseModels.Activity>() // snapshot, empty activities array
+                        };
                         item.Deliverables.Add(itm);
                     }
                 }

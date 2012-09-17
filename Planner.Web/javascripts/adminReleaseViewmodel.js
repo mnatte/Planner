@@ -85,24 +85,22 @@
     };
 
     AdminReleaseViewmodel.prototype.setMilestoneDeliverables = function(ms) {
-      var del, m, msDels, _i, _len, _results;
+      var del, m, msDels, _i, _j, _len, _len2, _ref;
+      console.log("setMilestoneDeliverables");
       msDels = ms.deliverables.slice();
+      console.log(msDels);
       ms.deliverables = ko.observableArray([]);
-      _results = [];
       for (_i = 0, _len = msDels.length; _i < _len; _i++) {
         del = msDels[_i];
-        _results.push((function() {
-          var _j, _len2, _ref, _results2;
-          _ref = this.allDeliverables();
-          _results2 = [];
-          for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
-            m = _ref[_j];
-            if (m.id === del.id) _results2.push(ms.deliverables.push(m));
-          }
-          return _results2;
-        }).call(this));
+        _ref = this.allDeliverables();
+        for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
+          m = _ref[_j];
+          if (!(m.id === del.id)) continue;
+          console.log("assign deliverable " + m.title);
+          ms.deliverables.push(m);
+        }
       }
-      return _results;
+      return console.log(ms);
     };
 
     AdminReleaseViewmodel.prototype.selectRelease = function(data) {
@@ -120,12 +118,11 @@
     AdminReleaseViewmodel.prototype.selectMilestone = function(data) {
       this.formType("milestone");
       this.selectedMilestone(data);
-      this.setMilestoneDeliverables(this.selectedMilestone());
       return console.log(this.selectedMilestone());
     };
 
     AdminReleaseViewmodel.prototype.refreshRelease = function(index, jsonData) {
-      var i, milestone, phase, project, rel, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
+      var i, milestone, ms, phase, project, rel, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
       i = index >= 0 ? index : this.allReleases().length;
       console.log("index: " + index);
       console.log("i: " + i);
@@ -142,7 +139,9 @@
         _ref2 = jsonData.Milestones;
         for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
           milestone = _ref2[_j];
-          rel.addMilestone(Milestone.create(milestone, rel.id));
+          ms = Milestone.create(milestone, rel.id);
+          this.setMilestoneDeliverables(ms);
+          rel.addMilestone(ms);
         }
         rel.phases.sort(function(a, b) {
           return a.startDate.date - b.startDate.date;
@@ -203,7 +202,6 @@
         _this = this;
       console.log("saveSelected: selectedRelease: " + (this.selectedRelease()));
       console.log(ko.toJSON(this.selectedRelease()));
-      console.log(ko.isObservable(this.selectedRelease().projects));
       rel = ((function() {
         var _i, _len, _ref, _results;
         _ref = this.allReleases();

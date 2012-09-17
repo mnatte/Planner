@@ -12,19 +12,50 @@
 
     function AdminDeliverableViewmodel(allItems, allActivities) {
       this.createNewEmptyItem = __bind(this.createNewEmptyItem, this);
-      this.createNewItem = __bind(this.createNewItem, this);      Deliverable.extend(RSimpleCrud);
+      this.createNewItem = __bind(this.createNewItem, this);
+      var del, _i, _len, _ref;
+      Deliverable.extend(RSimpleCrud);
       Deliverable.setSaveUrl("/planner/Deliverable/Save");
       Deliverable.setDeleteUrl("/planner/Deliverable/Delete");
       this.allActivities = ko.observableArray(allActivities);
       AdminDeliverableViewmodel.__super__.constructor.apply(this, arguments);
+      _ref = this.allItems();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        del = _ref[_i];
+        this.setDeliverableActivities(del);
+      }
     }
 
     AdminDeliverableViewmodel.prototype.createNewItem = function(jsonData) {
-      return Deliverable.create(jsonData);
+      var del;
+      del = Deliverable.create(jsonData);
+      this.setDeliverableActivities(del);
+      return del;
     };
 
     AdminDeliverableViewmodel.prototype.createNewEmptyItem = function() {
       return new Deliverable(0, "", "", "", "");
+    };
+
+    AdminDeliverableViewmodel.prototype.setDeliverableActivities = function(del) {
+      var a, act, delacts, _i, _len, _results;
+      delacts = del.activities.slice();
+      del.activities = ko.observableArray([]);
+      _results = [];
+      for (_i = 0, _len = delacts.length; _i < _len; _i++) {
+        act = delacts[_i];
+        _results.push((function() {
+          var _j, _len2, _ref, _results2;
+          _ref = this.allActivities();
+          _results2 = [];
+          for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
+            a = _ref[_j];
+            if (a.id === act.id) _results2.push(del.activities.push(a));
+          }
+          return _results2;
+        }).call(this));
+      }
+      return _results;
     };
 
     return AdminDeliverableViewmodel;

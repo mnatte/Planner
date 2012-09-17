@@ -14,5 +14,6 @@ namespace MvcApplication1.Models
         public string Description { get; set; }
         public string Location { get; set; }
         public string Format { get; set; }
+        public List<ReleaseModels.Activity> Activities { get; set; }
     }
 }

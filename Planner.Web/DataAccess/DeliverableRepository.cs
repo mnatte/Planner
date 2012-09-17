@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using MvcApplication1.Models;
+using System.Data.SqlClient;
 
 namespace MvcApplication1.DataAccess
 {
@@ -45,6 +46,29 @@ namespace MvcApplication1.DataAccess
             item.ActivitiesNeeded = activities;
 
             return item;
+        }
+
+        protected override void AddChildCollection(DeliverableInputModel obj)
+        {
+            if (obj.Activities != null && obj.Activities.Count > 0)
+            {
+                using (var conn = new SqlConnection(this.ConnectionString))
+                {
+                    conn.Open();
+                    using (var cmdInsertDeliverableActivity = new SqlCommand("sp_insert_deliverableactivity", conn))
+                    {
+                        cmdInsertDeliverableActivity.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = obj.Id;
+                        cmdInsertDeliverableActivity.Parameters.Add("@ActivityId", System.Data.SqlDbType.Int).Value = 0;
+                        cmdInsertDeliverableActivity.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        foreach (var itm in obj.Activities)
+                        {
+                            cmdInsertDeliverableActivity.Parameters["@ActivityId"].Value = itm.Id;
+                            cmdInsertDeliverableActivity.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
         }
 
         // Deliverable is a member of the Milestone aggregate root. We use a "Milestone snapshot" object to prevent loading the whole Milestone graph
