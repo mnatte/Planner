@@ -125,8 +125,8 @@
                     <ul data-bind="foreach: $root.selectedRelease().milestones">
                         <li>
                             <span class="selectable" data-bind="text: title, click: $root.selectMilestone.bind($data), style: { color: $root.formType() == 'milestone' && $root.selectedMilestone() != undefined && $data.id == $root.selectedMilestone().id ? 'red' : 'black' }"></span>
-                            <button data-bind="click: $root.unAssignMilestone.bind($data)">Unassign</button>
-                            <!--<button data-bind="click: $root.deleteMilestone.bind($data)">Delete</button>-->
+                            <!--<button data-bind="click: $root.unAssignMilestone.bind($data)">Unassign</button>-->
+                            <span class="icon16 icon-remove16 interact" data-bind="click: $root.unAssignMilestone.bind($data)"></span>
                         </li>
                     </ul>
                  </div>

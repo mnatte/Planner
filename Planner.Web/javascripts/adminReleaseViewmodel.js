@@ -160,7 +160,7 @@
           rel.addProject(new Project(project.Id, project.Title, project.ShortName));
           this.setReleaseProjects(rel);
         }
-        return this.allReleases.splice(i, 0, rel);
+        return this.allReleases.splice(i, 0, rels);
       }
     };
 
@@ -171,13 +171,14 @@
 
     AdminReleaseViewmodel.prototype.addPhase = function(data) {
       this.formType("phase");
-      this.selectPhase(new Release(0, new Date(), new Date(), "", "", data.id));
-      return console.log("selectedRelease parentId: " + (this.selectedRelease().parentId));
+      this.selectPhase(new Release(0, new Date(), new Date(), "", "", this.selectedRelease().id));
+      console.log("selectedPhase: " + (ko.toJSON(this.selectedPhase())));
+      return console.log("selectedRelease id: " + (this.selectedRelease().id));
     };
 
     AdminReleaseViewmodel.prototype.addNewMilestone = function(release) {
       this.formType("milestone");
-      return this.selectedMilestone(new Milestone(0, new Date(), "0:00", "", "", release.id));
+      return this.selectedMilestone(new Milestone(0, new Date(), "0:00", "", "", this.selectedRelease().id));
     };
 
     AdminReleaseViewmodel.prototype.unAssignMilestone = function(milestone) {

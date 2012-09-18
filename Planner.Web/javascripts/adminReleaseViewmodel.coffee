@@ -110,15 +110,7 @@ class AdminReleaseViewmodel
 				rel.addProject new Project(project.Id, project.Title, project.ShortName)
 				# use slice to create independent copy instead of copying the reference by relprojs = rel.projects
 				@setReleaseProjects rel
-
-				#relprojs = rel.projects.slice()
-				#rel.projects = ko.observableArray([])
-				#for proj in relprojs
-				#	console.log proj
-				#	for p in @allProjects() when p.id is proj.id
-				#		console.log "assign project #{p.title}"
-				#		rel.projects.push p
-			@allReleases.splice i, 0, rel
+			@allReleases.splice i, 0, rels
 
 	clear: ->
 		@formType "release"
@@ -127,12 +119,13 @@ class AdminReleaseViewmodel
 
 	addPhase: (data) =>
 		@formType "phase"
-		@selectPhase new Release(0, new Date(), new Date(), "", "", data.id)
-		console.log "selectedRelease parentId: #{@selectedRelease().parentId}"
+		@selectPhase new Release(0, new Date(), new Date(), "", "", @selectedRelease().id)
+		console.log "selectedPhase: #{ko.toJSON(@selectedPhase())}"
+		console.log "selectedRelease id: #{@selectedRelease().id}"
 
 	addNewMilestone: (release) =>
 		@formType "milestone"
-		@selectedMilestone new Milestone(0, new Date(), "0:00", "", "", release.id)
+		@selectedMilestone new Milestone(0, new Date(), "0:00", "", "", @selectedRelease().id)
 		#console.log release
 
 	unAssignMilestone: (milestone) =>
