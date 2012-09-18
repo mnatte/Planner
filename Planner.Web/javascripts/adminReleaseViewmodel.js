@@ -18,7 +18,7 @@
       this.selectMilestone = __bind(this.selectMilestone, this);
       this.selectPhase = __bind(this.selectPhase, this);
       this.selectRelease = __bind(this.selectRelease, this);
-      var rel, _fn, _i, _len, _ref;
+      var ms, rel, _fn, _i, _j, _len, _len2, _ref, _ref2;
       Array.prototype.remove = function(e) {
         var t, _ref;
         if ((t = this.indexOf(e)) > -1) {
@@ -51,6 +51,11 @@
         rel = _ref[_i];
         this.setReleaseProjects(rel);
         _fn(rel);
+        _ref2 = rel.milestones;
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          ms = _ref2[_j];
+          this.setMilestoneDeliverables(ms);
+        }
       }
       this.allReleases.sort(function(a, b) {
         if (a.startDate.date > b.startDate.date) {
@@ -86,7 +91,7 @@
 
     AdminReleaseViewmodel.prototype.setMilestoneDeliverables = function(ms) {
       var del, m, msDels, _i, _j, _len, _len2, _ref;
-      console.log("setMilestoneDeliverables");
+      console.log("setMilestoneDeliverables to observableArray");
       msDels = ms.deliverables.slice();
       console.log(msDels);
       ms.deliverables = ko.observableArray([]);

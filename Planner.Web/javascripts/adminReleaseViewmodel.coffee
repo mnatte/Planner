@@ -30,6 +30,8 @@ class AdminReleaseViewmodel
 			do (rel) ->
 				# console.log "ctor sort rel: #{rel}"
 				rel.phases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
+			for ms in rel.milestones
+				@setMilestoneDeliverables ms
 		@allReleases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
 
 		#console.log @allProjects()
@@ -45,7 +47,7 @@ class AdminReleaseViewmodel
 					rel.projects.push p		
 
 	setMilestoneDeliverables: (ms) ->
-		console.log "setMilestoneDeliverables"
+		console.log "setMilestoneDeliverables to observableArray"
 		# assign deliverables and transform deliverables array to observableArray so changes will be registered
 		msDels = ms.deliverables.slice() # use slice to create independent copy instead of copying the reference through msDels = ms.deliverables
 		console.log msDels

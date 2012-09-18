@@ -276,6 +276,14 @@ div[class=closeIcon]:hover {
      outline: 1px dotted green;
 }
 
+.colheader {
+	margin: 20px 0px 20px 0px;
+}
+
+.alignRight 
+{
+    horizontal-align: right;
+
 /* smaller than standard 960*/
 @media only screen and (max-width 959px) {
     body
