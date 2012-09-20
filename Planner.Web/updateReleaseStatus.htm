@@ -10,7 +10,7 @@
 	<!-- Basic Page Needs
   ================================================== -->
 	<meta charset="utf-8">
-	<title>Admin Deliverables</title>
+	<title>Update Release Status</title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 	<!--[if lt IE 9]>
@@ -26,7 +26,9 @@
 	<link rel="stylesheet" href="stylesheets/base.css">
 	<link rel="stylesheet" href="stylesheets/skeleton.css">
 	<link rel="stylesheet" href="stylesheets/layout.css">
-    <link rel="stylesheet" href="stylesheets/tables.css">
+    <!--<link rel="stylesheet" href="stylesheets/tables.css">
+    <link rel="stylesheet" href="images/Sprites/silk-bullets-sprite.css">
+    <link rel="stylesheet" href="images/Sprites/silk-sprite.css">-->
     <link rel="stylesheet" href="stylesheets/icon_styles.css">
 
 	<!-- Favicons
@@ -35,19 +37,17 @@
 	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
 	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
-    <link rel="stylesheet" href="images/Sprites/silk-bullets-sprite.css">
-    <link rel="stylesheet" href="images/Sprites/silk-sprite.css">
 
     <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="Scripts/jquery.dateFormat-1.0.js"></script>
     <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
     <script type="text/javascript" src="Scripts/knockout-array-filter.js"></script>
     <script type="text/javascript" src="Scripts/koExternalTemplateEngine_all.min.js"></script>
-        
+     
+    <script type="text/javascript" src="javascripts/ko.bindingHandlers.fadeVisible.js"></script>   
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
-    <script type="text/javascript" src="javascripts/simpleCrudViewmodel.js"></script>
-    <script type="text/javascript" src="javascripts/adminDeliverableViewmodel.js"></script>
+    <script type="text/javascript" src="javascripts/adminReleaseViewmodel.js"></script>
     <script type="text/javascript" src="javascripts/ajax.js"></script>
     <script type="text/javascript" src="javascripts/Roles.js"></script>
     <script type="text/javascript" src="javascripts/UseCases.js"></script>
@@ -69,54 +69,76 @@
                         <span class="icon24 icon-edit"></span>
                         <span>Form</span>
                     </div>
-                    <form data-bind="with: selectedItem()">
-                        <label>Title:</label><input type="text" data-bind="value: title" />
-                        <label>Description:</label><input type="text" data-bind="value: description" />
-                        <label>Format:</label><input type="text" data-bind="value: format" />
-                        <label>Location:</label><input type="text" data-bind="value: location" />
-                        <!--'activities' is a propery on the Deliverable object-->
-                        <label>Activities:</label><select data-bind="options: $root.allActivities(), optionsText: 'title', selectedOptions: activities", size="5" multiple="multiple"></select>
+                    <!-- ko if: selectedDeliverable() -->
+                    <form data-bind="with: selectedDeliverable()">
+                        <!-- ko foreach: deliverables -->
+                        <label data-bind="text: title"></label><input type="text" data-bind="value: title" />
+                        <!--/ko-->
                         <span class="icon32 icon-save interact" data-bind="click: $parent.saveSelected.bind($data)"></span>
                     </form>
+                    <!--/ko-->
                 </div>
-
-                <div class="ten columns omega">
+                <div class="five columns omega">
+                    <div class="colheader">
+                        <span class="icon32 icon-release"></span>
+                        <span>Releases</span>
+                    </div>
+                    <ul data-bind="foreach: allReleases">
+                        <li>
+                            <span class="selectable" data-bind="text: title, click: $root.selectRelease.bind($data), style: { color: $root.selectedRelease() != undefined && $data.id == $root.selectedRelease().id ? 'red' : 'black' }"></span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="five columns omega">
+                    <div class="colheader">
+                        <span class="icon32 icon-milestone"></span>
+                        <span>Milestones</span>
+                    </div>
+                    <ul data-bind="foreach: $root.selectedRelease().milestones">
+                        <li>
+                            <span class="selectable" data-bind="text: title, click: $root.selectMilestone.bind($data), style: { color: $root.selectedMilestone() != undefined && $data.id == $root.selectedMilestone().id ? 'red' : 'black' }"></span>
+                        </li>
+                    </ul>
                     <div class="colheader">
                         <span class="icon32 icon-deliverables"></span>
                         <span>Deliverables</span>
-                        <span class="icon24 icon-new interact" data-bind="click: clear.bind($data)"></span>
                     </div>
-                    <ul data-bind="foreach: allItems">
+                    <ul data-bind="foreach: $root.selectedRelease().phases">
                         <li>
-                            <span class="selectable" data-bind="text: title, click: $root.selectItem.bind($data), style: { color: $data.id == $root.selectedItem().id ? 'red' : 'black' }"></span>
-                            <!--<button data-bind="click: $root.deleteItem.bind($data)">Delete</button>-->
-                            <!--<span class="ui-silk ui-silk-delete interact" data-bind="click: $root.deleteItem.bind($data)"></span>-->
-                            <span class="icon22 icon-delete interact" data-bind="click: $root.deleteItem.bind($data)"></span>
+                            <span class="selectable" data-bind="text: title, click: $root.selectDeliverable.bind($data), style: { color: $root.selectedDeliverable() != undefined && $data.id == $root.selectedDeliverable().id ? 'red' : 'black' }"></span>
                         </li>
                     </ul>
-                    <!--<button data-bind="click: clear.bind($data)">New</button>-->
-                    <!--<span class="ui-silk ui-silk-user-add interact" data-bind="click: clear.bind($data)"></span>-->
-                    <!--<span class="icon48 icon-todo48 interact" data-bind="click: clear.bind($data)"></span>-->
                 </div>
             </div>
         </div>
     </div>
 
 <script type="text/javascript">
-    // 'activities' is callback data provided by former Ajax call
-    function loadDeliverables(activities) {
-        var uc = new ULoadAdminDeliverables();
+    // 'projects' is callback data provided by former Ajax call
+    function loadReleases(projects) {
+        //var uc = new ULoadAdminReleases();
         var ajx = new Ajax();
-        // callback 'uc.execute' provided, callback jsonData automatically supplied as argument. also provide 'activities'
-        ajx.getDeliverables(function (data) { uc.execute(activities, data) });
+        // callback 'loadDeliverables' provided, callback jsonData automatically supplied as argument as well as projects
+        ajx.getReleaseSummaries(function (data) { loadDeliverables(data, projects) });
     }
-    
+
+    // 'releases' is callback data provided by former Ajax call
+    function loadDeliverables(releases, projects) {
+        var uc = new ULoadAdminReleases();
+        var ajx = new Ajax();
+        // use closure around execute method to pass 'projects' and 'releases' argument as well as 'data' from getDeliverables callback
+        // function(data) is callback so data is available from callback while 'projects' and 'releases' are available from closure construction
+        ajx.getDeliverables(function (data) { uc.execute(releases, projects, data) });
+    }
+
+    // load all projects, afterwards load releases
     $(document).ready(function () {
         infuser.defaults.templateSuffix = ".tmpl.html";
         infuser.defaults.templateUrl = "/planner/templates";
 
         var ajax = new Ajax();
-        ajax.getActivities(loadDeliverables);
+        // callback 'loadReleases' provided, callback jsonData automatically supplied as argument
+        ajax.getProjects(loadReleases);
     });
 </script>    
 </body>

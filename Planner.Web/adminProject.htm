@@ -65,6 +65,10 @@
         <div class="band">
             <div class="sixteen columns omega">
                 <div class="six columns omega">
+                    <div class="colheader">
+                        <span class="icon24 icon-edit"></span>
+                        <span>Form</span>
+                    </div>
                     <form data-bind="with: selectedItem()">
                         <label>Project title:</label><input type="text" data-bind="value: title, valueUpdate: 'afterkeydown'" />
                         <label>Short Name:</label><input type="text" data-bind="value: shortName" />
@@ -74,19 +78,23 @@
                         <!--<p>Release Title: <span data-bind="text: title"></span></p>--> <!-- updates in real-time -->
                         <!--<button data-bind="click: $parent.saveSelected.bind($data)">Submit</button>-->
                         <!--<span class="ui-silk ui-silk-disk interact" data-bind="click: $parent.saveSelected.bind($data)"></span>-->
-                        <span class="icon48 icon-save interact" data-bind="click: $parent.saveSelected.bind($data)"></span>
+                        <span class="icon32 icon-save interact" data-bind="click: $parent.saveSelected.bind($data)"></span>
                     </form>
                 </div>
                 <div class="ten columns omega">
+                    <div class="colheader">
+                        <span class="icon32 icon-chart"></span>
+                        <span>Projects</span>
+                        <span class="icon24 icon-new interact" data-bind="click: $root.clear.bind($data)"></span>
+                    </div>
                     <ul data-bind="foreach: allItems">
                         <li>
                             <span class="selectable" data-bind="text: title, click: $root.selectItem.bind($data), style: { color: $data.id == $root.selectedItem().id ? 'red' : 'black' }"></span>
                             <!--<button data-bind="click: $root.deleteItem.bind($data)">Delete</button>-->
-                            <span class="icon22 icon-delete22 interact" data-bind="click: $root.deleteItem.bind($data)"></span>
+                            <span class="icon22 icon-delete interact" data-bind="click: $root.deleteItem.bind($data)"></span>
                         </li>
                     </ul>
                     <!--<button data-bind="click: clear.bind($data)">New</button>-->
-                    <span class="icon128 icon-project interact" data-bind="click: $root.clear.bind($data)"></span>
                 </div>
             </div>
         </div>

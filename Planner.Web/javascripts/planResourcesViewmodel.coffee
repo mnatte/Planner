@@ -5,7 +5,7 @@
 root = global ? window
 
 class PlanResourcesViewmodel extends Mixin
-	constructor: (allReleases, allResources) ->
+	constructor: (allReleases, allResources, allActivities) ->
 		ReleaseAssignments.extend(RCrud)
 		# console.log allReleases
 		PlanResourcesViewmodel.extend(RGroupBy)
@@ -15,6 +15,7 @@ class PlanResourcesViewmodel extends Mixin
 		@selectedMilestone = ko.observable()
 		@selectedDeliverable = ko.observable()
 		@selectedResource = ko.observable()
+		@selectedActivity = ko.observable()
 		@assignedStartDate = ko.observable()
 		@assignedEndDate = ko.observable()
 
@@ -35,6 +36,7 @@ class PlanResourcesViewmodel extends Mixin
 		@allResources = ko.observableArray(allResources)
 		@assignments = ko.observableArray()
 		@canShowForm = ko.observable(false)
+		@allActivities = allActivities
 		
 
 		# setup nice 'remove' method for Array
@@ -83,7 +85,7 @@ class PlanResourcesViewmodel extends Mixin
 		console.log @newAssignment().assignedPeriod.startDate
 		console.log @newAssignment().assignedPeriod.endDate.dateString
 		console.log @newAssignment().assignedPeriod.endDate.date
-		ass = new AssignedResource(0, @selectedRelease(), @selectedResource(), @selectedProject(), @newAssignment().focusFactor, DateFormatter.createFromString(@newAssignment().assignedPeriod.startDate.dateString), DateFormatter.createFromString(@newAssignment().assignedPeriod.endDate.dateString), @newAssignment().activity, @selectedMilestone(), @selectedDeliverable())
+		ass = new AssignedResource(0, @selectedRelease(), @selectedResource(), @selectedProject(), @newAssignment().focusFactor, DateFormatter.createFromString(@newAssignment().assignedPeriod.startDate.dateString), DateFormatter.createFromString(@newAssignment().assignedPeriod.endDate.dateString), @selectedActivity(), @selectedMilestone(), @selectedDeliverable())
 		console.log ass
 		@assignments.push ass
 		#@allResources.remove @selectedResource()

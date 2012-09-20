@@ -221,13 +221,14 @@
 
     function ULoadPlanResources() {}
 
-    ULoadPlanResources.prototype.execute = function(releases, resources) {
+    ULoadPlanResources.prototype.execute = function(releases, resources, activities) {
       var loadReleases;
       loadReleases = new HLoadReleases();
       releases = loadReleases.execute(releases);
       console.log(releases);
       resources = Resource.createCollection(resources);
-      this.viewModel = new PlanResourcesViewmodel(releases, resources);
+      activities = Activity.createCollection(activities);
+      this.viewModel = new PlanResourcesViewmodel(releases, resources, activities);
       this.viewModel.selectRelease(this.viewModel.allReleases()[0]);
       return ko.applyBindings(this.viewModel);
     };

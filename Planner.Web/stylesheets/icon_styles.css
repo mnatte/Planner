@@ -17,17 +17,22 @@ a.icon128, input.icon128, span.icon128
 .icon-new { background:url('../images/png/24x24/add.png'); }
 .icon-release { background:url('../images/png/32x32/fast_forward.png'); }
 .icon-phase { background:url('../images/png/32x32/calendar_blank.png'); }
-.icon-milestone { background:url('../images/png/32x32/target.png'); }
+.icon-milestone { background:url('../images/png/32x32/flag.png'); }
 .icon-edit { background:url('../images/png/24x24/edit.png'); }
-.icon-deletexx { background:url('../images/icons/trash2.png'); }
+.icon-users { background:url('../images/png/32x32/users.png'); }
 .icon-delete { background:url('../images/png/24x24/trash.png'); }
-.icon-remove { background:url('../images/icons/delete3.png'); }
 .icon-remove16 { background:url('../images/png/16x16/delete.png'); }
 .icon-save { background:url('../images/png/32x32/save.png'); }
+.icon-zoom { background:url('../images/png/32x32/zoom_in.png'); }
+.icon-chart { background:url('../images/png/32x32/chart.png'); }
+.icon-deliverables { background:url('../images/png/32x32/copy_page.png'); }
+.icon-play { background:url('../images/png/32x32/play.png'); }
+
+.icon-deletexx { background:url('../images/icons/trash2.png'); }
+.icon-remove { background:url('../images/icons/delete3.png'); }
 .icon-project { background:url('../images/icons/project.png'); }
 .icon-add-user48 { background:url('../images/icons/add-user.png'); }
 .icon-remove-user22 { background:url('../images/icons/remove-user22.png'); }
 .icon-add-user22 { background:url('../images/icons/add.png'); }
-.icon-zoom48 { background:url('../images/icons/zoom.png'); }
 .icon-todo48 { background:url('../images/icons/todo.png'); }
 

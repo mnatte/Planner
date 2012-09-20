@@ -139,14 +139,15 @@ class ULoadAdminActivities
 
 class ULoadPlanResources
 	constructor: ->
-	execute: (releases, resources) ->
+	execute: (releases, resources, activities) ->
 	#execute: (releases) ->
 		loadReleases = new HLoadReleases()
 		releases = loadReleases.execute(releases)
 		console.log releases
 		resources = Resource.createCollection resources
+		activities = Activity.createCollection activities
 		# console.log resources
-		@viewModel = new PlanResourcesViewmodel(releases, resources)
+		@viewModel = new PlanResourcesViewmodel(releases, resources, activities)
 		#@viewModel = new PlanResourcesViewmodel(releases)
 		@viewModel.selectRelease @viewModel.allReleases()[0]
 		ko.applyBindings(@viewModel)

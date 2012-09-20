@@ -283,8 +283,9 @@ class AssignedResource extends Mixin
 		resource = Resource.create jsonData.Resource
 		milestone = Milestone.create jsonData.Milestone
 		deliverable = Deliverable.create jsonData.Deliverable
+		activity = Activity.create jsonData.Activity
 		# create under given project and release
-		ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Activity, milestone, deliverable)
+		ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), activity, milestone, deliverable)
 		console.log ass
 		ass
 	@createCollection: (jsonData, project, release) ->
@@ -312,6 +313,7 @@ class AssignedResource extends Mixin
 		delete copy.assignedPeriod
 		delete copy.milestone
 		delete copy.deliverable
+		delete copy.activity
 		#console.log(@resource)
 		copy.resourceId = @resource.id
 		copy.phaseId = @release.id
@@ -320,6 +322,7 @@ class AssignedResource extends Mixin
 		copy.endDate = @assignedPeriod.endDate.dateString
 		copy.milestoneId = @milestone.id
 		copy.deliverableId = @deliverable.id
+		copy.activityId = @activity.id
 		console.log(copy)
 		copy #return the copy to be serialized
 
@@ -392,7 +395,7 @@ class Resource extends Mixin
 		for absence in jsonData.PeriodsAway
 			res.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title))
 		for assignment in jsonData.Assignments
-			res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity + " " + assignment.Phase.Title + " (" + assignment.FocusFactor + ")"), assignment.Phase.Title, assignment.Activity)
+			res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity.Title + " " + assignment.Phase.Title + " (" + assignment.FocusFactor + ")"), assignment.Phase.Title, assignment.Activity)
 		#console.log res
 		res
 	@createCollection: (jsonData) ->

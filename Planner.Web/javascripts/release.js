@@ -407,12 +407,13 @@
     }
 
     AssignedResource.create = function(jsonData, project, release) {
-      var ass, deliverable, milestone, resource;
+      var activity, ass, deliverable, milestone, resource;
       console.log("create AssignedResource:" + ko.toJSON(jsonData));
       resource = Resource.create(jsonData.Resource);
       milestone = Milestone.create(jsonData.Milestone);
       deliverable = Deliverable.create(jsonData.Deliverable);
-      ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Activity, milestone, deliverable);
+      activity = Activity.create(jsonData.Activity);
+      ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), activity, milestone, deliverable);
       console.log(ass);
       return ass;
     };
@@ -446,6 +447,7 @@
       delete copy.assignedPeriod;
       delete copy.milestone;
       delete copy.deliverable;
+      delete copy.activity;
       copy.resourceId = this.resource.id;
       copy.phaseId = this.release.id;
       copy.projectId = this.project.id;
@@ -453,6 +455,7 @@
       copy.endDate = this.assignedPeriod.endDate.dateString;
       copy.milestoneId = this.milestone.id;
       copy.deliverableId = this.deliverable.id;
+      copy.activityId = this.activity.id;
       console.log(copy);
       return copy;
     };
@@ -638,7 +641,7 @@
       _ref2 = jsonData.Assignments;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         assignment = _ref2[_j];
-        res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity + " " + assignment.Phase.Title + " (" + assignment.FocusFactor + ")"), assignment.Phase.Title, assignment.Activity);
+        res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity.Title + " " + assignment.Phase.Title + " (" + assignment.FocusFactor + ")"), assignment.Phase.Title, assignment.Activity);
       }
       return res;
     };

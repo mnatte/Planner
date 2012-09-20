@@ -137,6 +137,7 @@
     <Content Include="adminResource.htm" />
     <Content Include="adminDeliverable.htm" />
     <Content Include="adminActivity.htm" />
+    <Content Include="updateReleaseStatus.htm" />
     <Content Include="javascripts\adminActivityViewmodel.js">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

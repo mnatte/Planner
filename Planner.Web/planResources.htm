@@ -93,7 +93,7 @@
                     <span data-bind="text: resource.fullName()"></span>
                     <span data-bind="text: milestone.title"></span>
                     <span data-bind="text: deliverable.title"></span>
-                    <span class="selectable" contenteditable="true" data-bind="text: activity, editable: activity"></span>
+                    <span data-bind="text: activity.title"></span>
                     <span class="selectable" contenteditable="true" data-bind="text: focusFactor, editable: focusFactor, tooltip: { content: 'Hallo', style: { name: 'Cream' }, options: { hide: { event: 'blur' } } }"></span>
                     <span class="selectable" contenteditable="true" data-bind="text: assignedPeriod.startDate.dateString, editable: assignedPeriod.startDate.dateString"></span>
                     <span class="selectable" contenteditable="true" data-bind="text: assignedPeriod.endDate.dateString, editable: assignedPeriod.endDate.dateString"></span>
@@ -101,12 +101,12 @@
                     <select data-bind="options: $root.selectedRelease().milestones, optionsText: 'title', optionsValue: 'id', value: milestone.id, optionsCaption: 'Choose...'"></select>-->
                     <!--<button data-bind="click: $root.removeAssignment.bind($data)">Remove</button>-->
                     <!--<span class="ui-silk ui-silk-user-delete interact" data-bind="click: $root.removeAssignment.bind($data)"></span>-->
-                    <span class="icon22 icon-remove-user22 interact" data-bind="click: $root.removeAssignment.bind($data)"></span>
+                    <span class="icon16 icon-remove16 interact" data-bind="click: $root.removeAssignment.bind($data)"></span>
                 </li>
             </ul>
             <!--<button data-bind="click: $root.addResource.bind($data)">+ Resource</button>-->
             <!--<span class="ui-silk ui-silk-user-add interact" data-bind="click: $root.addResource.bind($data)"></span>-->
-            <span class="icon48 icon-add-user48 interact" data-bind="click: $root.addResource.bind($data)"></span>
+            <span class="icon32 icon-users interact" data-bind="click: $root.addResource.bind($data)"></span>
         </div>
         <!--/ko-->
 
@@ -119,18 +119,24 @@
 
         <!--<button data-bind="click: $root.saveAssignments.bind($data)">Save</button>-->
         <!--<span class="ui-silk ui-silk-disk interact" data-bind="click: $root.saveAssignments.bind($data)"></span>-->
-        <span class="icon48 icon-save interact" data-bind="click: $root.saveAssignments.bind($data)"></span>
+        <span class="icon32 icon-save interact" data-bind="click: $root.saveAssignments.bind($data)"></span>
         <!--<button data-bind="click: $root.openDetailsWindow.bind($data)">View Release</button>-->
         <!--<span class="ui-silk ui-silk-magnifier interact" data-bind="click: $root.openDetailsWindow.bind($data)"></span>-->
-        <span class="icon48 icon-zoom48 interact" data-bind="click: $root.openDetailsWindow.bind($data)"></span>
+        <span class="icon32 icon-zoom interact" data-bind="click: $root.openDetailsWindow.bind($data)"></span>
     </div>
 
 <script type="text/javascript">
-    function loadReleases(resources) {
+    function loadReleases(resources, activities) {
         var uc = new ULoadPlanResources();
         var ajx = new Ajax();
         // use closure around execute method to pass 'projects' argument as well as 'data' from getReleaseSummaries callback
-        ajx.getReleaseSummaries(function (data) { uc.execute(data, resources) });
+        ajx.getReleaseSummaries(function (data) { uc.execute(data, resources, activities) });
+    }
+
+    // 'releases' is callback data provided by former Ajax call
+    function loadActivities(resources) {
+        var ajx = new Ajax();
+        ajx.getActivities(function (data) { loadReleases(resources, data) });
     }
 
     $(document).ready(function () {
@@ -138,7 +144,7 @@
         infuser.defaults.templateUrl = "/planner/templates";
 
         var ajax = new Ajax();
-        ajax.getResources(loadReleases);
+        ajax.getResources(loadActivities);
         //var uc = new ULoadPlanResources();
         //ajax.getReleaseSummaries(uc.execute);
     });

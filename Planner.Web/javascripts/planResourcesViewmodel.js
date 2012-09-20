@@ -11,7 +11,7 @@
 
     __extends(PlanResourcesViewmodel, _super);
 
-    function PlanResourcesViewmodel(allReleases, allResources) {
+    function PlanResourcesViewmodel(allReleases, allResources, allActivities) {
       this.openDetailsWindow = __bind(this.openDetailsWindow, this);
       this.saveAssignments = __bind(this.saveAssignments, this);
       this.closeForm = __bind(this.closeForm, this);
@@ -31,6 +31,7 @@
       this.selectedMilestone = ko.observable();
       this.selectedDeliverable = ko.observable();
       this.selectedResource = ko.observable();
+      this.selectedActivity = ko.observable();
       this.assignedStartDate = ko.observable();
       this.assignedEndDate = ko.observable();
       this.selectedMilestone.subscribe(function(newValue) {
@@ -43,6 +44,7 @@
       this.allResources = ko.observableArray(allResources);
       this.assignments = ko.observableArray();
       this.canShowForm = ko.observable(false);
+      this.allActivities = allActivities;
       Array.prototype.remove = function(e) {
         var t, _ref;
         if ((t = this.indexOf(e)) > -1) {
@@ -107,7 +109,7 @@
       console.log(this.newAssignment().assignedPeriod.startDate);
       console.log(this.newAssignment().assignedPeriod.endDate.dateString);
       console.log(this.newAssignment().assignedPeriod.endDate.date);
-      ass = new AssignedResource(0, this.selectedRelease(), this.selectedResource(), this.selectedProject(), this.newAssignment().focusFactor, DateFormatter.createFromString(this.newAssignment().assignedPeriod.startDate.dateString), DateFormatter.createFromString(this.newAssignment().assignedPeriod.endDate.dateString), this.newAssignment().activity, this.selectedMilestone(), this.selectedDeliverable());
+      ass = new AssignedResource(0, this.selectedRelease(), this.selectedResource(), this.selectedProject(), this.newAssignment().focusFactor, DateFormatter.createFromString(this.newAssignment().assignedPeriod.startDate.dateString), DateFormatter.createFromString(this.newAssignment().assignedPeriod.endDate.dateString), this.selectedActivity(), this.selectedMilestone(), this.selectedDeliverable());
       console.log(ass);
       this.assignments.push(ass);
       return this.canShowForm(false);

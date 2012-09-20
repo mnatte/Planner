@@ -9,17 +9,19 @@
         <!-- ko if: $root.selectedResource() -->
         <div id="phases" class="sixteen columns">
             <div id="mytimeline" data-bind="periodoverview: $root.selectedResource()"></div>
-            <div id="space" style="height: 200px">&nbsp;</div>
+            <div id="space" style="height: 20px">&nbsp;</div>
         </div>
         <!--/ko-->
-
-        <select data-bind="options: $root.selectedRelease().milestones, optionsText: 'title', value: $root.selectedMilestone, optionsCaption: 'Choose...'" style="display:inline"></select> 
-        <!-- ko if: $root.selectedMilestone() -->
-        <select data-bind="options: $root.selectedMilestone().deliverables, optionsText: 'title', value: $root.selectedDeliverable, optionsCaption: 'Choose...'" style="display:inline"></select>
-        <!--/ko-->
-        <input type="text" data-bind="value: focusFactor" style="display:inline; width:30px; height:30px"/>
-        <input type="text" data-bind="value: assignedPeriod.startDate.dateString" style="display:inline; width:100px; height:30px"/>
-        <input type="text" data-bind="value: assignedPeriod.endDate.dateString" style="display:inline; width:100px; height:30px"/>
-        <input type="text" data-bind="value: activity" style="display:inline; width:100px; height:30px"/> <!--, event: { blur: $root.addAssignment.bind($data) }-->
-        <span class="icon24 icon-add-user22 interact" data-bind="click: $root.addAssignment.bind($data)"></span>
+        <div>
+            <select data-bind="options: $root.selectedRelease().milestones, optionsText: 'title', value: $root.selectedMilestone, optionsCaption: 'Choose...'" style="display:inline"></select> 
+            <!-- ko if: $root.selectedMilestone() -->
+            <select data-bind="options: $root.selectedMilestone().deliverables, optionsText: 'title', value: $root.selectedDeliverable, optionsCaption: 'Choose...'" style="display:inline"></select>
+            <!--/ko-->
+            <input type="text" data-bind="value: focusFactor" style="display:inline; width:30px; height:30px"/>
+            <input type="text" data-bind="value: assignedPeriod.startDate.dateString" style="display:inline; width:100px; height:30px"/>
+            <input type="text" data-bind="value: assignedPeriod.endDate.dateString" style="display:inline; width:100px; height:30px"/>
+            <!--,<input type="text" data-bind="value: activity" style="display:inline; width:100px; height:30px"/>  event: { blur: $root.addAssignment.bind($data) }-->
+            <select data-bind="options: $root.allActivities, optionsText: 'title', value: $root.selectedActivity, optionsCaption: 'Choose...'" style="display:inline"></select>
+            <span class="icon24 icon-add-user22 interact" data-bind="click: $root.addAssignment.bind($data)"></span>
+        </div>
 </section>
