@@ -1,5 +1,5 @@
 (function() {
-  var HLoadReleases, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, root;
+  var HLoadReleases, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -137,6 +137,25 @@
 
   })();
 
+  ULoadUpdateReleaseStatus = (function() {
+
+    function ULoadUpdateReleaseStatus() {}
+
+    ULoadUpdateReleaseStatus.prototype.execute = function(jsonRels) {
+      var loadReleases, releases;
+      loadReleases = new HLoadReleases();
+      releases = loadReleases.execute(jsonRels);
+      this.viewModel = new UpdateReleaseStatusViewmodel(releases);
+      this.viewModel.selectRelease(this.viewModel.allReleases[0]);
+      return ko.applyBindings(this.viewModel, null, {
+        independentBindings: true
+      });
+    };
+
+    return ULoadUpdateReleaseStatus;
+
+  })();
+
   ULoadAdminProjects = (function() {
 
     function ULoadAdminProjects() {}
@@ -258,5 +277,7 @@
   root.ULoadAdminActivities = ULoadAdminActivities;
 
   root.ULoadPlanResources = ULoadPlanResources;
+
+  root.ULoadUpdateReleaseStatus = ULoadUpdateReleaseStatus;
 
 }).call(this);

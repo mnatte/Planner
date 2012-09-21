@@ -137,6 +137,16 @@
     <Content Include="adminResource.htm" />
     <Content Include="adminDeliverable.htm" />
     <Content Include="adminActivity.htm" />
+    <Content Include="javascripts\updateReleaseStatusViewmodel.js">
+      <DependentUpon>updateReleaseStatusViewmodel.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
+    <Content Include="javascripts\xxx_updateReleaseStatus.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>xxx_updateReleaseStatus.coffee</DependentUpon>
+    </Content>
     <Content Include="updateReleaseStatus.htm" />
     <Content Include="javascripts\adminActivityViewmodel.js">
       <AutoGen>True</AutoGen>
@@ -373,6 +383,10 @@
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>adminDeliverableViewmodel.js</LastGenOutput>
     </None>
+    <None Include="javascripts\updateReleaseStatusViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>updateReleaseStatusViewmodel.js</LastGenOutput>
+    </None>
     <None Include="javascripts\phasesViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>phasesViewmodel.js</LastGenOutput>
@@ -392,6 +406,10 @@
     <None Include="javascripts\simpleCrudViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>simpleCrudViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\xxx_updateReleaseStatus.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>xxx_updateReleaseStatus.js</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

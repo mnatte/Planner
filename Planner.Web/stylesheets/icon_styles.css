@@ -25,8 +25,11 @@ a.icon128, input.icon128, span.icon128
 .icon-save { background:url('../images/png/32x32/save.png'); }
 .icon-zoom { background:url('../images/png/32x32/zoom_in.png'); }
 .icon-chart { background:url('../images/png/32x32/chart.png'); }
+.icon-chart-small { background:url('../images/png/24x24/chart.png'); }
 .icon-deliverables { background:url('../images/png/32x32/copy_page.png'); }
+.icon-deliverables-small { background:url('../images/png/24x24/copy_page.png'); }
 .icon-play { background:url('../images/png/32x32/play.png'); }
+.icon-clock { background:url('../images/png/24x24/clock.png'); }
 
 .icon-deletexx { background:url('../images/icons/trash2.png'); }
 .icon-remove { background:url('../images/icons/delete3.png'); }

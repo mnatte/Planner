@@ -97,6 +97,15 @@ class ULoadAdminReleases
 		#@viewModel.selectPhase @viewModel.allReleases()[0].phases[0]
 		ko.applyBindings(@viewModel, null, {independentBindings: true})
 
+class ULoadUpdateReleaseStatus
+	constructor: ->
+	execute: (jsonRels) ->
+		loadReleases = new HLoadReleases()
+		releases = loadReleases.execute(jsonRels)
+		@viewModel = new UpdateReleaseStatusViewmodel(releases)
+		@viewModel.selectRelease @viewModel.allReleases[0]
+		ko.applyBindings(@viewModel, null, {independentBindings: true})
+
 class ULoadAdminProjects
 	constructor: ->
 	execute: (data) ->
@@ -164,4 +173,6 @@ root.ULoadAdminResources = ULoadAdminResources
 root.ULoadAdminDeliverables = ULoadAdminDeliverables
 root.ULoadAdminActivities = ULoadAdminActivities
 root.ULoadPlanResources = ULoadPlanResources
+root.ULoadUpdateReleaseStatus = ULoadUpdateReleaseStatus
+
 

@@ -58,6 +58,17 @@ namespace MvcApplication1.DataAccess
                             InitialHoursEstimate = int.Parse(delReader["InitialEstimate"].ToString()),
                             ActivitiesNeeded = new List<ReleaseModels.Activity>() // snapshot, empty activities array
                         };
+
+                        var cmdAct = new SqlCommand("get_activities_for_deliverable", conn);
+                        cmdAct.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = itm.Id;
+                        cmdAct.CommandType = System.Data.CommandType.StoredProcedure;
+                        using (var actReader = cmdAct.ExecuteReader())
+                        {
+                            while(actReader.Read())
+                            {
+                                itm.ActivitiesNeeded.Add(new ReleaseModels.Activity { Id = int.Parse(actReader["Id"].ToString()), Title = actReader["Title"].ToString(), Description = actReader["Description"].ToString() }); 
+                            }
+                        }
                         item.Deliverables.Add(itm);
                     }
                 }
