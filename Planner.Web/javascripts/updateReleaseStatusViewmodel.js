@@ -64,7 +64,8 @@
 
     UpdateReleaseStatusViewmodel.prototype.selectDeliverable = function(data) {
       console.log("selectDeliverable - function");
-      return this.selectedDeliverable(data);
+      this.selectedDeliverable(data);
+      return console.log(this.selectedDeliverable());
     };
 
     UpdateReleaseStatusViewmodel.prototype.refreshRelease = function(index, jsonData) {};

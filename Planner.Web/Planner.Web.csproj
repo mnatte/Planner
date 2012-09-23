@@ -113,6 +113,8 @@
     <Compile Include="Controllers\ReleaseController.cs" />
     <Compile Include="Controllers\BaseCrudController.cs" />
     <Compile Include="DataAccess\BaseCrudRepository.cs" />
+    <Compile Include="DataAccess\ProjectRepository.cs" />
+    <Compile Include="DataAccess\ReleaseRepository.cs" />
     <Compile Include="DataAccess\ResourceRepository.cs" />
     <Compile Include="DataAccess\SimpleCrudRepository.cs" />
     <Compile Include="Global.asax.cs">
@@ -121,6 +123,7 @@
     <Compile Include="Helpers.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\ActivityInputModel.cs" />
+    <Compile Include="Models\DeliverableActivityStatusInputModel.cs" />
     <Compile Include="Models\DeliverableInputModel.cs" />
     <Compile Include="Models\MilestoneInputModel.cs" />
     <Compile Include="Models\PersonInputModel.cs" />

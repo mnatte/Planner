@@ -1,5 +1,5 @@
 (function() {
-  var Activity, AssignedResource, Deliverable, Feature, Milestone, Period, Phase, Project, Release, ReleaseAssignments, Resource, Week, root,
+  var Activity, AssignedResource, Deliverable, Feature, Milestone, Period, Phase, Project, ProjectActivityStatus, Release, ReleaseAssignments, Resource, Week, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -499,15 +499,21 @@
       this.format = format;
       this.location = location;
       this.activities = [];
+      this.activityStatuses = [];
     }
 
     Deliverable.create = function(jsonData) {
-      var act, deliverabale, _i, _len, _ref;
+      var act, deliverabale, status, _i, _j, _len, _len2, _ref, _ref2;
       deliverabale = new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location);
       _ref = jsonData.ActivitiesNeeded;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         act = _ref[_i];
         deliverabale.activities.push(Activity.create(act));
+      }
+      _ref2 = jsonData.ActivityStatuses;
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        status = _ref2[_j];
+        deliverabale.activityStatuses.push(ProjectActivityStatus.create(status));
       }
       return deliverabale;
     };
@@ -526,6 +532,26 @@
     return Deliverable;
 
   })(Mixin);
+
+  ProjectActivityStatus = (function() {
+
+    function ProjectActivityStatus(hoursRemaining, project, activity) {
+      this.hoursRemaining = hoursRemaining;
+      this.project = project;
+      this.activity = activity;
+    }
+
+    ProjectActivityStatus.create = function(jsonData, project) {
+      var act, proj, status;
+      proj = Project.create(jsonData.Project);
+      act = Actiivity.create(jsonData.Activity);
+      status = new ProjectActivityStatus(jsonData.HoursRemaining, proj, act);
+      return status;
+    };
+
+    return ProjectActivityStatus;
+
+  })();
 
   Activity = (function(_super) {
 

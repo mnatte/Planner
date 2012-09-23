@@ -42,7 +42,7 @@ class UpdateReleaseStatusViewmodel
 		# console.log @
 		# console.log data
 		@selectedDeliverable data
-		#console.log @selectedRelease.projects
+		console.log @selectedDeliverable()
 
 	refreshRelease: (index, jsonData) =>
 		#reload deliverable activity statuses per project

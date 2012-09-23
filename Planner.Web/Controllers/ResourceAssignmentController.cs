@@ -113,7 +113,7 @@ namespace MvcApplication1.Controllers
                 Resource = new ReleaseModels.Resource { Id = int.Parse(reader["PersonId"].ToString()), FirstName = reader["FirstName"].ToString(), MiddleName = reader["MiddleName"].ToString(), LastName = reader["LastName"].ToString() },
                 Project = new ReleaseModels.Project { Id = int.Parse(reader["ProjectId"].ToString()), Title = reader["ProjectTitle"].ToString() },
                 //TODO: fill ActivitiesNeeded
-                Deliverable = new ReleaseModels.Deliverable { Id = int.Parse(reader["DeliverableId"].ToString()), Title = reader["DeliverableTitle"].ToString(), ActivitiesNeeded = new List<ReleaseModels.Activity>() },
+                Deliverable = new ReleaseModels.Deliverable { Id = int.Parse(reader["DeliverableId"].ToString()), Title = reader["DeliverableTitle"].ToString() },
                 Milestone = new ReleaseModels.Milestone { Id = int.Parse(reader["MilestoneId"].ToString()), Title = reader["MilestoneTitle"].ToString() },
                 StartDate = DateTime.Parse(reader["StartDate"].ToString()),
                 EndDate = DateTime.Parse(reader["EndDate"].ToString()),

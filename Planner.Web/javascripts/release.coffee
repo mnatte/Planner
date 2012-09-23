@@ -337,10 +337,13 @@ class Feature
 class Deliverable extends Mixin
 	constructor: (@id, @title, @description, @format, @location) ->
 		@activities = []
+		@activityStatuses = []
 	@create: (jsonData) ->
 		deliverabale = new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location)
 		for act in jsonData.ActivitiesNeeded
 			deliverabale.activities.push Activity.create(act)
+		for status in jsonData.ActivityStatuses
+			deliverabale.activityStatuses.push ProjectActivityStatus.create(status)
 		deliverabale
 	@createCollection: (jsonData) ->
 		deliverables = []
@@ -349,6 +352,13 @@ class Deliverable extends Mixin
 			deliverables.push @del
 		deliverables
 
+class ProjectActivityStatus
+	constructor: (@hoursRemaining, @project, @activity) ->
+	@create: (jsonData, project) ->
+		proj = Project.create(jsonData.Project)
+		act = Actiivity.create(jsonData.Activity)
+		status = new ProjectActivityStatus(jsonData.HoursRemaining, proj, act)
+		status
 
 class Activity extends Mixin
 	constructor: (@id, @title, @description) ->

@@ -130,7 +130,6 @@
         infuser.defaults.templateUrl = "/planner/templates";
         var uc = new ULoadUpdateReleaseStatus();
         var ajax = new Ajax();
-        // callback 'loadReleases' provided, callback jsonData automatically supplied as argument
         ajax.getReleaseSummaries(function (data) { uc.execute(data) });
     });
 </script>    

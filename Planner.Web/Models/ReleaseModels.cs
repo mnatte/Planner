@@ -89,7 +89,27 @@ namespace MvcApplication1.Models
             public string Format { get; set; }
             public int InitialHoursEstimate { get; set; }
             public int HoursRemaining { get; set; }
-            public List<Activity> ActivitiesNeeded { get; set; }
+            private List<Activity> _activitiesNeeded;
+            public IList<Activity> ActivitiesNeeded
+            {
+                get
+                {
+                    if (_activitiesNeeded == null)
+                        _activitiesNeeded = new List<Activity>();
+                    return _activitiesNeeded;
+                }
+            }
+
+            private List<ProjectActivityStatus> _activitiesStatus;
+            public IList<ProjectActivityStatus> ActivityStatuses
+            {
+                get
+                {
+                    if (_activitiesStatus == null)
+                        _activitiesStatus = new List<ProjectActivityStatus>();
+                    return _activitiesStatus;
+                }
+            }
         }
 
         public class Activity
@@ -166,6 +186,14 @@ namespace MvcApplication1.Models
             public int HoursWorked { get; set; }
             public Project Project { get; set; }
             public string Status { get; set; }
+        }
+
+        public class ProjectActivityStatus
+        {
+            public Deliverable Deliverable { get; set; }
+            public int HoursRemaining { get; set; }
+            public Project Project { get; set; }
+            public Activity Activity { get; set; }
         }
 
         public class Project

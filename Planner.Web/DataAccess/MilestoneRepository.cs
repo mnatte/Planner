@@ -19,6 +19,8 @@ namespace MvcApplication1.DataAccess
             get { return "sp_upsert_milestone"; }
         }
 
+        private ReleaseModels.Release _release { get; set; }
+
         protected override void AddUpsertCommandParameters(MilestoneInputModel model, System.Data.SqlClient.SqlCommand cmd)
         {
             cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = model.Id;
@@ -32,7 +34,9 @@ namespace MvcApplication1.DataAccess
 
         protected override ReleaseModels.Milestone CreateItemByDbRow(System.Data.SqlClient.SqlDataReader reader)
         {
-            var item = new ReleaseModels.Milestone { Id = int.Parse(reader["MilestoneId"].ToString()), Title = reader["Title"].ToString(), Date = DateTime.Parse(reader["Date"].ToString()), Time = reader["Time"].ToString(), Description = reader["Description"].ToString() };
+            var milestone = new ReleaseModels.Milestone { Id = int.Parse(reader["MilestoneId"].ToString()), Title = reader["Title"].ToString(), Date = DateTime.Parse(reader["Date"].ToString()), Time = reader["Time"].ToString(), Description = reader["Description"].ToString() };
+            var projRep = new ProjectRepository();
+            var actRep = new ActivityRepository();
             
             var conn = new SqlConnection(this.ConnectionString);
             // Eager load Deliverables as being inside of the Milestone root
@@ -43,7 +47,7 @@ namespace MvcApplication1.DataAccess
 
                 // Prepare command
                 var cmd = new SqlCommand("sp_get_deliverables_for_milestone", conn);
-                cmd.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = item.Id;
+                cmd.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = milestone.Id;
                 cmd.CommandType = System.Data.CommandType.StoredProcedure;
                 
 
@@ -56,7 +60,7 @@ namespace MvcApplication1.DataAccess
                             Location = delReader["Location"].ToString(), Format = delReader["Format"].ToString(), Owner = delReader["Owner"].ToString(), 
                             State = delReader["State"].ToString(), HoursRemaining = int.Parse(delReader["HoursRemaining"].ToString()), 
                             InitialHoursEstimate = int.Parse(delReader["InitialEstimate"].ToString()),
-                            ActivitiesNeeded = new List<ReleaseModels.Activity>() // snapshot, empty activities array
+                            // ActivitiesNeeded => snapshot, empty activities array
                         };
 
                         var cmdAct = new SqlCommand("get_activities_for_deliverable", conn);
@@ -69,16 +73,37 @@ namespace MvcApplication1.DataAccess
                                 itm.ActivitiesNeeded.Add(new ReleaseModels.Activity { Id = int.Parse(actReader["Id"].ToString()), Title = actReader["Title"].ToString(), Description = actReader["Description"].ToString() }); 
                             }
                         }
-                        item.Deliverables.Add(itm);
+
+                        var cmdStatus = new SqlCommand("sp_get_deliverable_status", conn);
+                        cmdStatus.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = itm.Id;
+                        cmdStatus.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = _release.Id;
+                        cmdStatus.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = milestone.Id;
+                        cmdStatus.CommandType = System.Data.CommandType.StoredProcedure;
+                        using (var statusReader = cmdStatus.ExecuteReader())
+                        {
+                            while (statusReader.Read())
+                            {
+                                itm.ActivityStatuses.Add(new ReleaseModels.ProjectActivityStatus 
+                                    { 
+                                        Deliverable = itm,
+                                        HoursRemaining = int.Parse(statusReader["HoursRemaining"].ToString()), 
+                                        Project = projRep.GetProject(int.Parse(statusReader["ProjectId"].ToString())),
+                                        Activity = actRep.GetItemById(int.Parse(statusReader["ActivityId"].ToString()))
+                                    });
+                            }
+                        }
+                        milestone.Deliverables.Add(itm);
                     }
                 }
             }
 
-            return item;
+            return milestone;
         }
 
         public List<ReleaseModels.Milestone> GetMilestonesForRelease(ReleaseModels.Release release)
         {
+            _release = release;
+
             var conn = new SqlConnection(this.ConnectionString);
 
             var cmd = new SqlCommand("sp_get_phase_milestones", conn);

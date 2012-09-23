@@ -42,8 +42,8 @@ namespace MvcApplication1.DataAccess
 
             var actRepository = new ActivityRepository();
             var activities = actRepository.GetDeliverableActivities(item);
-
-            item.ActivitiesNeeded = activities;
+            foreach(var act in activities)
+                item.ActivitiesNeeded.Add(act);
 
             return item;
         }
