@@ -89,25 +89,25 @@ namespace MvcApplication1.Models
             public string Format { get; set; }
             public int InitialHoursEstimate { get; set; }
             public int HoursRemaining { get; set; }
-            private List<Activity> _activitiesNeeded;
-            public IList<Activity> ActivitiesNeeded
+            private List<Activity> _configuredActivities;
+            public IList<Activity> ConfiguredActivities
             {
                 get
                 {
-                    if (_activitiesNeeded == null)
-                        _activitiesNeeded = new List<Activity>();
-                    return _activitiesNeeded;
+                    if (_configuredActivities == null)
+                        _configuredActivities = new List<Activity>();
+                    return _configuredActivities;
                 }
             }
 
-            private List<ProjectActivityStatus> _activitiesStatus;
-            public IList<ProjectActivityStatus> ActivityStatuses
+            private List<Project> _scope;
+            public IList<Project> Scope
             {
                 get
                 {
-                    if (_activitiesStatus == null)
-                        _activitiesStatus = new List<ProjectActivityStatus>();
-                    return _activitiesStatus;
+                    if (_scope == null)
+                        _scope = new List<Project>();
+                    return _scope;
                 }
             }
         }
@@ -188,7 +188,7 @@ namespace MvcApplication1.Models
             public string Status { get; set; }
         }
 
-        public class ProjectActivityStatus
+        public class ActivityStatus
         {
             public Deliverable Deliverable { get; set; }
             public int HoursRemaining { get; set; }
@@ -226,6 +226,20 @@ namespace MvcApplication1.Models
                     if (_backlog == null)
                         _backlog = new List<Feature>();
                     return _backlog;
+                }
+            }
+
+            /// <summary>
+            /// Use Backlog to access Features to Projects to Teams (to Resources)
+            /// </summary>
+            private List<ActivityStatus> _workload;
+            public IList<ActivityStatus> Workload
+            {
+                get
+                {
+                    if (_workload == null)
+                        _workload = new List<ActivityStatus>();
+                    return _workload;
                 }
             }
         }

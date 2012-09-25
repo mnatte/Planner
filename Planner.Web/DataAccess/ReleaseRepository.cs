@@ -47,35 +47,35 @@ namespace MvcApplication1.DataAccess
                             var project = new ReleaseModels.Project { ShortName = projectsReader["ShortName"].ToString(), Id = int.Parse(projectsReader["ProjectId"].ToString()) };
 
                             // Backlog
-                            var cmd3 = new SqlCommand(string.Format("Select i.BusinessId, i.ContactPerson, i.WorkRemaining, i.Title, i.State, p.Id AS ProjectId, p.ShortName as ProjectShortName from TfsImport i INNER JOIN Phases r ON i.IterationPath LIKE r.TfsIterationPath + '%' INNER JOIN Projects p on i.IterationPath LIKE p.TfsIterationPath + '%' WHERE r.Id = {0}", id), conn);
-                            using (var featuresReader = cmd3.ExecuteReader())
-                            {
-                                while (featuresReader.Read())
-                                {
-                                    var feature = new ReleaseModels.Feature { BusinessId = featuresReader["BusinessId"].ToString(), ContactPerson = featuresReader["ContactPerson"].ToString(), RemainingHours = int.Parse(featuresReader["WorkRemaining"].ToString()), Title = featuresReader["Title"].ToString(), Status = featuresReader["State"].ToString() };
-                                    project.Backlog.Add(feature);
-                                }
-                            }
+                            //var cmd3 = new SqlCommand(string.Format("Select i.BusinessId, i.ContactPerson, i.WorkRemaining, i.Title, i.State, p.Id AS ProjectId, p.ShortName as ProjectShortName from TfsImport i INNER JOIN Phases r ON i.IterationPath LIKE r.TfsIterationPath + '%' INNER JOIN Projects p on i.IterationPath LIKE p.TfsIterationPath + '%' WHERE r.Id = {0}", id), conn);
+                            //using (var featuresReader = cmd3.ExecuteReader())
+                            //{
+                            //    while (featuresReader.Read())
+                            //    {
+                            //        var feature = new ReleaseModels.Feature { BusinessId = featuresReader["BusinessId"].ToString(), ContactPerson = featuresReader["ContactPerson"].ToString(), RemainingHours = int.Parse(featuresReader["WorkRemaining"].ToString()), Title = featuresReader["Title"].ToString(), Status = featuresReader["State"].ToString() };
+                            //        project.Backlog.Add(feature);
+                            //    }
+                            //}
 
-                            // Assigned Resources
-                            var cmdReleaseResources = new SqlCommand(String.Format("Select rr.*, p.Initials, p.HoursPerWeek from ReleaseResources rr INNER JOIN Persons p on rr.PersonId = p.Id where rr.ReleaseId = {0} and rr.ProjectId = {1}", id, project.Id), conn);
-                            using (var releaseResourcesReader = cmdReleaseResources.ExecuteReader())
-                            {
-                                while (releaseResourcesReader.Read())
-                                {
-                                    var assignment = new ReleaseModels.ResourceAssignment { EndDate = DateTime.Parse(releaseResourcesReader["EndDate"].ToString()), StartDate = DateTime.Parse(releaseResourcesReader["StartDate"].ToString()), FocusFactor = double.Parse(releaseResourcesReader["FocusFactor"].ToString()), Resource = new ReleaseModels.Resource { AvailableHoursPerWeek = int.Parse(releaseResourcesReader["HoursPerWeek"].ToString()), Initials = releaseResourcesReader["Initials"].ToString() } };
-                                    // get absences
-                                    var cmdAbsences = new SqlCommand(String.Format("Select * from Absences where PersonId = {0}", releaseResourcesReader["PersonId"].ToString()), conn);
-                                    using (var absencesReader = cmdAbsences.ExecuteReader())
-                                    {
-                                        while (absencesReader.Read())
-                                        {
-                                            assignment.Resource.PeriodsAway.Add(new ReleaseModels.Phase { Id = int.Parse(absencesReader["Id"].ToString()), EndDate = DateTime.Parse(absencesReader["EndDate"].ToString()), StartDate = DateTime.Parse(absencesReader["StartDate"].ToString()), Title = absencesReader["Title"].ToString() });
-                                        }
-                                    }
-                                    project.AssignedResources.Add(assignment);
-                                }
-                            }
+                            //// Assigned Resources
+                            //var cmdReleaseResources = new SqlCommand(String.Format("Select rr.*, p.Initials, p.HoursPerWeek from ReleaseResources rr INNER JOIN Persons p on rr.PersonId = p.Id where rr.ReleaseId = {0} and rr.ProjectId = {1}", id, project.Id), conn);
+                            //using (var releaseResourcesReader = cmdReleaseResources.ExecuteReader())
+                            //{
+                            //    while (releaseResourcesReader.Read())
+                            //    {
+                            //        var assignment = new ReleaseModels.ResourceAssignment { EndDate = DateTime.Parse(releaseResourcesReader["EndDate"].ToString()), StartDate = DateTime.Parse(releaseResourcesReader["StartDate"].ToString()), FocusFactor = double.Parse(releaseResourcesReader["FocusFactor"].ToString()), Resource = new ReleaseModels.Resource { AvailableHoursPerWeek = int.Parse(releaseResourcesReader["HoursPerWeek"].ToString()), Initials = releaseResourcesReader["Initials"].ToString() } };
+                            //        // get absences
+                            //        var cmdAbsences = new SqlCommand(String.Format("Select * from Absences where PersonId = {0}", releaseResourcesReader["PersonId"].ToString()), conn);
+                            //        using (var absencesReader = cmdAbsences.ExecuteReader())
+                            //        {
+                            //            while (absencesReader.Read())
+                            //            {
+                            //                assignment.Resource.PeriodsAway.Add(new ReleaseModels.Phase { Id = int.Parse(absencesReader["Id"].ToString()), EndDate = DateTime.Parse(absencesReader["EndDate"].ToString()), StartDate = DateTime.Parse(absencesReader["StartDate"].ToString()), Title = absencesReader["Title"].ToString() });
+                            //            }
+                            //        }
+                            //        project.AssignedResources.Add(assignment);
+                            //    }
+                            //}
 
                             release.Projects.Add(project);
                         }
@@ -144,7 +144,7 @@ namespace MvcApplication1.DataAccess
                 conn.Open();
 
                 // Release
-                var cmd = new SqlCommand("Select * from Phases where ISNULL(ParentId, 0) = 0", conn);
+                var cmd = new SqlCommand("Select * from Phases where ISNULL(ParentId, 0) = 0 AND Id <> 84", conn);
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
@@ -240,12 +240,31 @@ namespace MvcApplication1.DataAccess
                         }
                     }
                 }
+                var rel = this.GetRelease(newId);
 
-                return this.GetRelease(newId);
+                return rel;
             }
             catch (Exception ex)
             {
                 throw;
+            }
+        }
+
+        public bool StatusRecordsExist(int releaseId, int milestoneId, int deliverableId, int projectId)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            using (conn)
+            {
+                conn.Open();
+                var cmdCountStatusRecords = new SqlCommand("sp_count_milestonestatus_records", conn);
+                cmdCountStatusRecords.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = releaseId;
+                cmdCountStatusRecords.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = projectId;
+                cmdCountStatusRecords.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = milestoneId;
+                cmdCountStatusRecords.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = deliverableId;
+                cmdCountStatusRecords.CommandType = System.Data.CommandType.StoredProcedure;
+                            
+                var recs = int.Parse(cmdCountStatusRecords.ExecuteScalar().ToString());
+                return recs > 0;
             }
         }
 
@@ -336,11 +355,44 @@ namespace MvcApplication1.DataAccess
 
                 }
 
-                return this.GetRelease(obj.PhaseId);
+                var rel = this.GetReleaseSummary(obj.PhaseId);
+                this.GenerateStatusRecords(rel);
+                return rel;
+
             }
             catch (Exception ex)
             {
                 throw;
+            }
+        }
+
+        public void GenerateStatusRecords(ReleaseModels.Release rel)
+        {
+            // create status records when not existing baased on release configuration
+            foreach (var ms in rel.Milestones)
+            {
+                foreach (var deliverable in ms.Deliverables)
+                {
+                    foreach (var proj in rel.Projects)
+                    {
+                        if (!this.StatusRecordsExist(rel.Id, ms.Id, deliverable.Id, proj.Id))
+                        {
+                            var input = new StatusInputModel
+                            {
+                                ProjectId = proj.Id,
+                                DeliverableId = deliverable.Id,
+                                MilestoneId =  ms.Id,
+                                ReleaseId = rel.Id,
+                                ActivityStatuses = new List<DeliverableActivityStatusInputModel>()
+                            };
+                            foreach (var act in deliverable.ConfiguredActivities)
+                            {
+                                input.ActivityStatuses.Add(new DeliverableActivityStatusInputModel { ActivityId = act.Id, HoursRemaining = 0 });
+                            }
+                            this.CreateDeliverableStatusRecords(input);
+                        }
+                    }
+                }
             }
         }
 
@@ -373,10 +425,24 @@ namespace MvcApplication1.DataAccess
             return repository.GetMilestonesForRelease(release);
         }
 
-        public ReleaseModels.Release CreateDeliverableStatusRecords(StatusInputModel obj)
+        public void SaveDeliverableStatus(DeliverableStatusInputModel obj)
         {
-            var recs = new List<ReleaseModels.ProjectActivityStatus>();
+            var input = new StatusInputModel { DeliverableId = obj.DeliverableId, MilestoneId = obj.MilestoneId, ReleaseId = obj.ReleaseId, ActivityStatuses = new List<DeliverableActivityStatusInputModel>() };
 
+            foreach (var proj in obj.Scope)
+            {
+                input.ProjectId = proj.Id;
+                foreach (var act in proj.Workload)
+                {
+                    input.ActivityStatuses.Add(new DeliverableActivityStatusInputModel { ActivityId = act.Activity.Id, HoursRemaining = act.HoursRemaining });
+                }
+
+                this.CreateDeliverableStatusRecords(input);
+            }
+        }
+
+        public void CreateDeliverableStatusRecords(StatusInputModel obj)
+        {
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
             try
             {
@@ -385,30 +451,28 @@ namespace MvcApplication1.DataAccess
                     conn.Open();
 
                     var cmd = new SqlCommand("sp_insert_milestonestatus", conn);
-                    cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = obj.Release.Id;
-                    cmd.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = obj.Milestone.Id;
-                    cmd.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = obj.Deliverable.Id;
-                    cmd.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = 0;
+                    cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = obj.ReleaseId;
+                    cmd.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = obj.MilestoneId;
+                    cmd.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = obj.DeliverableId;
+                    cmd.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = obj.ProjectId;
                     cmd.Parameters.Add("@ActivityId", System.Data.SqlDbType.Int).Value = 0;
                     cmd.Parameters.Add("@HoursRemaining", System.Data.SqlDbType.Int).Value = 0;
                     
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
                     // completely renew the ProjectActivityStatuses for the Milestone Deliverables as set in the client app
-                    var cmdDelCross = new SqlCommand(string.Format("DELETE FROM MilestoneStatus WHERE ReleaseId = {0} AND MilestoneId = {1} AND DeliverableId = {2}", obj.Release.Id, obj.Milestone.Id, obj.Deliverable.Id), conn);
+                    var cmdDelCross = new SqlCommand(string.Format("DELETE FROM MilestoneStatus WHERE ReleaseId = {0} AND MilestoneId = {1} AND DeliverableId = {2}", obj.ReleaseId, obj.MilestoneId, obj.DeliverableId), conn);
                     cmdDelCross.ExecuteNonQuery();
 
                     foreach (var itm in obj.ActivityStatuses)
                     {
-                        cmd.Parameters["@ProjectId"].Value = itm.ProjectId;
+                        //cmd.Parameters["@ProjectId"].Value = itm.ProjectId;
                         cmd.Parameters["@ActivityId"].Value = itm.ActivityId;
                         cmd.Parameters["@HoursRemaining"].Value = itm.HoursRemaining;
 
                         cmd.ExecuteNonQuery();
                     }
                 }
-
-                return this.GetRelease(obj.Release.Id);
             }
             catch (Exception ex)
             {

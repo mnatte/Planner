@@ -6,8 +6,9 @@ root = global ? window
 
 class UpdateReleaseStatusViewmodel
 	constructor: (@allReleases) ->
-		Phase.extend(RCrud)
-		Milestone.extend(RCrud)
+		# Phase.extend(RCrud)
+		# Milestone.extend(RCrud)
+		Deliverable.extend(RCrud)
 		@selectedRelease = ko.observable()
 		@selectedMilestone = ko.observable()
 		@selectedDeliverable = ko.observable()
@@ -49,11 +50,11 @@ class UpdateReleaseStatusViewmodel
 
 	saveSelectedDeliverable: =>
 		console.log "saveSelectedDeliverable: selectedRelease: #{@selectedRelease()}"
-		console.log "saveSelectedDeliverable: selectedMilestone: #{@selectedDeliverable()}"
-		console.log ko.toJSON(@selectedDeliverable())
-		console.log ko.toJSON(@selectedDeliverable().milestoneId)
-		i = @allReleases().indexOf(@selectedRelease())
-		#@selectedMilestone().save("/planner/Release/SaveDeliverableStatus", ko.toJSON(@selectedMilestone()), (data) => @refreshRelease(i, data))
+		console.log "saveSelectedDeliverable: selectedMilestone: #{@selectedMilestone()}"
+		console.log @selectedDeliverable().toStatusJSON()
+		#console.log ko.toJSON(@selectedDeliverable().milestoneId)
+		#i = @allReleases().indexOf(@selectedRelease())
+		@selectedDeliverable().save("/planner/Release/SaveDeliverableStatus", ko.toJSON(@selectedDeliverable().toStatusJSON()), (data) => @refreshRelease(i, data))
 	
 # export to root object
 root.UpdateReleaseStatusViewmodel = UpdateReleaseStatusViewmodel

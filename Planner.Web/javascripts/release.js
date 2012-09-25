@@ -202,7 +202,7 @@
       _ref = jsonData.Deliverables;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         deliverable = _ref[_i];
-        ms.addDeliverable(Deliverable.create(deliverable));
+        ms.addDeliverable(Deliverable.create(deliverable, ms));
       }
       return ms;
     };
@@ -320,6 +320,7 @@
 
     Release.create = function(jsonData) {
       var milestone, phase, project, release, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
+      console.log("create Release");
       release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId);
       _ref = jsonData.Phases;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -357,10 +358,13 @@
       this.release = release;
       this.resources = [];
       this.backlog = [];
+      this.workload = [];
     }
 
     Project.create = function(jsonData, release) {
-      var feature, project, res, _i, _j, _len, _len2, _ref, _ref2;
+      var feature, project, res, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
+      console.log("create project - jsonData");
+      console.log(jsonData);
       project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch, release);
       _ref = jsonData.AssignedResources;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -372,11 +376,17 @@
         feature = _ref2[_j];
         project.backlog.push(Feature.create(feature, project));
       }
+      _ref3 = jsonData.Workload;
+      for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+        feature = _ref3[_k];
+        project.workload.push(ProjectActivityStatus.create(feature, project));
+      }
       return project;
     };
 
     Project.createCollection = function(jsonData, release) {
       var project, projects, _i, _len;
+      console.log("Project.createCollection");
       projects = [];
       for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
         project = jsonData[_i];
@@ -384,6 +394,22 @@
         projects.push(this.project);
       }
       return projects;
+    };
+
+    Project.prototype.toStatusJSON = function() {
+      var copy;
+      copy = ko.toJS(this);
+      console.log(copy);
+      delete copy.title;
+      delete copy.shortName;
+      delete copy.descr;
+      delete copy.backlog;
+      delete copy.tfsIterationPath;
+      delete copy.tfsDevBranch;
+      delete copy.release;
+      delete copy.resources;
+      console.log(copy);
+      return copy;
     };
 
     return Project;
@@ -492,28 +518,30 @@
 
     __extends(Deliverable, _super);
 
-    function Deliverable(id, title, description, format, location) {
+    function Deliverable(id, title, description, format, location, milestone) {
       this.id = id;
       this.title = title;
       this.description = description;
       this.format = format;
       this.location = location;
+      this.milestone = milestone;
       this.activities = [];
-      this.activityStatuses = [];
+      this.scope = [];
     }
 
-    Deliverable.create = function(jsonData) {
-      var act, deliverabale, status, _i, _j, _len, _len2, _ref, _ref2;
-      deliverabale = new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location);
-      _ref = jsonData.ActivitiesNeeded;
+    Deliverable.create = function(jsonData, milestone) {
+      var act, deliverabale, project, _i, _j, _len, _len2, _ref, _ref2;
+      console.log("create Deliverable");
+      deliverabale = new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location, milestone);
+      _ref = jsonData.ConfiguredActivities;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         act = _ref[_i];
         deliverabale.activities.push(Activity.create(act));
       }
-      _ref2 = jsonData.ActivityStatuses;
+      _ref2 = jsonData.Scope;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-        status = _ref2[_j];
-        deliverabale.activityStatuses.push(ProjectActivityStatus.create(status));
+        project = _ref2[_j];
+        deliverabale.scope.push(Project.create(project));
       }
       return deliverabale;
     };
@@ -529,23 +557,46 @@
       return deliverables;
     };
 
+    Deliverable.prototype.toStatusJSON = function() {
+      var copy, proj, _i, _len, _ref;
+      copy = ko.toJS(this);
+      console.log(copy);
+      delete copy.title;
+      delete copy.description;
+      delete copy.format;
+      delete copy.location;
+      delete copy.activities;
+      delete copy.milestone;
+      copy.releaseId = this.milestone.phaseId;
+      copy.milestoneId = this.milestone.id;
+      copy.deliverableId = this.id;
+      copy.scope = [];
+      _ref = this.scope;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        proj = _ref[_i];
+        copy.scope.push(proj.toStatusJSON());
+      }
+      console.log(copy);
+      return copy;
+    };
+
     return Deliverable;
 
   })(Mixin);
 
   ProjectActivityStatus = (function() {
 
-    function ProjectActivityStatus(hoursRemaining, project, activity) {
+    function ProjectActivityStatus(hoursRemaining, activity) {
       this.hoursRemaining = hoursRemaining;
-      this.project = project;
       this.activity = activity;
     }
 
     ProjectActivityStatus.create = function(jsonData, project) {
-      var act, proj, status;
-      proj = Project.create(jsonData.Project);
-      act = Actiivity.create(jsonData.Activity);
-      status = new ProjectActivityStatus(jsonData.HoursRemaining, proj, act);
+      var act, status;
+      console.log("create ProjectActivityStatus");
+      console.log(jsonData);
+      act = Activity.create(jsonData.Activity);
+      status = new ProjectActivityStatus(jsonData.HoursRemaining, act);
       return status;
     };
 

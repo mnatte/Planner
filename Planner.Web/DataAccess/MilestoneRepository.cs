@@ -55,7 +55,7 @@ namespace MvcApplication1.DataAccess
                 {
                     while (delReader.Read())
                     {
-                        var itm = new ReleaseModels.Deliverable { 
+                        var deliv = new ReleaseModels.Deliverable { 
                             Id = int.Parse(delReader["DeliverableId"].ToString()), Title = delReader["Title"].ToString(), Description = delReader["Description"].ToString(), 
                             Location = delReader["Location"].ToString(), Format = delReader["Format"].ToString(), Owner = delReader["Owner"].ToString(), 
                             State = delReader["State"].ToString(), HoursRemaining = int.Parse(delReader["HoursRemaining"].ToString()), 
@@ -64,35 +64,22 @@ namespace MvcApplication1.DataAccess
                         };
 
                         var cmdAct = new SqlCommand("get_activities_for_deliverable", conn);
-                        cmdAct.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = itm.Id;
+                        cmdAct.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = deliv.Id;
                         cmdAct.CommandType = System.Data.CommandType.StoredProcedure;
                         using (var actReader = cmdAct.ExecuteReader())
                         {
                             while(actReader.Read())
                             {
-                                itm.ActivitiesNeeded.Add(new ReleaseModels.Activity { Id = int.Parse(actReader["Id"].ToString()), Title = actReader["Title"].ToString(), Description = actReader["Description"].ToString() }); 
+                                deliv.ConfiguredActivities.Add(new ReleaseModels.Activity { Id = int.Parse(actReader["Id"].ToString()), Title = actReader["Title"].ToString(), Description = actReader["Description"].ToString() }); 
                             }
                         }
 
-                        var cmdStatus = new SqlCommand("sp_get_deliverable_status", conn);
-                        cmdStatus.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = itm.Id;
-                        cmdStatus.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = _release.Id;
-                        cmdStatus.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = milestone.Id;
-                        cmdStatus.CommandType = System.Data.CommandType.StoredProcedure;
-                        using (var statusReader = cmdStatus.ExecuteReader())
+                        foreach (var proj in _release.Projects)
                         {
-                            while (statusReader.Read())
-                            {
-                                itm.ActivityStatuses.Add(new ReleaseModels.ProjectActivityStatus 
-                                    { 
-                                        Deliverable = itm,
-                                        HoursRemaining = int.Parse(statusReader["HoursRemaining"].ToString()), 
-                                        Project = projRep.GetProject(int.Parse(statusReader["ProjectId"].ToString())),
-                                        Activity = actRep.GetItemById(int.Parse(statusReader["ActivityId"].ToString()))
-                                    });
-                            }
+                            deliv.Scope.Add(projRep.GetProjectWithWorkload(proj.Id, _release.Id, milestone.Id, deliv.Id));
                         }
-                        milestone.Deliverables.Add(itm);
+
+                        milestone.Deliverables.Add(deliv);
                     }
                 }
             }

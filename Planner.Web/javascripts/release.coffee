@@ -169,7 +169,7 @@ class Milestone extends Mixin
 	@create: (jsonData, phaseId) ->
 		ms = new Milestone(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.Date), jsonData.Time, jsonData.Title, jsonData.Description, phaseId)
 		for deliverable in jsonData.Deliverables
-			ms.addDeliverable Deliverable.create(deliverable)
+			ms.addDeliverable Deliverable.create(deliverable, ms)
 		ms
 	@createCollection: (jsonData) ->
 		milestones = []
@@ -233,7 +233,11 @@ class Release extends Phase
 	addMilestone: (milestone) ->
 		@milestones.push(milestone)
 	@create: (jsonData) ->
+		console.log "create Release"
 		#console.log jsonData
+		#console.log "jsonData.Projects"
+		#console.log jsonData.Projects
+		#console.log jsonData.Projects.length
 		#console.log "#{jsonData.StartDate} #{jsonData.EndDate}"
 		release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId)
 		for phase in jsonData.Phases
@@ -253,22 +257,41 @@ class Project extends Mixin
 	constructor: (@id, @title, @shortName, @descr, @tfsIterationPath, @tfsDevBranch, @release) ->
 		@resources = []
 		@backlog = []
+		@workload = []
 	@create: (jsonData, release) ->
-		# console.log "create project"
-		# console.log jsonData
+		console.log "create project - jsonData"
+		console.log jsonData
 		project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch, release)
 		# console.log project
 		for res in jsonData.AssignedResources
 			project.resources.push AssignedResource.create(res, project, release)
 		for feature in jsonData.Backlog
 			project.backlog.push Feature.create(feature, project)
+		for feature in jsonData.Workload
+			project.workload.push ProjectActivityStatus.create(feature, project)
+		#console.log "created Project entity"
+		#console.log project
 		project
 	@createCollection: (jsonData, release) ->
+		console.log "Project.createCollection"
 		projects = []
 		for project in jsonData
 			@project = Project.create(project, release)
 			projects.push @project
 		projects
+	toStatusJSON: ->
+		copy = ko.toJS(@) #get a clean copy
+		console.log copy
+		delete copy.title #remove property
+		delete copy.shortName #remove property
+		delete copy.descr #remove property
+		delete copy.backlog #remove property
+		delete copy.tfsIterationPath #remove property
+		delete copy.tfsDevBranch
+		delete copy.release
+		delete copy.resources
+		console.log(copy)
+		copy #return the copy to be serialized
 
 class AssignedResource extends Mixin
 	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate, @activity, @milestone, @deliverable) ->
@@ -335,15 +358,16 @@ class Feature
 		feature
 
 class Deliverable extends Mixin
-	constructor: (@id, @title, @description, @format, @location) ->
+	constructor: (@id, @title, @description, @format, @location, @milestone) ->
 		@activities = []
-		@activityStatuses = []
-	@create: (jsonData) ->
-		deliverabale = new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location)
-		for act in jsonData.ActivitiesNeeded
+		@scope = []
+	@create: (jsonData, milestone) ->
+		console.log "create Deliverable"
+		deliverabale = new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location, milestone)
+		for act in jsonData.ConfiguredActivities
 			deliverabale.activities.push Activity.create(act)
-		for status in jsonData.ActivityStatuses
-			deliverabale.activityStatuses.push ProjectActivityStatus.create(status)
+		for project in jsonData.Scope
+			deliverabale.scope.push Project.create(project)
 		deliverabale
 	@createCollection: (jsonData) ->
 		deliverables = []
@@ -351,13 +375,32 @@ class Deliverable extends Mixin
 			@del = Deliverable.create(del)
 			deliverables.push @del
 		deliverables
+	toStatusJSON: ->
+		copy = ko.toJS(@) #get a clean copy
+		console.log copy
+		delete copy.title #remove property
+		delete copy.description #remove property
+		delete copy.format #remove property
+		delete copy.location #remove property
+		delete copy.activities
+		delete copy.milestone
+		copy.releaseId = @milestone.phaseId
+		copy.milestoneId = @milestone.id
+		copy.deliverableId = @id
+		copy.scope = []
+		for proj in @scope
+			copy.scope.push proj.toStatusJSON()
+		console.log(copy)
+		copy #return the copy to be serialized
 
 class ProjectActivityStatus
-	constructor: (@hoursRemaining, @project, @activity) ->
+	constructor: (@hoursRemaining, @activity) ->
 	@create: (jsonData, project) ->
-		proj = Project.create(jsonData.Project)
-		act = Actiivity.create(jsonData.Activity)
-		status = new ProjectActivityStatus(jsonData.HoursRemaining, proj, act)
+		console.log "create ProjectActivityStatus"
+		console.log jsonData
+		#proj = Project.create(jsonData.Project)
+		act = Activity.create(jsonData.Activity)
+		status = new ProjectActivityStatus(jsonData.HoursRemaining, act)
 		status
 
 class Activity extends Mixin

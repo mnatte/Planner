@@ -14,8 +14,7 @@
       this.selectDeliverable = __bind(this.selectDeliverable, this);
       this.selectMilestone = __bind(this.selectMilestone, this);
       this.selectRelease = __bind(this.selectRelease, this);
-      Phase.extend(RCrud);
-      Milestone.extend(RCrud);
+      Deliverable.extend(RCrud);
       this.selectedRelease = ko.observable();
       this.selectedMilestone = ko.observable();
       this.selectedDeliverable = ko.observable();
@@ -71,12 +70,13 @@
     UpdateReleaseStatusViewmodel.prototype.refreshRelease = function(index, jsonData) {};
 
     UpdateReleaseStatusViewmodel.prototype.saveSelectedDeliverable = function() {
-      var i;
+      var _this = this;
       console.log("saveSelectedDeliverable: selectedRelease: " + (this.selectedRelease()));
-      console.log("saveSelectedDeliverable: selectedMilestone: " + (this.selectedDeliverable()));
-      console.log(ko.toJSON(this.selectedDeliverable()));
-      console.log(ko.toJSON(this.selectedDeliverable().milestoneId));
-      return i = this.allReleases().indexOf(this.selectedRelease());
+      console.log("saveSelectedDeliverable: selectedMilestone: " + (this.selectedMilestone()));
+      console.log(this.selectedDeliverable().toStatusJSON());
+      return this.selectedDeliverable().save("/planner/Release/SaveDeliverableStatus", ko.toJSON(this.selectedDeliverable().toStatusJSON()), function(data) {
+        return _this.refreshRelease(i, data);
+      });
     };
 
     return UpdateReleaseStatusViewmodel;

@@ -71,14 +71,14 @@
                     </div>
                     <!-- ko if: $root.selectedDeliverable() -->
                     <form>
-                        <ul data-bind="foreach: $root.selectedRelease().projects">
+                        <ul data-bind="foreach: $root.selectedDeliverable().scope">
                             <li>
                                 <div class="colheader">
                                     <span class="icon24 icon-chart-small"></span>
                                     <span data-bind="text: title"></span>
                                 </div>
-                                <!-- ko foreach: $root.selectedDeliverable().activities -->
-                                <label data-bind="text: title"></label><input type="text" data-bind="value: title" />
+                                <!-- ko foreach: workload -->
+                                    <label data-bind="text:activity.title"></label><input type="text" data-bind="value: hoursRemaining, name: activity.title" />
                                 <!--/ko-->
                             </li>
                         </ul>

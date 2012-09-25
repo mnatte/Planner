@@ -82,5 +82,36 @@ namespace MvcApplication1.DataAccess
                 return p;
             }
         }
+
+        public ReleaseModels.Project GetProjectWithWorkload(int projectId, int releaseId, int milestoneId, int deliverableId)
+        {
+            var project = this.GetProject(projectId);
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            var cmdStatus = new SqlCommand("sp_get_deliverable_status", conn);
+            cmdStatus.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = deliverableId;
+            cmdStatus.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = releaseId;
+            cmdStatus.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = milestoneId;
+            cmdStatus.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = projectId;
+            cmdStatus.CommandType = System.Data.CommandType.StoredProcedure;
+
+            using (conn)
+            {
+                conn.Open();
+                using (var statusReader = cmdStatus.ExecuteReader())
+                {
+                    while (statusReader.Read())
+                    {
+                        project.Workload.Add(new ReleaseModels.ActivityStatus
+                            {
+                                //Deliverable = itm,
+                                HoursRemaining = int.Parse(statusReader["HoursRemaining"].ToString()),
+                                //Project = projRep.GetProject(project.Id),
+                                Activity = new ReleaseModels.Activity { Id = int.Parse(statusReader["ActivityId"].ToString()), Title = statusReader["ActivityTitle"].ToString(), Description = statusReader["ActivityDescription"].ToString() }
+                            });
+                    }
+                }
+            }
+            return project;
+        }
     }
 }

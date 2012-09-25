@@ -56,6 +56,16 @@ namespace MvcApplication1.Controllers
             return result;
         }
 
+        [HttpPost]
+        public JsonResult SaveDeliverableStatus(DeliverableStatusInputModel obj)
+        {
+            var rep = new ReleaseRepository();
+            rep.SaveDeliverableStatus(obj);
+
+            var result = this.Json("Saved", JsonRequestBehavior.AllowGet);
+            return result;
+        }
+
         //
         // DELETE: /Release/Delete/5
         [HttpDelete]
