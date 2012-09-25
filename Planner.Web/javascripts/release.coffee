@@ -267,8 +267,8 @@ class Project extends Mixin
 			project.resources.push AssignedResource.create(res, project, release)
 		for feature in jsonData.Backlog
 			project.backlog.push Feature.create(feature, project)
-		for feature in jsonData.Workload
-			project.workload.push ProjectActivityStatus.create(feature, project)
+		for act in jsonData.Workload
+			project.workload.push ProjectActivityStatus.create(act, project)
 		#console.log "created Project entity"
 		#console.log project
 		project

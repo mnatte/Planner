@@ -438,6 +438,7 @@ namespace MvcApplication1.DataAccess
                 }
 
                 this.CreateDeliverableStatusRecords(input);
+                input.ActivityStatuses.Clear();
             }
         }
 
@@ -461,7 +462,7 @@ namespace MvcApplication1.DataAccess
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
                     // completely renew the ProjectActivityStatuses for the Milestone Deliverables as set in the client app
-                    var cmdDelCross = new SqlCommand(string.Format("DELETE FROM MilestoneStatus WHERE ReleaseId = {0} AND MilestoneId = {1} AND DeliverableId = {2}", obj.ReleaseId, obj.MilestoneId, obj.DeliverableId), conn);
+                    var cmdDelCross = new SqlCommand(string.Format("DELETE FROM MilestoneStatus WHERE ReleaseId = {0} AND MilestoneId = {1} AND DeliverableId = {2} AND ProjectId = {3}", obj.ReleaseId, obj.MilestoneId, obj.DeliverableId, obj.ProjectId), conn);
                     cmdDelCross.ExecuteNonQuery();
 
                     foreach (var itm in obj.ActivityStatuses)

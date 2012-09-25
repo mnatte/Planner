@@ -34,9 +34,10 @@ RGroupBy =
 							# console.log(addedSets)
 						# add item to set when property == propertyValue
 						set = (grp for grp in @sets when grp.label == item[property] and grp.groupedBy == property)[0]
-						# console.log("set: #{set}")
+						console.log set
 						set.items.push(item)
 						# console.log("added #{item} to set #{set.label}")
+					@sets
 
 RTeamMember = 
 	extended: ->

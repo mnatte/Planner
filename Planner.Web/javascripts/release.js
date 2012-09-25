@@ -362,7 +362,7 @@
     }
 
     Project.create = function(jsonData, release) {
-      var feature, project, res, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
+      var act, feature, project, res, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
       console.log("create project - jsonData");
       console.log(jsonData);
       project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch, release);
@@ -378,8 +378,8 @@
       }
       _ref3 = jsonData.Workload;
       for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
-        feature = _ref3[_k];
-        project.workload.push(ProjectActivityStatus.create(feature, project));
+        act = _ref3[_k];
+        project.workload.push(ProjectActivityStatus.create(act, project));
       }
       return project;
     };

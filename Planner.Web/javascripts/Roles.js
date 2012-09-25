@@ -22,9 +22,8 @@
       return this.include({
         sets: [],
         group: function(property, collection) {
-          var addedSets, grp, item, set, _i, _len, _ref, _results;
+          var addedSets, grp, item, set, _i, _len, _ref;
           addedSets = [];
-          _results = [];
           for (_i = 0, _len = collection.length; _i < _len; _i++) {
             item = collection[_i];
             if (_ref = "" + property + "_" + item[property], __indexOf.call(addedSets, _ref) < 0) {
@@ -36,20 +35,21 @@
               addedSets.push("" + property + "_" + item[property]);
             }
             set = ((function() {
-              var _j, _len2, _ref2, _results2;
+              var _j, _len2, _ref2, _results;
               _ref2 = this.sets;
-              _results2 = [];
+              _results = [];
               for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
                 grp = _ref2[_j];
                 if (grp.label === item[property] && grp.groupedBy === property) {
-                  _results2.push(grp);
+                  _results.push(grp);
                 }
               }
-              return _results2;
+              return _results;
             }).call(this))[0];
-            _results.push(set.items.push(item));
+            console.log(set);
+            set.items.push(item);
           }
-          return _results;
+          return this.sets;
         }
       });
     }

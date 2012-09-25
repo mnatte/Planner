@@ -8,25 +8,18 @@
 
     function PhasesViewmodel(allReleases) {
       this.selectPhase = __bind(this.selectPhase, this);
-      this.closeDetails = __bind(this.closeDetails, this);
-      var endDate, startDate;
-      this.selectedPhase = ko.observable();
+      this.closeDetails = __bind(this.closeDetails, this);      this.selectedPhase = ko.observable();
       this.canShowDetails = ko.observable(false);
-      this.centerDate = ko.observable(new Date());
-      this.currentPhases = ko.observableArray();
-      startDate = new Date(this.centerDate().getTime() - (24 * 60 * 60 * 1000 * 14));
-      endDate = new Date(this.centerDate().getTime() + (24 * 60 * 60 * 1000 * 28));
-      this.periodToView = ko.observable(new Period(new Date(this.centerDate().getTime() - (24 * 60 * 60 * 1000 * 14)), new Date(this.centerDate().getTime() + (24 * 60 * 60 * 1000 * 28)), "View Period"));
+      Project.extend(RGroupBy);
     }
 
     PhasesViewmodel.prototype.load = function(data) {
-      var ms, obj, ph, rel, _i, _j, _k, _len, _len2, _len3, _ref, _ref2;
+      var activ, acts, del, descr, flatten, ms, obj, ph, pr, rel, remainingHours, work, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _len6, _m, _n, _ref, _ref2, _ref3, _ref4, _ref5;
       this.releases = [];
       this.displayData = [];
       for (_i = 0, _len = data.length; _i < _len; _i++) {
         rel = data[_i];
         console.log(rel.title + ': ' + rel.endDate.dateString);
-        this.currentPhases.push(rel);
         _ref = rel.phases;
         for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
           ph = _ref[_j];
@@ -42,11 +35,44 @@
         _ref2 = rel.milestones;
         for (_k = 0, _len3 = _ref2.length; _k < _len3; _k++) {
           ms = _ref2[_k];
+          descr = '<ul>';
+          _ref3 = ms.deliverables;
+          for (_l = 0, _len4 = _ref3.length; _l < _len4; _l++) {
+            del = _ref3[_l];
+            flatten = [];
+            descr += '<li>' + del.title + '</li>';
+            _ref4 = del.scope;
+            for (_m = 0, _len5 = _ref4.length; _m < _len5; _m++) {
+              pr = _ref4[_m];
+              _ref5 = pr.workload;
+              for (_n = 0, _len6 = _ref5.length; _n < _len6; _n++) {
+                work = _ref5[_n];
+                flatten.push({
+                  act: work.activity.title,
+                  hrs: work.workload
+                });
+              }
+              acts = pr.group('act', flatten);
+              remainingHours = ((function() {
+                var _len7, _o, _results;
+                _results = [];
+                for (_o = 0, _len7 = acts.length; _o < _len7; _o++) {
+                  activ = acts[_o];
+                  _results.push(activ.hrs);
+                }
+                return _results;
+              })()).reduce(function(acc, x) {
+                return acc + x;
+              });
+              console.log(acts);
+            }
+          }
+          descr += '</ul>';
           obj = {
             group: rel.title,
             start: ms.date.date,
             content: ms.title + '<br /><span class="icon icon-milestone" />',
-            info: ms.date.dateString + '<br />' + ms.description
+            info: ms.date.dateString + '<br />' + ms.description + '<br/>' + descr
           };
           this.displayData.push(obj);
         }
@@ -64,38 +90,6 @@
 
     PhasesViewmodel.prototype.closeDetails = function() {
       return this.canShowDetails(false);
-    };
-
-    PhasesViewmodel.prototype.nextViewPeriod = function() {
-      var phase, _i, _len, _ref, _results;
-      this.centerDate(new Date(this.centerDate().getTime() + (24 * 60 * 60 * 1000 * 49)));
-      this.periodToView(new Period(new Date(this.centerDate().getTime() - (24 * 60 * 60 * 1000 * 14)), new Date(this.centerDate().getTime() + (24 * 60 * 60 * 1000 * 28)), "View Period"));
-      this.currentPhases.removeAll();
-      _ref = this.releases;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        phase = _ref[_i];
-        if (phase.overlaps(this.periodToView())) {
-          _results.push(this.currentPhases.push(phase));
-        }
-      }
-      return _results;
-    };
-
-    PhasesViewmodel.prototype.prevViewPeriod = function() {
-      var phase, _i, _len, _ref, _results;
-      this.centerDate(new Date(this.centerDate().getTime() - (24 * 60 * 60 * 1000 * 49)));
-      this.periodToView(new Period(new Date(this.centerDate().getTime() - (24 * 60 * 60 * 1000 * 14)), new Date(this.centerDate().getTime() + (24 * 60 * 60 * 1000 * 28)), "View Period"));
-      this.currentPhases.removeAll();
-      _ref = this.releases;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        phase = _ref[_i];
-        if (phase.overlaps(this.periodToView())) {
-          _results.push(this.currentPhases.push(phase));
-        }
-      }
-      return _results;
     };
 
     PhasesViewmodel.prototype.selectPhase = function(data) {
