@@ -46,7 +46,6 @@
               }
               return _results;
             }).call(this))[0];
-            console.log(set);
             set.items.push(item);
           }
           return this.sets;

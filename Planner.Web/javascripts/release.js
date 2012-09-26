@@ -475,7 +475,7 @@
       delete copy.deliverable;
       delete copy.activity;
       copy.resourceId = this.resource.id;
-      copy.phaseId = this.release.id;
+      if (this.release != null) copy.phaseId = this.release.id;
       copy.projectId = this.project.id;
       copy.startDate = this.assignedPeriod.startDate.dateString;
       copy.endDate = this.assignedPeriod.endDate.dateString;
@@ -589,15 +589,28 @@
     function ProjectActivityStatus(hoursRemaining, activity) {
       this.hoursRemaining = hoursRemaining;
       this.activity = activity;
+      this.assignedResources = [];
     }
 
     ProjectActivityStatus.create = function(jsonData, project) {
-      var act, status;
+      var act, res, status, _i, _len, _ref;
       console.log("create ProjectActivityStatus");
       console.log(jsonData);
       act = Activity.create(jsonData.Activity);
       status = new ProjectActivityStatus(jsonData.HoursRemaining, act);
+      _ref = jsonData.AssignedResources;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        res = _ref[_i];
+        status.assignedResources.push(AssignedResource.create(res, project));
+      }
       return status;
+    };
+
+    ProjectActivityStatus.prototype.toSJSON = function() {
+      var copy;
+      copy = ko.toJS(this);
+      delete copy.assignedResources;
+      return copy;
     };
 
     return ProjectActivityStatus;

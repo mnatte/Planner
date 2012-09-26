@@ -25,12 +25,6 @@ class PlanResourcesViewmodel extends Mixin
 			console.log @newAssignment()
 			)
 		@setEndDate = ko.observable(new Date())
-		# @setEndDate = ko.computed(=> 
-		#	console.log @selectedMilestone()
-		#	dt = if @selectedMilestone() then @selectedMilestone().date.date else new Date()
-		#	console.log dt
-		#	dt
-		#, @)
 		@newAssignment = ko.observable(new AssignedResource(0, "", "", "", 0.8, new Date(), new Date(), "", new Milestone(), new Deliverable()))
 		@allReleases = ko.observableArray(allReleases)
 		@allResources = ko.observableArray(allResources)
@@ -60,9 +54,6 @@ class PlanResourcesViewmodel extends Mixin
         ajax.getAssignedResources(@selectedRelease().id, @selectedProject().id, @setAssignments)
 
 	addResource: ->
-		#@newAssignment = new AssignedResource(0, "", "", "", 0.8, new Date(), dt, "", new Milestone(), new Deliverable())
-		#console.log @setEndDate()
-		#@newAssignment new AssignedResource(0, "", "", "", 0.8, new Date(), @setEndDate(), "", new Milestone(), new Deliverable())
 		@canShowForm(true)
 
 	# this way we need to refer from HTML as availableResources() - with '()'

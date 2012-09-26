@@ -8,13 +8,19 @@
 
     function PhasesViewmodel(allReleases) {
       this.selectPhase = __bind(this.selectPhase, this);
-      this.closeDetails = __bind(this.closeDetails, this);      this.selectedPhase = ko.observable();
+      this.closeDetails = __bind(this.closeDetails, this);
+      this.setAssignments = __bind(this.setAssignments, this);
+      var _this = this;
+      this.selectedPhase = ko.observable();
       this.canShowDetails = ko.observable(false);
-      Project.extend(RGroupBy);
+      this.assignments = ko.observableArray();
+      this.selectedPhase.subscribe(function(newValue) {
+        return loadAssignments(newValue.id);
+      });
     }
 
     PhasesViewmodel.prototype.load = function(data) {
-      var activ, acts, del, descr, flatten, ms, obj, ph, pr, rel, remainingHours, work, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _len6, _m, _n, _ref, _ref2, _ref3, _ref4, _ref5;
+      var act, activities, del, descr, icon, ms, obj, ph, proj, rel, style, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _len6, _m, _n, _ref, _ref2, _ref3, _ref4;
       this.releases = [];
       this.displayData = [];
       for (_i = 0, _len = data.length; _i < _len; _i++) {
@@ -35,43 +41,50 @@
         _ref2 = rel.milestones;
         for (_k = 0, _len3 = _ref2.length; _k < _len3; _k++) {
           ms = _ref2[_k];
+          icon = '<span class="icon icon-milestone" />';
+          style = 'style="color: green"';
           descr = '<ul>';
           _ref3 = ms.deliverables;
           for (_l = 0, _len4 = _ref3.length; _l < _len4; _l++) {
             del = _ref3[_l];
-            flatten = [];
-            descr += '<li>' + del.title + '</li>';
+            console.log(del.title);
+            descr += '<li>' + del.title + '<ul>';
             _ref4 = del.scope;
             for (_m = 0, _len5 = _ref4.length; _m < _len5; _m++) {
-              pr = _ref4[_m];
-              _ref5 = pr.workload;
-              for (_n = 0, _len6 = _ref5.length; _n < _len6; _n++) {
-                work = _ref5[_n];
-                flatten.push({
-                  act: work.activity.title,
-                  hrs: work.workload
+              proj = _ref4[_m];
+              descr += '<li>' + proj.title;
+              descr += '<ul>';
+              activities = proj.workload.reduce(function(acc, x) {
+                acc.push({
+                  activityTitle: x.activity.title,
+                  hrs: x.hoursRemaining,
+                  planned: x.assignedResources.reduce((function(acc, x) {
+                    return acc + x.availableHours();
+                  }), 0)
                 });
-              }
-              acts = pr.group('act', flatten);
-              remainingHours = ((function() {
-                var _len7, _o, _results;
-                _results = [];
-                for (_o = 0, _len7 = acts.length; _o < _len7; _o++) {
-                  activ = acts[_o];
-                  _results.push(activ.hrs);
+                return acc;
+              }, []);
+              for (_n = 0, _len6 = activities.length; _n < _len6; _n++) {
+                act = activities[_n];
+                if (act.hrs > act.planned) {
+                  icon = '<span class="icon icon-warning" />';
+                  style = 'style="color: red"';
+                } else {
+                  style = 'style="color: green"';
                 }
-                return _results;
-              })()).reduce(function(acc, x) {
-                return acc + x;
-              });
-              console.log(acts);
+                descr += '<li ' + style + '>' + act.activityTitle + ': ' + act.hrs + ' hours remaining, ' + act.planned + ' hours planned</li>';
+              }
+              descr += '</ul>';
+              descr += '</li>';
             }
+            descr += '</ul>';
           }
+          descr += '</li>';
           descr += '</ul>';
           obj = {
             group: rel.title,
             start: ms.date.date,
-            content: ms.title + '<br /><span class="icon icon-milestone" />',
+            content: ms.title + '<br />' + icon,
             info: ms.date.dateString + '<br />' + ms.description + '<br/>' + descr
           };
           this.displayData.push(obj);
@@ -86,6 +99,17 @@
           return 0;
         }
       });
+    };
+
+    PhasesViewmodel.prototype.setAssignments = function(jsonData) {
+      this.assignments.removeAll();
+      return this.assignments(AssignedResource.createCollection(jsonData));
+    };
+
+    PhasesViewmodel.prototype.loadAssignments = function(releaseId) {
+      var ajax;
+      ajax = new Ajax();
+      return ajax.getAssignedResourcesForRelease(releaseId, this.setAssignments);
     };
 
     PhasesViewmodel.prototype.closeDetails = function() {

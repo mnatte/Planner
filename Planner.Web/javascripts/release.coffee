@@ -339,7 +339,7 @@ class AssignedResource extends Mixin
 		delete copy.activity
 		#console.log(@resource)
 		copy.resourceId = @resource.id
-		copy.phaseId = @release.id
+		copy.phaseId =  @release.id if @release?
 		copy.projectId = @project.id
 		copy.startDate = @assignedPeriod.startDate.dateString
 		copy.endDate = @assignedPeriod.endDate.dateString
@@ -395,13 +395,20 @@ class Deliverable extends Mixin
 
 class ProjectActivityStatus
 	constructor: (@hoursRemaining, @activity) ->
+		@assignedResources = []
 	@create: (jsonData, project) ->
 		console.log "create ProjectActivityStatus"
 		console.log jsonData
 		#proj = Project.create(jsonData.Project)
 		act = Activity.create(jsonData.Activity)
 		status = new ProjectActivityStatus(jsonData.HoursRemaining, act)
+		for res in jsonData.AssignedResources
+			status.assignedResources.push AssignedResource.create(res, project)
 		status
+	toSJSON: ->
+		copy = ko.toJS(@) #get a clean copy
+		delete copy.assignedResources #remove property
+		copy #return the copy to be serialized
 
 class Activity extends Mixin
 	constructor: (@id, @title, @description) ->

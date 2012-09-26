@@ -35,8 +35,6 @@
 	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
 	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
-    <!--<link rel="stylesheet" href="images/Sprites/silk-bullets-sprite.css">
-    <link rel="stylesheet" href="images/Sprites/silk-sprite.css">-->
     <link rel="stylesheet" type="text/css" href="stylesheets/timeline.css" />
 
     <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
@@ -73,17 +71,24 @@
         <!-- /ko -->
 
         <section id="criteria" class="sixteen columns">
-            <div id="releases" class="five columns alpha">
+            <!--<div id="releases" class="five columns alpha">
                 Release: <select data-bind="options: allReleases, optionsText: 'title', value: selectedRelease, optionsCaption: 'Choose...'"></select>
+            </div>-->
+            <div class="colheader five columns alpha">
+                <span class="icon32 icon-release"></span><span>Release</span>
+                <select data-bind="options: allReleases, optionsText: 'title', value: selectedRelease, optionsCaption: 'Choose...'"></select>
             </div>
 
-            <div id="Div1" class="five columns alpha">
-                Phase: <select data-bind="options: selectedRelease().phases, optionsText: 'title', value: selectedPhase, optionsCaption: 'Choose...'"></select>
+            <div class="colheader five columns alpha">
+                <span class="icon32 icon-chart"></span><span>Project</span>
+                <select data-bind="options: selectedRelease().projects, optionsText: 'title', value: selectedProject, optionsCaption: 'Choose...', event: { change: $root.loadAssignments }"></select>
             </div>
-            
-            <div id="projects" class="five columns alpha">
-                Project: <select data-bind="options: selectedRelease().projects, optionsText: 'title', value: selectedProject, optionsCaption: 'Choose...', event: { change: $root.loadAssignments }"></select>
+
+            <!-- ko if: $root.selectedProject() -->
+            <div id="addUser" class="five columns alpha colheader">
+                <span class="icon32 icon-users interact" data-bind="click: $root.addResource.bind($data)"></span><span>Add Resource</span>
             </div>
+            <!-- /ko -->
         </section>
 
         <!-- ko if: $root.selectedProject() -->
@@ -94,19 +99,13 @@
                     <span data-bind="text: milestone.title"></span>
                     <span data-bind="text: deliverable.title"></span>
                     <span data-bind="text: activity.title"></span>
-                    <span class="selectable" contenteditable="true" data-bind="text: focusFactor, editable: focusFactor, tooltip: { content: 'Hallo', style: { name: 'Cream' }, options: { hide: { event: 'blur' } } }"></span>
+                    <span class="selectable" contenteditable="true" data-bind="text: focusFactor, editable: focusFactor"></span>
                     <span class="selectable" contenteditable="true" data-bind="text: assignedPeriod.startDate.dateString, editable: assignedPeriod.startDate.dateString"></span>
                     <span class="selectable" contenteditable="true" data-bind="text: assignedPeriod.endDate.dateString, editable: assignedPeriod.endDate.dateString"></span>
-                    <!--<select data-bind="options: $root.selectedRelease().milestones, optionsText: 'title', optionsValue: 'id', value: milestone.id, optionsCaption: 'Choose...'"></select>
-                    <select data-bind="options: $root.selectedRelease().milestones, optionsText: 'title', optionsValue: 'id', value: milestone.id, optionsCaption: 'Choose...'"></select>-->
-                    <!--<button data-bind="click: $root.removeAssignment.bind($data)">Remove</button>-->
-                    <!--<span class="ui-silk ui-silk-user-delete interact" data-bind="click: $root.removeAssignment.bind($data)"></span>-->
+                    <span style="color: Red" data-bind="text: availableHours() + ' working hours'"></span>
                     <span class="icon16 icon-remove16 interact" data-bind="click: $root.removeAssignment.bind($data)"></span>
                 </li>
             </ul>
-            <!--<button data-bind="click: $root.addResource.bind($data)">+ Resource</button>-->
-            <!--<span class="ui-silk ui-silk-user-add interact" data-bind="click: $root.addResource.bind($data)"></span>-->
-            <span class="icon32 icon-users interact" data-bind="click: $root.addResource.bind($data)"></span>
         </div>
         <!--/ko-->
 
@@ -117,11 +116,7 @@
         </section>
         <!--/ko-->
 
-        <!--<button data-bind="click: $root.saveAssignments.bind($data)">Save</button>-->
-        <!--<span class="ui-silk ui-silk-disk interact" data-bind="click: $root.saveAssignments.bind($data)"></span>-->
         <span class="icon32 icon-save interact" data-bind="click: $root.saveAssignments.bind($data)"></span>
-        <!--<button data-bind="click: $root.openDetailsWindow.bind($data)">View Release</button>-->
-        <!--<span class="ui-silk ui-silk-magnifier interact" data-bind="click: $root.openDetailsWindow.bind($data)"></span>-->
         <span class="icon32 icon-zoom interact" data-bind="click: $root.openDetailsWindow.bind($data)"></span>
     </div>
 

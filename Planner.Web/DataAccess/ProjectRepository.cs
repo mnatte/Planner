@@ -86,28 +86,68 @@ namespace MvcApplication1.DataAccess
         public ReleaseModels.Project GetProjectWithWorkload(int projectId, int releaseId, int milestoneId, int deliverableId)
         {
             var project = this.GetProject(projectId);
-            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
-            var cmdStatus = new SqlCommand("sp_get_deliverable_status", conn);
-            cmdStatus.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = deliverableId;
-            cmdStatus.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = releaseId;
-            cmdStatus.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = milestoneId;
-            cmdStatus.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = projectId;
-            cmdStatus.CommandType = System.Data.CommandType.StoredProcedure;
+            
+            var _assignments = new List<ReleaseModels.ResourceAssignment>();
 
-            using (conn)
+            using (var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true"))
             {
+                var cmdResources = new SqlCommand("get_release_deliverable_assignments", conn);
+                cmdResources.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = deliverableId;
+                cmdResources.Parameters.Add("@PhaseId", System.Data.SqlDbType.Int).Value = releaseId;
+                cmdResources.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = milestoneId;
+                cmdResources.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = projectId;
+                cmdResources.CommandType = System.Data.CommandType.StoredProcedure;
+
+                conn.Open();
+                using (var resourcesReader = cmdResources.ExecuteReader())
+                {
+                    while (resourcesReader.Read())
+                    {
+                        _assignments.Add(new ReleaseModels.ResourceAssignment
+                        {
+                            Id = int.Parse(resourcesReader["Id"].ToString()),
+                            FocusFactor = double.Parse(resourcesReader["FocusFactor"].ToString()),
+                            Phase = new ReleaseModels.Phase { Id = int.Parse(resourcesReader["PhaseId"].ToString()), Title = resourcesReader["phasetitle"].ToString() },
+                            Resource = new ReleaseModels.Resource { Id = int.Parse(resourcesReader["PersonId"].ToString()), FirstName = resourcesReader["FirstName"].ToString(), MiddleName = resourcesReader["MiddleName"].ToString(), LastName = resourcesReader["LastName"].ToString() },
+                            Project = new ReleaseModels.Project { Id = int.Parse(resourcesReader["ProjectId"].ToString()), Title = resourcesReader["ProjectTitle"].ToString() },
+                            //TODO: fill ActivitiesNeeded
+                            Deliverable = new ReleaseModels.Deliverable { Id = int.Parse(resourcesReader["DeliverableId"].ToString()), Title = resourcesReader["DeliverableTitle"].ToString() },
+                            Milestone = new ReleaseModels.Milestone { Id = int.Parse(resourcesReader["MilestoneId"].ToString()), Title = resourcesReader["MilestoneTitle"].ToString() },
+                            StartDate = DateTime.Parse(resourcesReader["StartDate"].ToString()),
+                            EndDate = DateTime.Parse(resourcesReader["EndDate"].ToString()),
+                            Activity = new ReleaseModels.Activity { Id = int.Parse(resourcesReader["ActivityId"].ToString()), Title = resourcesReader["ActivityTitle"].ToString() }
+                        });
+                    }
+                }
+            }
+
+            using (var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true"))
+            {
+                var cmdStatus = new SqlCommand("sp_get_deliverable_status", conn);
+                cmdStatus.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = deliverableId;
+                cmdStatus.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = releaseId;
+                cmdStatus.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = milestoneId;
+                cmdStatus.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = projectId;
+                cmdStatus.CommandType = System.Data.CommandType.StoredProcedure;
+
                 conn.Open();
                 using (var statusReader = cmdStatus.ExecuteReader())
                 {
                     while (statusReader.Read())
                     {
-                        project.Workload.Add(new ReleaseModels.ActivityStatus
-                            {
-                                //Deliverable = itm,
-                                HoursRemaining = int.Parse(statusReader["HoursRemaining"].ToString()),
-                                //Project = projRep.GetProject(project.Id),
-                                Activity = new ReleaseModels.Activity { Id = int.Parse(statusReader["ActivityId"].ToString()), Title = statusReader["ActivityTitle"].ToString(), Description = statusReader["ActivityDescription"].ToString() }
-                            });
+                        var assignments = _assignments.Where(a => a.Activity.Id == int.Parse(statusReader["ActivityId"].ToString())).ToList();
+                        var status = new ReleaseModels.ActivityStatus
+                                        {
+                                            //Deliverable = itm,
+                                            HoursRemaining = int.Parse(statusReader["HoursRemaining"].ToString()),
+                                            //Project = projRep.GetProject(project.Id),
+                                            Activity = new ReleaseModels.Activity { Id = int.Parse(statusReader["ActivityId"].ToString()), Title = statusReader["ActivityTitle"].ToString(), Description = statusReader["ActivityDescription"].ToString() },
+                                        };
+                        foreach(var a in assignments)
+                        {
+                            status.AssignedResources.Add(a);
+                        }
+                        project.Workload.Add(status);
                     }
                 }
             }

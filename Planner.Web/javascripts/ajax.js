@@ -142,6 +142,42 @@
       });
     };
 
+    Ajax.prototype.getAssignedResourcesForDeliverable = function(phaseId, projectId, milestoneId, deliverableId, callback) {
+      var url;
+      url = "/planner/ResourceAssignment/Assignments/" + phaseId + "/" + projectId + "/" + milestoneId + "/" + deliverableId;
+      return $.ajax(url, {
+        dataType: "json",
+        type: "GET",
+        success: function(data, status, XHR) {
+          console.log("Resource Assignments data loaded");
+          return callback(data);
+        },
+        error: function(XHR, status, errorThrown) {
+          console.log("AJAX Releases status: " + status);
+          console.log("AJAX Releases XHR: " + XHR);
+          return console.log("AJAX Releases errorThrown: " + errorThrown);
+        }
+      });
+    };
+
+    Ajax.prototype.getAssignedResourcesForRelease = function(phaseId, callback) {
+      var url;
+      url = "/planner/ResourceAssignment/Assignments/Release/" + phaseId;
+      return $.ajax(url, {
+        dataType: "json",
+        type: "GET",
+        success: function(data, status, XHR) {
+          console.log("Resource Assignments data loaded");
+          return callback(data);
+        },
+        error: function(XHR, status, errorThrown) {
+          console.log("AJAX Releases status: " + status);
+          console.log("AJAX Releases XHR: " + XHR);
+          return console.log("AJAX Releases errorThrown: " + errorThrown);
+        }
+      });
+    };
+
     Ajax.prototype.test = function() {
       return console.log("testing AJAX class");
     };

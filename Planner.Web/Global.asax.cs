@@ -33,6 +33,16 @@ namespace MvcApplication1
                 "ResourceAssignment/Assignments/{phaseId}/{projectId}", // URL with parameters
                 new { controller = "ResourceAssignment", action = "GetAssignmentsByPhaseIdAndProjectId", param1 = UrlParameter.Optional, param2 = UrlParameter.Optional } // Parameter defaults
             );
+            routes.MapRoute(
+                "ResourceAssignmentsForDeliverable", // Route name
+                "ResourceAssignment/Assignments/{phaseId}/{projectId}/{milestoneId}/{deliverableId}", // URL with parameters
+                new { controller = "ResourceAssignment", action = "GetAssignmentsByPhaseIdAndProjectIdAndMilestoneIdAndDeliverableId", param1 = UrlParameter.Optional, param2 = UrlParameter.Optional, param3 = UrlParameter.Optional, param4 = UrlParameter.Optional } // Parameter defaults
+            );
+            routes.MapRoute(
+                "ResourceAssignmentsForRelease", // Route name
+                "ResourceAssignment/Assignments/Release/{phaseId}", // URL with parameters
+                new { controller = "ResourceAssignment", action = "GetAssignmentsByPhaseId", param1 = UrlParameter.Optional } // Parameter defaults
+            );
         }
 
         protected void Application_Start()

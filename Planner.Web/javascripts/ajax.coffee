@@ -88,6 +88,30 @@ class Ajax
 				console.log "AJAX Releases status: #{status}"
 				console.log "AJAX Releases XHR: #{XHR}"
 				console.log "AJAX Releases errorThrown: #{errorThrown}"
+	getAssignedResourcesForDeliverable: (phaseId, projectId, milestoneId, deliverableId, callback) ->
+		url = "/planner/ResourceAssignment/Assignments/" + phaseId + "/" + projectId + "/" + milestoneId + "/" + deliverableId
+		$.ajax url,
+			dataType: "json"
+			type: "GET"
+			success: (data, status, XHR) ->
+				console.log "Resource Assignments data loaded"
+				callback data
+			error: (XHR, status, errorThrown) ->
+				console.log "AJAX Releases status: #{status}"
+				console.log "AJAX Releases XHR: #{XHR}"
+				console.log "AJAX Releases errorThrown: #{errorThrown}"
+	getAssignedResourcesForRelease: (phaseId, callback) ->
+		url = "/planner/ResourceAssignment/Assignments/Release/" + phaseId
+		$.ajax url,
+			dataType: "json"
+			type: "GET"
+			success: (data, status, XHR) ->
+				console.log "Resource Assignments data loaded"
+				callback data
+			error: (XHR, status, errorThrown) ->
+				console.log "AJAX Releases status: #{status}"
+				console.log "AJAX Releases XHR: #{XHR}"
+				console.log "AJAX Releases errorThrown: #{errorThrown}"
 	test: ->
 		console.log "testing AJAX class"
 

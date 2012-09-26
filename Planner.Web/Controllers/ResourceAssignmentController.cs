@@ -152,6 +152,67 @@ namespace MvcApplication1.Controllers
         }
 
         [HttpGet]
+        public JsonResult GetAssignmentsByPhaseIdAndProjectIdAndMilestoneIdAndDeliverableId(int phaseId, int projectId, int milestoneId, int deliverableId)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            var items = new List<ReleaseModels.ResourceAssignment>();
+
+            using (conn)
+            {
+                conn.Open();
+
+                // Prepare command
+                var cmd = new SqlCommand();
+                cmd.Connection = conn;
+                cmd.CommandText = "get_release_deliverable_assignments";
+                cmd.Parameters.Add("@PhaseId", System.Data.SqlDbType.Int).Value = phaseId;
+                cmd.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = projectId;
+                cmd.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = milestoneId;
+                cmd.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = deliverableId;
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var itm = this.CreateItemByDbRow(reader);
+                        items.Add(itm);
+                    }
+                }
+            }
+            return this.Json(items, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult GetAssignmentsByPhaseId(int phaseId)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            var items = new List<ReleaseModels.ResourceAssignment>();
+
+            using (conn)
+            {
+                conn.Open();
+
+                // Prepare command
+                var cmd = new SqlCommand();
+                cmd.Connection = conn;
+                cmd.CommandText = "sp_get_release_deliverable_assignments";
+                cmd.Parameters.Add("@PhaseId", System.Data.SqlDbType.Int).Value = phaseId;
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var itm = this.CreateItemByDbRow(reader);
+                        items.Add(itm);
+                    }
+                }
+            }
+            return this.Json(items, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
         public JsonResult GetAssignmentsByResourceId(int resourceId)
         {
             var lst = this.ResourceRepository.GetAssignments(resourceId);
