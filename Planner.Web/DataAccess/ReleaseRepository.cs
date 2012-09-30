@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using MvcApplication1.Models;
 using System.Data.SqlClient;
+using System.Data;
 
 namespace MvcApplication1.DataAccess
 {
@@ -229,7 +230,7 @@ namespace MvcApplication1.DataAccess
                     if (obj.Projects != null && obj.Projects.Count > 0)
                     {
                         var cmdInsertReleaseProject = new SqlCommand("sp_insert_releaseproject", conn);
-                        cmdInsertReleaseProject.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = obj.Id;
+                        cmdInsertReleaseProject.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = newId;
                         cmdInsertReleaseProject.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = 0;
                         cmdInsertReleaseProject.CommandType = System.Data.CommandType.StoredProcedure;
 
@@ -268,37 +269,31 @@ namespace MvcApplication1.DataAccess
             }
         }
 
-        public int Delete(int id)
+        public bool Delete(int id)
         {
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
-            int amount = 0;
             try
             {
                 using (conn)
                 {
                     conn.Open();
 
-                    // Remove Child phases
-                    var cmdChild = new SqlCommand(string.Format("Select * from Phases where ParentId = {0}", id), conn);
-                    using (var reader = cmdChild.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            var cmdPhases = new SqlCommand(string.Format("Delete from Phases where Id = {0}", reader["Id"].ToString()), conn);
-                            amount += cmdPhases.ExecuteNonQuery();
-                        }
-                    }
+                    var cmd = new SqlCommand("sp_delete_release", conn);
+                    cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = id;
+                    SqlParameter returnParameter = cmd.Parameters.Add("RetVal", SqlDbType.Int);
+                    returnParameter.Direction = ParameterDirection.ReturnValue;
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    // Remove Release
-                    var cmdMain = new SqlCommand(string.Format("Delete from Phases where Id = {0}", id), conn);
-                    amount += cmdMain.ExecuteNonQuery();
+                    cmd.ExecuteNonQuery();
+
+                    int returnValue = (int)returnParameter.Value;
+                    return returnValue == 1;
                 }
             }
             catch (Exception ex)
             {
                 throw;
             }
-            return amount;
         }
 
         public ReleaseModels.Release SaveMilestone(MilestoneInputModel obj)

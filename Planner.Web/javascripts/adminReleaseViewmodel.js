@@ -111,8 +111,7 @@
     AdminReleaseViewmodel.prototype.selectRelease = function(data) {
       console.log("selectRelease - function");
       this.formType("release");
-      this.selectedRelease(data);
-      return console.log(this.selectedRelease().projects());
+      return this.selectedRelease(data);
     };
 
     AdminReleaseViewmodel.prototype.selectPhase = function(data) {
@@ -127,26 +126,19 @@
     };
 
     AdminReleaseViewmodel.prototype.refreshRelease = function(index, jsonData) {
-      var i, milestone, ms, phase, project, rel, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
+      var i, ms, rel, _i, _len, _ref;
       i = index >= 0 ? index : this.allReleases().length;
       console.log("index: " + index);
       console.log("i: " + i);
-      this.allReleases.splice(i, 1);
       console.log(jsonData);
       if (jsonData !== null && jsonData !== void 0) {
         console.log("jsonData not undefined");
-        rel = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath);
-        _ref = jsonData.Phases;
+        rel = Release.create(jsonData);
+        this.setReleaseProjects(rel);
+        _ref = rel.milestones;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          phase = _ref[_i];
-          rel.addPhase(new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, rel.id));
-        }
-        _ref2 = jsonData.Milestones;
-        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-          milestone = _ref2[_j];
-          ms = Milestone.create(milestone, rel.id);
+          ms = _ref[_i];
           this.setMilestoneDeliverables(ms);
-          rel.addMilestone(ms);
         }
         rel.phases.sort(function(a, b) {
           return a.startDate.date - b.startDate.date;
@@ -154,19 +146,16 @@
         rel.milestones.sort(function(a, b) {
           return a.date.date - b.date.date;
         });
-        _ref3 = jsonData.Projects;
-        for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
-          project = _ref3[_k];
-          rel.addProject(new Project(project.Id, project.Title, project.ShortName));
-          this.setReleaseProjects(rel);
-        }
-        return this.allReleases.splice(i, 0, rels);
+        return this.allReleases.splice(i, 1, rel);
       }
     };
 
     AdminReleaseViewmodel.prototype.clear = function() {
+      var release;
       this.formType("release");
-      return this.selectRelease(new Release(0, new Date(), new Date(), "", ""));
+      release = new Release(0, new Date(), new Date(), "", "");
+      this.setReleaseProjects(release);
+      return this.selectRelease(release);
     };
 
     AdminReleaseViewmodel.prototype.addPhase = function(data) {
@@ -321,10 +310,12 @@
         i = this.allReleases().indexOf(parentrel);
       }
       return rel["delete"]("/planner/Release/Delete/" + rel.id, function(callbackdata) {
+        var next;
         console.log(callbackdata);
-        return rel.get("/planner/Release/GetReleaseSummaryById/" + id, function(jsonData) {
-          return _this.refreshRelease(i, jsonData);
-        });
+        _this.allReleases.splice(i, 1);
+        next = _this.allReleases()[i];
+        console.log(next);
+        return _this.selectRelease(next);
       });
     };
 

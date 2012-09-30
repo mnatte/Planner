@@ -69,7 +69,7 @@ class AdminReleaseViewmodel
 		#@selectedProjectIds.removeAll()
 		#for proj in @selectedRelease().projects
 			#@selectedProjectIds.push(proj.id)
-		console.log @selectedRelease().projects()
+		# console.log @selectedRelease().projects
 		#console.log "selectRelease after selection: " + @selectedRelease().title + ", parentId: " +  @selectedRelease().parentId
 
 	selectPhase: (data) =>
@@ -90,32 +90,37 @@ class AdminReleaseViewmodel
 		console.log "i: #{i}"
 		
 		# i = index of item to remove, 1 is amount to be removed
-		@allReleases.splice(i,1)
+		# @allReleases.splice(i,1)
 		# insert newly loaded release when available
 		console.log jsonData
 		if jsonData != null and jsonData != undefined
 			console.log "jsonData not undefined"
-			rel = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath)
-			for phase in jsonData.Phases
-				rel.addPhase new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, rel.id)
-			for milestone in jsonData.Milestones
-				ms = Milestone.create(milestone, rel.id)
+			rel = Release.create jsonData
+			@setReleaseProjects rel
+			#rel = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath)
+			#for phase in jsonData.Phases
+				#rel.addPhase new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, rel.id)
+			#for milestone in jsonData.Milestones
+				#ms = Milestone.create(milestone, rel.id)
+				#@setMilestoneDeliverables ms
+				#rel.addMilestone ms
+			for ms in rel.milestones
 				@setMilestoneDeliverables ms
-				rel.addMilestone ms
-			# index = index of item to remove, 0 is amount to be removed, rel is item to be inserted there
 			rel.phases.sort((a,b)->a.startDate.date - b.startDate.date)
 			rel.milestones.sort((a,b)->a.date.date - b.date.date)
 
-			for project in jsonData.Projects
-				rel.addProject new Project(project.Id, project.Title, project.ShortName)
+			#for project in rel.projects
+				#rel.addProject new Project(project.Id, project.Title, project.ShortName)
 				# use slice to create independent copy instead of copying the reference by relprojs = rel.projects
-				@setReleaseProjects rel
-			@allReleases.splice i, 0, rels
+			# i = index of item to remove, 1 is amount to be removed, rel is item to be inserted there
+			@allReleases.splice i, 1, rel
 
 	clear: ->
 		@formType "release"
 		#console.log "clear: selectedRelease: #{@selectedRelease().title}"
-		@selectRelease new Release(0, new Date(), new Date(), "", "")
+		release = new Release(0, new Date(), new Date(), "", "")
+		@setReleaseProjects release
+		@selectRelease release
 
 	addPhase: (data) =>
 		@formType "phase"
@@ -180,7 +185,12 @@ class AdminReleaseViewmodel
 
 		rel.delete("/planner/Release/Delete/" + rel.id, (callbackdata) =>
 			console.log callbackdata
-			rel.get("/planner/Release/GetReleaseSummaryById/"+ id, (jsonData) => @refreshRelease(i, jsonData))
+			#rel.get("/planner/Release/GetReleaseSummaryById/"+ id, (jsonData) => @refreshRelease(i, jsonData))
+			# i = index of item to remove, 1 is amount to be removed
+			@allReleases.splice i, 1
+			next = @allReleases()[i]
+			console.log next
+			@selectRelease next
 		)
 
 # export to root object

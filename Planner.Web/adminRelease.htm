@@ -97,8 +97,6 @@
                     <ul data-bind="foreach: allReleases">
                         <li>
                             <span class="selectable" data-bind="text: title, click: $root.selectRelease.bind($data), style: { color: $root.selectedRelease() != undefined && $data.id == $root.selectedRelease().id ? 'red' : 'black' }"></span>
-                            <!--<span class="icon24 icon-phase interact" data-bind="click: $root.addPhase.bind($data)"></span>
-                            <span class="icon24 icon-milestone interact" data-bind="click: $root.addNewMilestone.bind($data)"></span>-->
                             <span class="icon24 icon-delete interact" data-bind="click: $root.deleteRelease.bind($data)"></span>
                         </li>
                     </ul>
@@ -112,8 +110,6 @@
                     <ul data-bind="foreach: $root.selectedRelease().phases">
                         <li>
                             <span class="selectable" data-bind="text: title, click: $root.selectPhase.bind($data), style: { color: $root.formType() == 'phase' && $root.selectedPhase() != undefined && $data.id == $root.selectedPhase().id ? 'red' : 'black' }"></span>
-                            <!--<button data-bind="click: $root.deleteRelease.bind($data)">Delete</button>-->
-                            <!--<span class="ui-silk ui-silk-delete interact" data-bind="click: $root.deleteRelease.bind($data)"></span>-->
                             <span class="icon16 icon-remove16 interact" data-bind="click: $root.deleteRelease.bind($data)"></span>
                         </li>
                     </ul>
@@ -125,7 +121,6 @@
                     <ul data-bind="foreach: $root.selectedRelease().milestones">
                         <li>
                             <span class="selectable" data-bind="text: title, click: $root.selectMilestone.bind($data), style: { color: $root.formType() == 'milestone' && $root.selectedMilestone() != undefined && $data.id == $root.selectedMilestone().id ? 'red' : 'black' }"></span>
-                            <!--<button data-bind="click: $root.unAssignMilestone.bind($data)">Unassign</button>-->
                             <span class="icon16 icon-remove16 interact" data-bind="click: $root.unAssignMilestone.bind($data)"></span>
                         </li>
                     </ul>
