@@ -241,7 +241,8 @@ namespace MvcApplication1.DataAccess
                         }
                     }
                 }
-                var rel = this.GetRelease(newId);
+                var rel = this.GetReleaseSummary(newId);
+                this.GenerateStatusRecords(rel);
 
                 return rel;
             }

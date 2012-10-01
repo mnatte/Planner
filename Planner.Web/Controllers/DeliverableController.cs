@@ -31,9 +31,9 @@ namespace MvcApplication1.Controllers
             return this.Json(result);
         }
 
-        public JsonResult DeleteActivity(int activityId)
+        public JsonResult DeleteActivity(int id)
         {
-            var result = _actRepository.Delete(activityId);
+            var result = _actRepository.Delete(id);
             return this.Json(result);
         }
     }

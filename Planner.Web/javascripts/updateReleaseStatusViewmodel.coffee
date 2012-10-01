@@ -54,7 +54,7 @@ class UpdateReleaseStatusViewmodel
 		console.log @selectedDeliverable().toStatusJSON()
 		#console.log ko.toJSON(@selectedDeliverable().milestoneId)
 		#i = @allReleases().indexOf(@selectedRelease())
-		@selectedDeliverable().save("/planner/Release/SaveDeliverableStatus", ko.toJSON(@selectedDeliverable().toStatusJSON()), (data) => @refreshRelease(i, data))
+		@selectedDeliverable().save("/planner/Release/SaveDeliverableStatus", ko.toJSON(@selectedDeliverable().toStatusJSON()), (data) => @refreshRelease(0, data))
 	
 # export to root object
 root.UpdateReleaseStatusViewmodel = UpdateReleaseStatusViewmodel

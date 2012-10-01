@@ -19,6 +19,13 @@ namespace MvcApplication1.DataAccess
             get { return "sp_upsert_activity"; }
         }
 
+        protected override void ConfigureDeleteCommand(SqlCommand cmd, int id)
+        {
+            cmd.CommandText = "sp_delete_activity";
+            cmd.Parameters.Add("@ActivityId", System.Data.SqlDbType.Int).Value = id;
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+        }
+
         protected override void AddUpsertCommandParameters(ActivityInputModel model, System.Data.SqlClient.SqlCommand cmd)
         {
             cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = model.Id;

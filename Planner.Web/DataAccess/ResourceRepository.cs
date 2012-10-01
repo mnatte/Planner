@@ -14,6 +14,13 @@ namespace MvcApplication1.DataAccess
             get { return "Persons"; }
         }
 
+        protected override void ConfigureDeleteCommand(SqlCommand cmd, int id)
+        {
+            cmd.CommandText = "sp_delete_person";
+            cmd.Parameters.Add("@PersonId", System.Data.SqlDbType.Int).Value = id;
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+        }
+
         protected override string UpsertStoredProcedureName
         {
             get { return "sp_upsert_person"; }

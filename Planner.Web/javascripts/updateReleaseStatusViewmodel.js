@@ -75,7 +75,7 @@
       console.log("saveSelectedDeliverable: selectedMilestone: " + (this.selectedMilestone()));
       console.log(this.selectedDeliverable().toStatusJSON());
       return this.selectedDeliverable().save("/planner/Release/SaveDeliverableStatus", ko.toJSON(this.selectedDeliverable().toStatusJSON()), function(data) {
-        return _this.refreshRelease(i, data);
+        return _this.refreshRelease(0, data);
       });
     };
 

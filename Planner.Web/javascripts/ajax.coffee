@@ -4,6 +4,22 @@ root = global ? window
 # requires jQuery 1.6.4 or later
 class Ajax
 	constructor: -> 
+		$.ajaxSetup({
+			beforeSend: -> 
+				$.blockUI({ css: { 
+					border: 'none', 
+					padding: '15px', 
+					backgroundColor: '#000', 
+					'-webkit-border-radius': '10px', 
+					'-moz-border-radius': '10px', 
+					opacity: .5, 
+					color: '#fff'
+				},
+				message:  '<b><img src="images/ajax-loader.gif" /> Busy...</b>'  })
+			,
+			complete: ->
+				setTimeout $.unblockUI, 200
+		})
 	loadRelease: (releaseId, callback) ->
 		url = "/planner/Release/GetReleaseById/" + releaseId
 		$.ajax url,

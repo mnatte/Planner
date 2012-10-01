@@ -150,6 +150,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>xxx_updateReleaseStatus.coffee</DependentUpon>
     </Content>
+    <Content Include="Scripts\jquery.blockUI.js" />
     <Content Include="updateReleaseStatus.htm" />
     <Content Include="javascripts\adminActivityViewmodel.js">
       <AutoGen>True</AutoGen>

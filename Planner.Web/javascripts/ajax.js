@@ -5,7 +5,27 @@
 
   Ajax = (function() {
 
-    function Ajax() {}
+    function Ajax() {
+      $.ajaxSetup({
+        beforeSend: function() {
+          return $.blockUI({
+            css: {
+              border: 'none',
+              padding: '15px',
+              backgroundColor: '#000',
+              '-webkit-border-radius': '10px',
+              '-moz-border-radius': '10px',
+              opacity: .5,
+              color: '#fff'
+            },
+            message: '<b><img src="images/ajax-loader.gif" /> Busy...</b>'
+          });
+        },
+        complete: function() {
+          return setTimeout($.unblockUI, 200);
+        }
+      });
+    }
 
     Ajax.prototype.loadRelease = function(releaseId, callback) {
       var url;

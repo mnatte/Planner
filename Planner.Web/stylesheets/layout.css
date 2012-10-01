@@ -287,6 +287,20 @@ div[class=closeIcon]:hover {
 {
     position: relative;
     left: 190px;
+}
+
+#busy {
+    position: fixed;
+    left: 50%;
+    top: 35%;
+    display: none;
+    background: transparent url("../images/ajax-loader.gif");
+    z-index: 1000;
+    height: 31px;
+    width: 31px;
+    background-color: Blue;
+}
+
 
 /* smaller than standard 960*/
 @media only screen and (max-width 959px) {
