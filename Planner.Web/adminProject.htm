@@ -23,11 +23,12 @@
 
 	<!-- CSS
   ================================================== -->
-	<link rel="stylesheet" href="stylesheets/base.css">
+	<link rel="stylesheet" href="stylesheets/base_no_buttons.css">
 	<link rel="stylesheet" href="stylesheets/skeleton.css">
 	<link rel="stylesheet" href="stylesheets/layout.css">
     <link rel="stylesheet" href="stylesheets/tables.css">
     <link rel="stylesheet" href="stylesheets/icon_styles.css">
+    <link rel="stylesheet" href="stylesheets/sexybuttons.css">
 
 	<!-- Favicons
 	================================================== -->
@@ -35,8 +36,8 @@
 	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
 	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
-    <link rel="stylesheet" href="images/Sprites/silk-bullets-sprite.css">
-    <link rel="stylesheet" href="images/Sprites/silk-sprite.css">
+    <!--<link rel="stylesheet" href="images/Sprites/silk-bullets-sprite.css">
+    <link rel="stylesheet" href="images/Sprites/silk-sprite.css">-->
 
     <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="Scripts/jquery.dateFormat-1.0.js"></script>
@@ -78,26 +79,38 @@
                         <!--<p>Release Title: <span data-bind="text: title"></span></p>--> <!-- updates in real-time -->
                         <!--<button data-bind="click: $parent.saveSelected.bind($data)">Submit</button>-->
                         <!--<span class="ui-silk ui-silk-disk interact" data-bind="click: $parent.saveSelected.bind($data)"></span>-->
-                        <span class="icon32 icon-save interact" data-bind="click: $parent.saveSelected.bind($data)"></span>
+                        <!--<span class="icon32 icon-save interact" data-bind="click: $parent.saveSelected.bind($data)"></span>-->
+                        <!--<a class="button img save" href="#" data-bind="click: $parent.saveSelected.bind($data)"><span>save</span></a>-->
+                        <button class="sexybutton" data-bind="click: $parent.saveSelected.bind($data)"><span><span><span class="save">Save</span></span></span></button> 
+                        <!--<button class="sexybutton sexyicononly"><span class="save"></span></button>-->
+
                     </form>
                 </div>
                 <div class="ten columns omega">
                     <div class="colheader">
                         <span class="icon32 icon-chart"></span>
                         <span>Projects</span>
-                        <span class="icon24 icon-new interact" data-bind="click: $root.clear.bind($data)"></span>
+                        <!--<span class="icon24 icon-new interact" data-bind="click: $root.clear.bind($data)"></span>-->
+                        <button class="sexybutton" data-bind="click: $root.clear.bind($data)"><span><span><span class="add">New</span></span></span></button>
                     </div>
                     <ul data-bind="foreach: allItems">
                         <li>
+                            <button class="sexybutton sexyicononly" data-bind="click: aap"><span><span><span class="delete"></span></span></span></button>
                             <span class="selectable" data-bind="text: title, click: $root.selectItem.bind($data), style: { color: $data.id == $root.selectedItem().id ? 'red' : 'black' }"></span>
                             <!--<button data-bind="click: $root.deleteItem.bind($data)">Delete</button>-->
-                            <span class="icon22 icon-delete interact" data-bind="click: $root.deleteItem.bind($data)"></span>
+                            <!--<span class="icon22 icon-delete interact" data-bind="click: $root.deleteItem.bind($data)"></span>-->
+                            <!--<button class="sexybutton sexyicononly"><span><span><img src="images/png/16x16/trash.png" alt="" /></span></span></button>-->
                         </li>
                     </ul>
                     <!--<button data-bind="click: clear.bind($data)">New</button>-->
                 </div>
             </div>
         </div>
+    
+    <div id="question" style="display:none; cursor: default"> 
+        <b>Would you like to contine?</b> 
+        <input type="button" id="yes" value="Yes" /> 
+        <input type="button" id="no" value="No" /> 
     </div>
 
 <script type="text/javascript">
@@ -108,6 +121,39 @@
         var uc = new ULoadAdminProjects();
         var ajax = new Ajax();
         ajax.getProjects(uc.execute);
+
+        aap = (function () {
+            $.blockUI({ css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#000',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                opacity: .5,
+                color: '#fff'
+            },
+                message: $('#question')
+            });
+        });
+
+        $('#yes').click(function () {
+            // update the block message 
+            $.blockUI({ message: "<h1>Remote call in progress...</h1>" });
+
+            $.ajax({
+                url: 'wait.php',
+                cache: false,
+                complete: function () {
+                    // unblock when remote call returns 
+                    $.unblockUI();
+                }
+            });
+        });
+
+        $('#no').click(function () {
+            $.unblockUI();
+            return false;
+        });
     });
 </script>    
 </body>

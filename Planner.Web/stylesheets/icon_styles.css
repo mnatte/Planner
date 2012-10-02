@@ -40,3 +40,53 @@ a.icon128, input.icon128, span.icon128
 .icon-add-user22 { background:url('../images/icons/add.png'); }
 .icon-todo48 { background:url('../images/icons/todo.png'); }
 
+/*
+buttons
+*/
+a.button {
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#ffffff', EndColorStr='#dbdbdb')";
+    border: 1px solid #fff;
+    -moz-box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.4);
+    -webkit-box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.4);
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.4);
+    border-radius: 18px;
+    -webkit-border-radius: 18px;
+    -moz-border-radius: 18px;
+    padding: 5px 15px;
+    text-decoration: none;
+    text-shadow: #fff 0 1px 0;
+    float: left;
+    margin-right: 15px;
+    margin-bottom: 15px;
+    display: block;
+    color: #597390;
+    line-height: 24px;
+    font-size: 20px;
+    font-weight: bold;
+    background-image: -webkit-gradient(linear,left top,left bottom, color-stop(0, #ffffff),color-stop(1, #dbdbdb));
+}
+
+a.button:hover {
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#ffffff', EndColorStr='#eeeeee')";
+    color: #000;
+    display: block;
+    background-image: -webkit-gradient(linear,left top,left bottom, color-stop(0, #ffffff),color-stop(1, #eeeeee));
+}
+
+a.button:active {
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#dbdbdb', EndColorStr='#ffffff')";
+    text-shadow: 0px -1px 0 rgba(255, 255, 255, 0.5);
+    margin-top: 1px;
+    background-image: -webkit-gradient(linear,left top,left bottom, color-stop(0, #dbdbdb),color-stop(1, #ffffff));
+}
+
+a.button.img {
+    padding-left: 11px;
+}
+
+a.button.img.save span{
+    padding-left: 36px;
+    background:url('../images/png/24x24/save.png') no-repeat 0 -4px;
+}
+
+

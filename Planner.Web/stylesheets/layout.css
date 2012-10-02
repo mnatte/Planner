@@ -282,6 +282,9 @@ div[class=closeIcon]:hover {
 .colheader span {
 	margin: 0px 10px 0px 10px;
 }
+.colheader button span  {
+	margin: 0px 0px 0px 0px;
+}
 
 .alignRight 
 {
