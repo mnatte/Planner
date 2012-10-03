@@ -192,7 +192,7 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Content>
-    <Content Include="javascripts\ko.bindingHandlers.tooltip.js" />
+    <Content Include="javascripts\ko.bindingHandlers.clickWithParameters.js" />
     <Content Include="javascripts\ko.bindingHandlers.fadeVisible.js" />
     <Content Include="javascripts\ko.bindingHandlers.editable.js" />
     <Content Include="javascripts\planResourcesViewmodel.js">

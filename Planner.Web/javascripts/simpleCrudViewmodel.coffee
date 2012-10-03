@@ -45,7 +45,7 @@ class SimpleCrudViewmodel
 		
 		@selectedItem().save(ko.toJSON(@selectedItem()), (data) => @refreshItem(i, data))
 	
-	deleteItem: (data) =>
+	deleteItem: (data, callback) =>
 		item = (a for a in @allItems() when a.id is data.id)[0]
 		id = data.id
 		# use index for removing from @allItems
@@ -54,6 +54,7 @@ class SimpleCrudViewmodel
 		item.delete(item.id, (callbackdata) =>
 			# console.log callbackdata
 			@refreshItem(i)
+			callback
 		)
 		
 # export to root object

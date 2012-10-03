@@ -53,6 +53,7 @@
     <script type="text/javascript" src="javascripts/ajax.js"></script>
     <script type="text/javascript" src="javascripts/Roles.js"></script>
     <script type="text/javascript" src="javascripts/UseCases.js"></script>
+    <!--<script type="text/javascript" src="javascripts/ko.bindingHandlers.clickWithParameters.js"></script>-->
 </head>
 <body>
 <!-- Primary Page Layout
@@ -95,7 +96,7 @@
                     </div>
                     <ul data-bind="foreach: allItems">
                         <li>
-                            <button class="sexybutton sexyicononly" data-bind="click: aap"><span><span><span class="delete"></span></span></span></button>
+                            <button class="sexybutton sexyicononly" data-bind="click: $root.setItemToDelete.bind($data)"><span><span><span class="delete"></span></span></span></button>
                             <span class="selectable" data-bind="text: title, click: $root.selectItem.bind($data), style: { color: $data.id == $root.selectedItem().id ? 'red' : 'black' }"></span>
                             <!--<button data-bind="click: $root.deleteItem.bind($data)">Delete</button>-->
                             <!--<span class="icon22 icon-delete interact" data-bind="click: $root.deleteItem.bind($data)"></span>-->
@@ -108,9 +109,9 @@
         </div>
     
     <div id="question" style="display:none; cursor: default"> 
-        <b>Would you like to contine?</b> 
-        <input type="button" id="yes" value="Yes" /> 
-        <input type="button" id="no" value="No" /> 
+        <b>Are you sure you want to delete?</b> 
+        <button class="sexybutton" data-bind="click: $root.confirmDelete"><span><span><span class="delete">Yes, delete</span></span></span></button>
+        <button class="sexybutton" data-bind="click: $.unblockUI"><span><span><span class="repeat">No, cancel</span></span></span></button>
     </div>
 
 <script type="text/javascript">
@@ -122,38 +123,6 @@
         var ajax = new Ajax();
         ajax.getProjects(uc.execute);
 
-        aap = (function () {
-            $.blockUI({ css: {
-                border: 'none',
-                padding: '15px',
-                backgroundColor: '#000',
-                '-webkit-border-radius': '10px',
-                '-moz-border-radius': '10px',
-                opacity: .5,
-                color: '#fff'
-            },
-                message: $('#question')
-            });
-        });
-
-        $('#yes').click(function () {
-            // update the block message 
-            $.blockUI({ message: "<h1>Remote call in progress...</h1>" });
-
-            $.ajax({
-                url: 'wait.php',
-                cache: false,
-                complete: function () {
-                    // unblock when remote call returns 
-                    $.unblockUI();
-                }
-            });
-        });
-
-        $('#no').click(function () {
-            $.unblockUI();
-            return false;
-        });
     });
 </script>    
 </body>

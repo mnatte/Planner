@@ -70,7 +70,7 @@
       });
     };
 
-    SimpleCrudViewmodel.prototype.deleteItem = function(data) {
+    SimpleCrudViewmodel.prototype.deleteItem = function(data, callback) {
       var a, i, id, item,
         _this = this;
       item = ((function() {
@@ -86,7 +86,8 @@
       id = data.id;
       i = this.allItems().indexOf(item);
       return item["delete"](item.id, function(callbackdata) {
-        return _this.refreshItem(i);
+        _this.refreshItem(i);
+        return callback;
       });
     };
 
