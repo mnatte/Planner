@@ -18,6 +18,7 @@
       this.selectMilestone = __bind(this.selectMilestone, this);
       this.selectPhase = __bind(this.selectPhase, this);
       this.selectRelease = __bind(this.selectRelease, this);
+      this.setPhases = __bind(this.setPhases, this);
       var ms, rel, _fn, _i, _j, _len, _len2, _ref, _ref2;
       Array.prototype.remove = function(e) {
         var t, _ref;
@@ -34,7 +35,6 @@
       this.allReleases = ko.observableArray(allReleases);
       this.allProjects = ko.observableArray(allProjects);
       this.allDeliverables = ko.observableArray(allDeliverables);
-      this.testNumbers = ko.observableArray([]);
       _ref = this.allReleases();
       _fn = function(rel) {
         return rel.phases.sort(function(a, b) {
@@ -56,6 +56,7 @@
           ms = _ref2[_j];
           this.setMilestoneDeliverables(ms);
         }
+        this.setPhases(rel);
       }
       this.allReleases.sort(function(a, b) {
         if (a.startDate.date > b.startDate.date) {
@@ -108,10 +109,19 @@
       return console.log(ms);
     };
 
+    AdminReleaseViewmodel.prototype.setPhases = function(rel) {
+      var phases;
+      console.log("setPhases to observableArray");
+      phases = rel.phases.slice();
+      rel.phases = ko.observableArray([phases]);
+      return console.log(rel.phases());
+    };
+
     AdminReleaseViewmodel.prototype.selectRelease = function(data) {
       console.log("selectRelease - function");
       this.formType("release");
-      return this.selectedRelease(data);
+      this.selectedRelease(data);
+      return console.log("selectRelease - done");
     };
 
     AdminReleaseViewmodel.prototype.selectPhase = function(data) {
@@ -270,9 +280,12 @@
     };
 
     AdminReleaseViewmodel.prototype.deleteRelease = function(data) {
-      var a, i, id, parentrel, rel,
+      var a, i, id, isRelease, parentrel, rel,
         _this = this;
-      if (data.parentId === void 0) {
+      console.log('deleteRelease');
+      console.log(data);
+      isRelease = data.parentId === void 0;
+      if (isRelease) {
         rel = ((function() {
           var _i, _len, _ref, _results;
           _ref = this.allReleases();
@@ -307,15 +320,28 @@
           return _results;
         })())[0];
         id = data.parentId;
-        i = this.allReleases().indexOf(parentrel);
       }
       return rel["delete"]("/planner/Release/Delete/" + rel.id, function(callbackdata) {
-        var next;
-        console.log(callbackdata);
-        _this.allReleases.splice(i, 1);
-        next = _this.allReleases()[i];
-        console.log(next);
-        return _this.selectRelease(next);
+        var a, next, phase;
+        if (isRelease) {
+          _this.allReleases.splice(i, 1);
+          next = _this.allReleases()[i];
+          console.log(next);
+          return _this.selectRelease(next);
+        } else {
+          phase = ((function() {
+            var _i, _len, _ref, _results;
+            _ref = this.selectedRelease().phases;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              a = _ref[_i];
+              if (a.id === data.id) _results.push(a);
+            }
+            return _results;
+          }).call(_this))[0];
+          i = _this.allReleases().indexOf(phase);
+          return _this.selectedRelease().phases.splice(i, 1);
+        }
       });
     };
 

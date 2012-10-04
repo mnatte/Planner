@@ -401,8 +401,14 @@ namespace MvcApplication1.DataAccess
                 {
                     conn.Open();
 
-                    var cmd = new SqlCommand(string.Format("delete from PhaseMilestones where PhaseId = {0} AND MilestoneId = {1}", obj.PhaseId, obj.Id), conn);
-                    var result = cmd.ExecuteNonQuery();
+                    var cmd = new SqlCommand("sp_unassign_milestone_from_release", conn);
+                    cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = obj.PhaseId;
+                    cmd.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = obj.Id;
+                    SqlParameter returnParameter = cmd.Parameters.Add("RetVal", SqlDbType.Int);
+                    returnParameter.Direction = ParameterDirection.ReturnValue;
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    cmd.ExecuteNonQuery();
 
                 }
 

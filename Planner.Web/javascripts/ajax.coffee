@@ -15,7 +15,7 @@ class Ajax
 					opacity: .5, 
 					color: '#fff'
 				},
-				message:  '<b><img src="images/ajax-loader.gif" /> Busy...</b>'  })
+				message:  '<img src="images/ajax-loader.gif" />'  })
 			,
 			complete: ->
 				setTimeout $.unblockUI, 200

@@ -19,22 +19,15 @@ class AdminReleaseViewmodel
 		@allProjects = ko.observableArray(allProjects)
 		@allDeliverables = ko.observableArray(allDeliverables)
 
-		#@allNumbers = ko.observableArray([1,2,3,4,5])
-		@testNumbers = ko.observableArray([])
-		#@selectedProjectIds = ko.observableArray([])
 		for rel in @allReleases()
 			@setReleaseProjects rel
-			# console.log rel.projects()
-			# console.log ko.isObservable(rel.projects)
-			# console.log ko.isWriteableObservable(rel.projects)
 			do (rel) ->
 				# console.log "ctor sort rel: #{rel}"
 				rel.phases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
 			for ms in rel.milestones
 				@setMilestoneDeliverables ms
+			@setPhases rel
 		@allReleases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
-
-		#console.log @allProjects()
 
 	setReleaseProjects: (rel) ->
 		# assign projects and transform projects array to observableArray so changes will be registered
@@ -59,18 +52,19 @@ class AdminReleaseViewmodel
 				ms.deliverables.push m
 		console.log ms
 
+	setPhases: (rel) =>
+		console.log "setPhases to observableArray"
+		# assign deliverables and transform deliverables array to observableArray so changes will be registered
+		phases = rel.phases.slice() # use slice to create independent copy
+		rel.phases = ko.observableArray([phases])
+		console.log rel.phases()
+
 	# functions for observable necessary to pass view model data to it from html
 	selectRelease: (data) =>
 		console.log "selectRelease - function"
 		@formType "release"
-		# console.log @
-		# console.log data
 		@selectedRelease data
-		#@selectedProjectIds.removeAll()
-		#for proj in @selectedRelease().projects
-			#@selectedProjectIds.push(proj.id)
-		# console.log @selectedRelease().projects
-		#console.log "selectRelease after selection: " + @selectedRelease().title + ", parentId: " +  @selectedRelease().parentId
+		console.log "selectRelease - done"
 
 	selectPhase: (data) =>
 		@formType "phase"
@@ -79,7 +73,6 @@ class AdminReleaseViewmodel
 	selectMilestone: (data) =>
 		@formType "milestone"
 		@selectedMilestone data
-		#@setMilestoneDeliverables @selectedMilestone()
 		console.log @selectedMilestone()
 
 	refreshRelease: (index, jsonData) =>
@@ -88,30 +81,17 @@ class AdminReleaseViewmodel
 		i = if index >= 0 then index else @allReleases().length
 		console.log "index: #{index}"
 		console.log "i: #{i}"
-		
-		# i = index of item to remove, 1 is amount to be removed
-		# @allReleases.splice(i,1)
 		# insert newly loaded release when available
 		console.log jsonData
 		if jsonData != null and jsonData != undefined
 			console.log "jsonData not undefined"
 			rel = Release.create jsonData
 			@setReleaseProjects rel
-			#rel = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath)
-			#for phase in jsonData.Phases
-				#rel.addPhase new Release(phase.Id, DateFormatter.createJsDateFromJson(phase.StartDate), DateFormatter.createJsDateFromJson(phase.EndDate), phase.Title, phase.TfsIterationPath, rel.id)
-			#for milestone in jsonData.Milestones
-				#ms = Milestone.create(milestone, rel.id)
-				#@setMilestoneDeliverables ms
-				#rel.addMilestone ms
 			for ms in rel.milestones
 				@setMilestoneDeliverables ms
 			rel.phases.sort((a,b)->a.startDate.date - b.startDate.date)
 			rel.milestones.sort((a,b)->a.date.date - b.date.date)
 
-			#for project in rel.projects
-				#rel.addProject new Project(project.Id, project.Title, project.ShortName)
-				# use slice to create independent copy instead of copying the reference by relprojs = rel.projects
 			# i = index of item to remove, 1 is amount to be removed, rel is item to be inserted there
 			@allReleases.splice i, 1, rel
 
@@ -171,7 +151,10 @@ class AdminReleaseViewmodel
 		@selectedMilestone().save("/planner/Release/SaveMilestone", ko.toJSON(@selectedMilestone()), (data) => @refreshRelease(i, data))
 	
 	deleteRelease: (data) =>
-		if data.parentId is undefined
+		console.log 'deleteRelease'
+		console.log data
+		isRelease = data.parentId is undefined
+		if isRelease
 			rel = (a for a in @allReleases() when a.id is data.id)[0]
 			id = data.id
 			# use index for removing from @allReleases
@@ -181,16 +164,20 @@ class AdminReleaseViewmodel
 			rel = (a for a in parentrel.phases when a.id is data.id)[0]
 			id = data.parentId
 			# use i as parent index for refreshing in @allReleases
-			i = @allReleases().indexOf(parentrel)
+			#i = @allReleases().indexOf(parentrel)
 
 		rel.delete("/planner/Release/Delete/" + rel.id, (callbackdata) =>
-			console.log callbackdata
-			#rel.get("/planner/Release/GetReleaseSummaryById/"+ id, (jsonData) => @refreshRelease(i, jsonData))
-			# i = index of item to remove, 1 is amount to be removed
-			@allReleases.splice i, 1
-			next = @allReleases()[i]
-			console.log next
-			@selectRelease next
+			if isRelease
+				# console.log callbackdata
+				# i = index of item to remove, 1 is amount to be removed
+				@allReleases.splice i, 1
+				next = @allReleases()[i]
+				console.log next
+				@selectRelease next
+			else
+				phase = (a for a in @selectedRelease().phases when a.id is data.id)[0]
+				i = @allReleases().indexOf(phase)
+				@selectedRelease().phases.splice i, 1
 		)
 
 # export to root object

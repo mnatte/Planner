@@ -57,9 +57,10 @@ namespace MvcApplication1.DataAccess
                     {
                         var deliv = new ReleaseModels.Deliverable { 
                             Id = int.Parse(delReader["DeliverableId"].ToString()), Title = delReader["Title"].ToString(), Description = delReader["Description"].ToString(), 
-                            Location = delReader["Location"].ToString(), Format = delReader["Format"].ToString(), Owner = delReader["Owner"].ToString(), 
-                            State = delReader["State"].ToString(), HoursRemaining = int.Parse(delReader["HoursRemaining"].ToString()), 
-                            InitialHoursEstimate = int.Parse(delReader["InitialEstimate"].ToString()),
+                            Location = delReader["Location"].ToString(), Format = delReader["Format"].ToString()//, Owner = delReader["Owner"].ToString()
+                            //,State = delReader["State"].ToString(),
+                            //HoursRemaining = int.Parse(delReader["HoursRemaining"].ToString()), 
+                            //InitialHoursEstimate = int.Parse(delReader["InitialEstimate"].ToString()),
                             // ActivitiesNeeded => snapshot, empty activities array
                         };
 
