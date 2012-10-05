@@ -14,7 +14,7 @@ namespace MvcApplication1.DataAccess
         {
             // add MultipleActiveResultSets=true to enable nested datareaders
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
-            ReleaseModels.Release release;
+            ReleaseModels.Release release = null;
 
             using (conn)
             {
@@ -24,8 +24,8 @@ namespace MvcApplication1.DataAccess
                 var cmd = new SqlCommand(string.Format("Select * from Phases where Id = {0}", id), conn);
                 using (var reader = cmd.ExecuteReader())
                 {
-                    reader.Read();
-                    release = new ReleaseModels.Release { Id = int.Parse(reader["Id"].ToString()), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString(), TfsIterationPath = reader["TfsIterationPath"].ToString() };
+                    if(reader.Read())
+                        release = new ReleaseModels.Release { Id = int.Parse(reader["Id"].ToString()), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString(), TfsIterationPath = reader["TfsIterationPath"].ToString() };
                 }
 
                 // Child phases
@@ -297,7 +297,7 @@ namespace MvcApplication1.DataAccess
             }
         }
 
-        public ReleaseModels.Release SaveMilestone(MilestoneInputModel obj)
+        public ReleaseModels.Milestone SaveMilestone(MilestoneInputModel obj)
         {
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
             int milestoneId = 0;
@@ -331,19 +331,19 @@ namespace MvcApplication1.DataAccess
                         var cmdInserMilestoneDeliverable = new SqlCommand("sp_insert_milestonedeliverable", conn);
                         cmdInserMilestoneDeliverable.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = milestoneId;
                         cmdInserMilestoneDeliverable.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = 0;
-                        cmdInserMilestoneDeliverable.Parameters.Add("@HoursRemaining", System.Data.SqlDbType.Int).Value = 0;
+                        /*cmdInserMilestoneDeliverable.Parameters.Add("@HoursRemaining", System.Data.SqlDbType.Int).Value = 0;
                         cmdInserMilestoneDeliverable.Parameters.Add("@InitialEstimate", System.Data.SqlDbType.Int).Value = 0;
                         cmdInserMilestoneDeliverable.Parameters.Add("@Owner", System.Data.SqlDbType.VarChar).Value = string.Empty;
-                        cmdInserMilestoneDeliverable.Parameters.Add("@State", System.Data.SqlDbType.VarChar).Value = string.Empty;
+                        cmdInserMilestoneDeliverable.Parameters.Add("@State", System.Data.SqlDbType.VarChar).Value = string.Empty;*/
                         cmdInserMilestoneDeliverable.CommandType = System.Data.CommandType.StoredProcedure;
 
                         foreach (var itm in obj.Deliverables)
                         {
                             cmdInserMilestoneDeliverable.Parameters["@DeliverableId"].Value = itm.Id;
-                            cmdInserMilestoneDeliverable.Parameters["@HoursRemaining"].Value = itm.HoursRemaining;
+                            /*cmdInserMilestoneDeliverable.Parameters["@HoursRemaining"].Value = itm.HoursRemaining;
                             cmdInserMilestoneDeliverable.Parameters["@InitialEstimate"].Value = itm.InitialHoursEstimate;
                             cmdInserMilestoneDeliverable.Parameters["@Owner"].Value = itm.Owner ?? "";
-                            cmdInserMilestoneDeliverable.Parameters["@State"].Value = itm.State ?? "";
+                            cmdInserMilestoneDeliverable.Parameters["@State"].Value = itm.State ?? "";*/
 
                             cmdInserMilestoneDeliverable.ExecuteNonQuery();
                         }
@@ -353,7 +353,9 @@ namespace MvcApplication1.DataAccess
 
                 var rel = this.GetReleaseSummary(obj.PhaseId);
                 this.GenerateStatusRecords(rel);
-                return rel;
+                var msrep = new MilestoneRepository();
+                var milestone = msrep.GetItemById(milestoneId);
+                return milestone;
 
             }
             catch (Exception ex)
@@ -364,7 +366,7 @@ namespace MvcApplication1.DataAccess
 
         public void GenerateStatusRecords(ReleaseModels.Release rel)
         {
-            // create status records when not existing baased on release configuration
+            // create status records when not existing based on release configuration
             foreach (var ms in rel.Milestones)
             {
                 foreach (var deliverable in ms.Deliverables)

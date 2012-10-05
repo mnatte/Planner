@@ -24,7 +24,8 @@ class AdminReleaseViewmodel
 			do (rel) ->
 				# console.log "ctor sort rel: #{rel}"
 				rel.phases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
-			for ms in rel.milestones
+			@setMilestones rel
+			for ms in rel.milestones()
 				@setMilestoneDeliverables ms
 			@setPhases rel
 		@allReleases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
@@ -40,31 +41,39 @@ class AdminReleaseViewmodel
 					rel.projects.push p		
 
 	setMilestoneDeliverables: (ms) ->
-		console.log "setMilestoneDeliverables to observableArray"
+		#console.log "setMilestoneDeliverables to observableArray"
 		# assign deliverables and transform deliverables array to observableArray so changes will be registered
 		msDels = ms.deliverables.slice() # use slice to create independent copy instead of copying the reference through msDels = ms.deliverables
-		console.log msDels
+		#console.log msDels
 		ms.deliverables = ko.observableArray([])
 		for del in msDels
 			#console.log del
 			for m in @allDeliverables() when m.id is del.id
-				console.log "assign deliverable #{m.title}"
+				#console.log "assign deliverable #{m.title}"
 				ms.deliverables.push m
-		console.log ms
+		#console.log ms
 
 	setPhases: (rel) =>
-		console.log "setPhases to observableArray"
+		#console.log "setPhases to observableArray"
 		# assign deliverables and transform deliverables array to observableArray so changes will be registered
 		phases = rel.phases.slice() # use slice to create independent copy
-		rel.phases = ko.observableArray([phases])
-		console.log rel.phases()
+		rel.phases = ko.observableArray(phases)
+		#console.log rel.phases()
+
+	setMilestones: (rel) =>
+		#console.log "setPhases to observableArray"
+		# assign deliverables and transform deliverables array to observableArray so changes will be registered
+		milestones = rel.milestones.slice() # use slice to create independent copy
+		rel.milestones = ko.observableArray(milestones)
+		#console.log rel.phases()
 
 	# functions for observable necessary to pass view model data to it from html
 	selectRelease: (data) =>
-		console.log "selectRelease - function"
+		#console.log "selectRelease - function"
 		@formType "release"
 		@selectedRelease data
-		console.log "selectRelease - done"
+		#console.log @selectedRelease().phases()
+		#console.log "selectRelease - done"
 
 	selectPhase: (data) =>
 		@formType "phase"
@@ -89,6 +98,7 @@ class AdminReleaseViewmodel
 			@setReleaseProjects rel
 			for ms in rel.milestones
 				@setMilestoneDeliverables ms
+			@setPhases rel
 			rel.phases.sort((a,b)->a.startDate.date - b.startDate.date)
 			rel.milestones.sort((a,b)->a.date.date - b.date.date)
 
@@ -112,15 +122,19 @@ class AdminReleaseViewmodel
 		@formType "milestone"
 		@selectedMilestone new Milestone(0, new Date(), "0:00", "", "", @selectedRelease().id)
 		#console.log release
+		@setMilestoneDeliverables @selectedMilestone()
+		console.log @selectedMilestone()
 
 	unAssignMilestone: (milestone) =>
 		#@formType "milestone"
 		@selectedMilestone milestone
 		console.log milestone
 		console.log @selectedMilestone()
-		parentrel = (a for a in @allReleases() when a.id is @selectedMilestone().phaseId)[0]
-		i = @allReleases().indexOf(parentrel)
-		@selectedMilestone().save("/planner/Release/UnAssignMilestone", ko.toJSON(@selectedMilestone()), (data) => @refreshRelease(i, data))
+		#parentrel = (a for a in @allReleases() when a.id is @selectedMilestone().phaseId)[0]
+		#i = @allReleases().indexOf(parentrel)
+		ms = (a for a in @selectedRelease().milestones() when a.id is milestone.id)[0]
+		i = @selectedRelease().milestones().indexOf(ms)
+		@selectedMilestone().save("/planner/Release/UnAssignMilestone", ko.toJSON(@selectedMilestone()), (data) => @selectedRelease().milestones.splice(i, 1))
 
 	saveSelected: =>
 		console.log "saveSelected: selectedRelease: #{@selectedRelease()}"
@@ -139,16 +153,19 @@ class AdminReleaseViewmodel
 		# rel = (a for a in @allReleases() when a.id is @selectedRelease().id)[0]
 		parentrel = (a for a in @allReleases() when a.id is @selectedPhase().parentId)[0]
 		i = @allReleases().indexOf(parentrel) #if @allReleases().indexOf(rel) is -1 then @allReleases().indexOf(parentrel) else @allReleases().indexOf(rel)
-		@selectedPhase().save("/planner/Release/Save", ko.toJSON(@selectedPhase()), (data) => @refreshRelease(i, data))
+		@selectedPhase().save("/planner/Release/Save", ko.toJSON(@selectedPhase()), (data) => @selectedRelease().phases.push(@selectedPhase()))
 
 	saveSelectedMilestone: =>
-		console.log "saveSelectedMilestone: selectedRelease: #{@selectedRelease()}"
-		console.log "saveSelectedMilestone: selectedMilestone: #{@selectedMilestone()}"
+		#console.log "saveSelectedMilestone: selectedRelease: #{@selectedRelease()}"
+		#console.log "saveSelectedMilestone: selectedMilestone: #{@selectedMilestone()}"
 		console.log ko.toJSON(@selectedMilestone())
-		console.log ko.toJSON(@selectedMilestone().phaseId)
-		parentrel = (a for a in @allReleases() when a.id is @selectedMilestone().phaseId)[0]
-		i = @allReleases().indexOf(parentrel)
-		@selectedMilestone().save("/planner/Release/SaveMilestone", ko.toJSON(@selectedMilestone()), (data) => @refreshRelease(i, data))
+		#console.log ko.toJSON(@selectedMilestone().phaseId)
+		#callback = @selectedRelease().milestones.push(@selectedMilestone())
+		ms = (a for a in @selectedRelease().milestones() when a.id is @selectedMilestone().id)[0]
+		#if(typeof(ms) is not "undefined" && ms is not null)
+			#console.log ms
+			#callback = 'undefined'
+		@selectedMilestone().save("/planner/Release/SaveMilestone", ko.toJSON(@selectedMilestone()), (data) => newMs = Milestone.create data;@setMilestoneDeliverables newMs;if(typeof(ms) is "undefined" || ms is null || ms.id is 0) then @selectedRelease().milestones.push(newMs))
 	
 	deleteRelease: (data) =>
 		console.log 'deleteRelease'
@@ -161,7 +178,9 @@ class AdminReleaseViewmodel
 			i = @allReleases().indexOf(rel)
 		else
 			parentrel = (a for a in @allReleases() when a.id is data.parentId)[0]
-			rel = (a for a in parentrel.phases when a.id is data.id)[0]
+			console.log parentrel
+			rel = (a for a in parentrel.phases() when a.id is data.id)[0]
+			console.log rel
 			id = data.parentId
 			# use i as parent index for refreshing in @allReleases
 			#i = @allReleases().indexOf(parentrel)
@@ -176,7 +195,7 @@ class AdminReleaseViewmodel
 				@selectRelease next
 			else
 				phase = (a for a in @selectedRelease().phases when a.id is data.id)[0]
-				i = @allReleases().indexOf(phase)
+				i = @selectedRelease().phases.indexOf(phase)
 				@selectedRelease().phases.splice i, 1
 		)
 

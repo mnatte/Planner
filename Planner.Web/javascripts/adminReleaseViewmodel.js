@@ -18,6 +18,7 @@
       this.selectMilestone = __bind(this.selectMilestone, this);
       this.selectPhase = __bind(this.selectPhase, this);
       this.selectRelease = __bind(this.selectRelease, this);
+      this.setMilestones = __bind(this.setMilestones, this);
       this.setPhases = __bind(this.setPhases, this);
       var ms, rel, _fn, _i, _j, _len, _len2, _ref, _ref2;
       Array.prototype.remove = function(e) {
@@ -51,7 +52,8 @@
         rel = _ref[_i];
         this.setReleaseProjects(rel);
         _fn(rel);
-        _ref2 = rel.milestones;
+        this.setMilestones(rel);
+        _ref2 = rel.milestones();
         for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
           ms = _ref2[_j];
           this.setMilestoneDeliverables(ms);
@@ -91,37 +93,41 @@
     };
 
     AdminReleaseViewmodel.prototype.setMilestoneDeliverables = function(ms) {
-      var del, m, msDels, _i, _j, _len, _len2, _ref;
-      console.log("setMilestoneDeliverables to observableArray");
+      var del, m, msDels, _i, _len, _results;
       msDels = ms.deliverables.slice();
-      console.log(msDels);
       ms.deliverables = ko.observableArray([]);
+      _results = [];
       for (_i = 0, _len = msDels.length; _i < _len; _i++) {
         del = msDels[_i];
-        _ref = this.allDeliverables();
-        for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
-          m = _ref[_j];
-          if (!(m.id === del.id)) continue;
-          console.log("assign deliverable " + m.title);
-          ms.deliverables.push(m);
-        }
+        _results.push((function() {
+          var _j, _len2, _ref, _results2;
+          _ref = this.allDeliverables();
+          _results2 = [];
+          for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
+            m = _ref[_j];
+            if (m.id === del.id) _results2.push(ms.deliverables.push(m));
+          }
+          return _results2;
+        }).call(this));
       }
-      return console.log(ms);
+      return _results;
     };
 
     AdminReleaseViewmodel.prototype.setPhases = function(rel) {
       var phases;
-      console.log("setPhases to observableArray");
       phases = rel.phases.slice();
-      rel.phases = ko.observableArray([phases]);
-      return console.log(rel.phases());
+      return rel.phases = ko.observableArray(phases);
+    };
+
+    AdminReleaseViewmodel.prototype.setMilestones = function(rel) {
+      var milestones;
+      milestones = rel.milestones.slice();
+      return rel.milestones = ko.observableArray(milestones);
     };
 
     AdminReleaseViewmodel.prototype.selectRelease = function(data) {
-      console.log("selectRelease - function");
       this.formType("release");
-      this.selectedRelease(data);
-      return console.log("selectRelease - done");
+      return this.selectedRelease(data);
     };
 
     AdminReleaseViewmodel.prototype.selectPhase = function(data) {
@@ -150,6 +156,7 @@
           ms = _ref[_i];
           this.setMilestoneDeliverables(ms);
         }
+        this.setPhases(rel);
         rel.phases.sort(function(a, b) {
           return a.startDate.date - b.startDate.date;
         });
@@ -177,28 +184,30 @@
 
     AdminReleaseViewmodel.prototype.addNewMilestone = function(release) {
       this.formType("milestone");
-      return this.selectedMilestone(new Milestone(0, new Date(), "0:00", "", "", this.selectedRelease().id));
+      this.selectedMilestone(new Milestone(0, new Date(), "0:00", "", "", this.selectedRelease().id));
+      this.setMilestoneDeliverables(this.selectedMilestone());
+      return console.log(this.selectedMilestone());
     };
 
     AdminReleaseViewmodel.prototype.unAssignMilestone = function(milestone) {
-      var a, i, parentrel,
+      var a, i, ms,
         _this = this;
       this.selectedMilestone(milestone);
       console.log(milestone);
       console.log(this.selectedMilestone());
-      parentrel = ((function() {
+      ms = ((function() {
         var _i, _len, _ref, _results;
-        _ref = this.allReleases();
+        _ref = this.selectedRelease().milestones();
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           a = _ref[_i];
-          if (a.id === this.selectedMilestone().phaseId) _results.push(a);
+          if (a.id === milestone.id) _results.push(a);
         }
         return _results;
       }).call(this))[0];
-      i = this.allReleases().indexOf(parentrel);
+      i = this.selectedRelease().milestones().indexOf(ms);
       return this.selectedMilestone().save("/planner/Release/UnAssignMilestone", ko.toJSON(this.selectedMilestone()), function(data) {
-        return _this.refreshRelease(i, data);
+        return _this.selectedRelease().milestones.splice(i, 1);
       });
     };
 
@@ -252,30 +261,31 @@
       }).call(this))[0];
       i = this.allReleases().indexOf(parentrel);
       return this.selectedPhase().save("/planner/Release/Save", ko.toJSON(this.selectedPhase()), function(data) {
-        return _this.refreshRelease(i, data);
+        return _this.selectedRelease().phases.push(_this.selectedPhase());
       });
     };
 
     AdminReleaseViewmodel.prototype.saveSelectedMilestone = function() {
-      var a, i, parentrel,
+      var a, ms,
         _this = this;
-      console.log("saveSelectedMilestone: selectedRelease: " + (this.selectedRelease()));
-      console.log("saveSelectedMilestone: selectedMilestone: " + (this.selectedMilestone()));
       console.log(ko.toJSON(this.selectedMilestone()));
-      console.log(ko.toJSON(this.selectedMilestone().phaseId));
-      parentrel = ((function() {
+      ms = ((function() {
         var _i, _len, _ref, _results;
-        _ref = this.allReleases();
+        _ref = this.selectedRelease().milestones();
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           a = _ref[_i];
-          if (a.id === this.selectedMilestone().phaseId) _results.push(a);
+          if (a.id === this.selectedMilestone().id) _results.push(a);
         }
         return _results;
       }).call(this))[0];
-      i = this.allReleases().indexOf(parentrel);
       return this.selectedMilestone().save("/planner/Release/SaveMilestone", ko.toJSON(this.selectedMilestone()), function(data) {
-        return _this.refreshRelease(i, data);
+        var newMs;
+        newMs = Milestone.create(data);
+        _this.setMilestoneDeliverables(newMs);
+        if (typeof ms === "undefined" || ms === null || ms.id === 0) {
+          return _this.selectedRelease().milestones.push(newMs);
+        }
       });
     };
 
@@ -309,9 +319,10 @@
           }
           return _results;
         }).call(this))[0];
+        console.log(parentrel);
         rel = ((function() {
           var _i, _len, _ref, _results;
-          _ref = parentrel.phases;
+          _ref = parentrel.phases();
           _results = [];
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             a = _ref[_i];
@@ -319,6 +330,7 @@
           }
           return _results;
         })())[0];
+        console.log(rel);
         id = data.parentId;
       }
       return rel["delete"]("/planner/Release/Delete/" + rel.id, function(callbackdata) {
@@ -339,7 +351,7 @@
             }
             return _results;
           }).call(_this))[0];
-          i = _this.allReleases().indexOf(phase);
+          i = _this.selectedRelease().phases.indexOf(phase);
           return _this.selectedRelease().phases.splice(i, 1);
         }
       });
