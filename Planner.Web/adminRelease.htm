@@ -113,7 +113,7 @@
                     </div>
                     <ul data-bind="foreach: $root.selectedRelease().phases()">
                         <li>
-                            <button class="sexybutton sexyicononly" data-bind="click: $root.deleteRelease.bind($data)"><span><span><span class="unassign"></span></span></span></button>
+                            <button class="sexybutton sexyicononly" data-bind="click: $root.removePhase.bind($data)"><span><span><span class="unassign"></span></span></span></button>
                             <span class="selectable" data-bind="text: title, click: $root.selectPhase.bind($data), style: { color: $root.formType() == 'phase' && $root.selectedPhase() != undefined && $data.id == $root.selectedPhase().id ? 'red' : 'black' }"></span>
                         </li>
                     </ul>

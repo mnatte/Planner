@@ -20,15 +20,18 @@ class AdminReleaseViewmodel
 		@allDeliverables = ko.observableArray(allDeliverables)
 
 		for rel in @allReleases()
-			@setReleaseProjects rel
-			do (rel) ->
-				# console.log "ctor sort rel: #{rel}"
-				rel.phases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
-			@setMilestones rel
-			for ms in rel.milestones()
-				@setMilestoneDeliverables ms
-			@setPhases rel
+			@setObservables rel
 		@allReleases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
+
+	setObservables: (rel) ->
+		@setReleaseProjects rel
+		do (rel) ->
+			# console.log "ctor sort rel: #{rel}"
+			rel.phases.sort((a,b)-> if a.startDate.date > b.startDate.date then 1 else if a.startDate.date < b.startDate.date then -1 else 0)
+		@setMilestones rel
+		for ms in rel.milestones()
+			@setMilestoneDeliverables ms
+		@setPhases rel
 
 	setReleaseProjects: (rel) ->
 		# assign projects and transform projects array to observableArray so changes will be registered
@@ -91,14 +94,15 @@ class AdminReleaseViewmodel
 		console.log "index: #{index}"
 		console.log "i: #{i}"
 		# insert newly loaded release when available
-		console.log jsonData
 		if jsonData != null and jsonData != undefined
-			console.log "jsonData not undefined"
+			console.log "jsonData not undefined:"
+			console.log jsonData
 			rel = Release.create jsonData
-			@setReleaseProjects rel
-			for ms in rel.milestones
-				@setMilestoneDeliverables ms
-			@setPhases rel
+			#@setReleaseProjects rel
+			#for ms in rel.milestones
+			#	@setMilestoneDeliverables ms
+			#@setPhases rel
+			@setObservables rel
 			rel.phases.sort((a,b)->a.startDate.date - b.startDate.date)
 			rel.milestones.sort((a,b)->a.date.date - b.date.date)
 
@@ -109,18 +113,40 @@ class AdminReleaseViewmodel
 		@formType "release"
 		#console.log "clear: selectedRelease: #{@selectedRelease().title}"
 		release = new Release(0, new Date(), new Date(), "", "")
-		@setReleaseProjects release
+		@setObservables release
 		@selectRelease release
 
 	addPhase: (data) =>
 		@formType "phase"
-		maxId = @allReleases().reduce (acc, x) ->
+		
+		allPhasesArr = @allReleases().reduce (acc, x) ->
+					acc.push x.phases()
+					acc
+				, []
+
+		allPhases = allPhasesArr.reduce (acc, x) ->
+					# when using concat the original array (acc, is '[]' here) never changes. concat returns a new array as result
+					result = acc.concat x
+					result
+				, []
+
+		maxId = allPhases.reduce (acc, x) ->
 					max = if acc > x.id then acc else x.id
 					max
 				,0
-		@selectPhase new Release(0, new Date(), new Date(), "", "", @selectedRelease().id)
+		newId = maxId + 1
+
+		@selectPhase new Phase(newId, new Date(), new Date(), "", "", @selectedRelease().id)
 		console.log "selectedPhase: #{ko.toJSON(@selectedPhase())}"
-		console.log "selectedRelease id: #{@selectedRelease().id}"
+		#console.log "selectedRelease id: #{@selectedRelease().id}"
+
+	removePhase: (data) =>
+		phase = (a for a in @selectedRelease().phases() when a.id is data.id)[0]
+		i = @selectedRelease().phases().indexOf(phase)
+		# add phaseId to graph
+		#assignment = @selectedMilestone()
+		#assignment.phaseId = @selectedRelease().id
+		@selectedRelease().phases.splice(i, 1)
 
 	addNewMilestone: (release) =>
 		@formType "milestone"
@@ -158,19 +184,50 @@ class AdminReleaseViewmodel
 		ms = (a for a in @selectedRelease().milestones() when a.id is milestone.id)[0]
 		i = @selectedRelease().milestones().indexOf(ms)
 		# add phaseId to graph
-		assignment = @selectedMilestone()
-		assignment.phaseId = @selectedRelease().id
+		# assignment = @selectedMilestone()
+		# assignment.phaseId = @selectedRelease().id
 		@selectedRelease().milestones.splice(i, 1)
 		#@selectedMilestone().save("/planner/Release/UnAssignMilestone", ko.toJSON(assignment), (data) => @selectedRelease().milestones.splice(i, 1))
 
 	saveSelected: =>
-		console.log "saveSelected: selectedRelease: #{@selectedRelease()}"
-		console.log ko.toJSON(@selectedRelease())
+		console.log "saveSelected"
+
+		# TODO: generate optimal serialized object
+		# project id's with basic properties, phase id's with basic properties, milestone id's with basic properties and with deliverable id's
+		# processing of the entire graph will go through Release aggregate / repository
+
+		# get clean copy, replacing all observables with their values
+		release = ko.toJS(@selectedRelease())
+		#console.log release
+		# use extra custom serialization for only relevant config properties
+		# ko.toJSON calls the toJSON method of all objects, this is done on the snapshot instance
+		graph = ko.toJSON(release.toConfigurationSnapshot())
+
+		# serialized graph:
+		#{"id":130,"startDate":"06/10/2012","endDate":"06/10/2012","title":"Test","tfsIterationPath":""
+		#	,"phases":[
+		#		{"id":130,"startDate":"07/10/2012","endDate":"07/10/2012","title":"Phase 1","tfsIterationPath":"","parentId":130}
+		#	]
+		#	,"projects":[
+		#		{"id":1,"title":"EU Maintenance","shortName":"EU","descr":"","tfsIterationPath":"","tfsDevBranch":"Dev-5"}
+		#		,{"id":2,"title":"APAC","shortName":"APAC","descr":"","tfsIterationPath":"NLBEESD-VFS-PM\\Release 9.2\\APAC","tfsDevBranch":"Dev-2"}
+		#	]
+		#	,"milestones":[
+		#		{"id":35,"time":"0:00","title":"New Milestone","description":"","phaseId":130,"date":"07/10/2012"
+		#			,"deliverables":[
+		#				1,2
+		#			]
+		#		}
+		#	]
+		#}
+
 		#console.log ko.isObservable(@selectedRelease().projects)
 		rel = (a for a in @allReleases() when a.id is @selectedRelease().id)[0]
-		parentrel = (a for a in @allReleases() when a.id is @selectedRelease().parentId)[0]
-		i = if @allReleases().indexOf(rel) is -1 then @allReleases().indexOf(parentrel) else @allReleases().indexOf(rel)
-		@selectedRelease().save("/planner/Release/Save", ko.toJSON(@selectedRelease()), (data) => @refreshRelease(i, data))
+		#parentrel = (a for a in @allReleases() when a.id is @selectedRelease().parentId)[0]
+		#i = if @allReleases().indexOf(rel) is -1 then @allReleases().indexOf(parentrel) else @allReleases().indexOf(rel)
+		#@selectedRelease().save("/planner/Release/Save", graph, (data) => @refreshRelease(i, data))
+		i = @allReleases().indexOf(rel)
+		@selectedRelease().save("/planner/Release/SaveReleaseConfiguration", graph, (data) => @refreshRelease(i, data))
 
 	saveSelectedPhase: =>
 		console.log "saveSelectedPhase: selectedRelease: #{@selectedRelease()}"
@@ -178,9 +235,12 @@ class AdminReleaseViewmodel
 		console.log ko.toJSON(@selectedPhase())
 		console.log ko.toJSON(@selectedPhase().parentId)
 		# rel = (a for a in @allReleases() when a.id is @selectedRelease().id)[0]
-		parentrel = (a for a in @allReleases() when a.id is @selectedPhase().parentId)[0]
-		i = @allReleases().indexOf(parentrel) #if @allReleases().indexOf(rel) is -1 then @allReleases().indexOf(parentrel) else @allReleases().indexOf(rel)
-		@selectedPhase().save("/planner/Release/Save", ko.toJSON(@selectedPhase()), (data) => @selectedRelease().phases.push(@selectedPhase()))
+		#parentrel = (a for a in @allReleases() when a.id is @selectedPhase().parentId)[0]
+		#i = @allReleases().indexOf(parentrel) #if @allReleases().indexOf(rel) is -1 then @allReleases().indexOf(parentrel) else @allReleases().indexOf(rel)
+
+		phase = (a for a in @selectedRelease().phases() when a.id is @selectedPhase().id)[0]
+		if(typeof(phase) is "undefined" || phase is null || phase.id is 0) then @selectedRelease().addPhase(@selectedPhase())
+		#@selectedPhase().save("/planner/Release/Save", ko.toJSON(@selectedPhase()), (data) => @selectedRelease().phases.push(@selectedPhase()))
 
 	saveSelectedMilestone: =>
 		#console.log "saveSelectedMilestone: selectedRelease: #{@selectedRelease()}"

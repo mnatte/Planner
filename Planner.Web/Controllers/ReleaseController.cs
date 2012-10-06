@@ -47,6 +47,14 @@ namespace MvcApplication1.Controllers
         }
 
         [HttpPost]
+        public JsonResult SaveReleaseConfiguration(ReleaseConfigurationInputModel obj)
+        {
+            var rep = new ReleaseRepository();
+            //var rel = rep.Save(obj);
+            return this.Json(0, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
         public JsonResult SaveMilestone(MilestoneInputModel obj)
         {
             var rep = new ReleaseRepository();

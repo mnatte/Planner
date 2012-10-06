@@ -178,9 +178,21 @@ class Milestone extends Mixin
 			milestones.push @ms
 		milestones
 	toJSON: ->
+		console.log 'doing toJSON in milestone'
 		copy = ko.toJS(@) #get a clean copy
 		delete copy.date.date #remove property
 		copy.date = @date.dateString
+		copy #return the copy to be serialized
+	toConfigurationSnapshot: ->
+		console.log @
+		copy = ko.toJS(@) #get a clean copy
+		#delete copy.date #remove property
+		#copy.date = @date.dateString
+		copy.deliverables = @deliverables.reduce (acc, x) ->
+					acc.push x.id
+					acc
+				, []
+		console.log copy
 		copy #return the copy to be serialized
 
 class Phase extends Period
@@ -195,6 +207,13 @@ class Phase extends Period
 			@phase = Phase.create(phase)
 			phases.push @phase
 		phases
+	toConfigurationSnapshot: ->
+		copy = ko.toJS(@) #get a clean copy
+		#delete copy.phases
+		#delete copy.projects
+		#delete copy.milestones
+		#console.log copy
+		copy #return the copy to be serialized
 
 class Week
 	# format weekNr: YYYYww, e.g. 201248 (week 48 in 2012)
@@ -251,6 +270,25 @@ class Release extends Phase
 			release.addMilestone Milestone.create(milestone, jsonData.Id)
 		#console.log release
 		release
+	toConfigurationSnapshot: ->
+		console.log 'serialize release configuration'
+		console.log @
+		copy = ko.toJS(@) #get a clean copy
+		copy.projects = @projects.reduce (acc, x) ->
+					acc.push x.id
+					acc
+				, []
+		#copy.projects = []
+		#for proj in @projects
+			#console.log proj.toConfigurationSnapshot()
+		#	copy.projects.push proj.toConfigurationSnapshot()
+		copy.milestones = []
+		for ms in @milestones
+			copy.milestones.push ms.toConfigurationSnapshot()
+		copy.phases = []
+		for phase in @phases
+			copy.phases.push phase.toConfigurationSnapshot()
+		copy #return the copy to be serialized
 
 # Release - Projects - Features & AssignedResources
 class Project extends Mixin
@@ -281,7 +319,7 @@ class Project extends Mixin
 		projects
 	toStatusJSON: ->
 		copy = ko.toJS(@) #get a clean copy
-		console.log copy
+		#console.log copy
 		delete copy.title #remove property
 		delete copy.shortName #remove property
 		delete copy.descr #remove property
@@ -290,7 +328,15 @@ class Project extends Mixin
 		delete copy.tfsDevBranch
 		delete copy.release
 		delete copy.resources
-		console.log(copy)
+		#console.log(copy)
+		copy #return the copy to be serialized
+	toConfigurationSnapshot: ->
+		copy = ko.toJS(@) #get a clean copy
+		#console.log copy
+		delete copy.resources #remove property
+		delete copy.backlog #remove property
+		delete copy.workload #remove property
+		#console.log(copy)
 		copy #return the copy to be serialized
 
 class AssignedResource extends Mixin
@@ -392,6 +438,16 @@ class Deliverable extends Mixin
 			copy.scope.push proj.toStatusJSON()
 		console.log(copy)
 		copy #return the copy to be serialized
+	toConfigurationSnapshot: ->
+		copy = ko.toJS(@) #get a clean copy
+		delete copy.title #remove property
+		delete copy.description #remove property
+		delete copy.format #remove property
+		delete copy.location #remove property
+		delete copy.activities
+		delete copy.scope
+		delete copy.milestone
+		copy
 
 class ProjectActivityStatus
 	constructor: (@hoursRemaining, @activity) ->

@@ -220,9 +220,22 @@
 
     Milestone.prototype.toJSON = function() {
       var copy;
+      console.log('doing toJSON in milestone');
       copy = ko.toJS(this);
       delete copy.date.date;
       copy.date = this.date.dateString;
+      return copy;
+    };
+
+    Milestone.prototype.toConfigurationSnapshot = function() {
+      var copy;
+      console.log(this);
+      copy = ko.toJS(this);
+      copy.deliverables = this.deliverables.reduce(function(acc, x) {
+        acc.push(x.id);
+        return acc;
+      }, []);
+      console.log(copy);
       return copy;
     };
 
@@ -257,6 +270,12 @@
         phases.push(this.phase);
       }
       return phases;
+    };
+
+    Phase.prototype.toConfigurationSnapshot = function() {
+      var copy;
+      copy = ko.toJS(this);
+      return copy;
     };
 
     return Phase;
@@ -340,6 +359,30 @@
       return release;
     };
 
+    Release.prototype.toConfigurationSnapshot = function() {
+      var copy, ms, phase, _i, _j, _len, _len2, _ref, _ref2;
+      console.log('serialize release configuration');
+      console.log(this);
+      copy = ko.toJS(this);
+      copy.projects = this.projects.reduce(function(acc, x) {
+        acc.push(x.id);
+        return acc;
+      }, []);
+      copy.milestones = [];
+      _ref = this.milestones;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        ms = _ref[_i];
+        copy.milestones.push(ms.toConfigurationSnapshot());
+      }
+      copy.phases = [];
+      _ref2 = this.phases;
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        phase = _ref2[_j];
+        copy.phases.push(phase.toConfigurationSnapshot());
+      }
+      return copy;
+    };
+
     return Release;
 
   })(Phase);
@@ -399,7 +442,6 @@
     Project.prototype.toStatusJSON = function() {
       var copy;
       copy = ko.toJS(this);
-      console.log(copy);
       delete copy.title;
       delete copy.shortName;
       delete copy.descr;
@@ -408,7 +450,15 @@
       delete copy.tfsDevBranch;
       delete copy.release;
       delete copy.resources;
-      console.log(copy);
+      return copy;
+    };
+
+    Project.prototype.toConfigurationSnapshot = function() {
+      var copy;
+      copy = ko.toJS(this);
+      delete copy.resources;
+      delete copy.backlog;
+      delete copy.workload;
       return copy;
     };
 
@@ -577,6 +627,19 @@
         copy.scope.push(proj.toStatusJSON());
       }
       console.log(copy);
+      return copy;
+    };
+
+    Deliverable.prototype.toConfigurationSnapshot = function() {
+      var copy;
+      copy = ko.toJS(this);
+      delete copy.title;
+      delete copy.description;
+      delete copy.format;
+      delete copy.location;
+      delete copy.activities;
+      delete copy.scope;
+      delete copy.milestone;
       return copy;
     };
 
