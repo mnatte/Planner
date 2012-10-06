@@ -32,26 +32,26 @@ class AdminReleaseViewmodel
 
 	setReleaseProjects: (rel) ->
 		# assign projects and transform projects array to observableArray so changes will be registered
-			relprojs = rel.projects.slice() # use slice to create independent copy instead of copying the reference by relprojs = rel.projects
-			rel.projects = ko.observableArray([])
-			for proj in relprojs
-				#console.log proj
-				for p in @allProjects() when p.id is proj.id
-					#console.log "assign project #{p.title}"
-					rel.projects.push p		
+		relprojs = rel.projects.slice() # use slice to create independent copy instead of copying the reference by relprojs = rel.projects
+		rel.projects = ko.observableArray([])
+		for proj in relprojs
+			#console.log proj
+			for p in @allProjects() when p.id is proj.id
+				#console.log "assign project #{p.title}"
+				rel.projects.push p		
 
 	setMilestoneDeliverables: (ms) ->
-		#console.log "setMilestoneDeliverables to observableArray"
+		console.log "setMilestoneDeliverables to observableArray"
 		# assign deliverables and transform deliverables array to observableArray so changes will be registered
 		msDels = ms.deliverables.slice() # use slice to create independent copy instead of copying the reference through msDels = ms.deliverables
-		#console.log msDels
+		console.log msDels
 		ms.deliverables = ko.observableArray([])
 		for del in msDels
 			#console.log del
 			for m in @allDeliverables() when m.id is del.id
 				#console.log "assign deliverable #{m.title}"
 				ms.deliverables.push m
-		#console.log ms
+		console.log ms
 
 	setPhases: (rel) =>
 		#console.log "setPhases to observableArray"
@@ -114,27 +114,54 @@ class AdminReleaseViewmodel
 
 	addPhase: (data) =>
 		@formType "phase"
+		maxId = @allReleases().reduce (acc, x) ->
+					max = if acc > x.id then acc else x.id
+					max
+				,0
 		@selectPhase new Release(0, new Date(), new Date(), "", "", @selectedRelease().id)
 		console.log "selectedPhase: #{ko.toJSON(@selectedPhase())}"
 		console.log "selectedRelease id: #{@selectedRelease().id}"
 
 	addNewMilestone: (release) =>
 		@formType "milestone"
-		@selectedMilestone new Milestone(0, new Date(), "0:00", "", "", @selectedRelease().id)
+
+		allMilestonesArr = @allReleases().reduce (acc, x) ->
+					acc.push x.milestones()
+					acc
+				, []
+
+		allMilestones = allMilestonesArr.reduce (acc, x) ->
+					# when using concat the original array (acc, is '[]' here) never changes. concat returns a new array as result
+					result = acc.concat x
+					result
+				, []
+
+		#console.log allMilestones
+		maxId = allMilestones.reduce (acc, x) ->
+					max = if acc > x.id then acc else x.id
+					max
+				,0
+		newId = maxId + 1
+		newMs = new Milestone(newId, new Date(), "0:00", "New Milestone", "", @selectedRelease().id)
+		@setMilestoneDeliverables newMs
+		@selectedMilestone newMs
 		#console.log release
-		@setMilestoneDeliverables @selectedMilestone()
 		console.log @selectedMilestone()
 
 	unAssignMilestone: (milestone) =>
 		#@formType "milestone"
-		@selectedMilestone milestone
+		#@selectedMilestone milestone
 		console.log milestone
-		console.log @selectedMilestone()
+		#console.log @selectedMilestone()
 		#parentrel = (a for a in @allReleases() when a.id is @selectedMilestone().phaseId)[0]
 		#i = @allReleases().indexOf(parentrel)
 		ms = (a for a in @selectedRelease().milestones() when a.id is milestone.id)[0]
 		i = @selectedRelease().milestones().indexOf(ms)
-		@selectedMilestone().save("/planner/Release/UnAssignMilestone", ko.toJSON(@selectedMilestone()), (data) => @selectedRelease().milestones.splice(i, 1))
+		# add phaseId to graph
+		assignment = @selectedMilestone()
+		assignment.phaseId = @selectedRelease().id
+		@selectedRelease().milestones.splice(i, 1)
+		#@selectedMilestone().save("/planner/Release/UnAssignMilestone", ko.toJSON(assignment), (data) => @selectedRelease().milestones.splice(i, 1))
 
 	saveSelected: =>
 		console.log "saveSelected: selectedRelease: #{@selectedRelease()}"
@@ -165,7 +192,11 @@ class AdminReleaseViewmodel
 		#if(typeof(ms) is not "undefined" && ms is not null)
 			#console.log ms
 			#callback = 'undefined'
-		@selectedMilestone().save("/planner/Release/SaveMilestone", ko.toJSON(@selectedMilestone()), (data) => newMs = Milestone.create data;@setMilestoneDeliverables newMs;if(typeof(ms) is "undefined" || ms is null || ms.id is 0) then @selectedRelease().milestones.push(newMs))
+		dels = ko.toJSON(@selectedMilestone().deliverables())
+		console.log dels
+		# add milestone to release when new
+		if(typeof(ms) is "undefined" || ms is null || ms.id is 0) then @selectedRelease().addMilestone(@selectedMilestone())
+		#@selectedMilestone().save("/planner/Release/SaveMilestone", ko.toJSON(@selectedMilestone()), (data) => newMs = Milestone.create data;newMs.phaseId = @selectedRelease().id; @setMilestoneDeliverables newMs;if(typeof(ms) is "undefined" || ms is null || ms.id is 0) then @selectedRelease().addMilestone(newMs))
 	
 	deleteRelease: (data) =>
 		console.log 'deleteRelease'

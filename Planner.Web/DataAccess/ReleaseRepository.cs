@@ -145,7 +145,7 @@ namespace MvcApplication1.DataAccess
                 conn.Open();
 
                 // Release
-                var cmd = new SqlCommand("Select * from Phases where ISNULL(ParentId, 0) = 0 AND Id <> 84", conn);
+                var cmd = new SqlCommand("Select * from Phases where ISNULL(ParentId, 0) = 0", conn);
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())

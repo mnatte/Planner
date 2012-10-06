@@ -93,24 +93,20 @@
     };
 
     AdminReleaseViewmodel.prototype.setMilestoneDeliverables = function(ms) {
-      var del, m, msDels, _i, _len, _results;
+      var del, m, msDels, _i, _j, _len, _len2, _ref;
+      console.log("setMilestoneDeliverables to observableArray");
       msDels = ms.deliverables.slice();
+      console.log(msDels);
       ms.deliverables = ko.observableArray([]);
-      _results = [];
       for (_i = 0, _len = msDels.length; _i < _len; _i++) {
         del = msDels[_i];
-        _results.push((function() {
-          var _j, _len2, _ref, _results2;
-          _ref = this.allDeliverables();
-          _results2 = [];
-          for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
-            m = _ref[_j];
-            if (m.id === del.id) _results2.push(ms.deliverables.push(m));
-          }
-          return _results2;
-        }).call(this));
+        _ref = this.allDeliverables();
+        for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
+          m = _ref[_j];
+          if (m.id === del.id) ms.deliverables.push(m);
+        }
       }
-      return _results;
+      return console.log(ms);
     };
 
     AdminReleaseViewmodel.prototype.setPhases = function(rel) {
@@ -176,25 +172,45 @@
     };
 
     AdminReleaseViewmodel.prototype.addPhase = function(data) {
+      var maxId;
       this.formType("phase");
+      maxId = this.allReleases().reduce(function(acc, x) {
+        var max;
+        max = acc > x.id ? acc : x.id;
+        return max;
+      }, 0);
       this.selectPhase(new Release(0, new Date(), new Date(), "", "", this.selectedRelease().id));
       console.log("selectedPhase: " + (ko.toJSON(this.selectedPhase())));
       return console.log("selectedRelease id: " + (this.selectedRelease().id));
     };
 
     AdminReleaseViewmodel.prototype.addNewMilestone = function(release) {
+      var allMilestones, allMilestonesArr, maxId, newId, newMs;
       this.formType("milestone");
-      this.selectedMilestone(new Milestone(0, new Date(), "0:00", "", "", this.selectedRelease().id));
-      this.setMilestoneDeliverables(this.selectedMilestone());
+      allMilestonesArr = this.allReleases().reduce(function(acc, x) {
+        acc.push(x.milestones());
+        return acc;
+      }, []);
+      allMilestones = allMilestonesArr.reduce(function(acc, x) {
+        var result;
+        result = acc.concat(x);
+        return result;
+      }, []);
+      maxId = allMilestones.reduce(function(acc, x) {
+        var max;
+        max = acc > x.id ? acc : x.id;
+        return max;
+      }, 0);
+      newId = maxId + 1;
+      newMs = new Milestone(newId, new Date(), "0:00", "New Milestone", "", this.selectedRelease().id);
+      this.setMilestoneDeliverables(newMs);
+      this.selectedMilestone(newMs);
       return console.log(this.selectedMilestone());
     };
 
     AdminReleaseViewmodel.prototype.unAssignMilestone = function(milestone) {
-      var a, i, ms,
-        _this = this;
-      this.selectedMilestone(milestone);
+      var a, assignment, i, ms;
       console.log(milestone);
-      console.log(this.selectedMilestone());
       ms = ((function() {
         var _i, _len, _ref, _results;
         _ref = this.selectedRelease().milestones();
@@ -206,9 +222,9 @@
         return _results;
       }).call(this))[0];
       i = this.selectedRelease().milestones().indexOf(ms);
-      return this.selectedMilestone().save("/planner/Release/UnAssignMilestone", ko.toJSON(this.selectedMilestone()), function(data) {
-        return _this.selectedRelease().milestones.splice(i, 1);
-      });
+      assignment = this.selectedMilestone();
+      assignment.phaseId = this.selectedRelease().id;
+      return this.selectedRelease().milestones.splice(i, 1);
     };
 
     AdminReleaseViewmodel.prototype.saveSelected = function() {
@@ -266,8 +282,7 @@
     };
 
     AdminReleaseViewmodel.prototype.saveSelectedMilestone = function() {
-      var a, ms,
-        _this = this;
+      var a, dels, ms;
       console.log(ko.toJSON(this.selectedMilestone()));
       ms = ((function() {
         var _i, _len, _ref, _results;
@@ -279,14 +294,11 @@
         }
         return _results;
       }).call(this))[0];
-      return this.selectedMilestone().save("/planner/Release/SaveMilestone", ko.toJSON(this.selectedMilestone()), function(data) {
-        var newMs;
-        newMs = Milestone.create(data);
-        _this.setMilestoneDeliverables(newMs);
-        if (typeof ms === "undefined" || ms === null || ms.id === 0) {
-          return _this.selectedRelease().milestones.push(newMs);
-        }
-      });
+      dels = ko.toJSON(this.selectedMilestone().deliverables());
+      console.log(dels);
+      if (typeof ms === "undefined" || ms === null || ms.id === 0) {
+        return this.selectedRelease().addMilestone(this.selectedMilestone());
+      }
     };
 
     AdminReleaseViewmodel.prototype.deleteRelease = function(data) {
