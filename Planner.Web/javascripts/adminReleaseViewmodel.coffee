@@ -200,7 +200,7 @@ class AdminReleaseViewmodel
 		release = ko.toJS(@selectedRelease())
 		#console.log release
 		# use extra custom serialization for only relevant config properties
-		# ko.toJSON calls the toJSON method of all objects, this is done on the snapshot instance
+		# ko.toJSON calls the toJSON method of all objects. this is done on the snapshot instance
 		graph = ko.toJSON(release.toConfigurationSnapshot())
 
 		# serialized graph:

@@ -48,9 +48,39 @@ namespace MvcApplication1.Models
         public string StartDate { get; set; }
         public string EndDate { get; set; }
         public string TfsIterationPath { get; set; }
-        public List<PhaseConfigurationInputModel> Phases { get; set; }
-        public List<int> Projects { get; set; }
-        public List<MilestoneConfigurationInputModel> Milestones { get; set; }
+        //public List<PhaseConfigurationInputModel> Phases { get; set; }
+        private List<PhaseConfigurationInputModel> _phases;
+        public List<PhaseConfigurationInputModel> Phases
+        {
+            get
+            {
+                if (_phases == null)
+                    _phases = new List<PhaseConfigurationInputModel>();
+                return _phases;
+            }
+        }
+        //public List<int> Projects { get; set; }
+        private List<int> _projects;
+        public List<int> Projects
+        {
+            get
+            {
+                if (_projects == null)
+                    _projects = new List<int>();
+                return _projects;
+            }
+        }
+        //public List<MilestoneConfigurationInputModel> Milestones { get; set; }
+        private List<MilestoneConfigurationInputModel> _milestones;
+        public List<MilestoneConfigurationInputModel> Milestones
+        {
+            get
+            {
+                if (_milestones == null)
+                    _milestones = new List<MilestoneConfigurationInputModel>();
+                return _milestones;
+            }
+        }
     }
 
     public class PhaseConfigurationInputModel
@@ -77,9 +107,19 @@ namespace MvcApplication1.Models
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public string Descr { get; set; }
+        public string Description { get; set; }
         public string Time { get; set; }
         public string Date { get; set; }
-        public List<int> Deliverables { get; set; }
+        //public List<int> Deliverables { get; set; }
+        private List<int> _deliverables;
+        public List<int> Deliverables
+        {
+            get
+            {
+                if (_deliverables == null)
+                    _deliverables = new List<int>();
+                return _deliverables;
+            }
+        }
     }
 }

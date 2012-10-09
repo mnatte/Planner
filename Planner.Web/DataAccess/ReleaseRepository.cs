@@ -484,5 +484,163 @@ namespace MvcApplication1.DataAccess
                 throw;
             }
         }
+
+        public ReleaseModels.Release SaveReleaseConfiguration(ReleaseConfigurationInputModel obj)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            int newId = 0;
+            try
+            {
+                using (conn)
+                {
+                    conn.Open();
+
+                    var cmd = new SqlCommand("sp_upsert_release", conn);
+                    cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = obj.Id;
+                    cmd.Parameters.Add("@Title", System.Data.SqlDbType.VarChar).Value = obj.Title;
+                    cmd.Parameters.Add("@Descr", System.Data.SqlDbType.VarChar).Value = "";// obj.Descr;
+                    cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = obj.StartDate.ToDateTimeFromDutchString();
+                    cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = obj.EndDate.ToDateTimeFromDutchString();
+                    cmd.Parameters.Add("@IterationPath", System.Data.SqlDbType.VarChar).Value = obj.TfsIterationPath ?? "";
+                    cmd.Parameters.Add("@ParentId", System.Data.SqlDbType.Int).Value = 0;
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    var result = cmd.ExecuteScalar().ToString();
+
+                    if (result == string.Empty)
+                    // it's an update
+                    {
+                        newId = obj.Id;
+                    }
+                    else
+                    // it's an insert
+                    {
+                        newId = int.Parse(result);
+                    }
+
+                    foreach (var phase in obj.Phases)
+                    {
+                        this.SavePhaseConfiguration(phase, newId);
+                    }
+
+                    foreach (var milestone in obj.Milestones)
+                    {
+                        this.SaveMilestoneConfiguration(milestone, newId);
+                    }
+
+                    // completely renew the Projects for the Release as set in the client app
+                    var cmdDelCross = new SqlCommand(string.Format("Delete from ReleaseProjects where PhaseId = {0}", newId), conn);
+                    cmdDelCross.ExecuteNonQuery();
+
+                    if (obj.Projects != null && obj.Projects.Count > 0)
+                    {
+                        var cmdInsertReleaseProject = new SqlCommand("sp_insert_releaseproject", conn);
+                        cmdInsertReleaseProject.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = newId;
+                        cmdInsertReleaseProject.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = 0;
+                        cmdInsertReleaseProject.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        foreach (var projId in obj.Projects)
+                        {
+                            cmdInsertReleaseProject.Parameters["@ProjectId"].Value = projId;
+                            cmdInsertReleaseProject.ExecuteNonQuery();
+                        }
+                    }
+                }
+                var rel = this.GetReleaseSummary(newId);
+                this.GenerateStatusRecords(rel);
+
+                return rel;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        private void SaveMilestoneConfiguration(MilestoneConfigurationInputModel obj, int releaseId)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            int milestoneId = 0;
+            try
+            {
+                using (conn)
+                {
+                    conn.Open();
+
+                    var cmd = new SqlCommand("sp_upsert_milestone", conn);
+                    cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = obj.Id;
+                    cmd.Parameters.Add("@Title", System.Data.SqlDbType.VarChar).Value = obj.Title;
+                    cmd.Parameters.Add("@Description", System.Data.SqlDbType.VarChar).Value = obj.Description ?? "";
+                    cmd.Parameters.Add("@Date", System.Data.SqlDbType.VarChar).Value = obj.Date.ToDateTimeFromDutchString();
+                    cmd.Parameters.Add("@Time", System.Data.SqlDbType.VarChar).Value = obj.Time ?? "";
+                    cmd.Parameters.Add("@PhaseId", System.Data.SqlDbType.Int).Value = releaseId;
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    var result = cmd.ExecuteScalar();
+                    var newId = result == null ? 0 : int.Parse(result.ToString());
+
+                    // it's an update (case 1) or an insert (case 2)
+                    milestoneId = newId == 0 ? obj.Id : newId;
+
+                    // completely renew the Deliverables for the Milestone as set in the client app
+                    var cmdDelCross = new SqlCommand(string.Format("Delete from MilestoneDeliverables where MilestoneId = {0}", milestoneId), conn);
+                    cmdDelCross.ExecuteNonQuery();
+
+                    if (obj.Deliverables != null && obj.Deliverables.Count > 0)
+                    {
+                        var cmdInserMilestoneDeliverable = new SqlCommand("sp_insert_milestonedeliverable", conn);
+                        cmdInserMilestoneDeliverable.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = milestoneId;
+                        cmdInserMilestoneDeliverable.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = 0;
+                        cmdInserMilestoneDeliverable.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        foreach (var deliverableId in obj.Deliverables)
+                        {
+                            cmdInserMilestoneDeliverable.Parameters["@DeliverableId"].Value = deliverableId;
+                            cmdInserMilestoneDeliverable.ExecuteNonQuery();
+                        }
+                    }
+
+                }
+
+                //var rel = this.GetReleaseSummary(releaseId);
+                //this.GenerateStatusRecords(rel);
+                //var msrep = new MilestoneRepository();
+                //var milestone = msrep.GetItemById(milestoneId);
+                //return milestone;
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        private void SavePhaseConfiguration(PhaseConfigurationInputModel obj, int parentId)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            try
+            {
+                using (conn)
+                {
+                    conn.Open();
+
+                    var cmd = new SqlCommand("sp_upsert_release", conn);
+                    cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = obj.Id;
+                    cmd.Parameters.Add("@Title", System.Data.SqlDbType.VarChar).Value = obj.Title;
+                    cmd.Parameters.Add("@Descr", System.Data.SqlDbType.VarChar).Value = "";// obj.Descr;
+                    cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = obj.StartDate.ToDateTimeFromDutchString();
+                    cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = obj.EndDate.ToDateTimeFromDutchString();
+                    cmd.Parameters.Add("@IterationPath", System.Data.SqlDbType.VarChar).Value = obj.TfsIterationPath ?? "";
+                    cmd.Parameters.Add("@ParentId", System.Data.SqlDbType.Int).Value = parentId;
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    var result = cmd.ExecuteScalar().ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }

@@ -50,7 +50,7 @@ namespace MvcApplication1.Controllers
         public JsonResult SaveReleaseConfiguration(ReleaseConfigurationInputModel obj)
         {
             var rep = new ReleaseRepository();
-            //var rel = rep.Save(obj);
+            var rel = rep.SaveReleaseConfiguration(obj);
             return this.Json(0, JsonRequestBehavior.AllowGet);
         }
 
