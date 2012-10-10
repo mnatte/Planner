@@ -120,6 +120,7 @@ class AdminReleaseViewmodel
 		@formType "phase"
 		
 		allPhasesArr = @allReleases().reduce (acc, x) ->
+					acc.push [x]
 					acc.push x.phases()
 					acc
 				, []
@@ -261,33 +262,34 @@ class AdminReleaseViewmodel
 	deleteRelease: (data) =>
 		console.log 'deleteRelease'
 		console.log data
-		isRelease = data.parentId is undefined
-		if isRelease
-			rel = (a for a in @allReleases() when a.id is data.id)[0]
-			id = data.id
-			# use index for removing from @allReleases
-			i = @allReleases().indexOf(rel)
-		else
-			parentrel = (a for a in @allReleases() when a.id is data.parentId)[0]
-			console.log parentrel
-			rel = (a for a in parentrel.phases() when a.id is data.id)[0]
-			console.log rel
-			id = data.parentId
+		#isRelease = data.parentId is undefined
+		#if isRelease
+		rel = (a for a in @allReleases() when a.id is data.id)[0]
+		id = data.id
+		# use index for removing from @allReleases
+		i = @allReleases().indexOf(rel)
+		#else
+			#parentrel = (a for a in @allReleases() when a.id is data.parentId)[0]
+			#console.log parentrel
+			#rel = (a for a in parentrel.phases() when a.id is data.id)[0]
+			#console.log rel
+			#id = data.parentId
 			# use i as parent index for refreshing in @allReleases
 			#i = @allReleases().indexOf(parentrel)
 
 		rel.delete("/planner/Release/Delete/" + rel.id, (callbackdata) =>
-			if isRelease
+			#if isRelease
 				# console.log callbackdata
 				# i = index of item to remove, 1 is amount to be removed
-				@allReleases.splice i, 1
-				next = @allReleases()[i]
-				console.log next
-				@selectRelease next
-			else
-				phase = (a for a in @selectedRelease().phases when a.id is data.id)[0]
-				i = @selectedRelease().phases.indexOf(phase)
-				@selectedRelease().phases.splice i, 1
+			# check for server error is done in Roles.coffee RCrud delete method
+			@allReleases.splice i, 1
+			next = @allReleases()[i]
+			console.log next
+			@selectRelease next
+			#else
+				#phase = (a for a in @selectedRelease().phases when a.id is data.id)[0]
+				#i = @selectedRelease().phases.indexOf(phase)
+				#@selectedRelease().phases.splice i, 1
 		)
 
 # export to root object

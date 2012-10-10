@@ -174,6 +174,7 @@
       var allPhases, allPhasesArr, maxId, newId;
       this.formType("phase");
       allPhasesArr = this.allReleases().reduce(function(acc, x) {
+        acc.push([x]);
         acc.push(x.phases());
         return acc;
       }, []);
@@ -313,70 +314,28 @@
     };
 
     AdminReleaseViewmodel.prototype.deleteRelease = function(data) {
-      var a, i, id, isRelease, parentrel, rel,
+      var a, i, id, rel,
         _this = this;
       console.log('deleteRelease');
       console.log(data);
-      isRelease = data.parentId === void 0;
-      if (isRelease) {
-        rel = ((function() {
-          var _i, _len, _ref, _results;
-          _ref = this.allReleases();
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            a = _ref[_i];
-            if (a.id === data.id) _results.push(a);
-          }
-          return _results;
-        }).call(this))[0];
-        id = data.id;
-        i = this.allReleases().indexOf(rel);
-      } else {
-        parentrel = ((function() {
-          var _i, _len, _ref, _results;
-          _ref = this.allReleases();
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            a = _ref[_i];
-            if (a.id === data.parentId) _results.push(a);
-          }
-          return _results;
-        }).call(this))[0];
-        console.log(parentrel);
-        rel = ((function() {
-          var _i, _len, _ref, _results;
-          _ref = parentrel.phases();
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            a = _ref[_i];
-            if (a.id === data.id) _results.push(a);
-          }
-          return _results;
-        })())[0];
-        console.log(rel);
-        id = data.parentId;
-      }
-      return rel["delete"]("/planner/Release/Delete/" + rel.id, function(callbackdata) {
-        var a, next, phase;
-        if (isRelease) {
-          _this.allReleases.splice(i, 1);
-          next = _this.allReleases()[i];
-          console.log(next);
-          return _this.selectRelease(next);
-        } else {
-          phase = ((function() {
-            var _i, _len, _ref, _results;
-            _ref = this.selectedRelease().phases;
-            _results = [];
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              a = _ref[_i];
-              if (a.id === data.id) _results.push(a);
-            }
-            return _results;
-          }).call(_this))[0];
-          i = _this.selectedRelease().phases.indexOf(phase);
-          return _this.selectedRelease().phases.splice(i, 1);
+      rel = ((function() {
+        var _i, _len, _ref, _results;
+        _ref = this.allReleases();
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          a = _ref[_i];
+          if (a.id === data.id) _results.push(a);
         }
+        return _results;
+      }).call(this))[0];
+      id = data.id;
+      i = this.allReleases().indexOf(rel);
+      return rel["delete"]("/planner/Release/Delete/" + rel.id, function(callbackdata) {
+        var next;
+        _this.allReleases.splice(i, 1);
+        next = _this.allReleases()[i];
+        console.log(next);
+        return _this.selectRelease(next);
       });
     };
 

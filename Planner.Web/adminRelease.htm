@@ -109,7 +109,7 @@
                         <span class="icon32 icon-phase"></span>
                         <span>Phases</span>
                         <!--<span class="icon24 icon-new interact" data-bind="click: $root.addPhase.bind($data)"></span>-->
-                        <button class="sexybutton" data-bind="click: $root.addPhase.bind($data)"><span><span><span class="add">New</span></span></span></button>
+                        <button class="sexybutton" data-bind="click: $root.addPhase.bind($data), enable:$root.selectedRelease() && $root.selectedRelease().id > 0"><span><span><span class="add">New</span></span></span></button>
                     </div>
                     <ul data-bind="foreach: $root.selectedRelease().phases()">
                         <li>
@@ -121,7 +121,7 @@
                         <span class="icon32 icon-milestone"></span>
                         <span>Milestones</span>
                         <!--<span class="icon24 icon-new interact" data-bind="click: $root.addNewMilestone.bind($data)"></span>-->
-                        <button class="sexybutton" data-bind="click: $root.addNewMilestone.bind($data)"><span><span><span class="add">New</span></span></span></button>
+                        <button class="sexybutton" data-bind="click: $root.addNewMilestone.bind($data), enable:$root.selectedRelease() && $root.selectedRelease().id > 0"><span><span><span class="add">New</span></span></span></button>
                     </div>
                     <ul data-bind="foreach: $root.selectedRelease().milestones">
                         <li>

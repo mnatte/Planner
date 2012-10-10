@@ -429,6 +429,7 @@
 .sexybutton span.repeat				{ background-image: url(../images/png/16x16/repeat.png) !important; }
 /*.sexybutton span.delete			{ background-image: url(../images/sexy/icons/silk/delete.png) !important; }*/
 .sexybutton span.delete			{ background-image: url(../images/png/16x16/trash.png) !important; }
+.sexybutton span.link			{ background-image: url(../images/png/16x16/link.png) !important; }
 .sexybutton span.unassign			{ background-image: url(../images/png/16x16/delete.png) !important; }
 .sexybutton span.download		{ background-image: url(../images/sexy/icons/silk/arrow_down.png) !important; }
 .sexybutton span.download2		{ background-image: url(../images/sexy/icons/silk/package_down.png) !important; }

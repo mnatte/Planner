@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using MvcApplication1.Models;
 using System.Data.SqlClient;
 using MvcApplication1.DataAccess;
+using System.Net;
 
 namespace MvcApplication1.Controllers
 {
@@ -51,7 +52,7 @@ namespace MvcApplication1.Controllers
         {
             var rep = new ReleaseRepository();
             var rel = rep.SaveReleaseConfiguration(obj);
-            return this.Json(0, JsonRequestBehavior.AllowGet);
+            return this.Json(rel, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -80,8 +81,12 @@ namespace MvcApplication1.Controllers
         public JsonResult Delete(int id)
         {
             var rep = new ReleaseRepository();
-            var amount = rep.Delete(id);
-            return this.Json(string.Format("{0} rows deleted", amount), JsonRequestBehavior.AllowGet);
+            var result = rep.Delete(id);
+            if (result)
+                return this.Json(string.Format("Release with Id {0} succesfully deleted", id), JsonRequestBehavior.AllowGet);
+            else
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return this.Json(string.Format("Release with Id {0} not deleted", id), JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]

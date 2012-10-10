@@ -71,6 +71,7 @@ RCrud =
 						callback data
 					error: (XHR, status, errorThrown) ->
 						console.log "AJAX DELETE error: #{errorThrown}"
+						# no callback called
 			get: (url, callback) ->
 				$.ajax url,
 					dataType: "json"
