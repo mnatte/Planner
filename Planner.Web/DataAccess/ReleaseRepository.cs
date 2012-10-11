@@ -422,6 +422,35 @@ namespace MvcApplication1.DataAccess
             }
         }
 
+        private int DeleteMilestone(int milestoneId)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            var result = 0;
+            try
+            {
+                using (conn)
+                {
+                    conn.Open();
+
+                    var cmd = new SqlCommand("sp_delete_milestone", conn);
+                    cmd.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = milestoneId;
+                    SqlParameter returnParameter = cmd.Parameters.Add("RetVal", SqlDbType.Int);
+                    returnParameter.Direction = ParameterDirection.ReturnValue;
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    cmd.ExecuteNonQuery();
+                    result = (int)cmd.Parameters["RetVal"].Value;
+
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         // Is Milestone an entity of the Release aggregate root?
         protected List<ReleaseModels.Milestone> GetMilestonesForRelease(ReleaseModels.Release release, SqlConnection conn)
         {
@@ -518,6 +547,20 @@ namespace MvcApplication1.DataAccess
                         newId = int.Parse(result);
                     }
 
+                    // clean up Milestones that are in database but not present in the inputmodel
+                    // do cleaning before storing the new milestone(s) to db, otherwise this / these will be deleted immediately since the newly generated id probably does not match the id passed in the inputmodel
+                    var msrep = new MilestoneRepository();
+                    // get all existing milestoneid's for this release
+                    var currentMilestones = msrep.GetConfiguredMilestonesForRelease(newId).Select(m => m.Id).ToList();
+                    // get all milestoneId's contained in the inputmodel
+                    var newMilestones = obj.Milestones.Select(m => m.Id).ToList();
+                    // remove all new id's from existing id's, keeping all obsolete id's. 'RemoveAll' returns the amount removed, the collection itself is changed
+                    var amountObsolete = currentMilestones.RemoveAll(ms => newMilestones.Contains(ms));
+                    foreach (var obsoleteId in currentMilestones)
+                    {
+                        this.DeleteMilestone(obsoleteId);
+                    }
+
                     foreach (var phase in obj.Phases)
                     {
                         this.SavePhaseConfiguration(phase, newId);
@@ -545,7 +588,10 @@ namespace MvcApplication1.DataAccess
                             cmdInsertReleaseProject.ExecuteNonQuery();
                         }
                     }
+
+                    // TODO: Delete from ReleaseResources where ProjectId not in new release inputmodel (Delete from ReleaseResources where projectId = obsolete and ReleaseId = newId) 
                 }
+
                 var rel = this.GetReleaseSummary(newId);
                 this.GenerateStatusRecords(rel);
 

@@ -135,5 +135,31 @@ namespace MvcApplication1.DataAccess
             return lst;
         }
 
+        public List<ReleaseModels.Milestone> GetConfiguredMilestonesForRelease(int releaseId)
+        {
+            //_release = release;
+
+            var conn = new SqlConnection(this.ConnectionString);
+
+            var cmd = new SqlCommand("sp_get_phase_milestones", conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.Add("@PhaseId", System.Data.SqlDbType.Int).Value = releaseId;
+            var lst = new List<ReleaseModels.Milestone>();
+
+            using (conn)
+            {
+                conn.Open();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var ms = this.CreateItemByDbRow(reader);
+                        lst.Add(ms);
+                    }
+                }
+            }
+            return lst;
+        }
+
     }
 }
