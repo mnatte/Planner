@@ -9,10 +9,11 @@ namespace MvcApplication1.DataAccess
 {
     public class ProjectRepository
     {
+        protected string ConnectionString = "Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true";
         public ReleaseModels.Project GetProject(int id)
         {
             // add MultipleActiveResultSets=true to enable nested datareaders
-            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            var conn = new SqlConnection(this.ConnectionString);
             ReleaseModels.Project p = null;
 
             using (conn)
@@ -89,7 +90,7 @@ namespace MvcApplication1.DataAccess
             
             var _assignments = new List<ReleaseModels.ResourceAssignment>();
 
-            using (var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true"))
+            using (var conn = new SqlConnection(this.ConnectionString))
             {
                 var cmdResources = new SqlCommand("get_release_deliverable_assignments", conn);
                 cmdResources.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = deliverableId;
@@ -121,7 +122,7 @@ namespace MvcApplication1.DataAccess
                 }
             }
 
-            using (var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true"))
+            using (var conn = new SqlConnection(this.ConnectionString))
             {
                 var cmdStatus = new SqlCommand("sp_get_deliverable_status", conn);
                 cmdStatus.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = deliverableId;
@@ -152,6 +153,30 @@ namespace MvcApplication1.DataAccess
                 }
             }
             return project;
+        }
+
+        public List<ReleaseModels.Project> GetConfiguredProjectsForRelease(int releaseId)
+        {
+            var conn = new SqlConnection(this.ConnectionString);
+
+            var cmd = new SqlCommand("sp_get_release_projects", conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = releaseId;
+            var lst = new List<ReleaseModels.Project>();
+
+            using (conn)
+            {
+                conn.Open();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var p = new ReleaseModels.Project { Id = int.Parse(reader["Id"].ToString()), Title = reader["Title"].ToString(), Description = reader["Description"].ToString(), ShortName = reader["ShortName"].ToString() };
+                        lst.Add(p);
+                    }
+                }
+            }
+            return lst;
         }
     }
 }

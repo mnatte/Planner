@@ -514,6 +514,36 @@ namespace MvcApplication1.DataAccess
             }
         }
 
+        private int UnAssignProject(int releaseId, int projectId)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            var result = 0;
+            try
+            {
+                using (conn)
+                {
+                    conn.Open();
+
+                    var cmd = new SqlCommand("sp_unassign_project_from_release", conn);
+                    cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = releaseId;
+                    cmd.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = projectId;
+                    SqlParameter returnParameter = cmd.Parameters.Add("RetVal", SqlDbType.Int);
+                    returnParameter.Direction = ParameterDirection.ReturnValue;
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    cmd.ExecuteNonQuery();
+                    result = (int)cmd.Parameters["RetVal"].Value;
+
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public ReleaseModels.Release SaveReleaseConfiguration(ReleaseConfigurationInputModel obj)
         {
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
@@ -571,9 +601,29 @@ namespace MvcApplication1.DataAccess
                         this.SaveMilestoneConfiguration(milestone, newId);
                     }
 
+                    // Projects are not value objects, they can be tracked and maintained seperately.
+                    // They do however belong to the Release aggregate but they need to be assigned / unassigned, not just deleted and inserted
+
+                    var projRep = new ProjectRepository();
+                    // get all existing projectid's for this release
+                    var currentProjects = projRep.GetConfiguredProjectsForRelease(newId).Select(m => m.Id).ToList();
+                    // create copy to determine obsolete projects
+                    var obsoleteProjects = new List<int>();
+                    obsoleteProjects.AddRange(currentProjects);
+
+                    // remove all configured id's in inputmodel from existing id's, keeping all obsolete id's. 'RemoveAll' returns the amount removed, the collection itself is changed
+                    var amountObsoleteProjects = obsoleteProjects.RemoveAll(p => obj.Projects.Contains(p));
+                    foreach (var obsoleteId in obsoleteProjects)
+                    {
+                        this.UnAssignProject(newId, obsoleteId);
+                    }
+
+                    // remove current projects from configured projects in inputmodel, leaving all new projects
+                    obj.Projects.RemoveAll(p => currentProjects.Contains(p));
+
                     // completely renew the Projects for the Release as set in the client app
-                    var cmdDelCross = new SqlCommand(string.Format("Delete from ReleaseProjects where PhaseId = {0}", newId), conn);
-                    cmdDelCross.ExecuteNonQuery();
+                    //var cmdDelCross = new SqlCommand(string.Format("Delete from ReleaseProjects where PhaseId = {0}", newId), conn);
+                    //cmdDelCross.ExecuteNonQuery();
 
                     if (obj.Projects != null && obj.Projects.Count > 0)
                     {
@@ -588,8 +638,6 @@ namespace MvcApplication1.DataAccess
                             cmdInsertReleaseProject.ExecuteNonQuery();
                         }
                     }
-
-                    // TODO: Delete from ReleaseResources where ProjectId not in new release inputmodel (Delete from ReleaseResources where projectId = obsolete and ReleaseId = newId) 
                 }
 
                 var rel = this.GetReleaseSummary(newId);
