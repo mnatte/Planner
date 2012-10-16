@@ -18,6 +18,7 @@ class AdminReleaseViewmodel
 		@allReleases = ko.observableArray(allReleases)
 		@allProjects = ko.observableArray(allProjects)
 		@allDeliverables = ko.observableArray(allDeliverables)
+		@itemToDelete = ko.observable()
 
 		for rel in @allReleases()
 			@setObservables rel
@@ -259,6 +260,24 @@ class AdminReleaseViewmodel
 		if(typeof(ms) is "undefined" || ms is null || ms.id is 0) then @selectedRelease().addMilestone(@selectedMilestone())
 		#@selectedMilestone().save("/planner/Release/SaveMilestone", ko.toJSON(@selectedMilestone()), (data) => newMs = Milestone.create data;newMs.phaseId = @selectedRelease().id; @setMilestoneDeliverables newMs;if(typeof(ms) is "undefined" || ms is null || ms.id is 0) then @selectedRelease().addMilestone(newMs))
 	
+	
+	confirmDelete: =>
+		@deleteRelease @itemToDelete(), $.unblockUI()
+
+	setItemToDelete: (item) =>
+		@itemToDelete item
+		$.blockUI({ css: {
+            border: 'none',
+            padding: '15px',
+            backgroundColor: '#000',
+            '-webkit-border-radius': '10px',
+            '-moz-border-radius': '10px',
+            opacity: .5,
+            color: '#fff'
+			},
+			message: $('#question')
+			})
+	
 	deleteRelease: (data) =>
 		console.log 'deleteRelease'
 		console.log data
@@ -286,6 +305,7 @@ class AdminReleaseViewmodel
 			next = @allReleases()[i]
 			console.log next
 			@selectRelease next
+			$.unblockUI()
 			#else
 				#phase = (a for a in @selectedRelease().phases when a.id is data.id)[0]
 				#i = @selectedRelease().phases.indexOf(phase)

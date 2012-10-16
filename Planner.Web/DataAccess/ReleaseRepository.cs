@@ -561,7 +561,7 @@ namespace MvcApplication1.DataAccess
                     cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = obj.StartDate.ToDateTimeFromDutchString();
                     cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = obj.EndDate.ToDateTimeFromDutchString();
                     cmd.Parameters.Add("@IterationPath", System.Data.SqlDbType.VarChar).Value = obj.TfsIterationPath ?? "";
-                    cmd.Parameters.Add("@ParentId", System.Data.SqlDbType.Int).Value = 0;
+                    cmd.Parameters.Add("@ParentId", System.Data.SqlDbType.Int).Value = DBNull.Value;
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
                     var result = cmd.ExecuteScalar().ToString();

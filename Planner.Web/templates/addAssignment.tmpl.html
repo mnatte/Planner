@@ -22,6 +22,7 @@
             <input type="text" data-bind="value: assignedPeriod.endDate.dateString" style="display:inline; width:100px; height:30px"/>
             <!--,<input type="text" data-bind="value: activity" style="display:inline; width:100px; height:30px"/>  event: { blur: $root.addAssignment.bind($data) }-->
             <select data-bind="options: $root.allActivities, optionsText: 'title', value: $root.selectedActivity, optionsCaption: 'Choose...'" style="display:inline"></select>
-            <span class="icon24 icon-add-user22 interact" data-bind="click: $root.addAssignment.bind($data)"></span>
+            <!--<span class="icon24 icon-add-user22 interact" data-bind="click: $root.addAssignment.bind($data)"></span>-->
+            <button class="sexybutton" data-bind="click: $root.addAssignment.bind($data)"><span><span><span class="add">Assign</span></span></span></button>
         </div>
 </section>

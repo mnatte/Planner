@@ -8,6 +8,8 @@
 
     function AdminReleaseViewmodel(allReleases, allProjects, allDeliverables) {
       this.deleteRelease = __bind(this.deleteRelease, this);
+      this.setItemToDelete = __bind(this.setItemToDelete, this);
+      this.confirmDelete = __bind(this.confirmDelete, this);
       this.saveSelectedMilestone = __bind(this.saveSelectedMilestone, this);
       this.saveSelectedPhase = __bind(this.saveSelectedPhase, this);
       this.saveSelected = __bind(this.saveSelected, this);
@@ -37,6 +39,7 @@
       this.allReleases = ko.observableArray(allReleases);
       this.allProjects = ko.observableArray(allProjects);
       this.allDeliverables = ko.observableArray(allDeliverables);
+      this.itemToDelete = ko.observable();
       _ref = this.allReleases();
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         rel = _ref[_i];
@@ -313,6 +316,26 @@
       }
     };
 
+    AdminReleaseViewmodel.prototype.confirmDelete = function() {
+      return this.deleteRelease(this.itemToDelete(), $.unblockUI());
+    };
+
+    AdminReleaseViewmodel.prototype.setItemToDelete = function(item) {
+      this.itemToDelete(item);
+      return $.blockUI({
+        css: {
+          border: 'none',
+          padding: '15px',
+          backgroundColor: '#000',
+          '-webkit-border-radius': '10px',
+          '-moz-border-radius': '10px',
+          opacity: .5,
+          color: '#fff'
+        },
+        message: $('#question')
+      });
+    };
+
     AdminReleaseViewmodel.prototype.deleteRelease = function(data) {
       var a, i, id, rel,
         _this = this;
@@ -335,7 +358,8 @@
         _this.allReleases.splice(i, 1);
         next = _this.allReleases()[i];
         console.log(next);
-        return _this.selectRelease(next);
+        _this.selectRelease(next);
+        return $.unblockUI();
       });
     };
 

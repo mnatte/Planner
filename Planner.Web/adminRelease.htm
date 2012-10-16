@@ -98,7 +98,7 @@
                     </div>
                     <ul data-bind="foreach: allReleases">
                         <li>
-                            <button class="sexybutton sexyicononly" data-bind="click: $root.deleteRelease.bind($data)"><span><span><span class="delete"></span></span></span></button>
+                            <button class="sexybutton sexyicononly" data-bind="click: $root.setItemToDelete.bind($data)"><span><span><span class="delete"></span></span></span></button>
                             <span class="selectable" data-bind="text: title, click: $root.selectRelease.bind($data), style: { color: $root.selectedRelease() != undefined && $data.id == $root.selectedRelease().id ? 'red' : 'black' }"></span>
                             <!--<span class="icon24 icon-delete interact" data-bind="click: $root.deleteRelease.bind($data)"></span>-->
                         </li>
@@ -133,6 +133,12 @@
                  </div>
             </div>
         </div>
+    </div>
+
+    <div id="question" style="display:none; cursor: default"> 
+        <b>Are you sure you want to delete?</b> 
+        <button class="sexybutton" data-bind="click: $root.confirmDelete"><span><span><span class="delete">Yes, delete</span></span></span></button>
+        <button class="sexybutton" data-bind="click: $.unblockUI"><span><span><span class="repeat">No, cancel</span></span></span></button>
     </div>
 
 <script type="text/javascript">
