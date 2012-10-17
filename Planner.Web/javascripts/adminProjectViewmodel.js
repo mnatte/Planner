@@ -11,13 +11,10 @@
     __extends(AdminProjectViewmodel, _super);
 
     function AdminProjectViewmodel(allProjects) {
-      this.setItemToDelete = __bind(this.setItemToDelete, this);
-      this.confirmDelete = __bind(this.confirmDelete, this);
       this.createNewEmptyItem = __bind(this.createNewEmptyItem, this);
       this.createNewItem = __bind(this.createNewItem, this);      Project.extend(RSimpleCrud);
       Project.setSaveUrl("/planner/Project/Save");
       Project.setDeleteUrl("/planner/Project/Delete");
-      this.itemToDelete = ko.observable();
       AdminProjectViewmodel.__super__.constructor.apply(this, arguments);
     }
 
@@ -27,26 +24,6 @@
 
     AdminProjectViewmodel.prototype.createNewEmptyItem = function() {
       return new Project(0, "", "", "", "", "");
-    };
-
-    AdminProjectViewmodel.prototype.confirmDelete = function() {
-      return this.deleteItem(this.itemToDelete(), $.unblockUI());
-    };
-
-    AdminProjectViewmodel.prototype.setItemToDelete = function(item) {
-      this.itemToDelete(item);
-      return $.blockUI({
-        css: {
-          border: 'none',
-          padding: '15px',
-          backgroundColor: '#000',
-          '-webkit-border-radius': '10px',
-          '-moz-border-radius': '10px',
-          opacity: .5,
-          color: '#fff'
-        },
-        message: $('#question')
-      });
     };
 
     return AdminProjectViewmodel;

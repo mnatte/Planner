@@ -758,7 +758,7 @@
     };
 
     Resource.prototype.hoursAvailable = function(period) {
-      var absence, absent, available, overlappingAbsences, _i, _len, _ref;
+      var absence, absent, amtDays, available, overlappingAbsences, _i, _len, _ref;
       absent = 0;
       _ref = this.periodsAway;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -779,7 +779,13 @@
           return init + x;
         });
       }
-      available = (period.workingDaysRemaining() - absent) * 8;
+      amtDays = 0;
+      if (period.containsDate(new Date())) {
+        amtDays = period.workingDaysRemaining() - absent;
+      } else {
+        amtDays = period.workingDays() - absent;
+      }
+      available = amtDays * 8;
       return available;
     };
 

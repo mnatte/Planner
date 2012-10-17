@@ -8,11 +8,14 @@
 
     function SimpleCrudViewmodel(allItems) {
       this.deleteItem = __bind(this.deleteItem, this);
+      this.setItemToDelete = __bind(this.setItemToDelete, this);
+      this.confirmDelete = __bind(this.confirmDelete, this);
       this.saveSelected = __bind(this.saveSelected, this);
       this.refreshItem = __bind(this.refreshItem, this);
       this.createNewEmptyItem = __bind(this.createNewEmptyItem, this);
       this.createNewItem = __bind(this.createNewItem, this);
-      this.selectItem = __bind(this.selectItem, this);      this.selectedItem = ko.observable();
+      this.selectItem = __bind(this.selectItem, this);      this.itemToDelete = ko.observable();
+      this.selectedItem = ko.observable();
       this.allItems = ko.observableArray(allItems);
       this.allItems.sort();
       Array.prototype.remove = function(e) {
@@ -67,6 +70,26 @@
       i = this.allItems().indexOf(item);
       return this.selectedItem().save(ko.toJSON(this.selectedItem()), function(data) {
         return _this.refreshItem(i, data);
+      });
+    };
+
+    SimpleCrudViewmodel.prototype.confirmDelete = function() {
+      return this.deleteItem(this.itemToDelete(), $.unblockUI());
+    };
+
+    SimpleCrudViewmodel.prototype.setItemToDelete = function(item) {
+      this.itemToDelete(item);
+      return $.blockUI({
+        css: {
+          border: 'none',
+          padding: '15px',
+          backgroundColor: '#000',
+          '-webkit-border-radius': '10px',
+          '-moz-border-radius': '10px',
+          opacity: .5,
+          color: '#fff'
+        },
+        message: $('#question')
       });
     };
 

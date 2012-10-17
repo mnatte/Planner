@@ -6,6 +6,7 @@ root = global ? window
 
 class SimpleCrudViewmodel
 	constructor: (allItems) ->
+		@itemToDelete = ko.observable()
 		@selectedItem = ko.observable()
 		@allItems = ko.observableArray(allItems)
 		@allItems.sort()
@@ -44,6 +45,24 @@ class SimpleCrudViewmodel
 		i = @allItems().indexOf(item)
 		
 		@selectedItem().save(ko.toJSON(@selectedItem()), (data) => @refreshItem(i, data))
+
+	# depending on blockUI jquery library
+	confirmDelete: =>
+		@deleteItem @itemToDelete(), $.unblockUI()
+
+	setItemToDelete: (item) =>
+		@itemToDelete item
+		$.blockUI({ css: {
+            border: 'none',
+            padding: '15px',
+            backgroundColor: '#000',
+            '-webkit-border-radius': '10px',
+            '-moz-border-radius': '10px',
+            opacity: .5,
+            color: '#fff'
+			},
+			message: $('#question')
+			})
 	
 	deleteItem: (data, callback) =>
 		item = (a for a in @allItems() when a.id is data.id)[0]

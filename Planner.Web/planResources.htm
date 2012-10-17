@@ -48,7 +48,7 @@
 
     <script type="text/javascript" src="javascripts/ko.bindingHandlers.editable.js"></script>
     <script type="text/javascript" src="javascripts/ko.bindingHandlers.fadeVisible.js"></script>
-    <script type="text/javascript" src="javascripts/ko.bindingHandlers.tooltip.js"></script>
+    <!--<script type="text/javascript" src="javascripts/ko.bindingHandlers.tooltip.js"></script>-->
     <script type="text/javascript" src="Scripts/koExternalTemplateEngine_all.min.js"></script>
     <script type="text/javascript" src="Scripts/datehelper.js"></script>
     <script type="text/javascript" src="Scripts/timeline-min.js"></script>
@@ -87,7 +87,8 @@
 
             <!-- ko if: $root.selectedProject() -->
             <div id="addUser" class="five columns alpha colheader">
-                <span class="icon32 icon-users interact" data-bind="click: $root.addResource.bind($data)"></span><span>Add Resource</span>
+                <span class="icon32 icon-users"></span><!-- data-bind="click: $root.addResource.bind($data)"></span><span>Add Resource</span>-->
+                <button class="sexybutton" data-bind="click: $root.addResource.bind($data)"><span><span><span class="add">Add Resource</span></span></span></button>
             </div>
             <!-- /ko -->
         </section>
@@ -117,7 +118,8 @@
         </section>
         <!--/ko-->
 
-        <span class="icon32 icon-save interact" data-bind="click: $root.saveAssignments.bind($data)"></span>
+        <!--<span class="icon32 icon-save interact" data-bind="click: $root.saveAssignments.bind($data)"></span>-->
+        <button class="sexybutton" data-bind="click: $root.saveAssignments.bind($data)"><span><span><span class="save">Save</span></span></span></button>
         <span class="icon32 icon-zoom interact" data-bind="click: $root.openDetailsWindow.bind($data)"></span>
     </div>
 

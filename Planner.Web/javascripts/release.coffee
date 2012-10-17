@@ -494,15 +494,20 @@ class Resource extends Mixin
 		away.length is 0
 	hoursAvailable: (period) ->
 		# somehow "reduce (x,y)" needs a space between name ('reduce') and args
-		#console.log period.toString()
+		# console.log period.toString()
 		absent = 0
 		overlappingAbsences = absence for absence in @periodsAway when absence.overlaps(period)
 		if(typeof(overlappingAbsences) is not "undefined" && overlappingAbsences is not null)
 			absent = (absence.overlappingPeriod(period).workingDaysRemaining() for absence in overlappingAbsences).reduce (init, x) -> console.log x; init + x
 		#console.log "absent days: " + absent
-		#console.log "period working days remaining: " + period.workingDaysRemaining()
-		available = (period.workingDaysRemaining() - absent) * 8
-		#console.log "available hours: " + available
+		# console.log "period working days remaining: " + period.workingDaysRemaining()
+		amtDays = 0
+		if period.containsDate(new Date())
+			amtDays = period.workingDaysRemaining() - absent
+		else
+			amtDays = period.workingDays() - absent
+		available = amtDays * 8
+		# console.log "available hours: " + available
 		available
 	# @ to create a static method, attach to class object itself
 	@create: (jsonData) ->
