@@ -82,7 +82,7 @@ namespace MvcApplication1.DataAccess
             return lst;
         }
 
-        protected List<ReleaseModels.Absence> GetAbsences(int resourceId)
+        public List<ReleaseModels.Absence> GetAbsences(int resourceId)
         {
             var conn = new SqlConnection(this.ConnectionString);
 

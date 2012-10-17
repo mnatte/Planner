@@ -758,27 +758,35 @@
     };
 
     Resource.prototype.hoursAvailable = function(period) {
-      var absence, absent, amtDays, available, overlappingAbsences, _i, _len, _ref;
+      var absence, absent, amtDays, available, overlappingAbsences;
       absent = 0;
-      _ref = this.periodsAway;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        absence = _ref[_i];
-        if (absence.overlaps(period)) overlappingAbsences = absence;
-      }
-      if (typeof overlappingAbsences === !"undefined" && overlappingAbsences === !null) {
+      overlappingAbsences = (function() {
+        var _i, _len, _ref, _results;
+        _ref = this.periodsAway;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          absence = _ref[_i];
+          if (absence.overlaps(period)) _results.push(absence);
+        }
+        return _results;
+      }).call(this);
+      if ((overlappingAbsences != null) && typeof overlappingAbsences !== 'undefined' && overlappingAbsences.length > 0) {
         absent = ((function() {
-          var _j, _len2, _results;
+          var _i, _len, _results;
           _results = [];
-          for (_j = 0, _len2 = overlappingAbsences.length; _j < _len2; _j++) {
-            absence = overlappingAbsences[_j];
-            _results.push(absence.overlappingPeriod(period).workingDaysRemaining());
+          for (_i = 0, _len = overlappingAbsences.length; _i < _len; _i++) {
+            absence = overlappingAbsences[_i];
+            _results.push(absence.overlappingPeriod(period));
           }
           return _results;
-        })()).reduce(function(init, x) {
+        })()).reduce(function(acc, x) {
+          var result;
           console.log(x);
-          return init + x;
-        });
+          result = x.containsDate(new Date()) ? x.workingDaysRemaining() : x.workingDays();
+          return acc + result;
+        }, 0);
       }
+      console.log("absent days: " + absent);
       amtDays = 0;
       if (period.containsDate(new Date())) {
         amtDays = period.workingDaysRemaining() - absent;
@@ -795,6 +803,7 @@
       _ref = jsonData.PeriodsAway;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         absence = _ref[_i];
+        console.log("jsonData absence: " + absence);
         res.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title));
       }
       _ref2 = jsonData.Assignments;

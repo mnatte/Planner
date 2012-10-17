@@ -496,10 +496,22 @@ class Resource extends Mixin
 		# somehow "reduce (x,y)" needs a space between name ('reduce') and args
 		# console.log period.toString()
 		absent = 0
-		overlappingAbsences = absence for absence in @periodsAway when absence.overlaps(period)
-		if(typeof(overlappingAbsences) is not "undefined" && overlappingAbsences is not null)
-			absent = (absence.overlappingPeriod(period).workingDaysRemaining() for absence in overlappingAbsences).reduce (init, x) -> console.log x; init + x
-		#console.log "absent days: " + absent
+		# ESSENTIAL: add parentheses around for...when, otherwise no array is returned
+		overlappingAbsences = (absence for absence in @periodsAway when absence.overlaps(period))
+		#if(typeof(overlappingAbsences) isnt 'undefined')
+		#	console.log "overlappingAbsences: " + overlappingAbsences
+		#	console.log "overlappingAbsences.length: " + overlappingAbsences.length
+		if(overlappingAbsences? and typeof(overlappingAbsences) isnt 'undefined' and overlappingAbsences.length > 0)
+			#away = 
+			#absent = (absence.overlappingPeriod(period).workingDaysRemaining() for absence in overlappingAbsences).reduce (init, x) -> console.log x; init + x
+			absent = (absence.overlappingPeriod(period) for absence in overlappingAbsences).reduce (acc, x) ->
+					console.log x
+					result = if x.containsDate(new Date()) then x.workingDaysRemaining() else x.workingDays()
+					acc + result
+				, 0
+
+			#console.log "overlappingAbsences more than 0"
+		console.log "absent days: " + absent
 		# console.log "period working days remaining: " + period.workingDaysRemaining()
 		amtDays = 0
 		if period.containsDate(new Date())
@@ -514,6 +526,7 @@ class Resource extends Mixin
 		#console.log "create Resource"
 		res = new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials, jsonData.AvailableHoursPerWeek, jsonData.Email, jsonData.PhoneNumber)
 		for absence in jsonData.PeriodsAway
+			console.log "jsonData absence: " + absence
 			res.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title))
 		for assignment in jsonData.Assignments
 			res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity.Title + " " + assignment.Phase.Title + " (" + assignment.FocusFactor + ")"), assignment.Phase.Title, assignment.Activity)

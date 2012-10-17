@@ -104,12 +104,16 @@ namespace MvcApplication1.DataAccess
                 {
                     while (resourcesReader.Read())
                     {
+                        var resRep = new ResourceRepository();
+                        var resource = new ReleaseModels.Resource { Id = int.Parse(resourcesReader["PersonId"].ToString()), FirstName = resourcesReader["FirstName"].ToString(), MiddleName = resourcesReader["MiddleName"].ToString(), LastName = resourcesReader["LastName"].ToString() };
+                        resource.PeriodsAway.AddRange(resRep.GetAbsences(resource.Id));
+
                         _assignments.Add(new ReleaseModels.ResourceAssignment
                         {
                             Id = int.Parse(resourcesReader["Id"].ToString()),
                             FocusFactor = double.Parse(resourcesReader["FocusFactor"].ToString()),
                             Phase = new ReleaseModels.Phase { Id = int.Parse(resourcesReader["PhaseId"].ToString()), Title = resourcesReader["phasetitle"].ToString() },
-                            Resource = new ReleaseModels.Resource { Id = int.Parse(resourcesReader["PersonId"].ToString()), FirstName = resourcesReader["FirstName"].ToString(), MiddleName = resourcesReader["MiddleName"].ToString(), LastName = resourcesReader["LastName"].ToString() },
+                            Resource = resource,
                             Project = new ReleaseModels.Project { Id = int.Parse(resourcesReader["ProjectId"].ToString()), Title = resourcesReader["ProjectTitle"].ToString() },
                             //TODO: fill ActivitiesNeeded
                             Deliverable = new ReleaseModels.Deliverable { Id = int.Parse(resourcesReader["DeliverableId"].ToString()), Title = resourcesReader["DeliverableTitle"].ToString() },

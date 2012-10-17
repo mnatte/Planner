@@ -282,7 +282,7 @@ namespace MvcApplication1.Models
             public Role Function { get; set; }
 
             private List<Phase> _periodsAway;
-            public IList<Phase> PeriodsAway
+            public List<Phase> PeriodsAway
             {
                 get
                 {

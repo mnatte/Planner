@@ -105,12 +105,15 @@ namespace MvcApplication1.Controllers
 
         protected ReleaseModels.ResourceAssignment CreateItemByDbRow(System.Data.SqlClient.SqlDataReader reader)
         {
+            var resRep = new ResourceRepository();
+            var resource = new ReleaseModels.Resource { Id = int.Parse(reader["PersonId"].ToString()), FirstName = reader["FirstName"].ToString(), MiddleName = reader["MiddleName"].ToString(), LastName = reader["LastName"].ToString() };
+            resource.PeriodsAway.AddRange(resRep.GetAbsences(resource.Id));
             return new ReleaseModels.ResourceAssignment
             {
                 Id = int.Parse(reader["Id"].ToString()),
                 FocusFactor = double.Parse(reader["FocusFactor"].ToString()),
                 Phase = new ReleaseModels.Phase { Id = int.Parse(reader["PhaseId"].ToString()), Title = reader["phasetitle"].ToString() },
-                Resource = new ReleaseModels.Resource { Id = int.Parse(reader["PersonId"].ToString()), FirstName = reader["FirstName"].ToString(), MiddleName = reader["MiddleName"].ToString(), LastName = reader["LastName"].ToString() },
+                Resource = resource,
                 Project = new ReleaseModels.Project { Id = int.Parse(reader["ProjectId"].ToString()), Title = reader["ProjectTitle"].ToString() },
                 //TODO: fill ActivitiesNeeded
                 Deliverable = new ReleaseModels.Deliverable { Id = int.Parse(reader["DeliverableId"].ToString()), Title = reader["DeliverableTitle"].ToString() },
