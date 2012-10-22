@@ -48,7 +48,7 @@ namespace MvcApplication1.DataAccess
             return item;
         }
 
-        protected override void AddChildCollection(DeliverableInputModel obj)
+        protected override void AddChildCollection(DeliverableInputModel obj, int parentId)
         {
             if (obj.Activities != null && obj.Activities.Count > 0)
             {
@@ -57,7 +57,7 @@ namespace MvcApplication1.DataAccess
                     conn.Open();
                     using (var cmdInsertDeliverableActivity = new SqlCommand("sp_insert_deliverableactivity", conn))
                     {
-                        cmdInsertDeliverableActivity.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = obj.Id;
+                        cmdInsertDeliverableActivity.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = parentId;
                         cmdInsertDeliverableActivity.Parameters.Add("@ActivityId", System.Data.SqlDbType.Int).Value = 0;
                         cmdInsertDeliverableActivity.CommandType = System.Data.CommandType.StoredProcedure;
 
@@ -69,6 +69,13 @@ namespace MvcApplication1.DataAccess
                     }
                 }
             }
+        }
+
+        protected override void ConfigureDeleteCommand(SqlCommand cmd, int id)
+        {
+            cmd.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = id;
+            cmd.CommandText = "sp_delete_deliverable";
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
         }
 
         // Deliverable is a member of the Milestone aggregate root. We use a "Milestone snapshot" object to prevent loading the whole Milestone graph

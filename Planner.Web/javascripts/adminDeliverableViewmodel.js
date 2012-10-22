@@ -34,7 +34,16 @@
     };
 
     AdminDeliverableViewmodel.prototype.createNewEmptyItem = function() {
-      return new Deliverable(0, "", "", "", "");
+      var del, maxId, newId;
+      maxId = this.allItems().reduce(function(acc, x) {
+        var max;
+        max = acc > x.id ? acc : x.id;
+        return max;
+      }, 0);
+      newId = maxId + 1;
+      del = new Deliverable(newId, "", "", "", "");
+      this.setDeliverableActivities(del);
+      return del;
     };
 
     AdminDeliverableViewmodel.prototype.setDeliverableActivities = function(del) {

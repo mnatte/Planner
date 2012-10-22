@@ -23,7 +23,15 @@ class AdminDeliverableViewmodel extends SimpleCrudViewmodel
 		del
 
 	createNewEmptyItem: =>
-		new Deliverable(0, "", "", "", "")
+		maxId = @allItems().reduce (acc, x) ->
+					max = if acc > x.id then acc else x.id
+					max
+				,0
+		newId = maxId + 1
+
+		del = new Deliverable(newId, "", "", "", "")
+		@setDeliverableActivities del
+		del
 
 	setDeliverableActivities: (del) ->
 		# assign activities and transform activities array to observableArray so changes will be registered
@@ -31,7 +39,6 @@ class AdminDeliverableViewmodel extends SimpleCrudViewmodel
 		del.activities = ko.observableArray([])
 		for act in delacts
 			for a in @allActivities() when a.id is act.id
-				#console.log "assign project #{p.title}"
 				del.activities.push a		
 
 # export to root object

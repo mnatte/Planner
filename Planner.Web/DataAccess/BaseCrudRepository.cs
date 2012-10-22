@@ -100,7 +100,7 @@ namespace MvcApplication1.DataAccess
                             newId = int.Parse(result);
                         }
                     }
-                    this.AddChildCollection(obj);
+                    this.AddChildCollection(obj, newId);
 
                 }
 
@@ -142,7 +142,7 @@ namespace MvcApplication1.DataAccess
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="cmd"></param>
-        protected virtual void AddChildCollection(TInputModel obj)
+        protected virtual void AddChildCollection(TInputModel obj, int parentId)
         { }
 
     }
