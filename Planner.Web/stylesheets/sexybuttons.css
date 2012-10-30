@@ -210,12 +210,12 @@
 	
 .sexybutton span,
 .sexybutton.sexysilver span {
-	background-image: url(../images/sexy/skins/silver/button_right.gif);
+	background-image: url(../images/skins/silver/button_right.gif);
 }
 
 .sexybutton span span,
 .sexybutton.sexysilver span span {
-	background-image: url(../images/sexy/skins/silver/button_left.gif);
+	background-image: url(../images/skins/silver/button_left.gif);
 }
 
 /* Orange Button Skin */
@@ -238,11 +238,11 @@
 }
 	
 .sexybutton.sexyorange span {
-	background-image: url(../images/sexy/skins/orange/button_right.gif);
+	background-image: url(../images/skins/orange/button_right.gif);
 }
 
 .sexybutton.sexyorange span span {
-	background-image: url(../images/sexy/skins/orange/button_left.gif);
+	background-image: url(../images/skins/orange/button_left.gif);
 }
 
 /* Yellow Button Skin */
@@ -254,11 +254,11 @@
 }
 	
 .sexybutton.sexyyellow span {
-	background-image: url(../images/sexy/skins/yellow/button_right.gif);
+	background-image: url(../images/skins/yellow/button_right.gif);
 }
 
 .sexybutton.sexyyellow span span {
-	background-image: url(../images/sexy/skins/yellow/button_left.gif);
+	background-image: url(../images/skins/yellow/button_left.gif);
 }
 
 
@@ -275,7 +275,7 @@
 	font-weight: bold !important; 
 	color: #fff !important;
 	line-height: 1; 
-	background-image: url(../images/sexy/skins/simple/awesome-overlay-sprite.png);
+	background-image: url(../images/skins/simple/awesome-overlay-sprite.png);
 	background-repeat: repeat-x;
 	background-position: 0 0;
 	
@@ -422,15 +422,21 @@
 /* Silk Icons - http://www.famfamfam.com/lab/icons/silk/ */
 /* (Obviously not all Silk icons are defined here. Feel free to define any other icons that you may need.) */
 
-.sexybutton span.ok				{ background-image: url(../images/sexy/icons/silk/tick.png) !important; }
-.sexybutton span.cancel			{ background-image: url(../images/sexy/icons/silk/cross.png) !important; }
-/*.sexybutton span.add				{ background-image: url(../images/sexy/icons/silk/add.png) !important; }*/
 .sexybutton span.add				{ background-image: url(../images/png/16x16/add.png) !important; }
 .sexybutton span.repeat				{ background-image: url(../images/png/16x16/repeat.png) !important; }
-/*.sexybutton span.delete			{ background-image: url(../images/sexy/icons/silk/delete.png) !important; }*/
 .sexybutton span.delete			{ background-image: url(../images/png/16x16/trash.png) !important; }
 .sexybutton span.link			{ background-image: url(../images/png/16x16/link.png) !important; }
 .sexybutton span.unassign			{ background-image: url(../images/png/16x16/delete.png) !important; }
+.sexybutton span.save			{ background-image: url(../images/png/16x16/save.png) !important; }
+
+/*
+.sexybutton span.ok				{ background-image: url(../images/sexy/icons/silk/tick.png) !important; }
+.sexybutton span.cancel			{ background-image: url(../images/sexy/icons/silk/cross.png) !important; }
+.sexybutton span.add				{ background-image: url(../images/sexy/icons/silk/add.png) !important; }
+
+.sexybutton span.delete			{ background-image: url(../images/sexy/icons/silk/delete.png) !important; }
+
+
 .sexybutton span.download		{ background-image: url(../images/sexy/icons/silk/arrow_down.png) !important; }
 .sexybutton span.download2		{ background-image: url(../images/sexy/icons/silk/package_down.png) !important; }
 .sexybutton span.upload			{ background-image: url(../images/sexy/icons/silk/arrow_up.png) !important; }
@@ -447,8 +453,7 @@
 .sexybutton span.stop			{ background-image: url(../images/sexy/icons/silk/stop_blue.png) !important; }
 .sexybutton span.reload			{ background-image: url(../images/sexy/icons/silk/reload.png) !important; }
 .sexybutton span.sync			{ background-image: url(../images/sexy/icons/silk/arrow_refresh.png) !important; }
-/*.sexybutton span.save			{ background-image: url(../images/sexy/icons/silk/disk.png) !important; }*/
-.sexybutton span.save			{ background-image: url(../images/png/16x16/save.png) !important; }
+.sexybutton span.save			{ background-image: url(../images/sexy/icons/silk/disk.png) !important; }
 .sexybutton span.email			{ background-image: url(../images/sexy/icons/silk/email.png) !important; }
 .sexybutton span.print			{ background-image: url(../images/sexy/icons/silk/printer.png) !important; }
 .sexybutton span.heart			{ background-image: url(../images/sexy/icons/silk/heart.png) !important; }
@@ -471,4 +476,4 @@
 .sexybutton span.settings		{ background-image: url(../images/sexy/icons/silk/cog.png) !important; }
 .sexybutton span.cart			{ background-image: url(../images/sexy/icons/silk/cart.png) !important; }
 .sexybutton span.wand			{ background-image: url(../images/sexy/icons/silk/wand.png) !important; }
-.sexybutton span.wrench			{ background-image: url(../images/sexy/icons/silk/wrench.png) !important; }
+.sexybutton span.wrench			{ background-image: url(../images/sexy/icons/silk/wrench.png) !important; }*/

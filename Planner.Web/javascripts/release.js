@@ -218,27 +218,6 @@
       return milestones;
     };
 
-    Milestone.prototype.toJSON = function() {
-      var copy;
-      console.log('doing toJSON in milestone');
-      copy = ko.toJS(this);
-      delete copy.date.date;
-      copy.date = this.date.dateString;
-      return copy;
-    };
-
-    Milestone.prototype.toConfigurationSnapshot = function() {
-      var copy;
-      console.log(this);
-      copy = ko.toJS(this);
-      copy.deliverables = this.deliverables.reduce(function(acc, x) {
-        acc.push(x.id);
-        return acc;
-      }, []);
-      console.log(copy);
-      return copy;
-    };
-
     return Milestone;
 
   })(Mixin);
@@ -359,30 +338,6 @@
       return release;
     };
 
-    Release.prototype.toConfigurationSnapshot = function() {
-      var copy, ms, phase, _i, _j, _len, _len2, _ref, _ref2;
-      console.log('serialize release configuration');
-      console.log(this);
-      copy = ko.toJS(this);
-      copy.projects = this.projects.reduce(function(acc, x) {
-        acc.push(x.id);
-        return acc;
-      }, []);
-      copy.milestones = [];
-      _ref = this.milestones;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        ms = _ref[_i];
-        copy.milestones.push(ms.toConfigurationSnapshot());
-      }
-      copy.phases = [];
-      _ref2 = this.phases;
-      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-        phase = _ref2[_j];
-        copy.phases.push(phase.toConfigurationSnapshot());
-      }
-      return copy;
-    };
-
     return Release;
 
   })(Phase);
@@ -406,8 +361,6 @@
 
     Project.create = function(jsonData, release) {
       var act, feature, project, res, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
-      console.log("create project - jsonData");
-      console.log(jsonData);
       project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch, release);
       _ref = jsonData.AssignedResources;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -429,7 +382,6 @@
 
     Project.createCollection = function(jsonData, release) {
       var project, projects, _i, _len;
-      console.log("Project.createCollection");
       projects = [];
       for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
         project = jsonData[_i];
@@ -484,13 +436,11 @@
 
     AssignedResource.create = function(jsonData, project, release) {
       var activity, ass, deliverable, milestone, resource;
-      console.log("create AssignedResource:" + ko.toJSON(jsonData));
       resource = Resource.create(jsonData.Resource);
       milestone = Milestone.create(jsonData.Milestone);
       deliverable = Deliverable.create(jsonData.Deliverable);
       activity = Activity.create(jsonData.Activity);
       ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), activity, milestone, deliverable);
-      console.log(ass);
       return ass;
     };
 
@@ -515,7 +465,6 @@
     AssignedResource.prototype.toJSON = function() {
       var copy;
       copy = ko.toJS(this);
-      console.log(copy);
       delete copy.release;
       delete copy.phase;
       delete copy.resource;
@@ -532,7 +481,6 @@
       copy.milestoneId = this.milestone.id;
       copy.deliverableId = this.deliverable.id;
       copy.activityId = this.activity.id;
-      console.log(copy);
       return copy;
     };
 
@@ -580,20 +528,19 @@
     }
 
     Deliverable.create = function(jsonData, milestone) {
-      var act, deliverabale, project, _i, _j, _len, _len2, _ref, _ref2;
-      console.log("create Deliverable");
-      deliverabale = new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location, milestone);
+      var act, deliverable, project, _i, _j, _len, _len2, _ref, _ref2;
+      deliverable = new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location, milestone);
       _ref = jsonData.ConfiguredActivities;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         act = _ref[_i];
-        deliverabale.activities.push(Activity.create(act));
+        deliverable.activities.push(Activity.create(act));
       }
       _ref2 = jsonData.Scope;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         project = _ref2[_j];
-        deliverabale.scope.push(Project.create(project));
+        deliverable.scope.push(Project.create(project));
       }
-      return deliverabale;
+      return deliverable;
     };
 
     Deliverable.createCollection = function(jsonData) {
@@ -605,42 +552,6 @@
         deliverables.push(this.del);
       }
       return deliverables;
-    };
-
-    Deliverable.prototype.toStatusJSON = function() {
-      var copy, proj, _i, _len, _ref;
-      copy = ko.toJS(this);
-      console.log(copy);
-      delete copy.title;
-      delete copy.description;
-      delete copy.format;
-      delete copy.location;
-      delete copy.activities;
-      delete copy.milestone;
-      copy.releaseId = this.milestone.phaseId;
-      copy.milestoneId = this.milestone.id;
-      copy.deliverableId = this.id;
-      copy.scope = [];
-      _ref = this.scope;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        proj = _ref[_i];
-        copy.scope.push(proj.toStatusJSON());
-      }
-      console.log(copy);
-      return copy;
-    };
-
-    Deliverable.prototype.toConfigurationSnapshot = function() {
-      var copy;
-      copy = ko.toJS(this);
-      delete copy.title;
-      delete copy.description;
-      delete copy.format;
-      delete copy.location;
-      delete copy.activities;
-      delete copy.scope;
-      delete copy.milestone;
-      return copy;
     };
 
     return Deliverable;
@@ -657,8 +568,6 @@
 
     ProjectActivityStatus.create = function(jsonData, project) {
       var act, res, status, _i, _len, _ref;
-      console.log("create ProjectActivityStatus");
-      console.log(jsonData);
       act = Activity.create(jsonData.Activity);
       status = new ProjectActivityStatus(jsonData.HoursRemaining, act);
       _ref = jsonData.AssignedResources;
@@ -781,12 +690,10 @@
           return _results;
         })()).reduce(function(acc, x) {
           var result;
-          console.log(x);
           result = x.containsDate(new Date()) ? x.workingDaysRemaining() : x.workingDays();
           return acc + result;
         }, 0);
       }
-      console.log("absent days: " + absent);
       amtDays = 0;
       if (period.containsDate(new Date())) {
         amtDays = period.workingDaysRemaining() - absent;
@@ -803,7 +710,6 @@
       _ref = jsonData.PeriodsAway;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         absence = _ref[_i];
-        console.log("jsonData absence: " + absence);
         res.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title));
       }
       _ref2 = jsonData.Assignments;

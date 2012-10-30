@@ -32,6 +32,8 @@
       };
       Phase.extend(RCrud);
       Milestone.extend(RCrud);
+      Milestone.extend(RMilestoneSerialize);
+      Release.extend(RReleaseSerialize);
       this.selectedRelease = ko.observable();
       this.selectedPhase = ko.observable();
       this.selectedMilestone = ko.observable();
@@ -46,13 +48,7 @@
         this.setObservables(rel);
       }
       this.allReleases.sort(function(a, b) {
-        if (a.startDate.date > b.startDate.date) {
-          return 1;
-        } else if (a.startDate.date < b.startDate.date) {
-          return -1;
-        } else {
-          return 0;
-        }
+        return a.startDate.date - b.startDate.date;
       });
     }
 
@@ -61,13 +57,7 @@
       this.setReleaseProjects(rel);
       (function(rel) {
         return rel.phases.sort(function(a, b) {
-          if (a.startDate.date > b.startDate.date) {
-            return 1;
-          } else if (a.startDate.date < b.startDate.date) {
-            return -1;
-          } else {
-            return 0;
-          }
+          return a.startDate.date - b.startDate.date;
         });
       })(rel);
       this.setMilestones(rel);
@@ -101,20 +91,24 @@
     };
 
     AdminReleaseViewmodel.prototype.setMilestoneDeliverables = function(ms) {
-      var del, m, msDels, _i, _j, _len, _len2, _ref;
-      console.log("setMilestoneDeliverables to observableArray");
+      var del, m, msDels, _i, _len, _results;
       msDels = ms.deliverables.slice();
-      console.log(msDels);
       ms.deliverables = ko.observableArray([]);
+      _results = [];
       for (_i = 0, _len = msDels.length; _i < _len; _i++) {
         del = msDels[_i];
-        _ref = this.allDeliverables();
-        for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
-          m = _ref[_j];
-          if (m.id === del.id) ms.deliverables.push(m);
-        }
+        _results.push((function() {
+          var _j, _len2, _ref, _results2;
+          _ref = this.allDeliverables();
+          _results2 = [];
+          for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
+            m = _ref[_j];
+            if (m.id === del.id) _results2.push(ms.deliverables.push(m));
+          }
+          return _results2;
+        }).call(this));
       }
-      return console.log(ms);
+      return _results;
     };
 
     AdminReleaseViewmodel.prototype.setPhases = function(rel) {
@@ -148,11 +142,7 @@
     AdminReleaseViewmodel.prototype.refreshRelease = function(index, jsonData) {
       var i, rel;
       i = index >= 0 ? index : this.allReleases().length;
-      console.log("index: " + index);
-      console.log("i: " + i);
       if (jsonData !== null && jsonData !== void 0) {
-        console.log("jsonData not undefined:");
-        console.log(jsonData);
         rel = Release.create(jsonData);
         this.setObservables(rel);
         rel.phases.sort(function(a, b) {
@@ -161,7 +151,8 @@
         rel.milestones.sort(function(a, b) {
           return a.date.date - b.date.date;
         });
-        return this.allReleases.splice(i, 1, rel);
+        this.allReleases.splice(i, 1, rel);
+        return this.selectRelease(rel);
       }
     };
 
@@ -258,6 +249,7 @@
         _this = this;
       console.log("saveSelected");
       release = ko.toJS(this.selectedRelease());
+      console.log(release);
       graph = ko.toJSON(release.toConfigurationSnapshot());
       rel = ((function() {
         var _i, _len, _ref, _results;
@@ -277,10 +269,6 @@
 
     AdminReleaseViewmodel.prototype.saveSelectedPhase = function() {
       var a, phase;
-      console.log("saveSelectedPhase: selectedRelease: " + (this.selectedRelease()));
-      console.log("saveSelectedPhase: selectedPhase: " + (this.selectedPhase()));
-      console.log(ko.toJSON(this.selectedPhase()));
-      console.log(ko.toJSON(this.selectedPhase().parentId));
       phase = ((function() {
         var _i, _len, _ref, _results;
         _ref = this.selectedRelease().phases();
@@ -297,7 +285,7 @@
     };
 
     AdminReleaseViewmodel.prototype.saveSelectedMilestone = function() {
-      var a, dels, ms;
+      var a, ms;
       console.log(ko.toJSON(this.selectedMilestone()));
       ms = ((function() {
         var _i, _len, _ref, _results;
@@ -309,8 +297,6 @@
         }
         return _results;
       }).call(this))[0];
-      dels = ko.toJSON(this.selectedMilestone().deliverables());
-      console.log(dels);
       if (typeof ms === "undefined" || ms === null || ms.id === 0) {
         return this.selectedRelease().addMilestone(this.selectedMilestone());
       }

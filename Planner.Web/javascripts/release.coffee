@@ -177,23 +177,6 @@ class Milestone extends Mixin
 			@ms = Milestone.create(ms)
 			milestones.push @ms
 		milestones
-	toJSON: ->
-		console.log 'doing toJSON in milestone'
-		copy = ko.toJS(@) #get a clean copy
-		delete copy.date.date #remove property
-		copy.date = @date.dateString
-		copy #return the copy to be serialized
-	toConfigurationSnapshot: ->
-		console.log @
-		copy = ko.toJS(@) #get a clean copy
-		#delete copy.date #remove property
-		#copy.date = @date.dateString
-		copy.deliverables = @deliverables.reduce (acc, x) ->
-					acc.push x.id
-					acc
-				, []
-		console.log copy
-		copy #return the copy to be serialized
 
 class Phase extends Period
 	# attach seperate startDate, endDate and title properties to each instance
@@ -270,25 +253,6 @@ class Release extends Phase
 			release.addMilestone Milestone.create(milestone, jsonData.Id)
 		#console.log release
 		release
-	toConfigurationSnapshot: ->
-		console.log 'serialize release configuration'
-		console.log @
-		copy = ko.toJS(@) #get a clean copy
-		copy.projects = @projects.reduce (acc, x) ->
-					acc.push x.id
-					acc
-				, []
-		#copy.projects = []
-		#for proj in @projects
-			#console.log proj.toConfigurationSnapshot()
-		#	copy.projects.push proj.toConfigurationSnapshot()
-		copy.milestones = []
-		for ms in @milestones
-			copy.milestones.push ms.toConfigurationSnapshot()
-		copy.phases = []
-		for phase in @phases
-			copy.phases.push phase.toConfigurationSnapshot()
-		copy #return the copy to be serialized
 
 # Release - Projects - Features & AssignedResources
 class Project extends Mixin
@@ -297,8 +261,8 @@ class Project extends Mixin
 		@backlog = []
 		@workload = []
 	@create: (jsonData, release) ->
-		console.log "create project - jsonData"
-		console.log jsonData
+		#console.log "create project - jsonData"
+		#console.log jsonData
 		project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch, release)
 		# console.log project
 		for res in jsonData.AssignedResources
@@ -311,7 +275,7 @@ class Project extends Mixin
 		#console.log project
 		project
 	@createCollection: (jsonData, release) ->
-		console.log "Project.createCollection"
+		#console.log "Project.createCollection"
 		projects = []
 		for project in jsonData
 			@project = Project.create(project, release)
@@ -347,7 +311,7 @@ class AssignedResource extends Mixin
 		@assignedPeriod = new Period(startDate, endDate, "")
 		# console.log "create AssignedResource:" + ko.toJSON(@assignedPeriod)
 	@create: (jsonData, project, release) ->
-		console.log "create AssignedResource:" + ko.toJSON(jsonData)
+		#console.log "create AssignedResource:" + ko.toJSON(jsonData)
 		# create resource from json
 		resource = Resource.create jsonData.Resource
 		milestone = Milestone.create jsonData.Milestone
@@ -355,7 +319,7 @@ class AssignedResource extends Mixin
 		activity = Activity.create jsonData.Activity
 		# create under given project and release
 		ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), activity, milestone, deliverable)
-		console.log ass
+		#console.log ass
 		ass
 	@createCollection: (jsonData, project, release) ->
 		assignments = []
@@ -374,7 +338,7 @@ class AssignedResource extends Mixin
 		available
 	toJSON: ->
 		copy = ko.toJS(@) #get a clean copy
-		console.log copy
+		#console.log copy
 		delete copy.release #remove property
 		delete copy.phase #remove property
 		delete copy.resource #remove property
@@ -392,7 +356,7 @@ class AssignedResource extends Mixin
 		copy.milestoneId = @milestone.id
 		copy.deliverableId = @deliverable.id
 		copy.activityId = @activity.id
-		console.log(copy)
+		#console.log(copy)
 		copy #return the copy to be serialized
 
 class Feature
@@ -408,53 +372,26 @@ class Deliverable extends Mixin
 		@activities = []
 		@scope = []
 	@create: (jsonData, milestone) ->
-		console.log "create Deliverable"
-		deliverabale = new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location, milestone)
+		#console.log "create Deliverable"
+		deliverable = new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location, milestone)
 		for act in jsonData.ConfiguredActivities
-			deliverabale.activities.push Activity.create(act)
+			deliverable.activities.push Activity.create(act)
 		for project in jsonData.Scope
-			deliverabale.scope.push Project.create(project)
-		deliverabale
+			deliverable.scope.push Project.create(project)
+		deliverable
 	@createCollection: (jsonData) ->
 		deliverables = []
 		for del in jsonData
 			@del = Deliverable.create(del)
 			deliverables.push @del
 		deliverables
-	toStatusJSON: ->
-		copy = ko.toJS(@) #get a clean copy
-		console.log copy
-		delete copy.title #remove property
-		delete copy.description #remove property
-		delete copy.format #remove property
-		delete copy.location #remove property
-		delete copy.activities
-		delete copy.milestone
-		copy.releaseId = @milestone.phaseId
-		copy.milestoneId = @milestone.id
-		copy.deliverableId = @id
-		copy.scope = []
-		for proj in @scope
-			copy.scope.push proj.toStatusJSON()
-		console.log(copy)
-		copy #return the copy to be serialized
-	toConfigurationSnapshot: ->
-		copy = ko.toJS(@) #get a clean copy
-		delete copy.title #remove property
-		delete copy.description #remove property
-		delete copy.format #remove property
-		delete copy.location #remove property
-		delete copy.activities
-		delete copy.scope
-		delete copy.milestone
-		copy
 
 class ProjectActivityStatus
 	constructor: (@hoursRemaining, @activity) ->
 		@assignedResources = []
 	@create: (jsonData, project) ->
-		console.log "create ProjectActivityStatus"
-		console.log jsonData
+		#console.log "create ProjectActivityStatus"
+		#console.log jsonData
 		#proj = Project.create(jsonData.Project)
 		act = Activity.create(jsonData.Activity)
 		status = new ProjectActivityStatus(jsonData.HoursRemaining, act)
@@ -505,13 +442,13 @@ class Resource extends Mixin
 			#away = 
 			#absent = (absence.overlappingPeriod(period).workingDaysRemaining() for absence in overlappingAbsences).reduce (init, x) -> console.log x; init + x
 			absent = (absence.overlappingPeriod(period) for absence in overlappingAbsences).reduce (acc, x) ->
-					console.log x
+					#console.log x
 					result = if x.containsDate(new Date()) then x.workingDaysRemaining() else x.workingDays()
 					acc + result
 				, 0
 
 			#console.log "overlappingAbsences more than 0"
-		console.log "absent days: " + absent
+		#console.log "absent days: " + absent
 		# console.log "period working days remaining: " + period.workingDaysRemaining()
 		amtDays = 0
 		if period.containsDate(new Date())
@@ -526,7 +463,7 @@ class Resource extends Mixin
 		#console.log "create Resource"
 		res = new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials, jsonData.AvailableHoursPerWeek, jsonData.Email, jsonData.PhoneNumber)
 		for absence in jsonData.PeriodsAway
-			console.log "jsonData absence: " + absence
+			# console.log "jsonData absence: " + absence
 			res.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title))
 		for assignment in jsonData.Assignments
 			res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity.Title + " " + assignment.Phase.Title + " (" + assignment.FocusFactor + ")"), assignment.Phase.Title, assignment.Activity)
