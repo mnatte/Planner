@@ -165,15 +165,6 @@
       return wks;
     };
 
-    Period.prototype.toJSON = function() {
-      var copy;
-      copy = ko.toJS(this);
-      delete copy.startDate.date;
-      copy.startDate = this.startDate.dateString;
-      copy.endDate = this.endDate.dateString;
-      return copy;
-    };
-
     return Period;
 
   })(Mixin);
@@ -249,12 +240,6 @@
         phases.push(this.phase);
       }
       return phases;
-    };
-
-    Phase.prototype.toConfigurationSnapshot = function() {
-      var copy;
-      copy = ko.toJS(this);
-      return copy;
     };
 
     return Phase;
@@ -391,29 +376,6 @@
       return projects;
     };
 
-    Project.prototype.toStatusJSON = function() {
-      var copy;
-      copy = ko.toJS(this);
-      delete copy.title;
-      delete copy.shortName;
-      delete copy.descr;
-      delete copy.backlog;
-      delete copy.tfsIterationPath;
-      delete copy.tfsDevBranch;
-      delete copy.release;
-      delete copy.resources;
-      return copy;
-    };
-
-    Project.prototype.toConfigurationSnapshot = function() {
-      var copy;
-      copy = ko.toJS(this);
-      delete copy.resources;
-      delete copy.backlog;
-      delete copy.workload;
-      return copy;
-    };
-
     return Project;
 
   })(Mixin);
@@ -460,28 +422,6 @@
       hoursPresent = this.resource.hoursAvailable(this.assignedPeriod);
       available = Math.round(hoursPresent * this.focusFactor);
       return available;
-    };
-
-    AssignedResource.prototype.toJSON = function() {
-      var copy;
-      copy = ko.toJS(this);
-      delete copy.release;
-      delete copy.phase;
-      delete copy.resource;
-      delete copy.project;
-      delete copy.assignedPeriod;
-      delete copy.milestone;
-      delete copy.deliverable;
-      delete copy.activity;
-      copy.resourceId = this.resource.id;
-      if (this.release != null) copy.phaseId = this.release.id;
-      copy.projectId = this.project.id;
-      copy.startDate = this.assignedPeriod.startDate.dateString;
-      copy.endDate = this.assignedPeriod.endDate.dateString;
-      copy.milestoneId = this.milestone.id;
-      copy.deliverableId = this.deliverable.id;
-      copy.activityId = this.activity.id;
-      return copy;
     };
 
     return AssignedResource;
@@ -576,13 +516,6 @@
         status.assignedResources.push(AssignedResource.create(res, project));
       }
       return status;
-    };
-
-    ProjectActivityStatus.prototype.toSJSON = function() {
-      var copy;
-      copy = ko.toJS(this);
-      delete copy.assignedResources;
-      return copy;
     };
 
     return ProjectActivityStatus;

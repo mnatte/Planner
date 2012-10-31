@@ -10,6 +10,7 @@ class UpdateReleaseStatusViewmodel
 		# Milestone.extend(RCrud)
 		Deliverable.extend(RCrud)
 		Deliverable.extend(RDeliverableSerialize)
+		Project.extend(RProjectSerialize)
 		@selectedRelease = ko.observable()
 		@selectedMilestone = ko.observable()
 		@selectedDeliverable = ko.observable()

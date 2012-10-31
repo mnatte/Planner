@@ -153,12 +153,6 @@ class Period extends Mixin
 			wks.push new Week(yrstring + wk.toString())
 		#console.log wks
 		wks
-	toJSON: ->
-		copy = ko.toJS(@) #get a clean copy
-		delete copy.startDate.date #remove property
-		copy.startDate = @startDate.dateString
-		copy.endDate = @endDate.dateString
-		copy #return the copy to be serialized
 
 class Milestone extends Mixin
 	constructor: (@id, date, @time, @title, @description, @phaseId) ->
@@ -190,13 +184,6 @@ class Phase extends Period
 			@phase = Phase.create(phase)
 			phases.push @phase
 		phases
-	toConfigurationSnapshot: ->
-		copy = ko.toJS(@) #get a clean copy
-		#delete copy.phases
-		#delete copy.projects
-		#delete copy.milestones
-		#console.log copy
-		copy #return the copy to be serialized
 
 class Week
 	# format weekNr: YYYYww, e.g. 201248 (week 48 in 2012)
@@ -281,27 +268,6 @@ class Project extends Mixin
 			@project = Project.create(project, release)
 			projects.push @project
 		projects
-	toStatusJSON: ->
-		copy = ko.toJS(@) #get a clean copy
-		#console.log copy
-		delete copy.title #remove property
-		delete copy.shortName #remove property
-		delete copy.descr #remove property
-		delete copy.backlog #remove property
-		delete copy.tfsIterationPath #remove property
-		delete copy.tfsDevBranch
-		delete copy.release
-		delete copy.resources
-		#console.log(copy)
-		copy #return the copy to be serialized
-	toConfigurationSnapshot: ->
-		copy = ko.toJS(@) #get a clean copy
-		#console.log copy
-		delete copy.resources #remove property
-		delete copy.backlog #remove property
-		delete copy.workload #remove property
-		#console.log(copy)
-		copy #return the copy to be serialized
 
 class AssignedResource extends Mixin
 	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate, @activity, @milestone, @deliverable) ->
@@ -336,28 +302,6 @@ class AssignedResource extends Mixin
 		available = Math.round(hoursPresent * @focusFactor)
 		#console.log "hours available corrected with assignment focus factor #{@focusFactor}: #{available}"
 		available
-	toJSON: ->
-		copy = ko.toJS(@) #get a clean copy
-		#console.log copy
-		delete copy.release #remove property
-		delete copy.phase #remove property
-		delete copy.resource #remove property
-		delete copy.project #remove property
-		delete copy.assignedPeriod
-		delete copy.milestone
-		delete copy.deliverable
-		delete copy.activity
-		#console.log(@resource)
-		copy.resourceId = @resource.id
-		copy.phaseId =  @release.id if @release?
-		copy.projectId = @project.id
-		copy.startDate = @assignedPeriod.startDate.dateString
-		copy.endDate = @assignedPeriod.endDate.dateString
-		copy.milestoneId = @milestone.id
-		copy.deliverableId = @deliverable.id
-		copy.activityId = @activity.id
-		#console.log(copy)
-		copy #return the copy to be serialized
 
 class Feature
 	constructor: (@businessId, @contactPerson, @estimatedHours, @hoursWorked, @priority, @project, @remainingHours, @title, @state) ->
@@ -398,10 +342,6 @@ class ProjectActivityStatus
 		for res in jsonData.AssignedResources
 			status.assignedResources.push AssignedResource.create(res, project)
 		status
-	toSJSON: ->
-		copy = ko.toJS(@) #get a clean copy
-		delete copy.assignedResources #remove property
-		copy #return the copy to be serialized
 
 class Activity extends Mixin
 	constructor: (@id, @title, @description) ->

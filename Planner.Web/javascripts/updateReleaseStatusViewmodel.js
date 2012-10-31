@@ -16,6 +16,7 @@
       this.selectRelease = __bind(this.selectRelease, this);
       Deliverable.extend(RCrud);
       Deliverable.extend(RDeliverableSerialize);
+      Project.extend(RProjectSerialize);
       this.selectedRelease = ko.observable();
       this.selectedMilestone = ko.observable();
       this.selectedDeliverable = ko.observable();

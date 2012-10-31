@@ -23,6 +23,7 @@
       this.selectProject = __bind(this.selectProject, this);
       this.selectRelease = __bind(this.selectRelease, this);
       var _this = this;
+      AssignedResource.extend(RAssignedResourceSerialize);
       ReleaseAssignments.extend(RCrud);
       PlanResourcesViewmodel.extend(RGroupBy);
       this.selectedProject = ko.observable();
@@ -35,8 +36,10 @@
       this.assignedStartDate = ko.observable();
       this.assignedEndDate = ko.observable();
       this.selectedMilestone.subscribe(function(newValue) {
-        _this.newAssignment(new AssignedResource(0, "", "", "", 0.8, new Date(), newValue.date.date, "", new Milestone(), new Deliverable()));
-        return console.log(_this.newAssignment());
+        if (typeof newValue !== "undefined" && newValue !== null) {
+          _this.newAssignment(new AssignedResource(0, "", "", "", 0.8, new Date(), newValue.date.date, "", new Milestone(), new Deliverable()));
+          return console.log(_this.newAssignment());
+        }
       });
       this.setEndDate = ko.observable(new Date());
       this.newAssignment = ko.observable(new AssignedResource(0, "", "", "", 0.8, new Date(), new Date(), "", new Milestone(), new Deliverable()));
@@ -45,12 +48,6 @@
       this.assignments = ko.observableArray();
       this.canShowForm = ko.observable(false);
       this.allActivities = allActivities;
-      Array.prototype.remove = function(e) {
-        var t, _ref;
-        if ((t = this.indexOf(e)) > -1) {
-          return ([].splice.apply(this, [t, t - t + 1].concat(_ref = [])), _ref);
-        }
-      };
     }
 
     PlanResourcesViewmodel.prototype.selectRelease = function(data) {

@@ -14,6 +14,9 @@ class AdminReleaseViewmodel
 		# we use Roles here for serialization, where you could consider the viewmodel to be a use case
 		Milestone.extend(RMilestoneSerialize)
 		Release.extend(RReleaseSerialize)
+		Project.extend(RProjectSerialize)
+		Period.extend(RPeriodSerialize)
+		Phase.extend(RPhaseSerialize)
 		@selectedRelease = ko.observable()
 		@selectedPhase = ko.observable()
 		@selectedMilestone = ko.observable()
@@ -180,14 +183,18 @@ class AdminReleaseViewmodel
 	saveSelected: =>
 		console.log "saveSelected"
 		# get clean copy, replacing all observables with their values
-		release = ko.toJS(@selectedRelease())
-		console.log release
+		
+		#release = ko.toJS(@selectedRelease())
+		#console.log release
 		# use extra custom serialization for only relevant config properties
 		# ko.toJSON calls the toJSON method of all objects. this is done on the snapshot instance
-		graph = ko.toJSON(release.toConfigurationSnapshot())
+		#graph = ko.toJSON(release.toConfigurationSnapshot())
+
 		rel = (a for a in @allReleases() when a.id is @selectedRelease().id)[0]
 		i = @allReleases().indexOf(rel)
-		@selectedRelease().save("/planner/Release/SaveReleaseConfiguration", graph, (data) => @refreshRelease(i, data))
+		# console.log @selectedRelease().phases()
+		# console.log @selectedRelease().toConfigurationSnapshotJson()
+		@selectedRelease().save("/planner/Release/SaveReleaseConfiguration", @selectedRelease().toConfigurationSnapshotJson(), (data) => @refreshRelease(i, data))
 
 	saveSelectedPhase: =>
 		#console.log "saveSelectedPhase: selectedPhase: #{@selectedPhase()}"
@@ -197,7 +204,7 @@ class AdminReleaseViewmodel
 
 	saveSelectedMilestone: =>
 		#console.log "saveSelectedMilestone: selectedMilestone: #{@selectedMilestone()}"
-		console.log ko.toJSON(@selectedMilestone())
+		#console.log ko.toJSON(@selectedMilestone())
 		ms = (a for a in @selectedRelease().milestones() when a.id is @selectedMilestone().id)[0]
 		# add milestone to release when new
 		if(typeof(ms) is "undefined" || ms is null || ms.id is 0) then @selectedRelease().addMilestone(@selectedMilestone())

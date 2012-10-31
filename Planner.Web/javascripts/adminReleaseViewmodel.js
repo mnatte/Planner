@@ -34,6 +34,9 @@
       Milestone.extend(RCrud);
       Milestone.extend(RMilestoneSerialize);
       Release.extend(RReleaseSerialize);
+      Project.extend(RProjectSerialize);
+      Period.extend(RPeriodSerialize);
+      Phase.extend(RPhaseSerialize);
       this.selectedRelease = ko.observable();
       this.selectedPhase = ko.observable();
       this.selectedMilestone = ko.observable();
@@ -245,12 +248,9 @@
     };
 
     AdminReleaseViewmodel.prototype.saveSelected = function() {
-      var a, graph, i, rel, release,
+      var a, i, rel,
         _this = this;
       console.log("saveSelected");
-      release = ko.toJS(this.selectedRelease());
-      console.log(release);
-      graph = ko.toJSON(release.toConfigurationSnapshot());
       rel = ((function() {
         var _i, _len, _ref, _results;
         _ref = this.allReleases();
@@ -262,7 +262,7 @@
         return _results;
       }).call(this))[0];
       i = this.allReleases().indexOf(rel);
-      return this.selectedRelease().save("/planner/Release/SaveReleaseConfiguration", graph, function(data) {
+      return this.selectedRelease().save("/planner/Release/SaveReleaseConfiguration", this.selectedRelease().toConfigurationSnapshotJson(), function(data) {
         return _this.refreshRelease(i, data);
       });
     };
@@ -286,7 +286,6 @@
 
     AdminReleaseViewmodel.prototype.saveSelectedMilestone = function() {
       var a, ms;
-      console.log(ko.toJSON(this.selectedMilestone()));
       ms = ((function() {
         var _i, _len, _ref, _results;
         _ref = this.selectedRelease().milestones();

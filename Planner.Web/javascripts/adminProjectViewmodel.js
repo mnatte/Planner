@@ -13,6 +13,7 @@
     function AdminProjectViewmodel(allProjects) {
       this.createNewEmptyItem = __bind(this.createNewEmptyItem, this);
       this.createNewItem = __bind(this.createNewItem, this);      Project.extend(RSimpleCrud);
+      Project.extend(RProjectSerialize);
       Project.setSaveUrl("/planner/Project/Save");
       Project.setDeleteUrl("/planner/Project/Delete");
       AdminProjectViewmodel.__super__.constructor.apply(this, arguments);

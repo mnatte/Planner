@@ -6,6 +6,7 @@ root = global ? window
 
 class PlanResourcesViewmodel extends Mixin
 	constructor: (allReleases, allResources, allActivities) ->
+		AssignedResource.extend(RAssignedResourceSerialize)
 		ReleaseAssignments.extend(RCrud)
 		# console.log allReleases
 		PlanResourcesViewmodel.extend(RGroupBy)
@@ -21,8 +22,9 @@ class PlanResourcesViewmodel extends Mixin
 
 		@selectedMilestone.subscribe((newValue) => 
 			#@setEndDate newValue.date.date 
-			@newAssignment new AssignedResource(0, "", "", "", 0.8, new Date(), newValue.date.date, "", new Milestone(), new Deliverable())
-			console.log @newAssignment()
+			if(typeof(newValue) isnt "undefined" and newValue isnt null)
+				@newAssignment new AssignedResource(0, "", "", "", 0.8, new Date(), newValue.date.date, "", new Milestone(), new Deliverable())
+				console.log @newAssignment()
 			)
 		@setEndDate = ko.observable(new Date())
 		@newAssignment = ko.observable(new AssignedResource(0, "", "", "", 0.8, new Date(), new Date(), "", new Milestone(), new Deliverable()))
@@ -31,10 +33,6 @@ class PlanResourcesViewmodel extends Mixin
 		@assignments = ko.observableArray()
 		@canShowForm = ko.observable(false)
 		@allActivities = allActivities
-		
-
-		# setup nice 'remove' method for Array
-		Array::remove = (e) -> @[t..t] = [] if (t = @indexOf(e)) > -1
 
 	selectRelease: (data) =>
 		@selectedRelease data

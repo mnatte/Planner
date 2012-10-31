@@ -7,6 +7,7 @@ root = global ? window
 class AdminProjectViewmodel extends SimpleCrudViewmodel
 	constructor: (allProjects) ->
 		Project.extend(RSimpleCrud)
+		Project.extend(RProjectSerialize)
 		Project.setSaveUrl "/planner/Project/Save"
 		Project.setDeleteUrl "/planner/Project/Delete"
 		#@itemToDelete = ko.observable()
