@@ -5,6 +5,9 @@
             var resource, obj, ass, abs, _i, _j, _k, _len, _len2, obj2;
             var periods = [];
             var grp = 0;
+            var sameRelease = 1;
+            var release = '';
+            var releases = [];
 
             // valueAccessor is model passed to binding, viewModel is complete viewModel within scope
             console.log("viewModel: " + viewModel.toString());
@@ -16,12 +19,19 @@
                 ass = resource.assignments[_i];
                 //console.log(ass)
                 //console.log(ass.period.title + ': ' + ass.period.endDate.dateString);
-                if (periods.indexOf(ass.release) === -1) {
+                if (releases.indexOf(ass.release) === -1) {
                     grp++;
+                    releases.push(ass.release);
+                    release = ass.release;
+                    sameRelease = 1;
+                } else {
+                    release = ass.release + '[' + sameRelease + ']'
+                    sameRelease++;
                 }
+                console.log(release);
 
                 obj = {
-                    group: ass.release,
+                    group: release,
                     start: ass.period.startDate.date,
                     end: ass.period.endDate.date,
                     content: ass.period.title,
