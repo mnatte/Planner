@@ -498,7 +498,9 @@
 
   })(Mixin);
 
-  ProjectActivityStatus = (function() {
+  ProjectActivityStatus = (function(_super) {
+
+    __extends(ProjectActivityStatus, _super);
 
     function ProjectActivityStatus(hoursRemaining, activity) {
       this.hoursRemaining = hoursRemaining;
@@ -520,7 +522,7 @@
 
     return ProjectActivityStatus;
 
-  })();
+  })(Mixin);
 
   Activity = (function(_super) {
 
@@ -707,6 +709,8 @@
   root.Activity = Activity;
 
   root.AssignedResource = AssignedResource;
+
+  root.ProjectActivityStatus = ProjectActivityStatus;
 
   root.ReleaseAssignments = ReleaseAssignments;
 

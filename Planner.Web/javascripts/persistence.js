@@ -1,5 +1,5 @@
 (function() {
-  var RAssignedResourceSerialize, RDeliverableSerialize, RMilestoneSerialize, RPeriodSerialize, RPhaseSerialize, RProjectSerialize, RReleaseSerialize, root;
+  var RAssignedResourceSerialize, RDeliverableSerialize, RMilestoneSerialize, RPeriodSerialize, RPhaseSerialize, RProjectActivityStatusSerialize, RProjectSerialize, RReleaseSerialize, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -118,6 +118,7 @@
       return this.include({
         toStatusJSON: function() {
           var copy, proj, _i, _len, _ref;
+          console.log(this);
           copy = ko.toJS(this);
           delete copy.title;
           delete copy.description;
@@ -134,6 +135,7 @@
             proj = _ref[_i];
             copy.scope.push(proj.toStatusJSON());
           }
+          console.log(copy);
           return copy;
         },
         toConfigurationSnapshot: function() {
@@ -180,6 +182,19 @@
     }
   };
 
+  RProjectActivityStatusSerialize = {
+    extended: function() {
+      return this.include({
+        toJSON: function() {
+          var copy;
+          copy = ko.toJS(this);
+          delete copy.assignedResources;
+          return copy;
+        }
+      });
+    }
+  };
+
   root.RMilestoneSerialize = RMilestoneSerialize;
 
   root.RDeliverableSerialize = RDeliverableSerialize;
@@ -193,5 +208,7 @@
   root.RProjectSerialize = RProjectSerialize;
 
   root.RPeriodSerialize = RPeriodSerialize;
+
+  root.RProjectActivityStatusSerialize = RProjectActivityStatusSerialize;
 
 }).call(this);

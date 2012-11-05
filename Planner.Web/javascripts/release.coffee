@@ -330,7 +330,7 @@ class Deliverable extends Mixin
 			deliverables.push @del
 		deliverables
 
-class ProjectActivityStatus
+class ProjectActivityStatus extends Mixin
 	constructor: (@hoursRemaining, @activity) ->
 		@assignedResources = []
 	@create: (jsonData, project) ->
@@ -436,5 +436,6 @@ root.Project = Project
 root.Deliverable = Deliverable
 root.Activity = Activity
 root.AssignedResource = AssignedResource
+root.ProjectActivityStatus = ProjectActivityStatus
 root.ReleaseAssignments = ReleaseAssignments
 

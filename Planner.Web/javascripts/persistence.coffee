@@ -111,6 +111,7 @@ RDeliverableSerialize =
 	extended: ->
 		@include
 			toStatusJSON: ->
+				console.log @
 				copy = ko.toJS(@) #get a clean copy
 				#console.log copy
 				delete copy.title #remove property
@@ -125,7 +126,7 @@ RDeliverableSerialize =
 				copy.scope = []
 				for proj in @scope
 					copy.scope.push proj.toStatusJSON()
-				#console.log(copy)
+				console.log(copy)
 				copy #return the copy to be serialized
 			toConfigurationSnapshot: ->
 				copy = ko.toJS(@) #get a clean copy
@@ -164,13 +165,14 @@ RAssignedResourceSerialize =
 				#console.log(copy)
 				copy #return the copy to be serialized
 
-#RProjectActivityStatusSerialize = 
-#	extended: ->
-#			@include
-#				toJSON: ->
-#					copy = ko.toJS(@) #get a clean copy
-#					delete copy.assignedResources #remove property
-#					copy #return the copy to be serialized
+#used in workload property of Project
+RProjectActivityStatusSerialize = 
+	extended: ->
+			@include
+				toJSON: ->
+					copy = ko.toJS(@) #get a clean copy
+					delete copy.assignedResources #remove property
+					copy #return the copy to be serialized
 
 # export to root object
 root.RMilestoneSerialize = RMilestoneSerialize
@@ -180,7 +182,7 @@ root.RAssignedResourceSerialize = RAssignedResourceSerialize
 root.RPhaseSerialize = RPhaseSerialize
 root.RProjectSerialize = RProjectSerialize
 root.RPeriodSerialize = RPeriodSerialize
-#root.RProjectActivityStatusSerialize = RProjectActivityStatusSerialize
+root.RProjectActivityStatusSerialize = RProjectActivityStatusSerialize
 
 
 

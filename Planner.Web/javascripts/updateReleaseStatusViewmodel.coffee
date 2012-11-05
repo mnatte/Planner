@@ -11,6 +11,7 @@ class UpdateReleaseStatusViewmodel
 		Deliverable.extend(RCrud)
 		Deliverable.extend(RDeliverableSerialize)
 		Project.extend(RProjectSerialize)
+		ProjectActivityStatus.extend(RProjectActivityStatusSerialize)
 		@selectedRelease = ko.observable()
 		@selectedMilestone = ko.observable()
 		@selectedDeliverable = ko.observable()
@@ -34,18 +35,18 @@ class UpdateReleaseStatusViewmodel
 		#console.log "selectRelease after selection: " + @selectedRelease().title + ", parentId: " +  @selectedRelease().parentId
 
 	selectMilestone: (data) =>
-		console.log "selectMilestone - function"
+		#console.log "selectMilestone - function"
 		@selectedMilestone data
 		# reset selected Deliverable
 		@selectDeliverable null
-		console.log @selectedMilestone()
+		#console.log @selectedMilestone()
 
 	selectDeliverable: (data) =>
 		console.log "selectDeliverable - function"
 		# console.log @
 		# console.log data
 		@selectedDeliverable data
-		console.log @selectedDeliverable()
+		#console.log @selectedDeliverable()
 
 	refreshRelease: (index, jsonData) =>
 		#reload deliverable activity statuses per project
@@ -53,10 +54,11 @@ class UpdateReleaseStatusViewmodel
 	saveSelectedDeliverable: =>
 		console.log "saveSelectedDeliverable: selectedRelease: #{@selectedRelease()}"
 		console.log "saveSelectedDeliverable: selectedMilestone: #{@selectedMilestone()}"
-		console.log @selectedDeliverable().toStatusJSON()
+		status = @selectedDeliverable().toStatusJSON()
+		console.log ko.toJSON(status)
 		#console.log ko.toJSON(@selectedDeliverable().milestoneId)
 		#i = @allReleases().indexOf(@selectedRelease())
-		@selectedDeliverable().save("/planner/Release/SaveDeliverableStatus", ko.toJSON(@selectedDeliverable().toStatusJSON()), (data) => @refreshRelease(0, data))
+		@selectedDeliverable().save("/planner/Release/SaveDeliverableStatus", ko.toJSON(status), (data) => @refreshRelease(0, data))
 	
 # export to root object
 root.UpdateReleaseStatusViewmodel = UpdateReleaseStatusViewmodel

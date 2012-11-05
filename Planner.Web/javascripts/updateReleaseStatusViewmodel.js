@@ -17,6 +17,7 @@
       Deliverable.extend(RCrud);
       Deliverable.extend(RDeliverableSerialize);
       Project.extend(RProjectSerialize);
+      ProjectActivityStatus.extend(RProjectActivityStatusSerialize);
       this.selectedRelease = ko.observable();
       this.selectedMilestone = ko.observable();
       this.selectedDeliverable = ko.observable();
@@ -57,26 +58,25 @@
     };
 
     UpdateReleaseStatusViewmodel.prototype.selectMilestone = function(data) {
-      console.log("selectMilestone - function");
       this.selectedMilestone(data);
-      this.selectDeliverable(null);
-      return console.log(this.selectedMilestone());
+      return this.selectDeliverable(null);
     };
 
     UpdateReleaseStatusViewmodel.prototype.selectDeliverable = function(data) {
       console.log("selectDeliverable - function");
-      this.selectedDeliverable(data);
-      return console.log(this.selectedDeliverable());
+      return this.selectedDeliverable(data);
     };
 
     UpdateReleaseStatusViewmodel.prototype.refreshRelease = function(index, jsonData) {};
 
     UpdateReleaseStatusViewmodel.prototype.saveSelectedDeliverable = function() {
-      var _this = this;
+      var status,
+        _this = this;
       console.log("saveSelectedDeliverable: selectedRelease: " + (this.selectedRelease()));
       console.log("saveSelectedDeliverable: selectedMilestone: " + (this.selectedMilestone()));
-      console.log(this.selectedDeliverable().toStatusJSON());
-      return this.selectedDeliverable().save("/planner/Release/SaveDeliverableStatus", ko.toJSON(this.selectedDeliverable().toStatusJSON()), function(data) {
+      status = this.selectedDeliverable().toStatusJSON();
+      console.log(ko.toJSON(status));
+      return this.selectedDeliverable().save("/planner/Release/SaveDeliverableStatus", ko.toJSON(status), function(data) {
         return _this.refreshRelease(0, data);
       });
     };
