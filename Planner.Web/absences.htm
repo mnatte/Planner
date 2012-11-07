@@ -10,7 +10,7 @@
 	<!-- Basic Page Needs
   ================================================== -->
 	<meta charset="utf-8">
-	<title>Planning Overview</title>
+	<title>Phases</title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 	<!--[if lt IE 9]>
@@ -27,12 +27,8 @@
 	<link rel="stylesheet" href="stylesheets/skeleton.css">
 	<link rel="stylesheet" href="stylesheets/layout.css">
     <link rel="stylesheet" href="stylesheets/tables.css">
-    <!--<link rel="stylesheet" href="stylesheets/jquery-ui-1.8.19.custom.css">
-    <link rel="stylesheet" href="stylesheets/jquery.tooltip.css">
-
-    <link rel="stylesheet" href="stylesheets/jquery.ui.progressbar.css">-->
-
     <link rel="stylesheet" type="text/css" href="stylesheets/timeline.css" />
+    <link rel="stylesheet" href="stylesheets/icon_styles.css">
 
 	<!-- Favicons
 	================================================== -->
@@ -42,75 +38,44 @@
 	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
 
     <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
-<!--    <script type="text/javascript" src="Scripts/jquery.ui.core.js"></script>
-    <script type="text/javascript" src="Scripts/jquery.ui.widget.js"></script>
-    <script type="text/javascript" src="Scripts/jquery.ui.mouse.js"></script>
-    <script type="text/javascript" src="Scripts/jquery.ui.progressbar.js"></script>
-    <script type="text/javascript" src="Scripts/jquery.ui.slider.js"></script>-->
     <script type="text/javascript" src="Scripts/jquery.dateFormat-1.0.js"></script>
     <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
     <script type="text/javascript" src="Scripts/knockout-array-filter.js"></script>
     <script type="text/javascript" src="Scripts/koExternalTemplateEngine_all.min.js"></script>
-    <script type="text/javascript" src="Scripts/timeline-min.js"></script>
-
-    <!--<script type="text/javascript" src="Scripts/jquery.dimensions.js"></script>
-    <script type="text/javascript" src="Scripts/jquery.delegate.js"></script>
-    <script type="text/javascript" src="Scripts/jquery.bgiframe.js"></script>
-    <script type="text/javascript" src="Scripts/jquery.tooltip.min.js"></script>-->
-    <script type="text/javascript" src="Scripts/datehelper.js"></script>
     <script type="text/javascript" src="Scripts/jquery.blockUI.js"></script>
+    <script type="text/javascript" src="Scripts/datehelper.js"></script>
+    <script type="text/javascript" src="Scripts/timeline-min.js"></script>
+    <script type="text/javascript" src="javascripts/timeline_instantion.js"></script>
         
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
-    <script type="text/javascript" src="javascripts/planningOverviewViewmodel.js"></script>
+    <script type="text/javascript" src="javascripts/absencesViewmodel.js"></script>
     <script type="text/javascript" src="javascripts/ajax.js"></script>
     <script type="text/javascript" src="javascripts/Roles.js"></script>
     <script type="text/javascript" src="javascripts/UseCases.js"></script>
-    <script type="text/javascript" src="javascripts/ko.bindingHandlers.fadeVisible.js"></script>
-    <!--<script type="text/javascript" src="javascripts/ko.bindingHandlers.period2.js"></script>
-    <script type="text/javascript" src="javascripts/ko.bindingHandlers.period.js"></script>-->
-
-    <script type="text/javascript" src="javascripts/ko.bindingHandlers.assignmentsTimeline.js"></script>
-
-    <!--<script type="text/javascript" src="Scripts/highcharts.js"></script>-->
 </head>
 <body>
 <!-- Primary Page Layout
 	================================================== -->
 
 	<div class="container">
-        <!--navigation-->
+    <!--navigation-->
         <!-- ko template: {name: 'navigation'} -->
         <!-- /ko -->
-        <section id="overview" class="sixteen columns">
-            <div><input type="checkbox" data-bind="checked: $root.showCheckboxes" />Select Resources</div>
-            <!-- ko if: $root.showCheckboxes() -->
-            <div class="four columns omega">
-                <div data-bind="foreach: allResources()">
-                    <!--'value' sets the value to the array and matches on it. it is the toString() method of the object that is used-->
-                    <div><input type="checkbox" data-bind="checked: $root.showResources, value: $data.id" /><data data-bind="text: fullName()"></data></div>
-                </div>
-            </div>
-            <!-- /ko -->
-
-            <div class="leftFloat" data-bind="foreach: $root.resourcesToShow()">
-                <div class="productDetailsArea" id="resource name" data-bind="text: $data"></div>
-
-                <div id="phases" class="sixteen columns">
-                    <div id="mytimeline" data-bind="assignmentsTimeline: $data"></div>
-                </div>
-
-            </div>
-            <div id="space" style="height: 200px">&nbsp;</div>
-        </section>
-	</div><!-- container -->
+        <div id="space" style="height: 100px">&nbsp;</div>
+        <!--releases overview-->
+        <div id="phases" class="sixteen columns">
+            <div id="mytimeline"></div>
+            <div id="details"></div>
+        </div>
+</div><!-- container -->
     <script type="text/javascript">
 
         $(document).ready(function () {
             infuser.defaults.templateSuffix = ".tmpl.html";
             infuser.defaults.templateUrl = "/planner/templates";
 
-            var uc = new UDisplayPlanningOverview();
+            var uc = new UDisplayAbsences();
             var ajax = new Ajax();
             ajax.getResources(uc.execute);
         });

@@ -323,6 +323,17 @@
       return release;
     };
 
+    Release.createCollection = function(jsonDdata) {
+      var rel, release, releases, _i, _len;
+      releases = [];
+      for (_i = 0, _len = jsonDdata.length; _i < _len; _i++) {
+        release = jsonDdata[_i];
+        rel = Release.create(release);
+        releases.push(rel);
+      }
+      return releases;
+    };
+
     return Release;
 
   })(Phase);

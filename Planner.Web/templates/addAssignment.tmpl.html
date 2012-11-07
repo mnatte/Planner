@@ -8,7 +8,7 @@
         <select data-bind="options: $root.allResources(), optionsText: function(item) { return item.fullName() }, value: $root.selectedResource, optionsCaption: 'Choose...'" style="display:inline" ></select>
         <!-- ko if: $root.selectedResource() -->
         <div id="phases" class="sixteen columns">
-            <div id="mytimeline" data-bind="periodoverview: $root.selectedResource()"></div>
+            <div id="mytimeline" data-bind="assignmentsTimeline: $root.selectedResource()"></div>
             <div id="space" style="height: 20px">&nbsp;</div>
         </div>
         <!--/ko-->

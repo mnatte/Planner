@@ -53,7 +53,7 @@ class PhasesViewmodel
 				descr += '</ul>' # /deliverables
 				obj = {group: rel.title, start: ms.date.date, content: ms.title + '<br />' + icon, info: ms.date.dateString + '<br />' + ms.description + '<br/>' + descr}
 				@displayData.push obj
-		@showPhases = @displayData.sort((a,b)-> if a.end > b.end then 1 else if a.end < b.end then -1 else 0)
+		@showPhases = @displayData.sort((a,b)-> a.start - b.end)
 
 	setAssignments: (jsonData) =>
 		@assignments.removeAll()

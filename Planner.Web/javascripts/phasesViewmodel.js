@@ -91,13 +91,7 @@
         }
       }
       return this.showPhases = this.displayData.sort(function(a, b) {
-        if (a.end > b.end) {
-          return 1;
-        } else if (a.end < b.end) {
-          return -1;
-        } else {
-          return 0;
-        }
+        return a.start - b.end;
       });
     };
 

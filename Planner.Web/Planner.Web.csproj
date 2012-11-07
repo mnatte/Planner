@@ -140,6 +140,7 @@
     <Content Include="adminResource.htm" />
     <Content Include="adminDeliverable.htm" />
     <Content Include="adminActivity.htm" />
+    <Content Include="absences.htm" />
     <Content Include="images\ajax-loader.gif" />
     <Content Include="images\png\128x128\accept.png" />
     <Content Include="images\png\128x128\add.png" />
@@ -654,11 +655,17 @@
     <Content Include="images\skins\yellow\button_left.png" />
     <Content Include="images\skins\yellow\button_right.gif" />
     <Content Include="images\skins\yellow\button_right.png" />
+    <Content Include="javascripts\absencesViewmodel.js">
+      <DependentUpon>absencesViewmodel.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
     <Content Include="javascripts\persistence.js">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>persistence.coffee</DependentUpon>
     </Content>
+    <Content Include="javascripts\timeline_instantion.js" />
     <Content Include="javascripts\updateReleaseStatusViewmodel.js">
       <DependentUpon>updateReleaseStatusViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -677,7 +684,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>adminActivityViewmodel.coffee</DependentUpon>
     </Content>
-    <Content Include="javascripts\ko.bindingHandlers.periodoverview.js" />
+    <Content Include="javascripts\ko.bindingHandlers.assignmentsTimeline.js" />
     <Content Include="javascripts\planningOverviewViewmodel.js">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -881,6 +888,10 @@
     <None Include="javascripts\adminDeliverableViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>adminDeliverableViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\absencesViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>absencesViewmodel.js</LastGenOutput>
     </None>
     <None Include="javascripts\persistence.coffee">
       <Generator>CoffeeScriptGenerator</Generator>

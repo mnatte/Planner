@@ -1,26 +1,7 @@
 (function() {
-  var HLoadReleases, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, root;
+  var UDisplayAbsences, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
-
-  HLoadReleases = (function() {
-
-    function HLoadReleases() {}
-
-    HLoadReleases.prototype.execute = function(data) {
-      var rel, release, releases, _i, _len;
-      releases = [];
-      for (_i = 0, _len = data.length; _i < _len; _i++) {
-        release = data[_i];
-        rel = Release.create(release);
-        releases.push(rel);
-      }
-      return releases;
-    };
-
-    return HLoadReleases;
-
-  })();
 
   UDisplayReleaseStatus = (function() {
 
@@ -95,18 +76,11 @@
     function UDisplayPhases() {}
 
     UDisplayPhases.prototype.execute = function(data) {
-      var loadReleases, releases;
-      loadReleases = new HLoadReleases();
-      releases = loadReleases.execute(data);
+      var releases;
+      releases = Release.createCollection(data);
       this.viewModel = new PhasesViewmodel(releases);
       this.viewModel.load(releases.sort(function(a, b) {
-        if (a.endDate.date > b.endDate.date) {
-          return 1;
-        } else if (a.endDate.date < b.endDate.date) {
-          return -1;
-        } else {
-          return 0;
-        }
+        return a.startDate.date - b.startDate.date;
       }));
       ko.applyBindings(this.viewModel);
       return drawTimeline(this.viewModel.showPhases);
@@ -116,14 +90,30 @@
 
   })();
 
+  UDisplayAbsences = (function() {
+
+    function UDisplayAbsences() {}
+
+    UDisplayAbsences.prototype.execute = function(data) {
+      var resources;
+      resources = Resource.createCollection(data);
+      this.viewModel = new AbsencesViewmodel(resources);
+      this.viewModel.load(resources.sort());
+      ko.applyBindings(this.viewModel);
+      return drawTimeline(this.viewModel.showAbsences);
+    };
+
+    return UDisplayAbsences;
+
+  })();
+
   ULoadAdminReleases = (function() {
 
     function ULoadAdminReleases() {}
 
     ULoadAdminReleases.prototype.execute = function(jsonRels, jsonProjects, jsonDeliverables) {
-      var deliverables, loadReleases, projects, releases;
-      loadReleases = new HLoadReleases();
-      releases = loadReleases.execute(jsonRels);
+      var deliverables, projects, releases;
+      releases = Release.createCollection(jsonRels);
       projects = Project.createCollection(jsonProjects);
       deliverables = Deliverable.createCollection(jsonDeliverables);
       this.viewModel = new AdminReleaseViewmodel(releases, projects, deliverables);
@@ -142,9 +132,8 @@
     function ULoadUpdateReleaseStatus() {}
 
     ULoadUpdateReleaseStatus.prototype.execute = function(jsonRels) {
-      var loadReleases, releases;
-      loadReleases = new HLoadReleases();
-      releases = loadReleases.execute(jsonRels);
+      var releases;
+      releases = Release.createCollection(jsonRels);
       this.viewModel = new UpdateReleaseStatusViewmodel(releases);
       this.viewModel.selectRelease(this.viewModel.allReleases[0]);
       return ko.applyBindings(this.viewModel, null, {
@@ -241,9 +230,7 @@
     function ULoadPlanResources() {}
 
     ULoadPlanResources.prototype.execute = function(releases, resources, activities) {
-      var loadReleases;
-      loadReleases = new HLoadReleases();
-      releases = loadReleases.execute(releases);
+      releases = Release.createCollection(releases);
       console.log(releases);
       resources = Resource.createCollection(resources);
       activities = Activity.createCollection(activities);
@@ -262,9 +249,9 @@
 
   root.UDisplayPhases = UDisplayPhases;
 
-  root.UDisplayPlanningOverview = UDisplayPlanningOverview;
+  root.UDisplayAbsences = UDisplayAbsences;
 
-  root.HLoadReleases = HLoadReleases;
+  root.UDisplayPlanningOverview = UDisplayPlanningOverview;
 
   root.ULoadAdminReleases = ULoadAdminReleases;
 

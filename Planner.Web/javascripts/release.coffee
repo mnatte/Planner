@@ -240,6 +240,13 @@ class Release extends Phase
 			release.addMilestone Milestone.create(milestone, jsonData.Id)
 		#console.log release
 		release
+	@createCollection: (jsonDdata) ->
+		releases = []
+		# fill release collection
+		for release in jsonDdata
+			rel = Release.create release
+			releases.push rel
+		releases
 
 # Release - Projects - Features & AssignedResources
 class Project extends Mixin

@@ -5,16 +5,6 @@
 # access (for browser)
 root = global ? window
 
-class HLoadReleases
-	execute: (data) ->
-		# console.log data
-		releases = []
-		# fill release collection
-		for release in data
-			rel = Release.create release
-			releases.push rel
-		releases
-
 class UDisplayReleaseStatus
 	constructor: ->
 		Release.extend(RGroupBy)
@@ -77,19 +67,27 @@ class UGetAvailableHoursForTeamMemberFromNow
 class UDisplayPhases
 	constructor: ->
 	execute: (data) ->
-		loadReleases = new HLoadReleases()
-		releases = loadReleases.execute(data)
+		releases = Release.createCollection(data)
 		#console.log releases
 		@viewModel = new PhasesViewmodel(releases)
-		@viewModel.load releases.sort((a,b)-> if a.endDate.date > b.endDate.date then 1 else if a.endDate.date < b.endDate.date then -1 else 0)
+		@viewModel.load releases.sort((a,b)->a.startDate.date - b.startDate.date)
 		ko.applyBindings(@viewModel)
 		drawTimeline(@viewModel.showPhases)
+
+class UDisplayAbsences
+	constructor: ->
+	execute: (data) ->
+		resources = Resource.createCollection(data)
+		#console.log releases
+		@viewModel = new AbsencesViewmodel(resources)
+		@viewModel.load resources.sort()
+		ko.applyBindings(@viewModel)
+		drawTimeline(@viewModel.showAbsences)
 
 class ULoadAdminReleases
 	constructor: ->
 	execute: (jsonRels, jsonProjects, jsonDeliverables) ->
-		loadReleases = new HLoadReleases()
-		releases = loadReleases.execute(jsonRels)
+		releases = Release.createCollection(jsonRels)
 		projects = Project.createCollection jsonProjects
 		deliverables = Deliverable.createCollection jsonDeliverables
 		@viewModel = new AdminReleaseViewmodel(releases, projects, deliverables)
@@ -100,8 +98,7 @@ class ULoadAdminReleases
 class ULoadUpdateReleaseStatus
 	constructor: ->
 	execute: (jsonRels) ->
-		loadReleases = new HLoadReleases()
-		releases = loadReleases.execute(jsonRels)
+		releases = Release.createCollection(jsonRels)
 		@viewModel = new UpdateReleaseStatusViewmodel(releases)
 		@viewModel.selectRelease @viewModel.allReleases[0]
 		ko.applyBindings(@viewModel, null, {independentBindings: true})
@@ -150,8 +147,7 @@ class ULoadPlanResources
 	constructor: ->
 	execute: (releases, resources, activities) ->
 	#execute: (releases) ->
-		loadReleases = new HLoadReleases()
-		releases = loadReleases.execute(releases)
+		releases = Release.createCollection(releases)
 		console.log releases
 		resources = Resource.createCollection resources
 		activities = Activity.createCollection activities
@@ -165,8 +161,8 @@ class ULoadPlanResources
 root.UDisplayReleaseStatus = UDisplayReleaseStatus
 root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFromNow
 root.UDisplayPhases = UDisplayPhases
+root.UDisplayAbsences = UDisplayAbsences
 root.UDisplayPlanningOverview = UDisplayPlanningOverview
-root.HLoadReleases = HLoadReleases
 root.ULoadAdminReleases = ULoadAdminReleases
 root.ULoadAdminProjects = ULoadAdminProjects
 root.ULoadAdminResources = ULoadAdminResources
