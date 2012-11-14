@@ -9,8 +9,9 @@
 
     __extends(Period, _super);
 
-    function Period(startDate, endDate, title) {
+    function Period(startDate, endDate, title, id) {
       this.title = title;
+      this.id = id;
       this.startDate = new DatePlus(startDate);
       this.endDate = new DatePlus(endDate);
     }
@@ -163,6 +164,10 @@
         wks.push(new Week(yrstring + wk.toString()));
       }
       return wks;
+    };
+
+    Period.create = function(jsonData) {
+      return new Period(DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.Id);
     };
 
     return Period;
@@ -656,7 +661,7 @@
       _ref = jsonData.PeriodsAway;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         absence = _ref[_i];
-        res.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title));
+        res.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title, absence.Id));
       }
       _ref2 = jsonData.Assignments;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {

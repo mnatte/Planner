@@ -82,7 +82,12 @@ class UDisplayAbsences
 		@viewModel = new AbsencesViewmodel(resources)
 		@viewModel.load resources.sort()
 		ko.applyBindings(@viewModel)
-		drawTimeline(@viewModel.showAbsences)
+		drawTimeline(@viewModel.showAbsences, @viewModel.selectedTimelineItem)
+
+class UReloadAbsenceInTimeline
+	constructor: (@allAbsences, @index, @refreshedTimelineItem) ->
+	execute: ->
+		drawTimeline(allAbsences, refreshedTimelineItem)
 
 class ULoadAdminReleases
 	constructor: ->

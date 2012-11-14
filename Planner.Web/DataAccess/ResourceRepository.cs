@@ -98,12 +98,41 @@ namespace MvcApplication1.DataAccess
                 {
                     while (reader.Read())
                     {
-                        var ass = new ReleaseModels.Absence { Title = reader["Title"].ToString(), Person = new ReleaseModels.Resource { FirstName = reader["FirstName"].ToString(), MiddleName = reader["MiddleName"].ToString(), LastName = reader["LastName"].ToString() }, EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()) };
+                        var ass = new ReleaseModels.Absence { Id = int.Parse(reader["Id"].ToString()), Title = reader["Title"].ToString(), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()) };
                         lst.Add(ass);
                     }
                 }
             }
             return lst;
         }
+
+        public ReleaseModels.Absence SaveAbsence(AbsenceInputModel obj)
+        {
+            var conn = new SqlConnection(this.ConnectionString);
+
+            var cmd = new SqlCommand("sp_save_absence", conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            // TODO: add params
+            cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = obj.Id;
+            cmd.Parameters.Add("@PersonId", System.Data.SqlDbType.Int).Value = obj.PersonId;
+            cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = obj.StartDate.ToDateTimeFromDutchString();
+            cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = obj.EndDate.ToDateTimeFromDutchString();
+            cmd.Parameters.Add("@Title", System.Data.SqlDbType.VarChar).Value = obj.Title;
+            var abs = new ReleaseModels.Absence();
+
+            var person = this.GetItemById(obj.PersonId);
+
+            using (conn)
+            {
+                conn.Open();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    reader.Read();
+                    abs = new ReleaseModels.Absence { Id = int.Parse(reader["Id"].ToString()), Title = reader["Title"].ToString(), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Person = new ReleaseModels.ResourceSnapshot { FirstName = person.FirstName, LastName = person.LastName, MiddleName = person.MiddleName, Id = person.Id, Initials = person.Initials } };
+                }
+            }
+            return abs;
+        }
+
     }
 }

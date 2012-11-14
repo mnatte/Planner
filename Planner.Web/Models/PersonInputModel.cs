@@ -20,4 +20,13 @@ namespace MvcApplication1.Models
         public int FunctionId { get; set; }
         public int CompanyId { get; set; }
     }
+
+    public class AbsenceInputModel
+    {
+        public int Id { get; set; }
+        public int PersonId { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
+        public string Title { get; set; }
+    }
 }

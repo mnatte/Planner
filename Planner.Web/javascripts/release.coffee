@@ -15,7 +15,7 @@ root = global ? window
 #relies on datehelper.js
 class Period extends Mixin
 	# attach seperate startDate, endDate and title properties to each instance
-	constructor: (startDate, endDate, @title) ->
+	constructor: (startDate, endDate, @title, @id) ->
 		# console.log "title: #{@title}"
 		# console.log "startDate: #{startDate}"
 		# console.log "endDate: #{endDate}"
@@ -153,6 +153,8 @@ class Period extends Mixin
 			wks.push new Week(yrstring + wk.toString())
 		#console.log wks
 		wks
+	@create: (jsonData) ->
+		new Period(DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.Id)
 
 class Milestone extends Mixin
 	constructor: (@id, date, @time, @title, @description, @phaseId) ->
@@ -411,7 +413,7 @@ class Resource extends Mixin
 		res = new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials, jsonData.AvailableHoursPerWeek, jsonData.Email, jsonData.PhoneNumber)
 		for absence in jsonData.PeriodsAway
 			# console.log "jsonData absence: " + absence
-			res.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title))
+			res.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title, absence.Id))
 		for assignment in jsonData.Assignments
 			res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity.Title + " " + assignment.Phase.Title + " (" + assignment.FocusFactor + ")"), assignment.Phase.Title, assignment.Activity)
 		#console.log res

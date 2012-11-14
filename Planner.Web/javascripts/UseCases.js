@@ -1,5 +1,5 @@
 (function() {
-  var UDisplayAbsences, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, root;
+  var UDisplayAbsences, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UReloadAbsenceInTimeline, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -100,10 +100,26 @@
       this.viewModel = new AbsencesViewmodel(resources);
       this.viewModel.load(resources.sort());
       ko.applyBindings(this.viewModel);
-      return drawTimeline(this.viewModel.showAbsences);
+      return drawTimeline(this.viewModel.showAbsences, this.viewModel.selectedTimelineItem);
     };
 
     return UDisplayAbsences;
+
+  })();
+
+  UReloadAbsenceInTimeline = (function() {
+
+    function UReloadAbsenceInTimeline(allAbsences, index, refreshedTimelineItem) {
+      this.allAbsences = allAbsences;
+      this.index = index;
+      this.refreshedTimelineItem = refreshedTimelineItem;
+    }
+
+    UReloadAbsenceInTimeline.prototype.execute = function() {
+      return drawTimeline(allAbsences, refreshedTimelineItem);
+    };
+
+    return UReloadAbsenceInTimeline;
 
   })();
 

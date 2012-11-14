@@ -678,6 +678,8 @@
     </Content>
     <Content Include="Scripts\jquery.blockUI.js" />
     <Content Include="stylesheets\sexybuttons.css" />
+    <Content Include="templates\absenceForm.tmpl.html" />
+    <Content Include="templates\phaseForm.tmpl.html" />
     <Content Include="updateReleaseStatus.htm" />
     <Content Include="javascripts\adminActivityViewmodel.js">
       <AutoGen>True</AutoGen>
@@ -747,7 +749,6 @@
     <Content Include="stylesheets\base_no_buttons.css" />
     <Content Include="stylesheets\icon_styles.css" />
     <Content Include="templates\navigation.tmpl.html" />
-    <Content Include="templates\phaseForm.tmpl.html" />
     <Content Include="templates\milestoneForm.tmpl.html" />
     <Content Include="templates\releaseForm.tmpl.html" />
     <Content Include="javascripts\ajax.coffee">

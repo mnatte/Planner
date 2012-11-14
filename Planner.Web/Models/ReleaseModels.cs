@@ -56,7 +56,7 @@ namespace MvcApplication1.Models
 
         public class Absence : Phase
         {
-            public ReleaseModels.Resource Person { get; set; }
+            public ReleaseModels.ResourceSnapshot Person { get; set; }
         }
 
         public class Milestone
@@ -268,7 +268,8 @@ namespace MvcApplication1.Models
             }
         }
 
-        public class Resource
+
+        public class ResourceSnapshot
         {
             public int Id { get; set; }
             public string FirstName { get; set; }
@@ -278,6 +279,10 @@ namespace MvcApplication1.Models
             public string Email { get; set; }
             public string PhoneNumber { get; set; }
             public string DisplayName { get { return string.Format("{0} {1} {2}", this.FirstName, this.MiddleName ?? "", this.LastName); } }
+        }
+
+        public class Resource : ResourceSnapshot
+        {
             public int AvailableHoursPerWeek { get; set; }
             public Role Function { get; set; }
 

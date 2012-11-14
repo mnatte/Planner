@@ -1,7 +1,7 @@
 ﻿var timeline;
 
 // Called when the Visualization API is loaded.
-function drawTimeline(data) {
+function drawTimeline(data, observableSelected) {
 
     // specify options
     var options = {
@@ -27,6 +27,9 @@ function drawTimeline(data) {
                 //});
                 if (typeof item.info !== "undefined")
                     $('#details').html(item.info);
+                if (typeof observableSelected !== "undefined")
+                    observableSelected(item);
+                
             }
         }
     }

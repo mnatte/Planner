@@ -55,6 +55,11 @@
   };
 
   RTeamMember = {
+    createSnapshot: function(jsonData) {
+      var res;
+      res = new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials, jsonData.AvailableHoursPerWeek, jsonData.Email, jsonData.PhoneNumber);
+      return res;
+    },
     extended: function() {
       return this.include({
         focusFactor: 0.8,

@@ -10,7 +10,7 @@
 	<!-- Basic Page Needs
   ================================================== -->
 	<meta charset="utf-8">
-	<title>Phases</title>
+	<title>Absences</title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 	<!--[if lt IE 9]>
@@ -49,6 +49,7 @@
         
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
+    <script type="text/javascript" src="javascripts/persistence.js"></script>
     <script type="text/javascript" src="javascripts/absencesViewmodel.js"></script>
     <script type="text/javascript" src="javascripts/ajax.js"></script>
     <script type="text/javascript" src="javascripts/Roles.js"></script>
@@ -68,6 +69,13 @@
             <div id="mytimeline"></div>
             <div id="details"></div>
         </div>
+
+        <!-- ko if: $root.selectedAbsence() -->
+        <section id="absenceFormSection" class="sixteen columns" data-bind="fadeVisible: true, fadeDuration: 500">
+                <!-- ko template: {name: 'absenceForm', data: $root.selectedAbsence()} -->
+                <!-- /ko -->
+        </section>
+        <!--/ko-->
 </div><!-- container -->
     <script type="text/javascript">
 

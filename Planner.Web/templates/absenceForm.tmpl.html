@@ -1,0 +1,6 @@
+﻿<form>
+    <label>Absence title:</label><input type="text" data-bind="value: title, valueUpdate: 'afterkeydown'" />
+    <label>Start date (dd-mm-yyyy):</label><input type="text" data-bind="value: startDate.dateString" />
+    <label>End date (dd-mm-yyyy):</label><input type="text" data-bind="value: endDate.dateString" />
+    <button class="sexybutton" data-bind="click: $parent.saveSelectedAbsence.bind($data)"><span><span><span class="save">Save</span></span></span></button>
+</form>

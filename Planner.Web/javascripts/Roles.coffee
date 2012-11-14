@@ -40,11 +40,24 @@ RGroupBy =
 					@sets
 
 RTeamMember = 
+	createSnapshot: (jsonData) ->
+		res = new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials, jsonData.AvailableHoursPerWeek, jsonData.Email, jsonData.PhoneNumber)
+		res
 	extended: ->
 		@include
 			# default value, just setting focusFactor in target object without specifying it here is enough to set it, but then it can be undefined.
 			focusFactor: 0.8
 			roles: []
+			#loadAbsences: (absences) ->
+			#	for absence in absences
+			#		@addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title, absence.Id))
+			
+
+#RAbsenceTimelineItem = 
+#	extended: ->
+#		@include
+#			focusFactor: 0.8
+#			roles: []
 
 RCrud = 
 	extended: ->

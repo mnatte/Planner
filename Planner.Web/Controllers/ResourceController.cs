@@ -14,5 +14,13 @@ namespace MvcApplication1.Controllers
         public ResourceController()
             : base(new ResourceRepository())
         { }
+
+        [HttpPost]
+        public JsonResult SaveAbsence(AbsenceInputModel obj)
+        {
+            var rep = this.Repository as ResourceRepository;
+            var absence = rep.SaveAbsence(obj);
+            return this.Json(absence, JsonRequestBehavior.AllowGet);
+        }
     }
 }
