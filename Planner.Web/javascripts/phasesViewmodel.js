@@ -17,6 +17,7 @@
       this.selectedPhase.subscribe(function(newValue) {
         return loadAssignments(newValue.id);
       });
+      Resource.extend(RTeamMember);
     }
 
     PhasesViewmodel.prototype.load = function(data) {

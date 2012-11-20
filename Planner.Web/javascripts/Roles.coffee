@@ -59,13 +59,16 @@ RTeamMember =
 							console.log x
 							console.log(x.period.overlappingPeriod(period).remainingWorkingDays())
 							days = x.period.overlappingPeriod(period).remainingWorkingDays()
-							hours = days * 8 * x.focusFactor
+							hours = Math.round(days * 8 * x.focusFactor)
 							console.log hours
 							acc + hours
 						, 0
-				hrsPlannedIn
+				Math.round(hrsPlannedIn)
 			availableHoursForPlanning: (period) ->
-				hrsAvailable = @hoursAvailable(period) - @hoursPlannedIn(period)
+				console.log @hoursAvailable(period)
+				console.log @hoursPlannedIn(period)
+				hrsAvailable = Math.round(@hoursAvailable(period) - @hoursPlannedIn(period))
+				console.log hrsAvailable
 				if hrsAvailable < 0 then 0 else hrsAvailable
 			hoursAbsent: (period) ->
 				absent = 0
@@ -76,7 +79,7 @@ RTeamMember =
 							result = x.remainingWorkingDays()
 							acc + result
 						, 0
-				absent * 8
+				Math.round(absent * 8)
 			hoursAvailable: (period) ->
 				absent = 0
 				# ESSENTIAL: add parentheses around for...when, otherwise no array is returned
@@ -85,12 +88,12 @@ RTeamMember =
 				if(overlappingAbsences? and typeof(overlappingAbsences) isnt 'undefined' and overlappingAbsences.length > 0)
 					absent = (absence.overlappingPeriod(period) for absence in overlappingAbsences).reduce (acc, x) ->
 							#console.log x
-							result = x.remainingWorkingDays()
+							result = Math.round(x.remainingWorkingDays())
 							acc + result
 						, 0
 				amtDays = period.remainingWorkingDays() - absent
 				if amtDays < 0 then amtDays = 0
-				available = amtDays * 8
+				available = Math.round(amtDays * 8)
 				available
 
 #RAbsenceTimelineItem = 

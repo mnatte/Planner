@@ -32,7 +32,7 @@
             r = _ref[_i];
             if (+r.id === +x) resource = r;
           }
-          result = resource.hoursAvailable(_this.checkPeriod());
+          result = resource.availableHoursForPlanning(_this.checkPeriod());
           return acc + result;
         }, 0);
         return total;

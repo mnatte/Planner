@@ -13,6 +13,7 @@ class PhasesViewmodel
 		@selectedPhase.subscribe((newValue) => 
 			loadAssignments newValue.id
 			)
+		Resource.extend RTeamMember
 
 	load: (data) ->
 		# all properties besides ctor are ATTACHED to prototype. these are EXECUTED in context of INSTANCE.

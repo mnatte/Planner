@@ -91,16 +91,19 @@
               console.log(x);
               console.log(x.period.overlappingPeriod(period).remainingWorkingDays());
               days = x.period.overlappingPeriod(period).remainingWorkingDays();
-              hours = days * 8 * x.focusFactor;
+              hours = Math.round(days * 8 * x.focusFactor);
               console.log(hours);
               return acc + hours;
             }, 0);
           }
-          return hrsPlannedIn;
+          return Math.round(hrsPlannedIn);
         },
         availableHoursForPlanning: function(period) {
           var hrsAvailable;
-          hrsAvailable = this.hoursAvailable(period) - this.hoursPlannedIn(period);
+          console.log(this.hoursAvailable(period));
+          console.log(this.hoursPlannedIn(period));
+          hrsAvailable = Math.round(this.hoursAvailable(period) - this.hoursPlannedIn(period));
+          console.log(hrsAvailable);
           if (hrsAvailable < 0) {
             return 0;
           } else {
@@ -135,7 +138,7 @@
               return acc + result;
             }, 0);
           }
-          return absent * 8;
+          return Math.round(absent * 8);
         },
         hoursAvailable: function(period) {
           var absence, absent, amtDays, available, overlappingAbsences;
@@ -161,13 +164,13 @@
               return _results;
             })()).reduce(function(acc, x) {
               var result;
-              result = x.remainingWorkingDays();
+              result = Math.round(x.remainingWorkingDays());
               return acc + result;
             }, 0);
           }
           amtDays = period.remainingWorkingDays() - absent;
           if (amtDays < 0) amtDays = 0;
-          available = amtDays * 8;
+          available = Math.round(amtDays * 8);
           return available;
         }
       });

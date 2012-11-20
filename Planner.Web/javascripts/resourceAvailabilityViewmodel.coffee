@@ -25,7 +25,7 @@ class ResourceAvailabilityViewmodel
 					#console.log x
 					resource = r for r in @allResources when +r.id is +x
 					#console.log resource
-					result = resource.hoursAvailable(@checkPeriod())
+					result = resource.availableHoursForPlanning(@checkPeriod())
 					acc + result
 				, 0
 			total
