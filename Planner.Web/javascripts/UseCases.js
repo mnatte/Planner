@@ -1,5 +1,5 @@
 (function() {
-  var UDisplayAbsences, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseStatus, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UReloadAbsenceInTimeline, root;
+  var UDisplayAbsences, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseStatus, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UReloadAbsenceInTimeline, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -192,6 +192,21 @@
 
   })();
 
+  UDisplayResourcesAvailability = (function() {
+
+    function UDisplayResourcesAvailability() {}
+
+    UDisplayResourcesAvailability.prototype.execute = function(data) {
+      var resources;
+      resources = Resource.createCollection(data);
+      this.viewModel = new ResourceAvailabilityViewmodel(resources);
+      return ko.applyBindings(this.viewModel);
+    };
+
+    return UDisplayResourcesAvailability;
+
+  })();
+
   ULoadAdminResources = (function() {
 
     function ULoadAdminResources() {}
@@ -268,6 +283,8 @@
   root.UDisplayAbsences = UDisplayAbsences;
 
   root.UDisplayPlanningOverview = UDisplayPlanningOverview;
+
+  root.UDisplayResourcesAvailability = UDisplayResourcesAvailability;
 
   root.ULoadAdminReleases = ULoadAdminReleases;
 

@@ -141,6 +141,12 @@
     <Content Include="adminDeliverable.htm" />
     <Content Include="adminActivity.htm" />
     <Content Include="absences.htm" />
+    <Content Include="javascripts\resourceAvailabilityViewmodel.js">
+      <DependentUpon>resourceAvailabilityViewmodel.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
+    <Content Include="resourceAvailability.htm" />
     <Content Include="images\ajax-loader.gif" />
     <Content Include="images\png\128x128\accept.png" />
     <Content Include="images\png\128x128\add.png" />
@@ -665,6 +671,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>persistence.coffee</DependentUpon>
     </Content>
+    <Content Include="javascripts\resourceRoles.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>resourceRoles.coffee</DependentUpon>
+    </Content>
     <Content Include="javascripts\timeline_instantion.js" />
     <Content Include="javascripts\updateReleaseStatusViewmodel.js">
       <DependentUpon>updateReleaseStatusViewmodel.coffee</DependentUpon>
@@ -750,7 +761,7 @@
     <Content Include="stylesheets\icon_styles.css" />
     <Content Include="templates\navigation.tmpl.html" />
     <Content Include="templates\milestoneForm.tmpl.html" />
-    <Content Include="templates\releaseForm.tmpl.html" />
+    <Content Include="releaseForm.tmpl.html" />
     <Content Include="javascripts\ajax.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>ajax.js</LastGenOutput>
@@ -894,9 +905,17 @@
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>absencesViewmodel.js</LastGenOutput>
     </None>
+    <None Include="javascripts\resourceAvailabilityViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>resourceAvailabilityViewmodel.js</LastGenOutput>
+    </None>
     <None Include="javascripts\persistence.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>persistence.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\resourceRoles.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>resourceRoles.js</LastGenOutput>
     </None>
     <None Include="javascripts\updateReleaseStatusViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>

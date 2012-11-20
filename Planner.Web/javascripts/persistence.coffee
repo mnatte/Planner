@@ -6,6 +6,7 @@ RPeriodSerialize =
 		@include
 			toJSON: ->
 				copy = ko.toJS(@) #get a clean copy
+				console.log copy
 				delete copy.startDate.date #remove property
 				copy.startDate = @startDate.dateString
 				copy.endDate = @endDate.dateString

@@ -33,7 +33,7 @@ class ReleaseViewmodel
 
 		for phase in @release.phases when phase.isCurrent()
 			ph = new Period(@currentDate(), phase.endDate.date, "")
-			phase.workingDaysRemaining = ph.workingDays()
+			phase.workingDaysFromNow = ph.workingDays()
 			@currentPhases.push(phase)
 
 		@selectedPhaseId = ko.observable()

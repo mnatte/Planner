@@ -26,6 +26,7 @@
       AssignedResource.extend(RAssignedResourceSerialize);
       ReleaseAssignments.extend(RCrud);
       PlanResourcesViewmodel.extend(RGroupBy);
+      Resource.extend(RTeamMember);
       this.selectedProject = ko.observable();
       this.selectedRelease = ko.observable();
       this.selectedPhase = ko.observable();
@@ -40,6 +41,10 @@
           _this.newAssignment(new AssignedResource(0, "", "", "", 0.8, new Date(), newValue.date.date, "", new Milestone(), new Deliverable()));
           return console.log(_this.newAssignment());
         }
+      });
+      this.selectedRelease.subscribe(function(newValue) {
+        console.log('selectedRelease changed');
+        return console.log(newValue);
       });
       this.setEndDate = ko.observable(new Date());
       this.newAssignment = ko.observable(new AssignedResource(0, "", "", "", 0.8, new Date(), new Date(), "", new Milestone(), new Deliverable()));
@@ -124,6 +129,7 @@
       var dto,
         _this = this;
       dto = new ReleaseAssignments(this.selectedRelease().id, this.selectedProject().id, this.assignments());
+      console.log('saveAssignments');
       console.log(ko.toJSON(dto));
       return dto.save("/planner/ResourceAssignment/SaveAssignments", ko.toJSON(dto), function(data) {
         return console.log(data);

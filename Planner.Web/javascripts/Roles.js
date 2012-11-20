@@ -63,7 +63,113 @@
     extended: function() {
       return this.include({
         focusFactor: 0.8,
-        roles: []
+        roles: [],
+        hoursPlannedIn: function(period) {
+          var ass, assignment, hrsPlannedIn, overlappingAssignments;
+          hrsPlannedIn = 0;
+          overlappingAssignments = (function() {
+            var _i, _len, _ref, _results;
+            _ref = this.assignments;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              ass = _ref[_i];
+              if (ass.period.overlaps(period)) _results.push(ass);
+            }
+            return _results;
+          }).call(this);
+          if ((overlappingAssignments != null) && typeof overlappingAssignments !== 'undefined' && overlappingAssignments.length > 0) {
+            hrsPlannedIn = ((function() {
+              var _i, _len, _results;
+              _results = [];
+              for (_i = 0, _len = overlappingAssignments.length; _i < _len; _i++) {
+                assignment = overlappingAssignments[_i];
+                _results.push(assignment);
+              }
+              return _results;
+            })()).reduce(function(acc, x) {
+              var days, hours;
+              console.log(x);
+              console.log(x.period.overlappingPeriod(period).remainingWorkingDays());
+              days = x.period.overlappingPeriod(period).remainingWorkingDays();
+              hours = days * 8 * x.focusFactor;
+              console.log(hours);
+              return acc + hours;
+            }, 0);
+          }
+          return hrsPlannedIn;
+        },
+        availableHoursForPlanning: function(period) {
+          var hrsAvailable;
+          hrsAvailable = this.hoursAvailable(period) - this.hoursPlannedIn(period);
+          if (hrsAvailable < 0) {
+            return 0;
+          } else {
+            return hrsAvailable;
+          }
+        },
+        hoursAbsent: function(period) {
+          var absence, absent, overlappingAbsences;
+          absent = 0;
+          overlappingAbsences = (function() {
+            var _i, _len, _ref, _results;
+            _ref = this.periodsAway;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              absence = _ref[_i];
+              if (absence.overlaps(period)) _results.push(absence);
+            }
+            return _results;
+          }).call(this);
+          if ((overlappingAbsences != null) && typeof overlappingAbsences !== 'undefined' && overlappingAbsences.length > 0) {
+            absent = ((function() {
+              var _i, _len, _results;
+              _results = [];
+              for (_i = 0, _len = overlappingAbsences.length; _i < _len; _i++) {
+                absence = overlappingAbsences[_i];
+                _results.push(absence.overlappingPeriod(period));
+              }
+              return _results;
+            })()).reduce(function(acc, x) {
+              var result;
+              result = x.remainingWorkingDays();
+              return acc + result;
+            }, 0);
+          }
+          return absent * 8;
+        },
+        hoursAvailable: function(period) {
+          var absence, absent, amtDays, available, overlappingAbsences;
+          absent = 0;
+          overlappingAbsences = (function() {
+            var _i, _len, _ref, _results;
+            _ref = this.periodsAway;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              absence = _ref[_i];
+              if (absence.overlaps(period)) _results.push(absence);
+            }
+            return _results;
+          }).call(this);
+          if ((overlappingAbsences != null) && typeof overlappingAbsences !== 'undefined' && overlappingAbsences.length > 0) {
+            absent = ((function() {
+              var _i, _len, _results;
+              _results = [];
+              for (_i = 0, _len = overlappingAbsences.length; _i < _len; _i++) {
+                absence = overlappingAbsences[_i];
+                _results.push(absence.overlappingPeriod(period));
+              }
+              return _results;
+            })()).reduce(function(acc, x) {
+              var result;
+              result = x.remainingWorkingDays();
+              return acc + result;
+            }, 0);
+          }
+          amtDays = period.remainingWorkingDays() - absent;
+          if (amtDays < 0) amtDays = 0;
+          available = amtDays * 8;
+          return available;
+        }
       });
     }
   };

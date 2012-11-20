@@ -134,5 +134,23 @@ namespace MvcApplication1.DataAccess
             return abs;
         }
 
+        public int DeleteAbsence(int id)
+        {
+            var conn = new SqlConnection(this.ConnectionString);
+            var amt = 0;
+
+            var cmd = new SqlCommand("sp_delete_absence", conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            // TODO: add params
+            cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = id;
+            var abs = new ReleaseModels.Absence();
+
+            using (conn)
+            {
+                conn.Open();
+                amt = cmd.ExecuteNonQuery();
+            }
+            return amt;
+        }
     }
 }

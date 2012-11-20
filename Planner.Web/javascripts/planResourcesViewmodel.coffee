@@ -10,6 +10,7 @@ class PlanResourcesViewmodel extends Mixin
 		ReleaseAssignments.extend(RCrud)
 		# console.log allReleases
 		PlanResourcesViewmodel.extend(RGroupBy)
+		Resource.extend RTeamMember
 		@selectedProject = ko.observable()
 		@selectedRelease = ko.observable()
 		@selectedPhase = ko.observable()
@@ -25,6 +26,10 @@ class PlanResourcesViewmodel extends Mixin
 			if(typeof(newValue) isnt "undefined" and newValue isnt null)
 				@newAssignment new AssignedResource(0, "", "", "", 0.8, new Date(), newValue.date.date, "", new Milestone(), new Deliverable())
 				console.log @newAssignment()
+			)
+		@selectedRelease.subscribe((newValue) => 
+			console.log 'selectedRelease changed'
+			console.log newValue
 			)
 		@setEndDate = ko.observable(new Date())
 		@newAssignment = ko.observable(new AssignedResource(0, "", "", "", 0.8, new Date(), new Date(), "", new Milestone(), new Deliverable()))
@@ -94,6 +99,7 @@ class PlanResourcesViewmodel extends Mixin
 		#console.log(@newAssignment.resource)
 		#console.log(@newAssignment.project)
 		dto = new ReleaseAssignments(@selectedRelease().id, @selectedProject().id, @assignments())
+		console.log('saveAssignments')
 		console.log(ko.toJSON(dto))
 		#TODO: Reload through callbacks
 		dto.save("/planner/ResourceAssignment/SaveAssignments", ko.toJSON(dto), (data) => console.log(data))

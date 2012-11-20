@@ -17,7 +17,7 @@
                 top: -15,
                 left: 5,
                 bodyHandler: function () {
-                    return viewModel.title + ", " + viewModel.startDate.dateString + " - " + viewModel.endDate.dateString + ". " + viewModel.workingDaysRemaining() + " working days remaining";
+                    return viewModel.title + ", " + viewModel.startDate.dateString + " - " + viewModel.endDate.dateString + ". " + viewModel.workingDaysFromNow() + " working days remaining";
                 }
             });
         },
@@ -39,7 +39,7 @@
                 top: -15,
                 left: 5,
                 bodyHandler: function () {
-                    return viewModel.title + ", " + viewModel.startDate.dateString + " - " + viewModel.endDate.dateString + ". " + viewModel.workingDaysRemaining() + " working days remaining";
+                    return viewModel.title + ", " + viewModel.startDate.dateString + " - " + viewModel.endDate.dateString + ". " + viewModel.workingDaysFromNow() + " working days remaining";
                 }
             });
         }

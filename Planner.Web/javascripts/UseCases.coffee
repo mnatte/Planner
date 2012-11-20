@@ -123,6 +123,13 @@ class UDisplayPlanningOverview
 		@viewModel = new PlanningOverviewViewmodel(resources)
 		ko.applyBindings(@viewModel)
 
+class UDisplayResourcesAvailability
+	constructor: ->
+	execute: (data) ->
+		resources = Resource.createCollection data
+		@viewModel = new ResourceAvailabilityViewmodel(resources)
+		ko.applyBindings(@viewModel)
+
 class ULoadAdminResources
 	constructor: ->
 	execute: (data) ->
@@ -168,6 +175,7 @@ root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFro
 root.UDisplayPhases = UDisplayPhases
 root.UDisplayAbsences = UDisplayAbsences
 root.UDisplayPlanningOverview = UDisplayPlanningOverview
+root.UDisplayResourcesAvailability = UDisplayResourcesAvailability
 root.ULoadAdminReleases = ULoadAdminReleases
 root.ULoadAdminProjects = ULoadAdminProjects
 root.ULoadAdminResources = ULoadAdminResources

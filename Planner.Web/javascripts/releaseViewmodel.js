@@ -52,7 +52,7 @@
         phase = _ref2[_j];
         if (!(phase.isCurrent())) continue;
         ph = new Period(this.currentDate(), phase.endDate.date, "");
-        phase.workingDaysRemaining = ph.workingDays();
+        phase.workingDaysFromNow = ph.workingDays();
         this.currentPhases.push(phase);
       }
       this.selectedPhaseId = ko.observable();

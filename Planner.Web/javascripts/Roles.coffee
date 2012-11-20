@@ -48,10 +48,50 @@ RTeamMember =
 			# default value, just setting focusFactor in target object without specifying it here is enough to set it, but then it can be undefined.
 			focusFactor: 0.8
 			roles: []
-			#loadAbsences: (absences) ->
-			#	for absence in absences
-			#		@addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title, absence.Id))
-			
+			hoursPlannedIn: (period) ->
+				# console.log period.toString()
+				hrsPlannedIn = 0
+				# ESSENTIAL: add parentheses around for...when, otherwise no array is returned
+				overlappingAssignments = (ass for ass in @assignments when ass.period.overlaps(period))
+				if(overlappingAssignments? and typeof(overlappingAssignments) isnt 'undefined' and overlappingAssignments.length > 0)
+					# somehow "reduce (x,y)" needs a space between name ('reduce') and args
+					hrsPlannedIn = (assignment for assignment in overlappingAssignments).reduce (acc, x) ->
+							console.log x
+							console.log(x.period.overlappingPeriod(period).remainingWorkingDays())
+							days = x.period.overlappingPeriod(period).remainingWorkingDays()
+							hours = days * 8 * x.focusFactor
+							console.log hours
+							acc + hours
+						, 0
+				hrsPlannedIn
+			availableHoursForPlanning: (period) ->
+				hrsAvailable = @hoursAvailable(period) - @hoursPlannedIn(period)
+				if hrsAvailable < 0 then 0 else hrsAvailable
+			hoursAbsent: (period) ->
+				absent = 0
+				# ESSENTIAL: add parentheses around for...when, otherwise no array is returned
+				overlappingAbsences = (absence for absence in @periodsAway when absence.overlaps(period))
+				if(overlappingAbsences? and typeof(overlappingAbsences) isnt 'undefined' and overlappingAbsences.length > 0)
+					absent = (absence.overlappingPeriod(period) for absence in overlappingAbsences).reduce (acc, x) ->
+							result = x.remainingWorkingDays()
+							acc + result
+						, 0
+				absent * 8
+			hoursAvailable: (period) ->
+				absent = 0
+				# ESSENTIAL: add parentheses around for...when, otherwise no array is returned
+				overlappingAbsences = (absence for absence in @periodsAway when absence.overlaps(period))
+				# somehow "reduce (x,y)" needs a space between name ('reduce') and args
+				if(overlappingAbsences? and typeof(overlappingAbsences) isnt 'undefined' and overlappingAbsences.length > 0)
+					absent = (absence.overlappingPeriod(period) for absence in overlappingAbsences).reduce (acc, x) ->
+							#console.log x
+							result = x.remainingWorkingDays()
+							acc + result
+						, 0
+				amtDays = period.remainingWorkingDays() - absent
+				if amtDays < 0 then amtDays = 0
+				available = amtDays * 8
+				available
 
 #RAbsenceTimelineItem = 
 #	extended: ->

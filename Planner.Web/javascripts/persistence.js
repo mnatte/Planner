@@ -9,6 +9,7 @@
         toJSON: function() {
           var copy;
           copy = ko.toJS(this);
+          console.log(copy);
           delete copy.startDate.date;
           copy.startDate = this.startDate.dateString;
           copy.endDate = this.endDate.dateString;

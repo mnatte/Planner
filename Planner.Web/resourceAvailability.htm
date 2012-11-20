@@ -10,7 +10,7 @@
 	<!-- Basic Page Needs
   ================================================== -->
 	<meta charset="utf-8">
-	<title>Absences</title>
+	<title>Resources Availability</title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 	<!--[if lt IE 9]>
@@ -27,9 +27,9 @@
 	<link rel="stylesheet" href="stylesheets/skeleton.css">
 	<link rel="stylesheet" href="stylesheets/layout.css">
     <link rel="stylesheet" href="stylesheets/tables.css">
-    <link rel="stylesheet" type="text/css" href="stylesheets/timeline.css" />
-    <link rel="stylesheet" href="stylesheets/icon_styles.css">
     <link rel="stylesheet" href="stylesheets/sexybuttons.css">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/timeline.css" />
 
 	<!-- Favicons
 	================================================== -->
@@ -43,50 +43,62 @@
     <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
     <script type="text/javascript" src="Scripts/knockout-array-filter.js"></script>
     <script type="text/javascript" src="Scripts/koExternalTemplateEngine_all.min.js"></script>
-    <script type="text/javascript" src="Scripts/jquery.blockUI.js"></script>
-    <script type="text/javascript" src="Scripts/datehelper.js"></script>
     <script type="text/javascript" src="Scripts/timeline-min.js"></script>
-    <script type="text/javascript" src="javascripts/timeline_instantion.js"></script>
+
+    <script type="text/javascript" src="Scripts/datehelper.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.blockUI.js"></script>
         
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
-    <script type="text/javascript" src="javascripts/persistence.js"></script>
-    <script type="text/javascript" src="javascripts/absencesViewmodel.js"></script>
+    <script type="text/javascript" src="javascripts/resourceAvailabilityViewmodel.js"></script>
     <script type="text/javascript" src="javascripts/ajax.js"></script>
     <script type="text/javascript" src="javascripts/Roles.js"></script>
     <script type="text/javascript" src="javascripts/UseCases.js"></script>
+    <script type="text/javascript" src="javascripts/ko.bindingHandlers.fadeVisible.js"></script>
+
+    <script type="text/javascript" src="javascripts/ko.bindingHandlers.assignmentsTimeline.js"></script>
+
+    <!--<script type="text/javascript" src="Scripts/highcharts.js"></script>-->
 </head>
 <body>
 <!-- Primary Page Layout
 	================================================== -->
 
 	<div class="container">
-    <!--navigation-->
+        <!--navigation-->
         <!-- ko template: {name: 'navigation'} -->
         <!-- /ko -->
-        <div id="space" style="height: 100px">&nbsp;</div>
-        <!--releases overview-->
-        <div id="phases" class="twelve columns">
-            <div id="mytimeline"></div>
-            <div id="details"></div>
-        </div>
-        <div id="newButton" class="four columns">
-            <button class="sexybutton" data-bind="click: $root.newAbsence.bind($data)"><span><span><span class="add">New</span></span></span></button>
-            <!-- ko if: $root.selectedAbsence() -->
-            <section id="absenceFormSection" class="fourteen columns" data-bind="fadeVisible: true, fadeDuration: 500">
-                <!-- ko template: {name: 'absenceForm', data: $root.selectedAbsence()} -->
-                <!-- /ko -->
-            </section>
-            <!--/ko-->
-        </div>
-</div><!-- container -->
+        <!-- ko with: $root.checkPeriod -->
+        <section id="period" class="sixteen columns">
+            <label>Start date (dd/mm/yyyy):</label><input type="text" data-bind="value: startDate.dateString, event: { blur: $root.checkAvailability.bind($data) }" style="display:inline; width:100px; height:30px"/>
+            <label>End date (dd/mm/yyyy):</label><input type="text" data-bind="value: endDate.dateString, event: { blur: $root.checkAvailability.bind($data) }" style="display:inline; width:100px; height:30px"/>
+            <!--<button class="sexybutton" data-bind="click: $root.checkAvailability.bind($data), enable: $root.checkPeriod()"><span><span><span class="view">Check</span></span></span></button>-->
+        </section>
+        <!-- /ko -->
+
+        <section id="overview" class="sixteen columns">
+            <div><input type="checkbox" data-bind="checked: $root.showCheckboxes" />Select Resources</div>
+            <!-- ko if: $root.showCheckboxes() -->
+            <div class="ten columns omega">
+                <div data-bind="foreach: allResources">
+                    <!--'value' sets the value to the array and matches on it. by default it is the toString() method of the object that is used-->
+                    <div><input type="checkbox" data-bind="checked: $root.includeResources, value: $data.id" /><data data-bind="text: fullName() + ' - ' + availableHoursForPlanning($root.checkPeriod()) + ' hours available'"></data></div>
+                </div>
+            </div>
+            <!-- /ko -->
+        </section>
+
+        <section id="total" class="sixteen columns">
+            <span data-bind="text: totalHoursAvailable()"></span>
+        </section>
+	</div><!-- container -->
     <script type="text/javascript">
 
         $(document).ready(function () {
             infuser.defaults.templateSuffix = ".tmpl.html";
             infuser.defaults.templateUrl = "/planner/templates";
 
-            var uc = new UDisplayAbsences();
+            var uc = new UDisplayResourcesAvailability();
             var ajax = new Ajax();
             ajax.getResources(uc.execute);
         });

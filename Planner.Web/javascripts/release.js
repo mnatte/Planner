@@ -42,7 +42,11 @@
       if (startDay - endDay > 1) days = days - 2;
       if (startDay === 0 && endDay !== 6) days = days - 1;
       if (endDay === 6 && startDay !== 0) days = days - 1;
-      return days;
+      if (days < 0) {
+        return 0;
+      } else {
+        return days;
+      }
     };
 
     Period.prototype.workingHours = function() {
@@ -99,7 +103,7 @@
       return Math.round(difference_ms / ONE_DAY);
     };
 
-    Period.prototype.workingDaysRemaining = function() {
+    Period.prototype.workingDaysFromNow = function() {
       var days, diff, endDay, msPerDay, startDay, today, weeks;
       days = 0;
       msPerDay = 86400 * 1000;
@@ -120,6 +124,17 @@
       } else {
         return days;
       }
+    };
+
+    Period.prototype.remainingWorkingDays = function() {
+      var amtDays;
+      amtDays = 0;
+      if (this.containsDate(new Date())) {
+        amtDays = this.workingDaysFromNow();
+      } else {
+        amtDays = this.workingDays();
+      }
+      return amtDays;
     };
 
     Period.prototype.comingUpThisWeek = function() {
@@ -229,7 +244,7 @@
       this.title = title;
       this.tfsIterationPath = tfsIterationPath;
       this.parentId = parentId;
-      Phase.__super__.constructor.call(this, this.startDate, this.endDate, this.title);
+      Phase.__super__.constructor.call(this, this.startDate, this.endDate, this.title, this.id);
     }
 
     Phase.create = function(jsonData, parentId) {
@@ -308,7 +323,6 @@
 
     Release.create = function(jsonData) {
       var milestone, phase, project, release, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
-      console.log("create Release");
       release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId);
       _ref = jsonData.Phases;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -592,11 +606,12 @@
       return this.periodsAway.push(period);
     };
 
-    Resource.prototype.addAssignment = function(per, rel, act) {
+    Resource.prototype.addAssignment = function(per, rel, act, ff) {
       return this.assignments.push({
         period: per,
         release: rel,
-        activity: act
+        activity: act,
+        focusFactor: ff
       });
     };
 
@@ -617,44 +632,6 @@
       return away.length === 0;
     };
 
-    Resource.prototype.hoursAvailable = function(period) {
-      var absence, absent, amtDays, available, overlappingAbsences;
-      absent = 0;
-      overlappingAbsences = (function() {
-        var _i, _len, _ref, _results;
-        _ref = this.periodsAway;
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          absence = _ref[_i];
-          if (absence.overlaps(period)) _results.push(absence);
-        }
-        return _results;
-      }).call(this);
-      if ((overlappingAbsences != null) && typeof overlappingAbsences !== 'undefined' && overlappingAbsences.length > 0) {
-        absent = ((function() {
-          var _i, _len, _results;
-          _results = [];
-          for (_i = 0, _len = overlappingAbsences.length; _i < _len; _i++) {
-            absence = overlappingAbsences[_i];
-            _results.push(absence.overlappingPeriod(period));
-          }
-          return _results;
-        })()).reduce(function(acc, x) {
-          var result;
-          result = x.containsDate(new Date()) ? x.workingDaysRemaining() : x.workingDays();
-          return acc + result;
-        }, 0);
-      }
-      amtDays = 0;
-      if (period.containsDate(new Date())) {
-        amtDays = period.workingDaysRemaining() - absent;
-      } else {
-        amtDays = period.workingDays() - absent;
-      }
-      available = amtDays * 8;
-      return available;
-    };
-
     Resource.create = function(jsonData) {
       var absence, assignment, res, _i, _j, _len, _len2, _ref, _ref2;
       res = new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials, jsonData.AvailableHoursPerWeek, jsonData.Email, jsonData.PhoneNumber);
@@ -666,7 +643,7 @@
       _ref2 = jsonData.Assignments;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         assignment = _ref2[_j];
-        res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity.Title + " " + assignment.Phase.Title + " (" + assignment.FocusFactor + ")"), assignment.Phase.Title, assignment.Activity);
+        res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity.Title + " " + assignment.Phase.Title + " (" + assignment.FocusFactor + ")"), assignment.Phase.Title, assignment.Activity, assignment.FocusFactor);
       }
       return res;
     };

@@ -58,7 +58,7 @@ class Period extends Mixin
 		# console.log "days: #{days}"
 		days = days - 1 if (endDay == 6 and startDay != 0)
 		# console.log "days: #{days}"
-		days
+		if days < 0 then 0 else days
 	workingHours: ->
 		@workingDays() * 8
 	toString: ->
@@ -101,7 +101,7 @@ class Period extends Mixin
 		difference_ms = Math.abs(date1_ms - date2_ms)
 		# Convert back to days and return
 		Math.round(difference_ms/ONE_DAY)
-	workingDaysRemaining: ->
+	workingDaysFromNow: ->
 		days = 0
 		msPerDay = 86400 * 1000
 		today = new Date()
@@ -118,6 +118,14 @@ class Period extends Mixin
 		days = days - 1 if (startDay == 0 and endDay != 6)
 		days = days - 1 if (endDay == 6 and startDay != 0)
 		if days < 0 then 0 else days
+	remainingWorkingDays: ->
+		amtDays = 0
+		if @containsDate(new Date())
+			amtDays = @workingDaysFromNow()
+		else
+			amtDays = @workingDays()
+		#if amtDays < 0 then 0 else amtDays
+		amtDays
 	comingUpThisWeek: ->
 		today = new Date()
 		nextWeek = today.setDate(today.getDate()+7)
@@ -177,7 +185,7 @@ class Milestone extends Mixin
 class Phase extends Period
 	# attach seperate startDate, endDate and title properties to each instance
 	constructor: (@id, @startDate, @endDate, @title, @tfsIterationPath, @parentId) ->
-		super @startDate, @endDate, @title
+		super @startDate, @endDate, @title, @id
 	@create: (jsonData, parentId) ->
 		new Phase(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, parentId)
 	@createCollection: (jsonData) ->
@@ -224,8 +232,8 @@ class Release extends Phase
 	addMilestone: (milestone) ->
 		@milestones.push(milestone)
 	@create: (jsonData) ->
-		console.log "create Release"
-		#console.log jsonData
+		#console.log "create Release"
+		#console.log jsonData.Id
 		#console.log "jsonData.Projects"
 		#console.log jsonData.Projects
 		#console.log jsonData.Projects.length
@@ -369,8 +377,8 @@ class Resource extends Mixin
 		@assignments = []
 	addAbsence: (period) ->
 		@periodsAway.push(period)
-	addAssignment: (per, rel, act) ->
-		@assignments.push({period: per, release: rel, activity: act})
+	addAssignment: (per, rel, act, ff) ->
+		@assignments.push({period: per, release: rel, activity: act, focusFactor: ff})
 	fullName: ->
 		middle = " " if (@middleName.length is 0)
 		middle = " " + @middleName + " " if (@middleName.length > 0)
@@ -378,35 +386,6 @@ class Resource extends Mixin
 	isPresent: (date) ->
 		away = absence for absence in @periodsAway when absence.containsDate(date)
 		away.length is 0
-	hoursAvailable: (period) ->
-		# somehow "reduce (x,y)" needs a space between name ('reduce') and args
-		# console.log period.toString()
-		absent = 0
-		# ESSENTIAL: add parentheses around for...when, otherwise no array is returned
-		overlappingAbsences = (absence for absence in @periodsAway when absence.overlaps(period))
-		#if(typeof(overlappingAbsences) isnt 'undefined')
-		#	console.log "overlappingAbsences: " + overlappingAbsences
-		#	console.log "overlappingAbsences.length: " + overlappingAbsences.length
-		if(overlappingAbsences? and typeof(overlappingAbsences) isnt 'undefined' and overlappingAbsences.length > 0)
-			#away = 
-			#absent = (absence.overlappingPeriod(period).workingDaysRemaining() for absence in overlappingAbsences).reduce (init, x) -> console.log x; init + x
-			absent = (absence.overlappingPeriod(period) for absence in overlappingAbsences).reduce (acc, x) ->
-					#console.log x
-					result = if x.containsDate(new Date()) then x.workingDaysRemaining() else x.workingDays()
-					acc + result
-				, 0
-
-			#console.log "overlappingAbsences more than 0"
-		#console.log "absent days: " + absent
-		# console.log "period working days remaining: " + period.workingDaysRemaining()
-		amtDays = 0
-		if period.containsDate(new Date())
-			amtDays = period.workingDaysRemaining() - absent
-		else
-			amtDays = period.workingDays() - absent
-		available = amtDays * 8
-		# console.log "available hours: " + available
-		available
 	# @ to create a static method, attach to class object itself
 	@create: (jsonData) ->
 		#console.log "create Resource"
@@ -415,7 +394,7 @@ class Resource extends Mixin
 			# console.log "jsonData absence: " + absence
 			res.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title, absence.Id))
 		for assignment in jsonData.Assignments
-			res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity.Title + " " + assignment.Phase.Title + " (" + assignment.FocusFactor + ")"), assignment.Phase.Title, assignment.Activity)
+			res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity.Title + " " + assignment.Phase.Title + " (" + assignment.FocusFactor + ")"), assignment.Phase.Title, assignment.Activity, assignment.FocusFactor)
 		#console.log res
 		res
 	@createCollection: (jsonData) ->

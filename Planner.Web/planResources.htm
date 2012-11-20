@@ -123,6 +123,22 @@
         <!--<span class="icon32 icon-save interact" data-bind="click: $root.saveAssignments.bind($data)"></span>-->
         <button class="sexybutton" data-bind="click: $root.saveAssignments.bind($data)"><span><span><span class="save">Save</span></span></span></button>
         <span class="icon32 icon-zoom interact" data-bind="click: $root.openDetailsWindow.bind($data)"></span>
+
+        <!-- ko if: $root.selectedMilestone() -->
+        <div id="Div1" class="sixteen columns">
+            <ul data-bind="foreach: allResources()">
+                <li>
+                    <div>
+                        <span data-bind="text: fullName()"></span>
+                        <span data-bind="text: hoursAbsent($root.newAssignment().assignedPeriod) + ' hours absent'"></span>
+                        <span data-bind="text: hoursAvailable($root.newAssignment().assignedPeriod) + ' hours present'"></span>
+                        <span data-bind="text: hoursPlannedIn($root.newAssignment().assignedPeriod) + ' hours planned in'"></span>
+                        <span data-bind="text: availableHoursForPlanning($root.newAssignment().assignedPeriod) + ' hours available'"></span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <!--/ko-->
     </div>
 
 <script type="text/javascript">
