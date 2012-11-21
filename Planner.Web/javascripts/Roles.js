@@ -88,22 +88,17 @@
               return _results;
             })()).reduce(function(acc, x) {
               var days, hours;
-              console.log(x);
-              console.log(x.period.overlappingPeriod(period).remainingWorkingDays());
               days = x.period.overlappingPeriod(period).remainingWorkingDays();
               hours = Math.round(days * 8 * x.focusFactor);
-              console.log(hours);
               return acc + hours;
             }, 0);
           }
           return Math.round(hrsPlannedIn);
         },
         availableHoursForPlanning: function(period) {
-          var hrsAvailable;
-          console.log(this.hoursAvailable(period));
-          console.log(this.hoursPlannedIn(period));
-          hrsAvailable = Math.round(this.hoursAvailable(period) - this.hoursPlannedIn(period));
-          console.log(hrsAvailable);
+          var hrsAvailable, maxHours;
+          maxHours = Math.round(this.hoursAvailable(period) * 0.8);
+          hrsAvailable = Math.round(maxHours - this.hoursPlannedIn(period));
           if (hrsAvailable < 0) {
             return 0;
           } else {
@@ -172,6 +167,11 @@
           if (amtDays < 0) amtDays = 0;
           available = Math.round(amtDays * 8);
           return available;
+        },
+        isOverPlanned: function(period) {
+          var maxHours;
+          maxHours = Math.round(this.hoursAvailable(period) * 0.8);
+          return maxHours < this.hoursPlannedIn(period);
         }
       });
     }

@@ -62,7 +62,7 @@ class Period extends Mixin
 	workingHours: ->
 		@workingDays() * 8
 	toString: ->
-		"#{@title} #{@startDate.dateString} - #{@endDate.dateString} (#{@workingDays()} working days)"
+		"#{@title} #{@startDate.dateString} - #{@endDate.dateString} (#{@workingDays()} working days) [#{@remainingWorkingDays()} remaining working days]"
 	toShortString: ->
 		"#{@startDate.format('dd/MM')} - #{@endDate.format('dd/MM')}"
 	containsDate: (date) ->
@@ -126,6 +126,8 @@ class Period extends Mixin
 			amtDays = @workingDays()
 		#if amtDays < 0 then 0 else amtDays
 		amtDays
+	remainingWorkingHours: ->
+		@remainingWorkingDays() * 8
 	comingUpThisWeek: ->
 		today = new Date()
 		nextWeek = today.setDate(today.getDate()+7)

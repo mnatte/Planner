@@ -10,7 +10,7 @@
             var releases = [];
 
             // valueAccessor is model passed to binding, viewModel is complete viewModel within scope
-            console.log("viewModel: " + viewModel.toString());
+            console.log("viewModel: " + ko.toJSON(viewModel));
             console.log("valueAccessor: " + valueAccessor());
             resource = valueAccessor();
             //console.log(resource.assignments);

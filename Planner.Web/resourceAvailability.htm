@@ -73,24 +73,33 @@
             <label>Start date (dd/mm/yyyy):</label><input type="text" data-bind="value: startDate.dateString, event: { blur: $root.checkAvailability.bind($data) }" style="display:inline; width:100px; height:30px"/>
             <label>End date (dd/mm/yyyy):</label><input type="text" data-bind="value: endDate.dateString, event: { blur: $root.checkAvailability.bind($data) }" style="display:inline; width:100px; height:30px"/>
             <!--<button class="sexybutton" data-bind="click: $root.checkAvailability.bind($data), enable: $root.checkPeriod()"><span><span><span class="view">Check</span></span></span></button>-->
+            <span id="amtHrs" data-bind="text: $root.checkPeriod().remainingWorkingHours() + ' working hours * 0.8 (focus factor) = ' + Math.round($root.checkPeriod().remainingWorkingHours() * 0.8) + ' remaining'"></span>
         </section>
         <!-- /ko -->
 
-        <section id="overview" class="sixteen columns">
+        <section id="overview" class="six columns">
             <div><input type="checkbox" data-bind="checked: $root.showCheckboxes" />Select Resources</div>
             <!-- ko if: $root.showCheckboxes() -->
-            <div class="ten columns omega">
+            <div class="six columns omega">
                 <div data-bind="foreach: allResources">
                     <!--'value' sets the value to the array and matches on it. by default it is the toString() method of the object that is used-->
-                    <div><input type="checkbox" data-bind="checked: $root.includeResources, value: $data.id" /><data data-bind="text: fullName() + ' - ' + availableHoursForPlanning($root.checkPeriod()) + ' hours available'"></data></div>
+                    <div>
+                        <input type="checkbox" data-bind="checked: $root.includeResources, value: $data.id" /><data data-bind="text: fullName() + ' - ' + availableHoursForPlanning($root.checkPeriod()) + ' hours available'"></data><button class="sexybutton sexyicononly" data-bind="click: $root.inspectOverplanning.bind($data), visible: isOverPlanned($root.checkPeriod())"><span><span><span class="warning"></span></span></span></button>
+                    </div>
                 </div>
             </div>
             <!-- /ko -->
-        </section>
-
-        <section id="total" class="sixteen columns">
             <span data-bind="text: totalHoursAvailable()"></span>
         </section>
+
+        <!-- ko if: $root.inspectResource() -->
+        <div id="phases" class="ten columns">
+            <!-- ko with: $root.inspectResource() -->
+            <span id="name" data-bind="text: fullName() + ' - ' + hoursAbsent($root.checkPeriod()) + ' hours absent' + ' - ' + hoursPlannedIn($root.checkPeriod()) + ' hours planned in'"></span>
+            <div id="mytimeline" data-bind="assignmentsTimeline: $data"></div>
+            <!--/ko-->
+        </div>
+        <!--/ko-->
 	</div><!-- container -->
     <script type="text/javascript">
 

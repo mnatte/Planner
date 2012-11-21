@@ -142,9 +142,9 @@
     <Content Include="adminActivity.htm" />
     <Content Include="absences.htm" />
     <Content Include="javascripts\resourceAvailabilityViewmodel.js">
-      <DependentUpon>resourceAvailabilityViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
+      <DependentUpon>resourceAvailabilityViewmodel.coffee</DependentUpon>
     </Content>
     <Content Include="resourceAvailability.htm" />
     <Content Include="images\ajax-loader.gif" />

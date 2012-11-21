@@ -56,19 +56,20 @@ RTeamMember =
 				if(overlappingAssignments? and typeof(overlappingAssignments) isnt 'undefined' and overlappingAssignments.length > 0)
 					# somehow "reduce (x,y)" needs a space between name ('reduce') and args
 					hrsPlannedIn = (assignment for assignment in overlappingAssignments).reduce (acc, x) ->
-							console.log x
-							console.log(x.period.overlappingPeriod(period).remainingWorkingDays())
+							#console.log x
+							#console.log(x.period.overlappingPeriod(period).remainingWorkingDays())
 							days = x.period.overlappingPeriod(period).remainingWorkingDays()
 							hours = Math.round(days * 8 * x.focusFactor)
-							console.log hours
+							#console.log hours
 							acc + hours
 						, 0
 				Math.round(hrsPlannedIn)
 			availableHoursForPlanning: (period) ->
-				console.log @hoursAvailable(period)
-				console.log @hoursPlannedIn(period)
-				hrsAvailable = Math.round(@hoursAvailable(period) - @hoursPlannedIn(period))
-				console.log hrsAvailable
+				#console.log @hoursAvailable(period)
+				#console.log @hoursPlannedIn(period)
+				maxHours = Math.round(@hoursAvailable(period) * 0.8)
+				hrsAvailable = Math.round(maxHours - @hoursPlannedIn(period))
+				#console.log hrsAvailable
 				if hrsAvailable < 0 then 0 else hrsAvailable
 			hoursAbsent: (period) ->
 				absent = 0
@@ -95,6 +96,9 @@ RTeamMember =
 				if amtDays < 0 then amtDays = 0
 				available = Math.round(amtDays * 8)
 				available
+			isOverPlanned: (period) ->
+				maxHours = Math.round(@hoursAvailable(period) * 0.8)
+				maxHours < @hoursPlannedIn(period)
 
 #RAbsenceTimelineItem = 
 #	extended: ->

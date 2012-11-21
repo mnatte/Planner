@@ -54,7 +54,7 @@
     };
 
     Period.prototype.toString = function() {
-      return "" + this.title + " " + this.startDate.dateString + " - " + this.endDate.dateString + " (" + (this.workingDays()) + " working days)";
+      return "" + this.title + " " + this.startDate.dateString + " - " + this.endDate.dateString + " (" + (this.workingDays()) + " working days) [" + (this.remainingWorkingDays()) + " remaining working days]";
     };
 
     Period.prototype.toShortString = function() {
@@ -135,6 +135,10 @@
         amtDays = this.workingDays();
       }
       return amtDays;
+    };
+
+    Period.prototype.remainingWorkingHours = function() {
+      return this.remainingWorkingDays() * 8;
     };
 
     Period.prototype.comingUpThisWeek = function() {
