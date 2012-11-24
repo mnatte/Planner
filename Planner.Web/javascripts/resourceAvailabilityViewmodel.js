@@ -10,6 +10,8 @@
       var monthLater,
         _this = this;
       this.allResources = allResources;
+      this.deleteSelectedAssignment = __bind(this.deleteSelectedAssignment, this);
+      this.saveSelectedAssignment = __bind(this.saveSelectedAssignment, this);
       this.inspectOverplanning = __bind(this.inspectOverplanning, this);
       this.checkAvailability = __bind(this.checkAvailability, this);
       Resource.extend(RTeamMember);
@@ -18,6 +20,20 @@
       this.showCheckboxes = ko.observable(true);
       monthLater = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 30);
       this.checkPeriod = ko.observable(new Period(new Date(), monthLater));
+      this.selectedTimelineItem = ko.observable();
+      this.selectedAssignment = ko.observable();
+      this.selectedResource = ko.observable();
+      this.selectedTimelineItem.subscribe(function(newValue) {
+        var ass;
+        console.log(newValue);
+        ass = newValue.assignment;
+        ass.resourceName = newValue.resource.fullName();
+        ass.resourceId = newValue.resource.id;
+        return _this.selectedAssignment(newValue.assignment);
+      });
+      this.selectedAssignment.subscribe(function(newValue) {
+        return console.log('selectedAssignment changed: ' + newValue);
+      });
       this.checkPeriod.subscribe(function(newValue) {
         return _this.inspectResource();
       });
@@ -78,6 +94,10 @@
       }).call(this);
       return this.inspectResource(resWithAssAndAbsInDate);
     };
+
+    ResourceAvailabilityViewmodel.prototype.saveSelectedAssignment = function() {};
+
+    ResourceAvailabilityViewmodel.prototype.deleteSelectedAssignment = function() {};
 
     return ResourceAvailabilityViewmodel;
 

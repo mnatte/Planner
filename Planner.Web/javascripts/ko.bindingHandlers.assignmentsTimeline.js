@@ -2,7 +2,7 @@
 (function () {
     ko.bindingHandlers.assignmentsTimeline = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel) {
-            var resource, obj, ass, abs, _i, _j, _k, _len, _len2, obj2;
+            var resource, obj, ass, abs, _i, _j, _k, _len, _len2, obj2, observableModel;
             var periods = [];
             var grp = 0;
             var sameRelease = 1;
@@ -13,6 +13,7 @@
             console.log("viewModel: " + ko.toJSON(viewModel));
             console.log("valueAccessor: " + valueAccessor());
             resource = valueAccessor();
+            observableModel = allBindingsAccessor().observableModel;
             //console.log(resource.assignments);
 
             for (_i = 0, _len = resource.assignments.length; _i < _len; _i++) {
@@ -35,7 +36,9 @@
                     start: ass.period.startDate.date,
                     end: ass.period.endDate.date,
                     content: ass.period.title,
-                    info: ass.period.toString()
+                    info: ass.period.toString(),
+                    resource: resource,
+                    assignment: ass
                 };
                 if (ass.period.startDate.dateString === ass.period.endDate.dateString) {
                     delete obj.end;
@@ -53,7 +56,8 @@
                     start: abs.startDate.date,
                     end: abs.endDate.date,
                     content: abs.title,
-                    info: abs.toString()
+                    info: abs.toString(),
+                    resource: resource
                 };
                 if (abs.startDate.dateString === abs.endDate.dateString) {
                     delete obj2.end;
@@ -88,6 +92,8 @@
                         //});
                         if (typeof item.info !== "undefined")
                             $(element).find('#details').html(item.info);
+                        if (typeof observableModel !== "undefined")
+                            observableModel(item);
                     }
                 }
             }

@@ -14,6 +14,23 @@ class ResourceAvailabilityViewmodel
 		@showCheckboxes = ko.observable(true)
 		monthLater = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 30 ) # 30 = amt days
 		@checkPeriod = ko.observable(new Period(new Date(), monthLater))
+		@selectedTimelineItem = ko.observable()
+		@selectedAssignment = ko.observable()
+		@selectedResource = ko.observable()
+		@selectedTimelineItem.subscribe((newValue) => 
+			console.log newValue
+			ass = newValue.assignment
+			ass.resourceName = newValue.resource.fullName()
+			ass.resourceId = newValue.resource.id
+			@selectedAssignment newValue.assignment
+			#@selectedResource newValue.resource
+			)
+		@selectedAssignment.subscribe((newValue) =>
+			console.log 'selectedAssignment changed: ' + newValue#.period
+			)
+		#@selectedResource.subscribe((newValue) =>
+			#console.log 'selectedResource changed: ' + newValue
+			#)
 
 		#@includeResources.subscribe((newValue) =>
 		#	console.log newValue
@@ -40,11 +57,16 @@ class ResourceAvailabilityViewmodel
 		@checkPeriod period
 
 	inspectOverplanning: (resource) =>
+		# only bring in the overlapping periods to the graph
 		console.log resource
 		resWithAssAndAbsInDate = resource
 		resWithAssAndAbsInDate.assignments = (a for a in resource.assignments when a.period.overlaps(@checkPeriod()))
 		resWithAssAndAbsInDate.periodsAway = (a for a in resource.periodsAway when a.overlaps(@checkPeriod()))
 		@inspectResource resWithAssAndAbsInDate
+
+	saveSelectedAssignment: =>
+
+	deleteSelectedAssignment: =>
 
 
 # export to root object

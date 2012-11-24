@@ -84,7 +84,7 @@
                 <div data-bind="foreach: allResources">
                     <!--'value' sets the value to the array and matches on it. by default it is the toString() method of the object that is used-->
                     <div>
-                        <input type="checkbox" data-bind="checked: $root.includeResources, value: $data.id" /><data data-bind="text: fullName() + ' - ' + availableHoursForPlanning($root.checkPeriod()) + ' hours available'"></data><button class="sexybutton sexyicononly" data-bind="click: $root.inspectOverplanning.bind($data), visible: isOverPlanned($root.checkPeriod())"><span><span><span class="warning"></span></span></span></button>
+                        <input type="checkbox" data-bind="checked: $root.includeResources, value: $data.id" /><data data-bind="text: fullName() + ' - ' + availableHoursForPlanning($root.checkPeriod()) + ' hours available'"></data><button class="sexybutton sexyicononly" data-bind="click: $root.inspectOverplanning.bind($data), visible: hasOverplannedPeriods($root.checkPeriod())"><span><span><span class="warning"></span></span></span></button>
                     </div>
                 </div>
             </div>
@@ -96,10 +96,19 @@
         <div id="phases" class="ten columns">
             <!-- ko with: $root.inspectResource() -->
             <span id="name" data-bind="text: fullName() + ' - ' + hoursAbsent($root.checkPeriod()) + ' hours absent' + ' - ' + hoursPlannedIn($root.checkPeriod()) + ' hours planned in'"></span>
-            <div id="mytimeline" data-bind="assignmentsTimeline: $data"></div>
+            <div id="mytimeline" data-bind="assignmentsTimeline: $data, observableModel: $root.selectedTimelineItem"></div>
             <!--/ko-->
         </div>
         <!--/ko-->
+
+        <div id="form" class="four columns">
+            <!-- ko if: $root.selectedAssignment() -->
+            <section id="absenceFormSection" class="fourteen columns" data-bind="fadeVisible: true, fadeDuration: 500">
+                <!-- ko template: {name: 'assignmentForm', data: $root.selectedAssignment()} -->
+                <!-- /ko -->
+            </section>
+            <!--/ko-->
+        </div>
 	</div><!-- container -->
     <script type="text/javascript">
 

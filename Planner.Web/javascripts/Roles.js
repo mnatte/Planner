@@ -172,6 +172,54 @@
           var maxHours;
           maxHours = Math.round(this.hoursAvailable(period) * 0.8);
           return maxHours < this.hoursPlannedIn(period);
+        },
+        getOverplannedPeriods: function(period) {
+          var ass, assignedPeriods, overplannedPeriods;
+          console.log(this.fullName());
+          overplannedPeriods = [];
+          assignedPeriods = ((function() {
+            var _i, _len, _ref, _results;
+            _ref = this.assignments;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              ass = _ref[_i];
+              if (ass.period.overlaps(period)) _results.push(ass);
+            }
+            return _results;
+          }).call(this)).reduce(function(acc, x) {
+            var newFocusFactor, overlap;
+            console.log('nieuwe assignmemnt: ' + x.period);
+            if (x.focusFactor > 0.8) {
+              console.log('focusFactor > 0.8');
+              overplannedPeriods.push(x);
+            } else if (x.period.overlaps(acc.period)) {
+              newFocusFactor = acc.focusFactor + x.focusFactor;
+              console.log('period overlaps; newFocusFactor: ' + newFocusFactor);
+              if (newFocusFactor > 0.8) {
+                console.log('newFocusFactor > 0.8 ');
+                overplannedPeriods.push(x);
+              } else {
+                overlap = {
+                  period: acc.period.overlappingPeriod(x.period),
+                  focusFactor: newFocusFactor
+                };
+                console.log('new acc: ' + overlap.period);
+                acc = overlap;
+              }
+            } else {
+              console.log('period NOT overlaps');
+            }
+            console.log('accumulator period value: ' + acc.period);
+            return acc;
+          }, {
+            period: period,
+            focusFactor: 0
+          });
+          console.log(overplannedPeriods);
+          return overplannedPeriods;
+        },
+        hasOverplannedPeriods: function(period) {
+          return this.getOverplannedPeriods(period).length > 0;
         }
       });
     }
