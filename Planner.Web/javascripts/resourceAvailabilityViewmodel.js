@@ -7,17 +7,17 @@
   ResourceAvailabilityViewmodel = (function() {
 
     function ResourceAvailabilityViewmodel(allResources) {
-      var monthLater,
-        _this = this;
-      this.allResources = allResources;
       this.deleteSelectedAssignment = __bind(this.deleteSelectedAssignment, this);
       this.saveSelectedAssignment = __bind(this.saveSelectedAssignment, this);
       this.refreshData = __bind(this.refreshData, this);
       this.inspectOverplanning = __bind(this.inspectOverplanning, this);
       this.checkAvailability = __bind(this.checkAvailability, this);
+      var monthLater,
+        _this = this;
       Resource.extend(RTeamMember);
       ResourceAssignment.extend(RResourceAssignmentSerialize);
       ResourceAssignment.extend(RCrud);
+      this.allResources = ko.observableArray(allResources);
       this.includeResources = ko.observableArray();
       this.inspectResource = ko.observable();
       monthLater = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 30);
@@ -37,6 +37,9 @@
       this.selectedAssignment.subscribe(function(newValue) {
         return console.log('selectedAssignment changed: ' + newValue);
       });
+      this.allResources.subscribe(function(newValue) {
+        return console.log('allResources changed: ' + newValue);
+      });
       this.checkPeriod.subscribe(function(newValue) {
         return _this.inspectResource();
       });
@@ -53,7 +56,7 @@
           return _results;
         }).call(_this)).reduce(function(acc, x) {
           var r, resource, result, _i, _len, _ref;
-          _ref = _this.allResources;
+          _ref = _this.allResources();
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             r = _ref[_i];
             if (+r.id === +x) resource = r;
@@ -105,13 +108,17 @@
     };
 
     ResourceAvailabilityViewmodel.prototype.saveSelectedAssignment = function() {
-      var useCase;
-      useCase = new UModifyResourceAssignment(null, this.selectedAssignment(), this.checkPeriod(), this.inspectResource, this.selectedAssignment);
+      var updateUc, useCase;
+      updateUc = new URefreshView(this.allResources, null, this.checkPeriod(), this.inspectResource, this.selectedAssignment);
+      useCase = new UModifyResourceAssignment(this.selectedAssignment(), updateUc);
       return useCase.execute();
     };
 
     ResourceAvailabilityViewmodel.prototype.deleteSelectedAssignment = function() {
-      return console.log(this.selectedAssignment());
+      var updateUc, useCase;
+      updateUc = new URefreshView(this.allResources, null, this.checkPeriod(), this.inspectResource, this.selectedAssignment);
+      useCase = new UDeleteResourceAssignment(this.selectedAssignment(), updateUc);
+      return useCase.execute();
     };
 
     return ResourceAvailabilityViewmodel;

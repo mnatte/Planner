@@ -82,6 +82,35 @@ namespace MvcApplication1.Controllers
         }
 
         [HttpPost]
+        public JsonResult DeleteAssignment(ResourceAssignmentInputModel model)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            ReleaseModels.Resource resource;
+            try
+            {
+                using (conn)
+                {
+                    conn.Open();
+
+                    // DDD: We don't need to find assignments by Id, we can simply delete all items and add new ones. No history needed.
+                    // Therefore we might say that Assignment is an entity under the Release root since it is accessed as an IMMUTABLE collection: no updates, just new instances.
+                    var delStatement = string.Format("delete from ReleaseResources where ReleaseId = {0} and ProjectId = {1} and PersonId = {2} and ActivityId = {3} and MilestoneId = {4} and DeliverableId = {5}", model.PhaseId, model.ProjectId, model.ResourceId, model.ActivityId, model.MilestoneId, model.DeliverableId);
+                    var delCmd = new SqlCommand(delStatement, conn);
+                    delCmd.ExecuteNonQuery();
+
+                    // return entire resource so we have all assignments and absences
+                    var resRep = new ResourceRepository();
+                    resource = resRep.GetItemById(model.ResourceId);
+                }
+            }
+            catch (Exception ex)
+            {
+                return this.Json(string.Format("error: {0}", ex.Message), JsonRequestBehavior.AllowGet);
+            }
+            return this.Json(resource, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
         public JsonResult SaveAssignments(ReleaseAssignmentsInputModel model)
         {
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");

@@ -213,7 +213,6 @@
 
     Milestone.create = function(jsonData, phaseId) {
       var deliverable, ms, _i, _len, _ref;
-      console.log('create Milestone');
       ms = new Milestone(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.Date), jsonData.Time, jsonData.Title, jsonData.Description, phaseId);
       _ref = jsonData.Deliverables;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -328,8 +327,6 @@
 
     Release.create = function(jsonData) {
       var milestone, phase, project, release, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
-      console.log("create Release");
-      console.log(jsonData);
       release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId);
       if (jsonData.Phases !== null && jsonData.Phases !== void 0) {
         _ref = jsonData.Phases;
@@ -395,7 +392,6 @@
 
     Project.create = function(jsonData, release) {
       var act, feature, project, res, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
-      console.log("create project - jsonData");
       project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch, release);
       _ref = jsonData.AssignedResources;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -525,7 +521,6 @@
 
     Deliverable.create = function(jsonData, milestone) {
       var act, deliverable, project, _i, _j, _len, _len2, _ref, _ref2;
-      console.log("create Deliverable");
       deliverable = new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location, milestone);
       _ref = jsonData.ConfiguredActivities;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -656,8 +651,6 @@
 
     Resource.create = function(jsonData) {
       var absence, assignment, res, _i, _j, _len, _len2, _ref, _ref2;
-      console.log("create Resource");
-      console.log(jsonData);
       res = new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials, jsonData.AvailableHoursPerWeek, jsonData.Email, jsonData.PhoneNumber);
       _ref = jsonData.PeriodsAway;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -674,8 +667,6 @@
 
     Resource.createSnapshot = function(jsonData) {
       var res;
-      console.log("create Resource");
-      console.log(jsonData);
       res = new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials);
       return res;
     };
@@ -717,7 +708,6 @@
 
     ResourceAssignment.create = function(jsonData, resource) {
       var activity, ass, deliverable, milestone, project, release;
-      console.log("create ResourceAssignment:" + ko.toJSON(jsonData));
       milestone = Milestone.create(jsonData.Milestone);
       deliverable = Deliverable.create(jsonData.Deliverable);
       activity = Activity.create(jsonData.Activity);

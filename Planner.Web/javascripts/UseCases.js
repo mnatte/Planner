@@ -1,5 +1,5 @@
 (function() {
-  var UDisplayAbsences, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseStatus, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyResourceAssignment, UReloadAbsenceInTimeline, root;
+  var UDeleteResourceAssignment, UDisplayAbsences, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseStatus, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyResourceAssignment, URefreshView, UReloadAbsenceInTimeline, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -276,12 +276,9 @@
 
   UModifyResourceAssignment = (function() {
 
-    function UModifyResourceAssignment(teamMember, assignment, checkPeriod, viewModelObservableGraph, viewModelObservableForm) {
-      this.teamMember = teamMember;
+    function UModifyResourceAssignment(assignment, updateViewUsecase) {
       this.assignment = assignment;
-      this.checkPeriod = checkPeriod;
-      this.viewModelObservableGraph = viewModelObservableGraph;
-      this.viewModelObservableForm = viewModelObservableForm;
+      this.updateViewUsecase = updateViewUsecase;
     }
 
     UModifyResourceAssignment.prototype.execute = function() {
@@ -297,34 +294,91 @@
     };
 
     UModifyResourceAssignment.prototype.refreshData = function(resourceData) {
-      var a, resWithAssAndAbsInDate, resource;
-      resource = Resource.create(resourceData);
-      resWithAssAndAbsInDate = resource;
+      var newResource;
+      newResource = Resource.create(resourceData);
+      this.updateViewUsecase.newResource = newResource;
+      return this.updateViewUsecase.execute();
+    };
+
+    return UModifyResourceAssignment;
+
+  })();
+
+  UDeleteResourceAssignment = (function() {
+
+    function UDeleteResourceAssignment(assignment, updateViewUsecase) {
+      this.assignment = assignment;
+      this.updateViewUsecase = updateViewUsecase;
+    }
+
+    UDeleteResourceAssignment.prototype.execute = function() {
+      var json, serialized,
+        _this = this;
+      console.log('execute use case');
+      serialized = this.assignment.toFlatJSON();
+      json = ko.toJSON(serialized);
+      console.log(json);
+      return this.assignment.save("/planner/Resource/Assignments/Delete", json, function(data) {
+        return _this.refreshData(data);
+      });
+    };
+
+    UDeleteResourceAssignment.prototype.refreshData = function(resourceData) {
+      var newResource;
+      newResource = Resource.create(resourceData);
+      this.updateViewUsecase.newResource = newResource;
+      return this.updateViewUsecase.execute();
+    };
+
+    return UDeleteResourceAssignment;
+
+  })();
+
+  URefreshView = (function() {
+
+    function URefreshView(viewModelObservableCollection, newResource, checkPeriod, viewModelObservableGraph, viewModelObservableForm) {
+      this.viewModelObservableCollection = viewModelObservableCollection;
+      this.newResource = newResource;
+      this.checkPeriod = checkPeriod;
+      this.viewModelObservableGraph = viewModelObservableGraph;
+      this.viewModelObservableForm = viewModelObservableForm;
+    }
+
+    URefreshView.prototype.execute = function() {
+      var a, index, oldResource, r, resWithAssAndAbsInDate, _i, _len, _ref;
+      _ref = this.viewModelObservableCollection();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        r = _ref[_i];
+        if (r.id === this.newResource.id) oldResource = r;
+      }
+      index = this.viewModelObservableCollection().indexOf(oldResource);
+      resWithAssAndAbsInDate = this.newResource;
       resWithAssAndAbsInDate.assignments = (function() {
-        var _i, _len, _ref, _results;
-        _ref = resource.assignments;
+        var _j, _len2, _ref2, _results;
+        _ref2 = this.newResource.assignments;
         _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          a = _ref[_i];
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          a = _ref2[_j];
           if (a.period.overlaps(this.checkPeriod)) _results.push(a);
         }
         return _results;
       }).call(this);
       resWithAssAndAbsInDate.periodsAway = (function() {
-        var _i, _len, _ref, _results;
-        _ref = resource.periodsAway;
+        var _j, _len2, _ref2, _results;
+        _ref2 = this.newResource.periodsAway;
         _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          a = _ref[_i];
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          a = _ref2[_j];
           if (a.overlaps(this.checkPeriod)) _results.push(a);
         }
         return _results;
       }).call(this);
       this.viewModelObservableGraph(resWithAssAndAbsInDate);
-      return this.viewModelObservableForm(null);
+      this.viewModelObservableForm(null);
+      return this.viewModelObservableCollection.splice(index, 1, this.newResource);
     };
 
-    return UModifyResourceAssignment;
+    return URefreshView;
 
   })();
 
@@ -355,5 +409,9 @@
   root.ULoadUpdateReleaseStatus = ULoadUpdateReleaseStatus;
 
   root.UModifyResourceAssignment = UModifyResourceAssignment;
+
+  root.UDeleteResourceAssignment = UDeleteResourceAssignment;
+
+  root.URefreshView = URefreshView;
 
 }).call(this);

@@ -5,12 +5,12 @@
 root = global ? window
 
 class ResourceAvailabilityViewmodel
-	constructor: (@allResources) ->
+	constructor: (allResources) ->
 		# ctor is executed in context of INSTANCE. Therfore @ refers here to CURRENT INSTANCE and attaches all props and functions to all instances (since object IS ctor)
 		Resource.extend RTeamMember
 		ResourceAssignment.extend RResourceAssignmentSerialize
 		ResourceAssignment.extend RCrud
-		#@allResources = ko.observableArray(allResources)
+		@allResources = ko.observableArray(allResources)
 		@includeResources = ko.observableArray()
 		@inspectResource = ko.observable()
 		#@showCheckboxes = ko.observable(true)
@@ -31,9 +31,9 @@ class ResourceAvailabilityViewmodel
 		@selectedAssignment.subscribe((newValue) =>
 			console.log 'selectedAssignment changed: ' + newValue#.period
 			)
-		#@selectedResource.subscribe((newValue) =>
-			#console.log 'selectedResource changed: ' + newValue
-			#)
+		@allResources.subscribe((newValue) =>
+			console.log 'allResources changed: ' + newValue
+			)
 
 		#@includeResources.subscribe((newValue) =>
 		#	console.log newValue
@@ -45,7 +45,7 @@ class ResourceAvailabilityViewmodel
 			total = (res for res in @includeResources()).reduce (acc, x) =>
 					#console.log 'computed total'
 					#console.log x
-					resource = r for r in @allResources when +r.id is +x
+					resource = r for r in @allResources() when +r.id is +x
 					#console.log resource
 					result = resource.availableHoursForPlanning(@checkPeriod())
 					acc + result
@@ -73,11 +73,17 @@ class ResourceAvailabilityViewmodel
 		console.log data
 
 	saveSelectedAssignment: =>
-		useCase = new UModifyResourceAssignment(null, @selectedAssignment(), @checkPeriod(), @inspectResource, @selectedAssignment)
+		# 2nd parameter null will be filled in the callback of the usecase with server data
+		updateUc = new URefreshView(@allResources, null, @checkPeriod(), @inspectResource, @selectedAssignment)
+		useCase = new UModifyResourceAssignment(@selectedAssignment(), updateUc)
 		useCase.execute()
 
 	deleteSelectedAssignment: =>
-		console.log @selectedAssignment()
+		#useCase = new UDeleteResourceAssignment(@selectedAssignment(), @checkPeriod(), @inspectResource, @selectedAssignment, @allResources)
+		# 2nd parameter null will be filled in the callback of the usecase with server data
+		updateUc = new URefreshView(@allResources, null, @checkPeriod(), @inspectResource, @selectedAssignment)
+		useCase = new UDeleteResourceAssignment(@selectedAssignment(), updateUc)
+		useCase.execute()
 
 # export to root object
 root.ResourceAvailabilityViewmodel = ResourceAvailabilityViewmodel

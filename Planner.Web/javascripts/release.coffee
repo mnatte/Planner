@@ -173,7 +173,7 @@ class Milestone extends Mixin
 	addDeliverable: (deliverable) ->
 		@deliverables.push(deliverable)
 	@create: (jsonData, phaseId) ->
-		console.log 'create Milestone'
+		#console.log 'create Milestone'
 		ms = new Milestone(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.Date), jsonData.Time, jsonData.Title, jsonData.Description, phaseId)
 		for deliverable in jsonData.Deliverables
 			ms.addDeliverable Deliverable.create(deliverable, ms)
@@ -235,8 +235,8 @@ class Release extends Phase
 	addMilestone: (milestone) ->
 		@milestones.push(milestone)
 	@create: (jsonData) ->
-		console.log "create Release"
-		console.log jsonData
+		#console.log "create Release"
+		#console.log jsonData
 		#console.log "jsonData.Projects"
 		#console.log jsonData.Projects
 		#console.log jsonData.Projects.length
@@ -274,7 +274,7 @@ class Project extends Mixin
 		@backlog = []
 		@workload = []
 	@create: (jsonData, release) ->
-		console.log "create project - jsonData"
+		#console.log "create project - jsonData"
 		#console.log jsonData
 		project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch, release)
 		# console.log project
@@ -345,7 +345,7 @@ class Deliverable extends Mixin
 		@activities = []
 		@scope = []
 	@create: (jsonData, milestone) ->
-		console.log "create Deliverable"
+		#console.log "create Deliverable"
 		deliverable = new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location, milestone)
 		for act in jsonData.ConfiguredActivities
 			deliverable.activities.push Activity.create(act)
@@ -400,8 +400,8 @@ class Resource extends Mixin
 		away.length is 0
 	# @ to create a static method, attach to class object itself
 	@create: (jsonData) ->
-		console.log "create Resource"
-		console.log jsonData
+		#console.log "create Resource"
+		#console.log jsonData
 		res = new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials, jsonData.AvailableHoursPerWeek, jsonData.Email, jsonData.PhoneNumber)
 		for absence in jsonData.PeriodsAway
 			# console.log "jsonData absence: " + absence
@@ -411,8 +411,8 @@ class Resource extends Mixin
 		#console.log res
 		res
 	@createSnapshot: (jsonData) ->
-		console.log "create Resource"
-		console.log jsonData
+		#console.log "create Resource"
+		#console.log jsonData
 		res = new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials)
 		res
 	@createCollection: (jsonData) ->
@@ -429,7 +429,7 @@ class ResourceAssignment extends Mixin
 	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate, @activity, @milestone, @deliverable) ->
 		@period = new Period(startDate, endDate, @activity.title + ' ' + @release.title + ' (' + @focusFactor + ') ' + @project.title)
 	@create: (jsonData, resource) ->
-		console.log "create ResourceAssignment:" + ko.toJSON(jsonData)
+		#console.log "create ResourceAssignment:" + ko.toJSON(jsonData)
 		milestone = Milestone.create jsonData.Milestone
 		deliverable = Deliverable.create jsonData.Deliverable
 		activity = Activity.create jsonData.Activity

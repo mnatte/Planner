@@ -170,7 +170,7 @@ class ULoadPlanResources
 		ko.applyBindings(@viewModel)
 
 class UModifyResourceAssignment
-	constructor: (@teamMember, @assignment, @checkPeriod, @viewModelObservableGraph, @viewModelObservableForm) ->
+	constructor: (@assignment, @updateViewUsecase) ->
 	execute: ->
 		console.log 'execute use case'
 		serialized = @assignment.toFlatJSON()
@@ -178,14 +178,46 @@ class UModifyResourceAssignment
 		console.log json
 		@assignment.save("/planner/Resource/Assignments/Save", json, (data) => @refreshData(data))
 	refreshData: (resourceData) ->
+		newResource = Resource.create resourceData
+		@updateViewUsecase.newResource = newResource
+		#useCase = new URefreshView(@viewModelObservableCollection, newResource, @checkPeriod, @viewModelObservableGraph, @viewModelObservableForm)
+		#useCase.execute()
+		@updateViewUsecase.execute()
+
+class UDeleteResourceAssignment
+	constructor: (@assignment, @updateViewUsecase) ->
+	execute: ->
+		console.log 'execute use case'
+		serialized = @assignment.toFlatJSON()
+		json = ko.toJSON(serialized)
+		console.log json
+		# since we POST a graph we cannot use HTTP DELETE. The RCrud method 'save' is abused here
+		@assignment.save("/planner/Resource/Assignments/Delete", json, (data) => @refreshData(data))
+	refreshData: (resourceData) ->
+		newResource = Resource.create resourceData
+		@updateViewUsecase.newResource = newResource
+		@updateViewUsecase.execute()
+	
+class URefreshView
+	constructor: (@viewModelObservableCollection, @newResource, @checkPeriod, @viewModelObservableGraph, @viewModelObservableForm) ->
+	execute: ->
 		#console.log resourceData
-		resource = Resource.create resourceData
-		resWithAssAndAbsInDate = resource
-		resWithAssAndAbsInDate.assignments = (a for a in resource.assignments when a.period.overlaps(@checkPeriod))
-		resWithAssAndAbsInDate.periodsAway = (a for a in resource.periodsAway when a.overlaps(@checkPeriod))
+		#console.log resource
+		#console.log @viewModelObservableCollection() 
+		oldResource = r for r in @viewModelObservableCollection() when r.id is @newResource.id
+		#console.log oldResource
+		index = @viewModelObservableCollection().indexOf(oldResource)
+		#console.log index
+		#console.log oldResource
+		resWithAssAndAbsInDate = @newResource
+		resWithAssAndAbsInDate.assignments = (a for a in @newResource.assignments when a.period.overlaps(@checkPeriod))
+		resWithAssAndAbsInDate.periodsAway = (a for a in @newResource.periodsAway when a.overlaps(@checkPeriod))
 		#console.log resWithAssAndAbsInDate
 		@viewModelObservableGraph resWithAssAndAbsInDate
 		@viewModelObservableForm null
+		# i = index of item to remove, 1 is amount to be removed, rel is item to be inserted there
+		@viewModelObservableCollection.splice index, 1, @newResource
+		
 
 # export to root object
 root.UDisplayReleaseStatus = UDisplayReleaseStatus
@@ -202,5 +234,8 @@ root.ULoadAdminActivities = ULoadAdminActivities
 root.ULoadPlanResources = ULoadPlanResources
 root.ULoadUpdateReleaseStatus = ULoadUpdateReleaseStatus
 root.UModifyResourceAssignment = UModifyResourceAssignment
+root.UDeleteResourceAssignment = UDeleteResourceAssignment
+root.URefreshView = URefreshView
+
 
 
