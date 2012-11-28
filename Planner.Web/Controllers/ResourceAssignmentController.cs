@@ -35,6 +35,52 @@ namespace MvcApplication1.Controllers
         //    cmd.CommandType = System.Data.CommandType.StoredProcedure;
         //}
 
+
+        [HttpPost]
+        public JsonResult SaveAssignment(ResourceAssignmentInputModel model)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            int newId = 0;
+            ReleaseModels.Resource resource;
+            try
+            {
+                using (conn)
+                {
+                    conn.Open();
+
+                    // DDD: We don't need to find assignments by Id, we can simply delete all items and add new ones. No history needed.
+                    // Therefore we might say that Assignment is an entity under the Release root since it is accessed as an IMMUTABLE collection: no updates, just new instances.
+                    var delStatement = string.Format("delete from ReleaseResources where ReleaseId = {0} and ProjectId = {1} and PersonId = {2} and ActivityId = {3} and MilestoneId = {4} and DeliverableId = {5}", model.PhaseId, model.ProjectId, model.ResourceId, model.ActivityId, model.MilestoneId, model.DeliverableId);
+                    var delCmd = new SqlCommand(delStatement, conn);
+                    delCmd.ExecuteNonQuery();
+
+                    var cmd = new SqlCommand("sp_insert_resource_assignment", conn);
+                    cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = 0;
+                    cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = model.PhaseId;
+                    cmd.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = model.ProjectId;
+                    cmd.Parameters.Add("@PersonId", System.Data.SqlDbType.Int).Value = model.ResourceId;
+                    cmd.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = model.MilestoneId;
+                    cmd.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = model.DeliverableId;
+                    cmd.Parameters.Add("@FocusFactor", System.Data.SqlDbType.Decimal).Value = model.FocusFactor;
+                    cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = model.StartDate.ToDateTimeFromDutchString();
+                    cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = model.EndDate.ToDateTimeFromDutchString();
+                    cmd.Parameters.Add("@ActivityId", System.Data.SqlDbType.Int).Value = model.ActivityId;
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    newId= int.Parse(cmd.ExecuteScalar().ToString());
+                    
+                    // return entire resource so we have all assignments and absences
+                    var resRep = new ResourceRepository();
+                    resource = resRep.GetItemById(model.ResourceId);
+                }
+            }
+            catch (Exception ex)
+            {
+                return this.Json(string.Format("error: {0}", ex.Message), JsonRequestBehavior.AllowGet);
+            }
+            return this.Json(resource, JsonRequestBehavior.AllowGet);
+        }
+
         [HttpPost]
         public JsonResult SaveAssignments(ReleaseAssignmentsInputModel model)
         {

@@ -1,5 +1,5 @@
 (function() {
-  var UDisplayAbsences, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseStatus, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UReloadAbsenceInTimeline, root;
+  var UDisplayAbsences, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseStatus, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyResourceAssignment, UReloadAbsenceInTimeline, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -274,6 +274,60 @@
 
   })();
 
+  UModifyResourceAssignment = (function() {
+
+    function UModifyResourceAssignment(teamMember, assignment, checkPeriod, viewModelObservableGraph, viewModelObservableForm) {
+      this.teamMember = teamMember;
+      this.assignment = assignment;
+      this.checkPeriod = checkPeriod;
+      this.viewModelObservableGraph = viewModelObservableGraph;
+      this.viewModelObservableForm = viewModelObservableForm;
+    }
+
+    UModifyResourceAssignment.prototype.execute = function() {
+      var json, serialized,
+        _this = this;
+      console.log('execute use case');
+      serialized = this.assignment.toFlatJSON();
+      json = ko.toJSON(serialized);
+      console.log(json);
+      return this.assignment.save("/planner/Resource/Assignments/Save", json, function(data) {
+        return _this.refreshData(data);
+      });
+    };
+
+    UModifyResourceAssignment.prototype.refreshData = function(resourceData) {
+      var a, resWithAssAndAbsInDate, resource;
+      resource = Resource.create(resourceData);
+      resWithAssAndAbsInDate = resource;
+      resWithAssAndAbsInDate.assignments = (function() {
+        var _i, _len, _ref, _results;
+        _ref = resource.assignments;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          a = _ref[_i];
+          if (a.period.overlaps(this.checkPeriod)) _results.push(a);
+        }
+        return _results;
+      }).call(this);
+      resWithAssAndAbsInDate.periodsAway = (function() {
+        var _i, _len, _ref, _results;
+        _ref = resource.periodsAway;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          a = _ref[_i];
+          if (a.overlaps(this.checkPeriod)) _results.push(a);
+        }
+        return _results;
+      }).call(this);
+      this.viewModelObservableGraph(resWithAssAndAbsInDate);
+      return this.viewModelObservableForm(null);
+    };
+
+    return UModifyResourceAssignment;
+
+  })();
+
   root.UDisplayReleaseStatus = UDisplayReleaseStatus;
 
   root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFromNow;
@@ -299,5 +353,7 @@
   root.ULoadPlanResources = ULoadPlanResources;
 
   root.ULoadUpdateReleaseStatus = ULoadUpdateReleaseStatus;
+
+  root.UModifyResourceAssignment = UModifyResourceAssignment;
 
 }).call(this);

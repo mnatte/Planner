@@ -12,23 +12,26 @@
       this.allResources = allResources;
       this.deleteSelectedAssignment = __bind(this.deleteSelectedAssignment, this);
       this.saveSelectedAssignment = __bind(this.saveSelectedAssignment, this);
+      this.refreshData = __bind(this.refreshData, this);
       this.inspectOverplanning = __bind(this.inspectOverplanning, this);
       this.checkAvailability = __bind(this.checkAvailability, this);
       Resource.extend(RTeamMember);
+      ResourceAssignment.extend(RResourceAssignmentSerialize);
+      ResourceAssignment.extend(RCrud);
       this.includeResources = ko.observableArray();
       this.inspectResource = ko.observable();
-      this.showCheckboxes = ko.observable(true);
       monthLater = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 30);
       this.checkPeriod = ko.observable(new Period(new Date(), monthLater));
       this.selectedTimelineItem = ko.observable();
       this.selectedAssignment = ko.observable();
       this.selectedResource = ko.observable();
       this.selectedTimelineItem.subscribe(function(newValue) {
-        var ass;
+        var aap;
         console.log(newValue);
-        ass = newValue.assignment;
-        ass.resourceName = newValue.resource.fullName();
-        ass.resourceId = newValue.resource.id;
+        aap = newValue.assignment;
+        aap.resourceName = newValue.resource.fullName();
+        aap.resourceId = newValue.resource.id;
+        console.log(newValue.assignment);
         return _this.selectedAssignment(newValue.assignment);
       });
       this.selectedAssignment.subscribe(function(newValue) {
@@ -95,9 +98,21 @@
       return this.inspectResource(resWithAssAndAbsInDate);
     };
 
-    ResourceAvailabilityViewmodel.prototype.saveSelectedAssignment = function() {};
+    ResourceAvailabilityViewmodel.prototype.refreshData = function(index, data) {
+      console.log('refreshData');
+      console.log(index);
+      return console.log(data);
+    };
 
-    ResourceAvailabilityViewmodel.prototype.deleteSelectedAssignment = function() {};
+    ResourceAvailabilityViewmodel.prototype.saveSelectedAssignment = function() {
+      var useCase;
+      useCase = new UModifyResourceAssignment(null, this.selectedAssignment(), this.checkPeriod(), this.inspectResource, this.selectedAssignment);
+      return useCase.execute();
+    };
+
+    ResourceAvailabilityViewmodel.prototype.deleteSelectedAssignment = function() {
+      return console.log(this.selectedAssignment());
+    };
 
     return ResourceAvailabilityViewmodel;
 

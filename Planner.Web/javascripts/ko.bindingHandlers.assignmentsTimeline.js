@@ -18,15 +18,15 @@
 
             for (_i = 0, _len = resource.assignments.length; _i < _len; _i++) {
                 ass = resource.assignments[_i];
-                //console.log(ass)
+                console.log(ass)
                 //console.log(ass.period.title + ': ' + ass.period.endDate.dateString);
-                if (releases.indexOf(ass.release) === -1) {
+                if (releases.indexOf(ass.release.title) === -1) {
                     grp++;
-                    releases.push(ass.release);
-                    release = ass.release;
+                    releases.push(ass.release.title);
+                    release = ass.release.title;
                     sameRelease = 1;
                 } else {
-                    release = ass.release + '[' + sameRelease + ']'
+                    release = ass.release.title + '[' + sameRelease + ']'
                     sameRelease++;
                 }
                 console.log(release);

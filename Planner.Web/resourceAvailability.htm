@@ -50,6 +50,7 @@
         
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
+    <script type="text/javascript" src="javascripts/persistence.js"></script>
     <script type="text/javascript" src="javascripts/resourceAvailabilityViewmodel.js"></script>
     <script type="text/javascript" src="javascripts/ajax.js"></script>
     <script type="text/javascript" src="javascripts/Roles.js"></script>
@@ -78,8 +79,7 @@
         <!-- /ko -->
 
         <section id="overview" class="six columns">
-            <div><input type="checkbox" data-bind="checked: $root.showCheckboxes" />Select Resources</div>
-            <!-- ko if: $root.showCheckboxes() -->
+            <div>Select Resources</div>
             <div class="six columns omega">
                 <div data-bind="foreach: allResources">
                     <!--'value' sets the value to the array and matches on it. by default it is the toString() method of the object that is used-->
@@ -88,7 +88,6 @@
                     </div>
                 </div>
             </div>
-            <!-- /ko -->
             <span data-bind="text: totalHoursAvailable()"></span>
         </section>
 

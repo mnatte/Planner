@@ -8,10 +8,12 @@ class ResourceAvailabilityViewmodel
 	constructor: (@allResources) ->
 		# ctor is executed in context of INSTANCE. Therfore @ refers here to CURRENT INSTANCE and attaches all props and functions to all instances (since object IS ctor)
 		Resource.extend RTeamMember
+		ResourceAssignment.extend RResourceAssignmentSerialize
+		ResourceAssignment.extend RCrud
 		#@allResources = ko.observableArray(allResources)
 		@includeResources = ko.observableArray()
 		@inspectResource = ko.observable()
-		@showCheckboxes = ko.observable(true)
+		#@showCheckboxes = ko.observable(true)
 		monthLater = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 30 ) # 30 = amt days
 		@checkPeriod = ko.observable(new Period(new Date(), monthLater))
 		@selectedTimelineItem = ko.observable()
@@ -19,9 +21,10 @@ class ResourceAvailabilityViewmodel
 		@selectedResource = ko.observable()
 		@selectedTimelineItem.subscribe((newValue) => 
 			console.log newValue
-			ass = newValue.assignment
-			ass.resourceName = newValue.resource.fullName()
-			ass.resourceId = newValue.resource.id
+			aap = newValue.assignment
+			aap.resourceName = newValue.resource.fullName()
+			aap.resourceId = newValue.resource.id
+			console.log newValue.assignment
 			@selectedAssignment newValue.assignment
 			#@selectedResource newValue.resource
 			)
@@ -64,10 +67,17 @@ class ResourceAvailabilityViewmodel
 		resWithAssAndAbsInDate.periodsAway = (a for a in resource.periodsAway when a.overlaps(@checkPeriod()))
 		@inspectResource resWithAssAndAbsInDate
 
+	refreshData: (index, data) =>
+		console.log 'refreshData'
+		console.log index
+		console.log data
+
 	saveSelectedAssignment: =>
+		useCase = new UModifyResourceAssignment(null, @selectedAssignment(), @checkPeriod(), @inspectResource, @selectedAssignment)
+		useCase.execute()
 
 	deleteSelectedAssignment: =>
-
+		console.log @selectedAssignment()
 
 # export to root object
 root.ResourceAvailabilityViewmodel = ResourceAvailabilityViewmodel

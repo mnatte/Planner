@@ -1,9 +1,9 @@
 ﻿<form>
-    <label>Resource:</label><input type="text" data-bind="value: resourceName, enable: false" />
-    <label>Assignment:</label><input type="text" data-bind="value: period.title, enable: false" />
+    <label>Resource:</label><span data-bind="text: resourceName" />
+    <label>Assignment:</label><span data-bind="text: period.title" />
     <label>Start date (dd-mm-yyyy):</label><input type="text" data-bind="value: period.startDate.dateString" />
     <label>End date (dd-mm-yyyy):</label><input type="text" data-bind="value: period.endDate.dateString" />
-    <button class="sexybutton" data-bind="click: $parent.saveSelectedAssignment.bind($data)"><span><span><span class="save">Save</span></span></span></button>
-    <button class="sexybutton" data-bind="click: $parent.deleteSelectedAssignment.bind($data), enable:$root.selectedAssignment()"><span><span><span class="delete">Delete</span></span></span></button>
+    <label>Focus factor:</label><input type="text" data-bind="value: focusFactor" />
+    <button class="sexybutton" data-bind="click: $root.saveSelectedAssignment.bind($data)"><span><span><span class="save">Save</span></span></span></button>
+    <button class="sexybutton" data-bind="click: $root.deleteSelectedAssignment.bind($data), enable:$root.selectedAssignment()"><span><span><span class="delete">Delete</span></span></span></button>
 </form>
-..

@@ -166,6 +166,32 @@ RAssignedResourceSerialize =
 				#console.log(copy)
 				copy #return the copy to be serialized
 
+RResourceAssignmentSerialize = 
+	extended: ->
+		@include
+			toFlatJSON: ->
+				copy = ko.toJS(@) #get a clean copy
+				#console.log copy
+				delete copy.release #remove property
+				delete copy.phase #remove property
+				delete copy.resource #remove property
+				delete copy.project #remove property
+				delete copy.period
+				delete copy.milestone
+				delete copy.deliverable
+				delete copy.activity
+				#console.log(@resource)
+				copy.resourceId = @resource.id
+				copy.phaseId =  @release.id if @release?
+				copy.projectId = @project.id
+				copy.startDate = @period.startDate.dateString
+				copy.endDate = @period.endDate.dateString
+				copy.milestoneId = @milestone.id
+				copy.deliverableId = @deliverable.id
+				copy.activityId = @activity.id
+				#console.log(copy)
+				copy #return the copy to be serialized
+
 #used in workload property of Project
 RProjectActivityStatusSerialize = 
 	extended: ->
@@ -180,10 +206,12 @@ root.RMilestoneSerialize = RMilestoneSerialize
 root.RDeliverableSerialize = RDeliverableSerialize
 root.RReleaseSerialize = RReleaseSerialize
 root.RAssignedResourceSerialize = RAssignedResourceSerialize
+root.RResourceAssignmentSerialize = RResourceAssignmentSerialize
 root.RPhaseSerialize = RPhaseSerialize
 root.RProjectSerialize = RProjectSerialize
 root.RPeriodSerialize = RPeriodSerialize
 root.RProjectActivityStatusSerialize = RProjectActivityStatusSerialize
+
 
 
 

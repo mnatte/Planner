@@ -1,5 +1,5 @@
 (function() {
-  var Activity, AssignedResource, Deliverable, Feature, Milestone, Period, Phase, Project, ProjectActivityStatus, Release, ReleaseAssignments, Resource, Week, root,
+  var Activity, AssignedResource, Deliverable, Feature, Milestone, Period, Phase, Project, ProjectActivityStatus, Release, ReleaseAssignments, Resource, ResourceAssignment, Week, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -213,6 +213,7 @@
 
     Milestone.create = function(jsonData, phaseId) {
       var deliverable, ms, _i, _len, _ref;
+      console.log('create Milestone');
       ms = new Milestone(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.Date), jsonData.Time, jsonData.Title, jsonData.Description, phaseId);
       _ref = jsonData.Deliverables;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -327,22 +328,36 @@
 
     Release.create = function(jsonData) {
       var milestone, phase, project, release, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
+      console.log("create Release");
+      console.log(jsonData);
       release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId);
-      _ref = jsonData.Phases;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        phase = _ref[_i];
-        release.addPhase(Phase.create(phase, jsonData.Id));
+      if (jsonData.Phases !== null && jsonData.Phases !== void 0) {
+        _ref = jsonData.Phases;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          phase = _ref[_i];
+          release.addPhase(Phase.create(phase, jsonData.Id));
+        }
       }
-      _ref2 = jsonData.Projects;
-      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-        project = _ref2[_j];
-        release.addProject(Project.create(project));
+      if (jsonData.Projects !== null && jsonData.Projects !== void 0) {
+        _ref2 = jsonData.Projects;
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          project = _ref2[_j];
+          release.addProject(Project.create(project));
+        }
       }
-      _ref3 = jsonData.Milestones;
-      for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
-        milestone = _ref3[_k];
-        release.addMilestone(Milestone.create(milestone, jsonData.Id));
+      if (jsonData.Milestones !== null && jsonData.Milestones !== void 0) {
+        _ref3 = jsonData.Milestones;
+        for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+          milestone = _ref3[_k];
+          release.addMilestone(Milestone.create(milestone, jsonData.Id));
+        }
       }
+      return release;
+    };
+
+    Release.createSnapshot = function(jsonData) {
+      var release;
+      release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId);
       return release;
     };
 
@@ -380,6 +395,7 @@
 
     Project.create = function(jsonData, release) {
       var act, feature, project, res, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
+      console.log("create project - jsonData");
       project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch, release);
       _ref = jsonData.AssignedResources;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -396,6 +412,12 @@
         act = _ref3[_k];
         project.workload.push(ProjectActivityStatus.create(act, project));
       }
+      return project;
+    };
+
+    Project.createSnapshot = function(jsonData) {
+      var project;
+      project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch);
       return project;
     };
 
@@ -503,6 +525,7 @@
 
     Deliverable.create = function(jsonData, milestone) {
       var act, deliverable, project, _i, _j, _len, _len2, _ref, _ref2;
+      console.log("create Deliverable");
       deliverable = new Deliverable(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.Format, jsonData.Location, milestone);
       _ref = jsonData.ConfiguredActivities;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -610,13 +633,8 @@
       return this.periodsAway.push(period);
     };
 
-    Resource.prototype.addAssignment = function(per, rel, act, ff) {
-      return this.assignments.push({
-        period: per,
-        release: rel,
-        activity: act,
-        focusFactor: ff
-      });
+    Resource.prototype.addAssignment = function(assignment) {
+      return this.assignments.push(assignment);
     };
 
     Resource.prototype.fullName = function() {
@@ -638,6 +656,8 @@
 
     Resource.create = function(jsonData) {
       var absence, assignment, res, _i, _j, _len, _len2, _ref, _ref2;
+      console.log("create Resource");
+      console.log(jsonData);
       res = new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials, jsonData.AvailableHoursPerWeek, jsonData.Email, jsonData.PhoneNumber);
       _ref = jsonData.PeriodsAway;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -647,8 +667,16 @@
       _ref2 = jsonData.Assignments;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         assignment = _ref2[_j];
-        res.addAssignment(new Period(DateFormatter.createJsDateFromJson(assignment.StartDate), DateFormatter.createJsDateFromJson(assignment.EndDate), assignment.Activity.Title + " " + assignment.Phase.Title + " (" + assignment.FocusFactor + ")"), assignment.Phase.Title, assignment.Activity, assignment.FocusFactor);
+        res.addAssignment(ResourceAssignment.create(assignment, Resource.createSnapshot(jsonData)));
       }
+      return res;
+    };
+
+    Resource.createSnapshot = function(jsonData) {
+      var res;
+      console.log("create Resource");
+      console.log(jsonData);
+      res = new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials);
       return res;
     };
 
@@ -668,6 +696,49 @@
     };
 
     return Resource;
+
+  })(Mixin);
+
+  ResourceAssignment = (function(_super) {
+
+    __extends(ResourceAssignment, _super);
+
+    function ResourceAssignment(id, release, resource, project, focusFactor, startDate, endDate, activity, milestone, deliverable) {
+      this.id = id;
+      this.release = release;
+      this.resource = resource;
+      this.project = project;
+      this.focusFactor = focusFactor;
+      this.activity = activity;
+      this.milestone = milestone;
+      this.deliverable = deliverable;
+      this.period = new Period(startDate, endDate, this.activity.title + ' ' + this.release.title + ' (' + this.focusFactor + ') ' + this.project.title);
+    }
+
+    ResourceAssignment.create = function(jsonData, resource) {
+      var activity, ass, deliverable, milestone, project, release;
+      console.log("create ResourceAssignment:" + ko.toJSON(jsonData));
+      milestone = Milestone.create(jsonData.Milestone);
+      deliverable = Deliverable.create(jsonData.Deliverable);
+      activity = Activity.create(jsonData.Activity);
+      release = Release.createSnapshot(jsonData.Phase);
+      project = Project.createSnapshot(jsonData.Project);
+      ass = new ResourceAssignment(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), activity, milestone, deliverable);
+      return ass;
+    };
+
+    ResourceAssignment.createCollection = function(jsonData, resource) {
+      var assignment, assignments, _i, _len;
+      assignments = [];
+      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
+        assignment = jsonData[_i];
+        this.assignment = ResourceAssignment.create(assignment, resource);
+        assignments.push(this.assignment);
+      }
+      return assignments;
+    };
+
+    return ResourceAssignment;
 
   })(Mixin);
 
@@ -706,6 +777,8 @@
   root.Activity = Activity;
 
   root.AssignedResource = AssignedResource;
+
+  root.ResourceAssignment = ResourceAssignment;
 
   root.ProjectActivityStatus = ProjectActivityStatus;
 

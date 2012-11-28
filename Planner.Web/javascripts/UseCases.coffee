@@ -169,6 +169,24 @@ class ULoadPlanResources
 		@viewModel.selectRelease @viewModel.allReleases()[0]
 		ko.applyBindings(@viewModel)
 
+class UModifyResourceAssignment
+	constructor: (@teamMember, @assignment, @checkPeriod, @viewModelObservableGraph, @viewModelObservableForm) ->
+	execute: ->
+		console.log 'execute use case'
+		serialized = @assignment.toFlatJSON()
+		json = ko.toJSON(serialized)
+		console.log json
+		@assignment.save("/planner/Resource/Assignments/Save", json, (data) => @refreshData(data))
+	refreshData: (resourceData) ->
+		#console.log resourceData
+		resource = Resource.create resourceData
+		resWithAssAndAbsInDate = resource
+		resWithAssAndAbsInDate.assignments = (a for a in resource.assignments when a.period.overlaps(@checkPeriod))
+		resWithAssAndAbsInDate.periodsAway = (a for a in resource.periodsAway when a.overlaps(@checkPeriod))
+		#console.log resWithAssAndAbsInDate
+		@viewModelObservableGraph resWithAssAndAbsInDate
+		@viewModelObservableForm null
+
 # export to root object
 root.UDisplayReleaseStatus = UDisplayReleaseStatus
 root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFromNow
@@ -183,5 +201,6 @@ root.ULoadAdminDeliverables = ULoadAdminDeliverables
 root.ULoadAdminActivities = ULoadAdminActivities
 root.ULoadPlanResources = ULoadPlanResources
 root.ULoadUpdateReleaseStatus = ULoadUpdateReleaseStatus
+root.UModifyResourceAssignment = UModifyResourceAssignment
 
 
