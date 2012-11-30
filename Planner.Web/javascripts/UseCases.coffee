@@ -84,6 +84,15 @@ class UDisplayAbsences
 		ko.applyBindings(@viewModel)
 		drawTimeline(@viewModel.showAbsences, @viewModel.selectedTimelineItem)
 
+class UDisplayAssignments
+	constructor: ->
+	execute: (data) ->
+		resources = Resource.createCollection(data)
+		@viewModel = new AssignmentsViewmodel(resources)
+		@viewModel.load resources.sort()
+		ko.applyBindings(@viewModel)
+		drawTimeline(@viewModel.showAssignments, @viewModel.selectedTimelineItem)
+
 class UReloadAbsenceInTimeline
 	constructor: (@allAbsences, @index, @refreshedTimelineItem) ->
 	execute: ->
@@ -236,6 +245,7 @@ root.ULoadUpdateReleaseStatus = ULoadUpdateReleaseStatus
 root.UModifyResourceAssignment = UModifyResourceAssignment
 root.UDeleteResourceAssignment = UDeleteResourceAssignment
 root.URefreshView = URefreshView
+root.UDisplayAssignments = UDisplayAssignments
 
 
 

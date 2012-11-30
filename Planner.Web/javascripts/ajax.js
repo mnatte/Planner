@@ -198,6 +198,22 @@
       });
     };
 
+    Ajax.prototype.mailPlanning = function(url, jsonData, callback) {
+      return $.ajax(url, {
+        dataType: "json",
+        data: jsonData,
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        success: function(data, status, XHR) {
+          console.log("" + data + " mailed");
+          return callback(data);
+        },
+        error: function(XHR, status, errorThrown) {
+          return console.log("AJAX MAIL error: " + errorThrown);
+        }
+      });
+    };
+
     Ajax.prototype.test = function() {
       return console.log("testing AJAX class");
     };

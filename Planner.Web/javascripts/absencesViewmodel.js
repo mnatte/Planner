@@ -1,12 +1,12 @@
 (function() {
-  var AbsencesViewmodel, root,
+  var AssignmentsViewmodel, root,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
-  AbsencesViewmodel = (function() {
+  AssignmentsViewmodel = (function() {
 
-    function AbsencesViewmodel(allResources) {
+    function AssignmentsViewmodel(allResources) {
       var _this = this;
       this.allResources = allResources;
       this.newAbsence = __bind(this.newAbsence, this);
@@ -31,8 +31,8 @@
       });
     }
 
-    AbsencesViewmodel.prototype.load = function(data) {
-      var absence, dto, obj, resource, _i, _j, _len, _len2, _ref;
+    AssignmentsViewmodel.prototype.load = function(data) {
+      var absence, assignment, dto, obj, resource, _i, _j, _k, _len, _len2, _len3, _ref, _ref2;
       this.displayData = [];
       for (_i = 0, _len = data.length; _i < _len; _i++) {
         resource = data[_i];
@@ -51,28 +51,43 @@
           };
           this.displayData.push(obj);
         }
+        _ref2 = resource.assignments;
+        for (_k = 0, _len3 = _ref2.length; _k < _len3; _k++) {
+          assignment = _ref2[_k];
+          dto = assignment;
+          dto.person = resource;
+          obj = {
+            group: resource.fullName(),
+            start: absence.startDate.date,
+            end: absence.endDate.date,
+            content: assignment.title,
+            info: assignment.toString(),
+            dataObject: dto
+          };
+          this.displayData.push(obj);
+        }
       }
       return this.showAbsences = this.displayData.sort(function(a, b) {
         return a.start - b.end;
       });
     };
 
-    AbsencesViewmodel.prototype.setAssignments = function(jsonData) {
+    AssignmentsViewmodel.prototype.setAssignments = function(jsonData) {
       this.assignments.removeAll();
       return this.assignments(AssignedResource.createCollection(jsonData));
     };
 
-    AbsencesViewmodel.prototype.loadAssignments = function(releaseId) {
+    AssignmentsViewmodel.prototype.loadAssignments = function(releaseId) {
       var ajax;
       ajax = new Ajax();
       return ajax.getAssignedResourcesForRelease(releaseId, this.setAssignments);
     };
 
-    AbsencesViewmodel.prototype.closeDetails = function() {
+    AssignmentsViewmodel.prototype.closeDetails = function() {
       return this.canShowDetails(false);
     };
 
-    AbsencesViewmodel.prototype.refreshTimeline = function(index, newItem) {
+    AssignmentsViewmodel.prototype.refreshTimeline = function(index, newItem) {
       var absence, p, timelineItem, _i, _len, _ref;
       console.log("refreshTimeline");
       absence = Period.create(newItem);
@@ -99,7 +114,7 @@
       return drawTimeline(this.showAbsences, this.selectedTimelineItem);
     };
 
-    AbsencesViewmodel.prototype.saveSelectedAbsence = function() {
+    AssignmentsViewmodel.prototype.saveSelectedAbsence = function() {
       var a, absence, i, timelineItem, _i, _len, _ref,
         _this = this;
       i = -1;
@@ -122,7 +137,7 @@
       });
     };
 
-    AbsencesViewmodel.prototype.deleteSelectedAbsence = function() {
+    AssignmentsViewmodel.prototype.deleteSelectedAbsence = function() {
       var a, abs, i,
         _this = this;
       console.log(this.selectedAbsence());
@@ -149,7 +164,7 @@
       });
     };
 
-    AbsencesViewmodel.prototype.newAbsence = function() {
+    AssignmentsViewmodel.prototype.newAbsence = function() {
       var newAbsence;
       newAbsence = new Period(new Date(), new Date(), 'New Absence', 0);
       newAbsence.id = 0;
@@ -157,7 +172,7 @@
       return console.log(this.selectedAbsence());
     };
 
-    return AbsencesViewmodel;
+    return AssignmentsViewmodel;
 
   })();
 

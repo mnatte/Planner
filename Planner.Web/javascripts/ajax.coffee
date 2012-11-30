@@ -128,6 +128,17 @@ class Ajax
 				console.log "AJAX Releases status: #{status}"
 				console.log "AJAX Releases XHR: #{XHR}"
 				console.log "AJAX Releases errorThrown: #{errorThrown}"
+	mailPlanning: (url, jsonData, callback) ->
+				$.ajax url,
+					dataType: "json"
+					data: jsonData
+					type: "POST"
+					contentType: "application/json; charset=utf-8"
+					success: (data, status, XHR) ->
+						console.log "#{data} mailed"
+						callback data
+					error: (XHR, status, errorThrown) ->
+						console.log "AJAX MAIL error: #{errorThrown}"
 	test: ->
 		console.log "testing AJAX class"
 

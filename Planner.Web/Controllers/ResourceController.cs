@@ -7,6 +7,8 @@ using System.Data.SqlClient;
 using MvcApplication1.Models;
 using MvcApplication1.DataAccess;
 using System.Net;
+using System.Text;
+using System.Net.Mail;
 
 namespace MvcApplication1.Controllers
 {
@@ -36,6 +38,57 @@ namespace MvcApplication1.Controllers
             else
                 Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 return this.Json(string.Format("Absence with Id {0} not deleted", id), JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult MailPlanning(PeriodInputModel model)
+        {
+            var viewPeriod = new ReleaseModels.Period { StartDate = model.StartDate.ToDateTimeFromDutchString(), EndDate = model.EndDate.ToDateTimeFromDutchString() };
+            var fromAddress = new MailAddress("mnatte@gmail.com", "MND Planner");
+            var fromPassword = "yczronaitzlhooxr";
+            var toAddress = new MailAddress("martijn.natte@consultant.vfsco.com", "Martijn Natté");
+            var subject = string.Format("Resource Planning {0} - {1}", model.StartDate, model.EndDate);
+
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                // ORDER IS CRUCIAL HERE! Credentials after UseDefaultCredentials
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromAddress.Address, fromPassword),
+                Timeout = 300000
+            };
+
+
+            var rep = this.Repository as ResourceRepository;
+            var resources = rep.GetItems();
+            var builder = new StringBuilder();
+
+            foreach(var res in resources)
+            {
+                builder.Append("\n***********************************************");
+                builder.Append(string.Format("\n{0}:", res.DisplayName));
+                foreach (var ass in res.Assignments.Where(x=>x.Period.Overlaps(viewPeriod)))
+                {
+                    builder.Append(string.Format("\n{0} - {1} {2}: {3} ({4}%)", ass.Phase.Title, ass.Project.Title, ass.Deliverable.Title, ass.Activity.Title, ass.FocusFactor * 100));
+                }
+                foreach (var abs in res.PeriodsAway.Where(x=>x.Period.Overlaps(viewPeriod)))
+                {
+                    builder.Append(string.Format("\nAbsent: {0} - {1} {2}", abs.StartDate.ToDutchString(), abs.EndDate.ToDutchString(), abs.Title));
+                }
+                builder.Append("\n***********************************************");
+                builder.Append("\n\n");
+            }
+            var content = builder.ToString();
+
+            using (var msg = new MailMessage(fromAddress, toAddress) { Subject = subject, Body = content })
+            {
+                smtp.Send(msg);
+            }
+
+            return this.Json(string.Format("Resourceplanning is mailed for {0} - {1}", model.StartDate, model.EndDate), JsonRequestBehavior.AllowGet);
         }
     }
 }

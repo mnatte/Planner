@@ -31,6 +31,26 @@ namespace MvcApplication1.Models
                 }
             }
         }
+
+        public class Period
+        {
+            public string Title { get; set; }
+            public DateTime StartDate { get; set; }
+            public DateTime EndDate { get; set; }
+
+            //@startDate.date >= other.startDate.date and @startDate.date <= other.endDate.date) or (@endDate.date >= other.startDate.date and @endDate.date <= other.endDate.date)
+            //or (other.startDate.date >= @startDate.date and other.startDate.date <= @endDate.date) or (other.endDate.date >= @startDate.date and other.endDate.date <= @endDate.date
+            public bool Overlaps(Period other)
+            {
+                return
+                    (this.StartDate >= other.StartDate && this.StartDate <= other.EndDate) ||
+                    (this.EndDate >= other.StartDate && this.EndDate <= other.EndDate) ||
+                    (other.StartDate >= this.StartDate && other.StartDate <= this.EndDate) ||
+                    (other.EndDate >= this.StartDate && other.EndDate <= this.EndDate);
+            }
+        }
+
+
         public class Phase
         {
             public int Id { get; set; }
@@ -39,19 +59,24 @@ namespace MvcApplication1.Models
             public DateTime EndDate { get; set; }
             public string TfsIterationPath { get; set; }
 
-            public int WorkingDays
+            public Period Period
             {
-                get
-                {
-                    var workingDays = Enumerable.Range(0, Convert.ToInt32(this.EndDate.Subtract(this.StartDate).TotalDays))
-                    .Select(
-                        i => new[] { DayOfWeek.Saturday, DayOfWeek.Sunday }.Contains(this.StartDate.AddDays(i).DayOfWeek) ? 0 : 1
-                        )
-                    .Sum();
-
-                    return workingDays;
-                }
+                get { return new Period { EndDate = this.EndDate, StartDate = this.StartDate }; }
             }
+
+            //public int WorkingDays
+            //{
+            //    get
+            //    {
+            //        var workingDays = Enumerable.Range(0, Convert.ToInt32(this.EndDate.Subtract(this.StartDate).TotalDays))
+            //        .Select(
+            //            i => new[] { DayOfWeek.Saturday, DayOfWeek.Sunday }.Contains(this.StartDate.AddDays(i).DayOfWeek) ? 0 : 1
+            //            )
+            //        .Sum();
+
+            //        return workingDays;
+            //    }
+            //}
         }
 
         public class Absence : Phase
@@ -134,6 +159,11 @@ namespace MvcApplication1.Models
             public double FocusFactor { get; set; }
             public DateTime StartDate { get; set; }
             public DateTime EndDate { get; set; }
+
+            public Period Period 
+            {
+                get { return new Period { EndDate = this.EndDate, StartDate = this.StartDate }; }
+            }
         }
 
         public class Release : Phase

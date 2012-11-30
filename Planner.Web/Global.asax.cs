@@ -34,6 +34,11 @@ namespace MvcApplication1
                 new { controller = "ResourceAssignment", action = "DeleteAssignment", param1 = UrlParameter.Optional } // Parameter defaults
             );
             routes.MapRoute(
+                "MailPlanning", // Route name
+                "Resource/Assignments/Mail", // URL with parameters
+                new { controller = "Resource", action = "MailPlanning", param1 = UrlParameter.Optional } // Parameter defaults
+            );
+            routes.MapRoute(
                 "Default", // Route name
                 "{controller}/{action}/{id}", // URL with parameters
                 new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults

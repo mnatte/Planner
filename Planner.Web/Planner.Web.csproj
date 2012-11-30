@@ -126,6 +126,7 @@
     <Compile Include="Models\DeliverableActivityStatusInputModel.cs" />
     <Compile Include="Models\DeliverableInputModel.cs" />
     <Compile Include="Models\MilestoneInputModel.cs" />
+    <Compile Include="Models\PeriodInputModel.cs" />
     <Compile Include="Models\PersonInputModel.cs" />
     <Compile Include="Models\ProjectInputModel.cs" />
     <Compile Include="Models\ReleaseAssignmentsInputModel.cs" />
@@ -141,6 +142,12 @@
     <Content Include="adminDeliverable.htm" />
     <Content Include="adminActivity.htm" />
     <Content Include="absences.htm" />
+    <Content Include="assignments.htm" />
+    <Content Include="javascripts\assignmentsViewmodel.js">
+      <DependentUpon>assignmentsViewmodel.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
     <Content Include="javascripts\resourceAvailabilityViewmodel.js">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -762,7 +769,7 @@
     <Content Include="stylesheets\icon_styles.css" />
     <Content Include="templates\navigation.tmpl.html" />
     <Content Include="templates\milestoneForm.tmpl.html" />
-    <Content Include="releaseForm.tmpl.html" />
+    <Content Include="templates\releaseForm.tmpl.html" />
     <Content Include="javascripts\ajax.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>ajax.js</LastGenOutput>
@@ -905,6 +912,10 @@
     <None Include="javascripts\absencesViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>absencesViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\assignmentsViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>assignmentsViewmodel.js</LastGenOutput>
     </None>
     <None Include="javascripts\resourceAvailabilityViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>

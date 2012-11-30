@@ -1,5 +1,5 @@
 (function() {
-  var UDeleteResourceAssignment, UDisplayAbsences, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseStatus, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyResourceAssignment, URefreshView, UReloadAbsenceInTimeline, root;
+  var UDeleteResourceAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseStatus, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyResourceAssignment, URefreshView, UReloadAbsenceInTimeline, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -104,6 +104,23 @@
     };
 
     return UDisplayAbsences;
+
+  })();
+
+  UDisplayAssignments = (function() {
+
+    function UDisplayAssignments() {}
+
+    UDisplayAssignments.prototype.execute = function(data) {
+      var resources;
+      resources = Resource.createCollection(data);
+      this.viewModel = new AssignmentsViewmodel(resources);
+      this.viewModel.load(resources.sort());
+      ko.applyBindings(this.viewModel);
+      return drawTimeline(this.viewModel.showAssignments, this.viewModel.selectedTimelineItem);
+    };
+
+    return UDisplayAssignments;
 
   })();
 
@@ -413,5 +430,7 @@
   root.UDeleteResourceAssignment = UDeleteResourceAssignment;
 
   root.URefreshView = URefreshView;
+
+  root.UDisplayAssignments = UDisplayAssignments;
 
 }).call(this);
