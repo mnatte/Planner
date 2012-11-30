@@ -64,14 +64,23 @@
     <!--navigation-->
         <!-- ko template: {name: 'navigation'} -->
         <!-- /ko -->
-        <div id="space" style="height: 100px">&nbsp;</div>
-        <!--releases overview-->
-        <div id="phases" class="sixteen columns">
+        <div id="space" style="height: 50px">&nbsp;</div>
+        <!-- ko with: $root.checkPeriod -->
+        <section id="period" class="sixteen columns">
+            <label>Start date (dd/mm/yyyy):</label><input type="text" data-bind="value: startDate.dateString" style="display:inline; width:100px; height:30px"/>
+            <label>End date (dd/mm/yyyy):</label><input type="text" data-bind="value: endDate.dateString" style="display:inline; width:100px; height:30px"/>
+            <!--<button class="sexybutton" data-bind="click: $root.checkAvailability.bind($data), enable: $root.checkPeriod()"><span><span><span class="view">Check</span></span></span></button>-->
+            <span id="amtHrs" data-bind="text: $root.checkPeriod().remainingWorkingHours() + ' working hours * 0.8 (focus factor) = ' + Math.round($root.checkPeriod().remainingWorkingHours() * 0.8) + ' remaining'"></span>
+        </section>
+        <!-- /ko -->
+        <div id="mailButton" class="sixteen columns">
+            <button class="sexybutton" data-bind="click: $root.mailPlanning.bind($data)"><span><span><span class="mail">Mail Planning</span></span></span></button>
+        </div>
+        <div id="space2" style="height: 50px">&nbsp;</div>
+        <!--items overview-->
+        <div id="phases" class="fifteen columns">
             <div id="mytimeline"></div>
             <div id="details"></div>
-        </div>
-        <div id="mailButton">
-            <button class="sexybutton" data-bind="click: $root.mailPlanning.bind($data)"><span><span><span class="add">Mail Planning</span></span></span></button>
         </div>
 </div><!-- container -->
     <script type="text/javascript">

@@ -25,6 +25,8 @@ class AssignmentsViewmodel
 		@selectedResource.subscribe((newValue) =>
 			console.log 'selectedResource changed: ' + newValue.fullName()
 			)
+		weekLater = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 7 ) # 30 = amt days
+		@checkPeriod = ko.observable(new Period(new Date(), weekLater))
 
 	load: (data) ->
 		# all properties besides ctor are ATTACHED to prototype. these are EXECUTED in context of INSTANCE.
@@ -47,7 +49,7 @@ class AssignmentsViewmodel
 
 	mailPlanning: (model) ->
 		ajx = new Ajax
-		ajx.mailPlanning("/planner/Resource/Assignments/Mail", ko.toJSON({ startDate: "30/11/2012", endDate: "07/12/2012" }), (data) => @afterMail(data))
+		ajx.mailPlanning("/planner/Resource/Assignments/Mail", ko.toJSON(@checkPeriod()), (data) => @afterMail(data))
 
 	afterMail: (data) =>
 		console.log data

@@ -7,7 +7,8 @@
   AssignmentsViewmodel = (function() {
 
     function AssignmentsViewmodel(allResources) {
-      var _this = this;
+      var weekLater,
+        _this = this;
       this.allResources = allResources;
       this.afterMail = __bind(this.afterMail, this);
       Period.extend(RCrud);
@@ -24,6 +25,8 @@
       this.selectedResource.subscribe(function(newValue) {
         return console.log('selectedResource changed: ' + newValue.fullName());
       });
+      weekLater = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 7);
+      this.checkPeriod = ko.observable(new Period(new Date(), weekLater));
     }
 
     AssignmentsViewmodel.prototype.load = function(data) {
@@ -71,10 +74,7 @@
       var ajx,
         _this = this;
       ajx = new Ajax;
-      return ajx.mailPlanning("/planner/Resource/Assignments/Mail", ko.toJSON({
-        startDate: "30/11/2012",
-        endDate: "07/12/2012"
-      }), function(data) {
+      return ajx.mailPlanning("/planner/Resource/Assignments/Mail", ko.toJSON(this.checkPeriod()), function(data) {
         return _this.afterMail(data);
       });
     };
