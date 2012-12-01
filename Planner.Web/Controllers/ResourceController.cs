@@ -46,7 +46,8 @@ namespace MvcApplication1.Controllers
             var viewPeriod = new ReleaseModels.Period { StartDate = model.StartDate.ToDateTimeFromDutchString(), EndDate = model.EndDate.ToDateTimeFromDutchString() };
             var fromAddress = new MailAddress("mnatte@gmail.com", "MND Planner");
             var fromPassword = "yczronaitzlhooxr";
-            var toAddress = new MailAddress("martijn.natte@consultant.vfsco.com", "Martijn Natté");
+            //var toAddress = new MailAddress("martijn.natte@consultant.vfsco.com", "Martijn Natté");
+            var toAddress = new MailAddress("mnatte@gmail.com", "Martijn Natté");
             var subject = string.Format("Resource Planning {0} - {1}", model.StartDate, model.EndDate);
 
             var smtp = new SmtpClient
@@ -72,7 +73,11 @@ namespace MvcApplication1.Controllers
                 builder.Append(string.Format("\n{0}:", res.DisplayName));
                 foreach (var ass in res.Assignments.Where(x=>x.Period.Overlaps(viewPeriod)))
                 {
-                    builder.Append(string.Format("\n{0} - {1} {2}: {3} ({4}%)", ass.Phase.Title, ass.Project.Title, ass.Deliverable.Title, ass.Activity.Title, ass.FocusFactor * 100));
+                    var overlap = ass.Period.OverlappingPeriod(viewPeriod);
+                    builder.Append(string.Format("\n{0} - {1}:", overlap.StartDate.ToDutchString(), overlap.EndDate.ToDutchString()));
+                    builder.Append(string.Format("\n{0} - {1} - {2}: {3} ({4}%)", ass.Phase.Title, ass.Project.Title, ass.Deliverable.Title, ass.Activity.Title, ass.FocusFactor * 100));
+                    builder.Append(string.Format("\nDeadline {0}: {1}", ass.Deliverable.Title, ass.Milestone.Date.ToDutchString()));
+                    builder.Append("\n----------------------------------------------");
                 }
                 foreach (var abs in res.PeriodsAway.Where(x=>x.Period.Overlaps(viewPeriod)))
                 {
