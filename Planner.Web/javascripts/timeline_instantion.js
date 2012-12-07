@@ -1,12 +1,39 @@
 ﻿var timeline;
 
 // Called when the Visualization API is loaded.
-function drawTimeline(data, observableSelected) {
+function drawTimeline(data, observableSelected, width, height, divName, detailsDiv) {
+    //console.log(width);
+    var _w, _h, _div, _details;
+    if (typeof width !== "undefined") {
+        _w = width;
+    }
+    else {
+        _w = "100%";
+    }
+
+    if (typeof height !== "undefined") {
+        _h = height;
+    }
+    else {
+        _h = "800px";
+    }
+    if (typeof divName !== "undefined") {
+        _div = divName;
+    }
+    else {
+        _div = "mytimeline";
+    }
+    if (typeof detailsDiv !== "undefined") {
+        _details = detailsDiv;
+    }
+    else {
+        _details = "details";
+    }
 
     // specify options
     var options = {
-        "width": "100%",
-        "height": "800px",
+        "width": _w, //"100%",
+        "height": _h, //"800px",
         "style": "box",
         "eventMargin": 5, // minimal margin between events 
         "intervalMin": 1000 * 60 * 60 * 24,          // one day in milliseconds
@@ -14,10 +41,12 @@ function drawTimeline(data, observableSelected) {
     };
 
     // Instantiate our timeline object.
-    timeline = new links.Timeline(document.getElementById('mytimeline'));
+    timeline = new links.Timeline(document.getElementById(_div));
+    //console.log('timeline div: ' + timeline);
 
     function onSelectedChanged(properties) {
-        $('#details').html('');
+        details = document.getElementById(_details);
+        $(details).html('');
         var sel = timeline.getSelection();
         if (sel.length) {
             if (sel[0] != undefined) {
@@ -26,7 +55,7 @@ function drawTimeline(data, observableSelected) {
                 //document.getElementById('details').innerHTML += (name + ": " + value) + " selected";
                 //});
                 if (typeof item.info !== "undefined")
-                    $('#details').html(item.info);
+                    $(details).html(item.info);
                 if (typeof observableSelected !== "undefined")
                     observableSelected(item);
                 

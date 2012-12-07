@@ -46,8 +46,9 @@ namespace MvcApplication1.Controllers
             var viewPeriod = new ReleaseModels.Period { StartDate = model.StartDate.ToDateTimeFromDutchString(), EndDate = model.EndDate.ToDateTimeFromDutchString() };
             var fromAddress = new MailAddress("mnatte@gmail.com", "MND Planner");
             var fromPassword = "yczronaitzlhooxr";
-            //var toAddress = new MailAddress("martijn.natte@consultant.vfsco.com", "Martijn Natté");
+            var workAddress = new MailAddress("martijn.natte@consultant.vfsco.com", "Martijn Natté");
             var toAddress = new MailAddress("mnatte@gmail.com", "Martijn Natté");
+
             var subject = string.Format("Resource Planning {0} - {1}", model.StartDate, model.EndDate);
 
             var smtp = new SmtpClient
@@ -90,6 +91,7 @@ namespace MvcApplication1.Controllers
 
             using (var msg = new MailMessage(fromAddress, toAddress) { Subject = subject, Body = content })
             {
+                msg.To.Add(workAddress);
                 smtp.Send(msg);
             }
 

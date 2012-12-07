@@ -143,11 +143,18 @@
     <Content Include="adminActivity.htm" />
     <Content Include="absences.htm" />
     <Content Include="assignments.htm" />
+    <Content Include="javascripts\releaseOverviewViewmodel.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>releaseOverviewViewmodel.coffee</DependentUpon>
+    </Content>
+    <Content Include="releasePlanningOverview.htm" />
     <Content Include="javascripts\assignmentsViewmodel.js">
       <DependentUpon>assignmentsViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Content>
+    <Content Include="javascripts\ko.bindingHandlers.releaseTimeline.js" />
     <Content Include="javascripts\resourceAvailabilityViewmodel.js">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -698,6 +705,7 @@
     <Content Include="stylesheets\sexybuttons.css" />
     <Content Include="templates\absenceForm.tmpl.html" />
     <Content Include="templates\assignmentForm.tmpl.html" />
+    <Content Include="templates\releaseOverview.tmpl.html" />
     <Content Include="templates\phaseForm.tmpl.html" />
     <Content Include="updateReleaseStatus.htm" />
     <Content Include="javascripts\adminActivityViewmodel.js">
@@ -916,6 +924,10 @@
     <None Include="javascripts\assignmentsViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>assignmentsViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\releaseOverviewViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>releaseOverviewViewmodel.js</LastGenOutput>
     </None>
     <None Include="javascripts\resourceAvailabilityViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>

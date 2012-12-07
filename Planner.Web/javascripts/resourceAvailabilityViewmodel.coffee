@@ -6,6 +6,7 @@ root = global ? window
 
 class ResourceAvailabilityViewmodel
 	constructor: (allResources) ->
+		console.log allResources
 		# ctor is executed in context of INSTANCE. Therfore @ refers here to CURRENT INSTANCE and attaches all props and functions to all instances (since object IS ctor)
 		Resource.extend RTeamMember
 		ResourceAssignment.extend RResourceAssignmentSerialize
@@ -40,6 +41,9 @@ class ResourceAvailabilityViewmodel
 		#)
 		@checkPeriod.subscribe((newValue) =>
 			@inspectResource()
+			#useCase = new URefreshView(@allResources, null, @checkPeriod(), @inspectResource, @selectedAssignment)
+			#useCase.execute()
+
 		)
 		@totalHoursAvailable = ko.computed(=> 
 			total = (res for res in @includeResources()).reduce (acc, x) =>

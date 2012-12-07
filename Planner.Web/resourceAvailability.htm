@@ -84,7 +84,9 @@
                 <div data-bind="foreach: allResources()">
                     <!--'value' sets the value to the array and matches on it. by default it is the toString() method of the object that is used-->
                     <div>
-                        <input type="checkbox" data-bind="checked: $root.includeResources, value: $data.id" /><data data-bind="text: fullName() + ' - ' + availableHoursForPlanning($root.checkPeriod()) + ' hours available'"></data><button class="sexybutton sexyicononly" data-bind="click: $root.inspectOverplanning.bind($data), visible: hasOverplannedPeriods($root.checkPeriod())"><span><span><span class="warning"></span></span></span></button>
+                        <input type="checkbox" data-bind="checked: $root.includeResources, value: $data.id" /><data data-bind="text: fullName() + ' - ' + availableHoursForPlanning($root.checkPeriod()) + ' hours available'"></data>
+                        <button class="sexybutton sexyicononly" data-bind="click: $root.inspectOverplanning.bind($data)"><span><span><span class="view"></span></span></span></button>
+                        <img src="images/png/16x16/warning.png" data-bind="visible: hasOverplannedPeriods($root.checkPeriod())">
                     </div>
                 </div>
             </div>

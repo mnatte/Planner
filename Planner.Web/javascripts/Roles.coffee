@@ -129,7 +129,9 @@ RTeamMember =
 				#console.log overplannedPeriods
 				overplannedPeriods
 			hasOverplannedPeriods: (period) ->
-				@getOverplannedPeriods(period).length > 0
+				ret = @getOverplannedPeriods(period).length > 0
+				#console.log ret
+				ret
 
 #RAbsenceTimelineItem = 
 #	extended: ->

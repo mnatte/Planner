@@ -14,6 +14,7 @@
       this.checkAvailability = __bind(this.checkAvailability, this);
       var monthLater,
         _this = this;
+      console.log(allResources);
       Resource.extend(RTeamMember);
       ResourceAssignment.extend(RResourceAssignmentSerialize);
       ResourceAssignment.extend(RCrud);

@@ -226,7 +226,121 @@ class URefreshView
 		@viewModelObservableForm null
 		# i = index of item to remove, 1 is amount to be removed, rel is item to be inserted there
 		@viewModelObservableCollection.splice index, 1, @newResource
-		
+
+class URefreshViewAfterCheckPeriod
+	constructor: (@checkPeriod, @viewModelObservableGraph, @viewModelObservableForm) ->
+	execute: ->
+		@viewModelObservableGraph null
+		@viewModelObservableForm null
+
+# show Release planning
+
+class UDisplayReleaseOverview
+	constructor: ->
+	execute: (data) ->
+		releases = Release.createCollection(data)
+		console.log releases
+		@viewModel = new ReleaseOverviewViewmodel(releases)
+		ko.applyBindings(@viewModel)
+	
+class UDisplayReleaseTimeline
+	# depends on timeline.js and having an HTML div with id 'mytimeline'
+	constructor: (@release, @observableTimelineSource) ->
+	execute: ->
+		@displayData = []
+		console.log 'execute use case UDisplayReleaseTimeline'
+		for ph in @release.phases
+			obj = {group: @release.title, start: ph.startDate.date, end: ph.endDate.date, content: ph.title, info: ph.title }
+			@displayData.push obj
+		for ms in @release.milestones
+			icon = '<span class="icon icon-milestone" />'
+			style = 'style="color: green"'
+			descr = '<ul>'
+			for del in ms.deliverables
+				#console.log del.title
+				descr += '<li>' + del.title + '<ul>'
+				for proj in del.scope
+					descr += '<li>' + proj.title
+					descr += '<ul>'
+					activities = proj.workload.reduce (acc, x) ->
+								acc.push {activityTitle :x.activity.title, hrs: x.hoursRemaining, planned: x.assignedResources.reduce ((acc, x) -> acc + x.availableHours()), 0 }
+								acc
+							, []
+					for act in activities
+						if act.hrs > act.planned
+							icon = '<span class="icon icon-warning" />'
+							style = 'style="color: red"'
+						else
+							style = 'style="color: green"'
+						descr += '<li ' + style + '>' + act.activityTitle + ': ' + act.hrs + ' hours remaining, ' + act.planned + ' hours planned</li>'
+					descr += '</ul>' # /activities
+					descr += '</li>' # /project
+				descr += '</ul>' # /projects
+			descr += '</li>' # /deliverable
+			descr += '</ul>' # /deliverables
+			obj = {group: @release.title, start: ms.date.date, content: ms.title + '<br />' + icon, info: 'test'}
+			@displayData.push obj
+		showData = @displayData.sort((a,b)-> a.start - b.end)
+		#console.log showData
+		drawTimeline(showData, undefined, "100%", "200px", "mytimeline", "details")
+		#@observableTimelineSource @displayData.sort((a,b)-> a.start - b.end)
+
+class UDisplayReleasePlanningInTimeline
+	# depends on timeline.js and having an HTML div with id 'mytimeline'
+	constructor: (@release, @observableTimelineSource) ->
+	execute: ->
+		@displayData = []
+		releaseTitle = @release.title
+		console.log 'execute use case UDisplayReleasePlanningInTimeline'
+		console.log @release
+		for ms in @release.milestones
+			#icon = '<span class="icon icon-milestone" />'
+			#style = 'style="color: green"'
+			#descr = '<ul>'
+			for del in ms.deliverables
+				#console.log del.title
+				#descr += '<li>' + del.title + '<ul>'
+				for proj in del.scope
+					#descr += '<li>' + proj.title
+					#descr += '<ul>'
+					activities = proj.workload.reduce (acc, x) ->
+								for ass in x.assignedResources
+									#console.log ass
+									acc.push { releaseTitle: releaseTitle, milestoneTitle: ms.title, deliverableTitle: del.title, projectTitle: proj.title, activityTitle :x.activity.title, resource: ass.resource.fullName(), focusFactor: ass.focusFactor, startDate: ass.assignedPeriod.startDate, endDate: ass.assignedPeriod.endDate }
+								acc
+							, []
+					# add assignments for all milestone deliverables per project
+					for assignment in activities
+						#console.log assignment
+						obj = {group: assignment.resource, start: assignment.startDate.date, end: assignment.endDate.date, content: assignment.activityTitle + ' [' + assignment.focusFactor + ']', info: assignment.releaseTitle + ' - ' + assignment.projectTitle + ' - ' + assignment.milestoneTitle + ' - ' + assignment.deliverableTitle + '<br /> ' + assignment.startDate.dateString + ' - ' + assignment.endDate.dateString + ' [' + assignment.focusFactor + ']'}
+						@displayData.push obj
+					#for act in activities
+						#if act.hrs > act.planned
+							#icon = '<span class="icon icon-warning" />'
+							#style = 'style="color: red"'
+						#else
+							#style = 'style="color: green"'
+						#descr += '<li ' + style + '>' + act.activityTitle + ': ' + act.hrs + ' hours remaining, ' + act.planned + ' hours planned</li>'
+					#descr += '</ul>' # /activities
+					#descr += '</li>' # /project
+				#descr += '</ul>' # /projects
+			#descr += '</li>' # /deliverable
+			#descr += '</ul>' # /deliverables
+		#console.log activities
+		#console.log activities
+		showData = @displayData.sort((a,b)-> a.start - b.end)
+		#console.log showData
+		drawTimeline(showData, undefined, "100%", "500px", "resourcePlanning", "assignmentDetails")
+		#@observableTimelineSource @displayData.sort((a,b)-> a.start - b.end)
+
+class UDisplayReleasePhases
+	constructor: (@release, @viewModelObservableGraph) ->
+	execute: ->
+		#console.log releases
+		@viewModel = new PhasesViewmodel(releases)
+		@viewModel.load releases.sort((a,b)->a.startDate.date - b.startDate.date)
+		ko.applyBindings(@viewModel)
+		drawTimeline(@viewModel.showPhases)
 
 # export to root object
 root.UDisplayReleaseStatus = UDisplayReleaseStatus
@@ -246,6 +360,10 @@ root.UModifyResourceAssignment = UModifyResourceAssignment
 root.UDeleteResourceAssignment = UDeleteResourceAssignment
 root.URefreshView = URefreshView
 root.UDisplayAssignments = UDisplayAssignments
+root.UDisplayReleaseOverview = UDisplayReleaseOverview
+root.UDisplayReleaseTimeline = UDisplayReleaseTimeline
+root.UDisplayReleasePlanningInTimeline = UDisplayReleasePlanningInTimeline
+
 
 
 

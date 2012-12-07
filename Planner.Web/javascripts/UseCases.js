@@ -1,5 +1,5 @@
 (function() {
-  var UDeleteResourceAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseStatus, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyResourceAssignment, URefreshView, UReloadAbsenceInTimeline, root;
+  var UDeleteResourceAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyResourceAssignment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -399,6 +399,207 @@
 
   })();
 
+  URefreshViewAfterCheckPeriod = (function() {
+
+    function URefreshViewAfterCheckPeriod(checkPeriod, viewModelObservableGraph, viewModelObservableForm) {
+      this.checkPeriod = checkPeriod;
+      this.viewModelObservableGraph = viewModelObservableGraph;
+      this.viewModelObservableForm = viewModelObservableForm;
+    }
+
+    URefreshViewAfterCheckPeriod.prototype.execute = function() {
+      this.viewModelObservableGraph(null);
+      return this.viewModelObservableForm(null);
+    };
+
+    return URefreshViewAfterCheckPeriod;
+
+  })();
+
+  UDisplayReleaseOverview = (function() {
+
+    function UDisplayReleaseOverview() {}
+
+    UDisplayReleaseOverview.prototype.execute = function(data) {
+      var releases;
+      releases = Release.createCollection(data);
+      console.log(releases);
+      this.viewModel = new ReleaseOverviewViewmodel(releases);
+      return ko.applyBindings(this.viewModel);
+    };
+
+    return UDisplayReleaseOverview;
+
+  })();
+
+  UDisplayReleaseTimeline = (function() {
+
+    function UDisplayReleaseTimeline(release, observableTimelineSource) {
+      this.release = release;
+      this.observableTimelineSource = observableTimelineSource;
+    }
+
+    UDisplayReleaseTimeline.prototype.execute = function() {
+      var act, activities, del, descr, icon, ms, obj, ph, proj, showData, style, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref, _ref2, _ref3, _ref4;
+      this.displayData = [];
+      console.log('execute use case UDisplayReleaseTimeline');
+      _ref = this.release.phases;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        ph = _ref[_i];
+        obj = {
+          group: this.release.title,
+          start: ph.startDate.date,
+          end: ph.endDate.date,
+          content: ph.title,
+          info: ph.title
+        };
+        this.displayData.push(obj);
+      }
+      _ref2 = this.release.milestones;
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        ms = _ref2[_j];
+        icon = '<span class="icon icon-milestone" />';
+        style = 'style="color: green"';
+        descr = '<ul>';
+        _ref3 = ms.deliverables;
+        for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+          del = _ref3[_k];
+          descr += '<li>' + del.title + '<ul>';
+          _ref4 = del.scope;
+          for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
+            proj = _ref4[_l];
+            descr += '<li>' + proj.title;
+            descr += '<ul>';
+            activities = proj.workload.reduce(function(acc, x) {
+              acc.push({
+                activityTitle: x.activity.title,
+                hrs: x.hoursRemaining,
+                planned: x.assignedResources.reduce((function(acc, x) {
+                  return acc + x.availableHours();
+                }), 0)
+              });
+              return acc;
+            }, []);
+            for (_m = 0, _len5 = activities.length; _m < _len5; _m++) {
+              act = activities[_m];
+              if (act.hrs > act.planned) {
+                icon = '<span class="icon icon-warning" />';
+                style = 'style="color: red"';
+              } else {
+                style = 'style="color: green"';
+              }
+              descr += '<li ' + style + '>' + act.activityTitle + ': ' + act.hrs + ' hours remaining, ' + act.planned + ' hours planned</li>';
+            }
+            descr += '</ul>';
+            descr += '</li>';
+          }
+          descr += '</ul>';
+        }
+        descr += '</li>';
+        descr += '</ul>';
+        obj = {
+          group: this.release.title,
+          start: ms.date.date,
+          content: ms.title + '<br />' + icon,
+          info: 'test'
+        };
+        this.displayData.push(obj);
+      }
+      showData = this.displayData.sort(function(a, b) {
+        return a.start - b.end;
+      });
+      return drawTimeline(showData, void 0, "100%", "200px", "mytimeline", "details");
+    };
+
+    return UDisplayReleaseTimeline;
+
+  })();
+
+  UDisplayReleasePlanningInTimeline = (function() {
+
+    function UDisplayReleasePlanningInTimeline(release, observableTimelineSource) {
+      this.release = release;
+      this.observableTimelineSource = observableTimelineSource;
+    }
+
+    UDisplayReleasePlanningInTimeline.prototype.execute = function() {
+      var activities, assignment, del, ms, obj, proj, releaseTitle, showData, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3;
+      this.displayData = [];
+      releaseTitle = this.release.title;
+      console.log('execute use case UDisplayReleasePlanningInTimeline');
+      console.log(this.release);
+      _ref = this.release.milestones;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        ms = _ref[_i];
+        _ref2 = ms.deliverables;
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          del = _ref2[_j];
+          _ref3 = del.scope;
+          for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+            proj = _ref3[_k];
+            activities = proj.workload.reduce(function(acc, x) {
+              var ass, _l, _len4, _ref4;
+              _ref4 = x.assignedResources;
+              for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
+                ass = _ref4[_l];
+                acc.push({
+                  releaseTitle: releaseTitle,
+                  milestoneTitle: ms.title,
+                  deliverableTitle: del.title,
+                  projectTitle: proj.title,
+                  activityTitle: x.activity.title,
+                  resource: ass.resource.fullName(),
+                  focusFactor: ass.focusFactor,
+                  startDate: ass.assignedPeriod.startDate,
+                  endDate: ass.assignedPeriod.endDate
+                });
+              }
+              return acc;
+            }, []);
+            for (_l = 0, _len4 = activities.length; _l < _len4; _l++) {
+              assignment = activities[_l];
+              obj = {
+                group: assignment.resource,
+                start: assignment.startDate.date,
+                end: assignment.endDate.date,
+                content: assignment.activityTitle + ' [' + assignment.focusFactor + ']',
+                info: assignment.releaseTitle + ' - ' + assignment.projectTitle + ' - ' + assignment.milestoneTitle + ' - ' + assignment.deliverableTitle + '<br /> ' + assignment.startDate.dateString + ' - ' + assignment.endDate.dateString + ' [' + assignment.focusFactor + ']'
+              };
+              this.displayData.push(obj);
+            }
+          }
+        }
+      }
+      showData = this.displayData.sort(function(a, b) {
+        return a.start - b.end;
+      });
+      return drawTimeline(showData, void 0, "100%", "500px", "resourcePlanning", "assignmentDetails");
+    };
+
+    return UDisplayReleasePlanningInTimeline;
+
+  })();
+
+  UDisplayReleasePhases = (function() {
+
+    function UDisplayReleasePhases(release, viewModelObservableGraph) {
+      this.release = release;
+      this.viewModelObservableGraph = viewModelObservableGraph;
+    }
+
+    UDisplayReleasePhases.prototype.execute = function() {
+      this.viewModel = new PhasesViewmodel(releases);
+      this.viewModel.load(releases.sort(function(a, b) {
+        return a.startDate.date - b.startDate.date;
+      }));
+      ko.applyBindings(this.viewModel);
+      return drawTimeline(this.viewModel.showPhases);
+    };
+
+    return UDisplayReleasePhases;
+
+  })();
+
   root.UDisplayReleaseStatus = UDisplayReleaseStatus;
 
   root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFromNow;
@@ -432,5 +633,11 @@
   root.URefreshView = URefreshView;
 
   root.UDisplayAssignments = UDisplayAssignments;
+
+  root.UDisplayReleaseOverview = UDisplayReleaseOverview;
+
+  root.UDisplayReleaseTimeline = UDisplayReleaseTimeline;
+
+  root.UDisplayReleasePlanningInTimeline = UDisplayReleasePlanningInTimeline;
 
 }).call(this);

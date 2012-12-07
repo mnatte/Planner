@@ -211,7 +211,9 @@
           return overplannedPeriods;
         },
         hasOverplannedPeriods: function(period) {
-          return this.getOverplannedPeriods(period).length > 0;
+          var ret;
+          ret = this.getOverplannedPeriods(period).length > 0;
+          return ret;
         }
       });
     }

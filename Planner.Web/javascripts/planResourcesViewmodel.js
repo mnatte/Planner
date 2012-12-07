@@ -108,9 +108,6 @@
     PlanResourcesViewmodel.prototype.addAssignment = function() {
       var ass;
       console.log("addAssignment");
-      console.log(this.newAssignment().assignedPeriod.startDate);
-      console.log(this.newAssignment().assignedPeriod.endDate.dateString);
-      console.log(this.newAssignment().assignedPeriod.endDate.date);
       ass = new AssignedResource(0, this.selectedRelease(), this.selectedResource(), this.selectedProject(), this.newAssignment().focusFactor, DateFormatter.createFromString(this.newAssignment().assignedPeriod.startDate.dateString), DateFormatter.createFromString(this.newAssignment().assignedPeriod.endDate.dateString), this.selectedActivity(), this.selectedMilestone(), this.selectedDeliverable());
       console.log(ass);
       this.assignments.push(ass);
