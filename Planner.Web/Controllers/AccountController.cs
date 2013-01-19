@@ -7,9 +7,9 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
-using MvcApplication1.Models;
+using Mnd.Planner.Web.Models;
 
-namespace MvcApplication1.Controllers
+namespace Mnd.Planner.Web.Controllers
 {
 
     [HandleError]

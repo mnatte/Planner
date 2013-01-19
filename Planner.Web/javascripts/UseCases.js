@@ -508,6 +508,7 @@
       showData = this.displayData.sort(function(a, b) {
         return a.start - b.end;
       });
+      console.log(showData);
       return drawTimeline(showData, void 0, "100%", "200px", "mytimeline", "details");
     };
 

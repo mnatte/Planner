@@ -4,13 +4,15 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Data.SqlClient;
-using MvcApplication1.Models;
-using MvcApplication1.DataAccess;
 using System.Net;
 using System.Text;
 using System.Net.Mail;
+using Mnd.Mail;
+using Mnd.Planner.Data.Models;
+using Mnd.Planner.Data.DataAccess;
+using Mnd.Helpers;
 
-namespace MvcApplication1.Controllers
+namespace Mnd.Planner.Web.Controllers
 {
     public class ResourceController : BaseCrudController<ReleaseModels.Resource, PersonInputModel>
     {
@@ -44,24 +46,7 @@ namespace MvcApplication1.Controllers
         public JsonResult MailPlanning(PeriodInputModel model)
         {
             var viewPeriod = new ReleaseModels.Period { StartDate = model.StartDate.ToDateTimeFromDutchString(), EndDate = model.EndDate.ToDateTimeFromDutchString() };
-            var fromAddress = new MailAddress("mnatte@gmail.com", "MND Planner");
-            var fromPassword = "yczronaitzlhooxr";
-            var workAddress = new MailAddress("martijn.natte@consultant.vfsco.com", "Martijn Natté");
-            var toAddress = new MailAddress("mnatte@gmail.com", "Martijn Natté");
-
             var subject = string.Format("Resource Planning {0} - {1}", model.StartDate, model.EndDate);
-
-            var smtp = new SmtpClient
-            {
-                Host = "smtp.gmail.com",
-                Port = 587,
-                EnableSsl = true,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                // ORDER IS CRUCIAL HERE! Credentials after UseDefaultCredentials
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(fromAddress.Address, fromPassword),
-                Timeout = 300000
-            };
 
 
             var rep = this.Repository as ResourceRepository;
@@ -89,11 +74,8 @@ namespace MvcApplication1.Controllers
             }
             var content = builder.ToString();
 
-            using (var msg = new MailMessage(fromAddress, toAddress) { Subject = subject, Body = content })
-            {
-                msg.To.Add(workAddress);
-                smtp.Send(msg);
-            }
+            var mailSender = new MailSender();
+            mailSender.SendMail("martijn.natte@consultant.vfsco.com", subject, content);
 
             return this.Json(string.Format("Resourceplanning is mailed for {0} - {1}", model.StartDate, model.EndDate), JsonRequestBehavior.AllowGet);
         }

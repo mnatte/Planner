@@ -6,6 +6,7 @@
             var periods = [];
             var grp = 0;
             var sameRelease = 1;
+            var releaseAndProject = '';
             var release = '';
             var releases = [];
 
@@ -20,9 +21,10 @@
                 ass = resource.assignments[_i];
                 console.log(ass)
                 //console.log(ass.period.title + ': ' + ass.period.endDate.dateString);
-                if (releases.indexOf(ass.release.title) === -1) {
+                releaseAndProject = ass.release.title + ass.project.title;
+                if (releases.indexOf(releaseAndProject) === -1) {
                     grp++;
-                    releases.push(ass.release.title);
+                    releases.push(releaseAndProject);
                     release = ass.release.title;
                     sameRelease = 1;
                 } else {

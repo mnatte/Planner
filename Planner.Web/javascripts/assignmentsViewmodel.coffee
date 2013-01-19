@@ -35,16 +35,19 @@ class AssignmentsViewmodel
 		#console.log data
 		for resource in data
 			#console.log resource.fullName()
-			for absence in resource.periodsAway
+			i = 0
+			for absence in (abs for abs in resource.periodsAway when abs.overlaps(@checkPeriod())) # resource.periodsAway
 				dto = absence
 				dto.person = resource
-				obj = {group: resource.fullName(), start: absence.startDate.date, end: absence.endDate.date, content: absence.title, info: absence.toString(), dataObject: dto}
+				obj = {group: resource.fullName() + '[' + i + ']', start: absence.startDate.date, end: absence.endDate.date, content: absence.title, info: absence.toString(), dataObject: dto}
 				@displayData.push obj
-			for assignment in resource.assignments
+				i++
+			for assignment in (ass for ass in resource.assignments when ass.period.overlaps(@checkPeriod())) #resource.assignments
 				dto = assignment
 				dto.person = resource
-				obj = {group: resource.fullName(), start: assignment.period.startDate.date, end: assignment.period.endDate.date, content: assignment.period.title, info: assignment.period.toString(), dataObject: dto}
+				obj = {group: resource.fullName() + '[' + i + ']', start: assignment.period.startDate.date, end: assignment.period.endDate.date, content: assignment.period.title, info: assignment.period.toString(), dataObject: dto}
 				@displayData.push obj
+				i++
 		@showAssignments = @displayData.sort((a,b)-> a.start - b.end)
 
 	mailPlanning: (model) ->

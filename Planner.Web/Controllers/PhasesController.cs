@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using MvcApplication1.Models;
+using Mnd.Planner.Web.Models;
 using System.Data.SqlClient;
+using Mnd.Planner.Data.Models;
 
-namespace MvcApplication1.Controllers
+namespace Mnd.Planner.Web.Controllers
 {
     public class PhasesController : Controller
     {

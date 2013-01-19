@@ -281,7 +281,7 @@ class UDisplayReleaseTimeline
 			obj = {group: @release.title, start: ms.date.date, content: ms.title + '<br />' + icon, info: 'test'}
 			@displayData.push obj
 		showData = @displayData.sort((a,b)-> a.start - b.end)
-		#console.log showData
+		console.log showData
 		drawTimeline(showData, undefined, "100%", "200px", "mytimeline", "details")
 		#@observableTimelineSource @displayData.sort((a,b)-> a.start - b.end)
 

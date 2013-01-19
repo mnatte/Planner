@@ -30,17 +30,27 @@
     }
 
     AssignmentsViewmodel.prototype.load = function(data) {
-      var absence, assignment, dto, obj, resource, _i, _j, _k, _len, _len2, _len3, _ref, _ref2;
+      var abs, absence, ass, assignment, dto, i, obj, resource, _i, _j, _k, _len, _len2, _len3, _ref, _ref2;
       this.displayData = [];
       for (_i = 0, _len = data.length; _i < _len; _i++) {
         resource = data[_i];
-        _ref = resource.periodsAway;
+        i = 0;
+        _ref = (function() {
+          var _k, _len2, _ref, _results;
+          _ref = resource.periodsAway;
+          _results = [];
+          for (_k = 0, _len2 = _ref.length; _k < _len2; _k++) {
+            abs = _ref[_k];
+            if (abs.overlaps(this.checkPeriod())) _results.push(abs);
+          }
+          return _results;
+        }).call(this);
         for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
           absence = _ref[_j];
           dto = absence;
           dto.person = resource;
           obj = {
-            group: resource.fullName(),
+            group: resource.fullName() + '[' + i + ']',
             start: absence.startDate.date,
             end: absence.endDate.date,
             content: absence.title,
@@ -48,14 +58,24 @@
             dataObject: dto
           };
           this.displayData.push(obj);
+          i++;
         }
-        _ref2 = resource.assignments;
+        _ref2 = (function() {
+          var _l, _len3, _ref2, _results;
+          _ref2 = resource.assignments;
+          _results = [];
+          for (_l = 0, _len3 = _ref2.length; _l < _len3; _l++) {
+            ass = _ref2[_l];
+            if (ass.period.overlaps(this.checkPeriod())) _results.push(ass);
+          }
+          return _results;
+        }).call(this);
         for (_k = 0, _len3 = _ref2.length; _k < _len3; _k++) {
           assignment = _ref2[_k];
           dto = assignment;
           dto.person = resource;
           obj = {
-            group: resource.fullName(),
+            group: resource.fullName() + '[' + i + ']',
             start: assignment.period.startDate.date,
             end: assignment.period.endDate.date,
             content: assignment.period.title,
@@ -63,6 +83,7 @@
             dataObject: dto
           };
           this.displayData.push(obj);
+          i++;
         }
       }
       return this.showAssignments = this.displayData.sort(function(a, b) {

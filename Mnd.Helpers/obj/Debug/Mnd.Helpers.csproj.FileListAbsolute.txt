@@ -1,0 +1,5 @@
+C:\Projects\Planner\Mnd.Helpers\bin\Debug\Mnd.Helpers.dll
+C:\Projects\Planner\Mnd.Helpers\bin\Debug\Mnd.Helpers.pdb
+C:\Projects\Planner\Mnd.Helpers\obj\Debug\ResolveAssemblyReference.cache
+C:\Projects\Planner\Mnd.Helpers\obj\Debug\Mnd.Helpers.dll
+C:\Projects\Planner\Mnd.Helpers\obj\Debug\Mnd.Helpers.pdb

@@ -3,4 +3,9 @@ C:\Projects\Planner\Planner.Web\bin\MvcApplication1.pdb
 C:\Projects\Planner\Planner.Web\obj\Debug\ResolveAssemblyReference.cache
 C:\Projects\Planner\Planner.Web\obj\Debug\MvcApplication1.dll
 C:\Projects\Planner\Planner.Web\obj\Debug\MvcApplication1.pdb
-C:\Projects\Planner\Planner.Web\bin\Microsoft.Web.Mvc.pdb
+C:\Projects\Planner\Planner.Web\bin\Mnd.Mail.dll
+C:\Projects\Planner\Planner.Web\bin\Mnd.Mail.pdb
+C:\Projects\Planner\Planner.Web\bin\Mnd.Helpers.dll
+C:\Projects\Planner\Planner.Web\bin\Planner.DataAccess.dll
+C:\Projects\Planner\Planner.Web\bin\Mnd.Helpers.pdb
+C:\Projects\Planner\Planner.Web\bin\Planner.DataAccess.pdb

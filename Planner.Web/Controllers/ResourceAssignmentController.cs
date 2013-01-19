@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using MvcApplication1.Models;
 using System.Web.Mvc;
 using System.Data.SqlClient;
-using MvcApplication1.DataAccess;
+using Mnd.Planner.Data.Models;
+using Mnd.Planner.Data.DataAccess;
+using Mnd.Helpers;
 
-namespace MvcApplication1.Controllers
+namespace Mnd.Planner.Web.Controllers
 {
     public class ResourceAssignmentController : BaseCrudController<ReleaseModels.ResourceAssignment, ResourceAssignmentInputModel>
     {

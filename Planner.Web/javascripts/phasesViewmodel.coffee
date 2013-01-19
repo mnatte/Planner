@@ -20,8 +20,9 @@ class PhasesViewmodel
 		# therefore @ refers to INSTANCE here 
 		@releases = []
 		@displayData = []
-		# console.log data
-		for rel in data
+		relevantReleases = (a for a in data when a.isCurrent())
+		#console.log relevantReleases
+		for rel in relevantReleases 
 			console.log rel.title + ': ' + rel.endDate.dateString
 			for ph in rel.phases
 				obj = {group: rel.title, start: ph.startDate.date, end: ph.endDate.date, content: ph.title, info: ph.toString()}

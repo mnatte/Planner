@@ -1,0 +1,11 @@
+C:\Projects\Planner\Planner.Mailservice\bin\Debug\Planner.Mailservice.exe
+C:\Projects\Planner\Planner.Mailservice\bin\Debug\Planner.Mailservice.pdb
+C:\Projects\Planner\Planner.Mailservice\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Projects\Planner\Planner.Mailservice\obj\x86\Debug\Planner.Mailservice.ProjectInstaller.resources
+C:\Projects\Planner\Planner.Mailservice\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Projects\Planner\Planner.Mailservice\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Projects\Planner\Planner.Mailservice\obj\x86\Debug\Planner.Mailservice.exe
+C:\Projects\Planner\Planner.Mailservice\obj\x86\Debug\Planner.Mailservice.pdb
+C:\Projects\Planner\Planner.Mailservice\obj\x86\Debug\Planner.Mailservice.MailService.resources
+C:\Projects\Planner\Planner.Mailservice\bin\Debug\Mnd.Mail.dll
+C:\Projects\Planner\Planner.Mailservice\bin\Debug\Mnd.Mail.pdb

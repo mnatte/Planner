@@ -48,7 +48,9 @@ function drawTimeline(data, observableSelected, width, height, divName, detailsD
         details = document.getElementById(_details);
         $(details).html('');
         var sel = timeline.getSelection();
+        console.log(sel);
         if (sel.length) {
+            console.log(sel[0]);
             if (sel[0] != undefined) {
                 var item = data[sel[0].row];
                 //$.each(item, function (name, value) {

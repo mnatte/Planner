@@ -1,0 +1,995 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9B0C0E4A-79DE-4674-91EE-82129E9EB801}</ProjectGuid>
+    <ProjectTypeGuids>{F85E285D-A4E0-4152-9332-AB1D724D3325};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Mnd.Planner.Web</RootNamespace>
+    <AssemblyName>Mnd.Planner.Web</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="IronRuby">
+      <HintPath>..\packages\IronRuby.1.1.3\Lib\IronRuby.dll</HintPath>
+    </Reference>
+    <Reference Include="IronRuby.Libraries">
+      <HintPath>..\packages\IronRuby.1.1.3\Lib\IronRuby.Libraries.dll</HintPath>
+    </Reference>
+    <Reference Include="IronRuby.Libraries.Yaml">
+      <HintPath>..\packages\IronRuby.1.1.3\Lib\IronRuby.Libraries.Yaml.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Dynamic">
+      <HintPath>..\packages\IronRuby.1.1.3\Lib\Microsoft.Dynamic.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting">
+      <HintPath>..\packages\IronRuby.1.1.3\Lib\Microsoft.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting.Metadata">
+      <HintPath>..\packages\IronRuby.1.1.3\Lib\Microsoft.Scripting.Metadata.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Mvc, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Microsoft.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="SassAndCoffee.AspNet">
+      <HintPath>..\packages\SassAndCoffee.AspNet.2.0.2.0\lib\net40\SassAndCoffee.AspNet.dll</HintPath>
+    </Reference>
+    <Reference Include="SassAndCoffee.Core">
+      <HintPath>..\packages\SassAndCoffee.Core.2.0.2.0\lib\net40-Client\SassAndCoffee.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SassAndCoffee.JavaScript">
+      <HintPath>..\packages\SassAndCoffee.JavaScript.2.0.2.0\lib\net40-Client\SassAndCoffee.JavaScript.dll</HintPath>
+    </Reference>
+    <Reference Include="SassAndCoffee.Ruby">
+      <HintPath>..\packages\SassAndCoffee.Ruby.2.0.2.0\lib\net40-Client\SassAndCoffee.Ruby.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\DeliverableController.cs" />
+    <Compile Include="Controllers\ResourceAssignmentController.cs" />
+    <Compile Include="Controllers\ResourceController.cs" />
+    <Compile Include="Controllers\PhasesController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ProjectController.cs" />
+    <Compile Include="Controllers\ReleaseController.cs" />
+    <Compile Include="Controllers\BaseCrudController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="404.html" />
+    <Content Include="adminProject.htm" />
+    <Content Include="adminResource.htm" />
+    <Content Include="adminDeliverable.htm" />
+    <Content Include="adminActivity.htm" />
+    <Content Include="absences.htm" />
+    <Content Include="assignments.htm" />
+    <Content Include="javascripts\releaseOverviewViewmodel.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>releaseOverviewViewmodel.coffee</DependentUpon>
+    </Content>
+    <Content Include="releasePlanningOverview.htm" />
+    <Content Include="javascripts\assignmentsViewmodel.js">
+      <DependentUpon>assignmentsViewmodel.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
+    <Content Include="javascripts\ko.bindingHandlers.releaseTimeline.js" />
+    <Content Include="javascripts\resourceAvailabilityViewmodel.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>resourceAvailabilityViewmodel.coffee</DependentUpon>
+    </Content>
+    <Content Include="resourceAvailability.htm" />
+    <Content Include="images\ajax-loader.gif" />
+    <Content Include="images\png\128x128\accept.png" />
+    <Content Include="images\png\128x128\add.png" />
+    <Content Include="images\png\128x128\apple.png" />
+    <Content Include="images\png\128x128\arrow_down.png" />
+    <Content Include="images\png\128x128\arrow_left.png" />
+    <Content Include="images\png\128x128\arrow_right.png" />
+    <Content Include="images\png\128x128\arrow_up.png" />
+    <Content Include="images\png\128x128\attachment.png" />
+    <Content Include="images\png\128x128\battery.png" />
+    <Content Include="images\png\128x128\battery_full.png" />
+    <Content Include="images\png\128x128\battery_low.png" />
+    <Content Include="images\png\128x128\briefcase.png" />
+    <Content Include="images\png\128x128\calculator.png" />
+    <Content Include="images\png\128x128\calendar_blank.png" />
+    <Content Include="images\png\128x128\calendar_full.png" />
+    <Content Include="images\png\128x128\chart.png" />
+    <Content Include="images\png\128x128\chart_pie.png" />
+    <Content Include="images\png\128x128\chess.png" />
+    <Content Include="images\png\128x128\clock.png" />
+    <Content Include="images\png\128x128\cloud_comment.png" />
+    <Content Include="images\png\128x128\coffee.png" />
+    <Content Include="images\png\128x128\comment.png" />
+    <Content Include="images\png\128x128\comments.png" />
+    <Content Include="images\png\128x128\computer.png" />
+    <Content Include="images\png\128x128\copy_page.png" />
+    <Content Include="images\png\128x128\cut.png" />
+    <Content Include="images\png\128x128\delete.png" />
+    <Content Include="images\png\128x128\dollar.png" />
+    <Content Include="images\png\128x128\edit.png" />
+    <Content Include="images\png\128x128\eject.png" />
+    <Content Include="images\png\128x128\email.png" />
+    <Content Include="images\png\128x128\euro.png" />
+    <Content Include="images\png\128x128\exclamation.png" />
+    <Content Include="images\png\128x128\fast_forward.png" />
+    <Content Include="images\png\128x128\favorite.png" />
+    <Content Include="images\png\128x128\flag.png" />
+    <Content Include="images\png\128x128\folder.png" />
+    <Content Include="images\png\128x128\games.png" />
+    <Content Include="images\png\128x128\heart.png" />
+    <Content Include="images\png\128x128\help.png" />
+    <Content Include="images\png\128x128\home.png" />
+    <Content Include="images\png\128x128\info.png" />
+    <Content Include="images\png\128x128\ipod.png" />
+    <Content Include="images\png\128x128\key.png" />
+    <Content Include="images\png\128x128\link.png" />
+    <Content Include="images\png\128x128\lock.png" />
+    <Content Include="images\png\128x128\mail.png" />
+    <Content Include="images\png\128x128\map.png" />
+    <Content Include="images\png\128x128\microphone.png" />
+    <Content Include="images\png\128x128\minus.png" />
+    <Content Include="images\png\128x128\mobile_phone.png" />
+    <Content Include="images\png\128x128\mouse.png" />
+    <Content Include="images\png\128x128\music_note.png" />
+    <Content Include="images\png\128x128\new.png" />
+    <Content Include="images\png\128x128\new_page.png" />
+    <Content Include="images\png\128x128\notebook.png" />
+    <Content Include="images\png\128x128\old_clock.png" />
+    <Content Include="images\png\128x128\old_phone.png" />
+    <Content Include="images\png\128x128\page.png" />
+    <Content Include="images\png\128x128\paint_brush.png" />
+    <Content Include="images\png\128x128\pause.png" />
+    <Content Include="images\png\128x128\phone.png" />
+    <Content Include="images\png\128x128\photo_camera.png" />
+    <Content Include="images\png\128x128\play.png" />
+    <Content Include="images\png\128x128\print.png" />
+    <Content Include="images\png\128x128\process.png" />
+    <Content Include="images\png\128x128\puzzle.png" />
+    <Content Include="images\png\128x128\record.png" />
+    <Content Include="images\png\128x128\refresh.png" />
+    <Content Include="images\png\128x128\remove.png" />
+    <Content Include="images\png\128x128\repeat.png" />
+    <Content Include="images\png\128x128\rewind.png" />
+    <Content Include="images\png\128x128\rss.png" />
+    <Content Include="images\png\128x128\save.png" />
+    <Content Include="images\png\128x128\search.png" />
+    <Content Include="images\png\128x128\security.png" />
+    <Content Include="images\png\128x128\shopping_cart.png" />
+    <Content Include="images\png\128x128\shut_down.png" />
+    <Content Include="images\png\128x128\skip_backward.png" />
+    <Content Include="images\png\128x128\skip_forward.png" />
+    <Content Include="images\png\128x128\sterling_pound.png" />
+    <Content Include="images\png\128x128\stop.png" />
+    <Content Include="images\png\128x128\target.png" />
+    <Content Include="images\png\128x128\television.png" />
+    <Content Include="images\png\128x128\tools.png" />
+    <Content Include="images\png\128x128\trash.png" />
+    <Content Include="images\png\128x128\umbrella.png" />
+    <Content Include="images\png\128x128\unlock.png" />
+    <Content Include="images\png\128x128\user.png" />
+    <Content Include="images\png\128x128\users.png" />
+    <Content Include="images\png\128x128\video_camera.png" />
+    <Content Include="images\png\128x128\volume_down.png" />
+    <Content Include="images\png\128x128\volume_up.png" />
+    <Content Include="images\png\128x128\warning.png" />
+    <Content Include="images\png\128x128\webcam.png" />
+    <Content Include="images\png\128x128\wired.png" />
+    <Content Include="images\png\128x128\wireless.png" />
+    <Content Include="images\png\128x128\yen.png" />
+    <Content Include="images\png\128x128\zoom_in.png" />
+    <Content Include="images\png\128x128\zoom_out.png" />
+    <Content Include="images\png\16x16\accept.png" />
+    <Content Include="images\png\16x16\add.png" />
+    <Content Include="images\png\16x16\apple.png" />
+    <Content Include="images\png\16x16\arrow_down.png" />
+    <Content Include="images\png\16x16\arrow_left.png" />
+    <Content Include="images\png\16x16\arrow_right.png" />
+    <Content Include="images\png\16x16\arrow_up.png" />
+    <Content Include="images\png\16x16\attachment.png" />
+    <Content Include="images\png\16x16\battery.png" />
+    <Content Include="images\png\16x16\battery_full.png" />
+    <Content Include="images\png\16x16\battery_low.png" />
+    <Content Include="images\png\16x16\briefcase.png" />
+    <Content Include="images\png\16x16\calculator.png" />
+    <Content Include="images\png\16x16\calendar_blank.png" />
+    <Content Include="images\png\16x16\calendar_full.png" />
+    <Content Include="images\png\16x16\chart.png" />
+    <Content Include="images\png\16x16\chart_pie.png" />
+    <Content Include="images\png\16x16\chess.png" />
+    <Content Include="images\png\16x16\clock.png" />
+    <Content Include="images\png\16x16\cloud_comment.png" />
+    <Content Include="images\png\16x16\coffee.png" />
+    <Content Include="images\png\16x16\comment.png" />
+    <Content Include="images\png\16x16\comments.png" />
+    <Content Include="images\png\16x16\computer.png" />
+    <Content Include="images\png\16x16\copy_page.png" />
+    <Content Include="images\png\16x16\cut.png" />
+    <Content Include="images\png\16x16\delete.png" />
+    <Content Include="images\png\16x16\dollar.png" />
+    <Content Include="images\png\16x16\edit.png" />
+    <Content Include="images\png\16x16\eject.png" />
+    <Content Include="images\png\16x16\email.png" />
+    <Content Include="images\png\16x16\euro.png" />
+    <Content Include="images\png\16x16\exclamation.png" />
+    <Content Include="images\png\16x16\fast_forward.png" />
+    <Content Include="images\png\16x16\favorite.png" />
+    <Content Include="images\png\16x16\flag.png" />
+    <Content Include="images\png\16x16\folder.png" />
+    <Content Include="images\png\16x16\games.png" />
+    <Content Include="images\png\16x16\heart.png" />
+    <Content Include="images\png\16x16\help.png" />
+    <Content Include="images\png\16x16\home.png" />
+    <Content Include="images\png\16x16\info.png" />
+    <Content Include="images\png\16x16\ipod.png" />
+    <Content Include="images\png\16x16\key.png" />
+    <Content Include="images\png\16x16\link.png" />
+    <Content Include="images\png\16x16\lock.png" />
+    <Content Include="images\png\16x16\mail.png" />
+    <Content Include="images\png\16x16\map.png" />
+    <Content Include="images\png\16x16\microphone.png" />
+    <Content Include="images\png\16x16\minus.png" />
+    <Content Include="images\png\16x16\mobile_phone.png" />
+    <Content Include="images\png\16x16\mouse.png" />
+    <Content Include="images\png\16x16\music_note.png" />
+    <Content Include="images\png\16x16\new.png" />
+    <Content Include="images\png\16x16\new_page.png" />
+    <Content Include="images\png\16x16\notebook.png" />
+    <Content Include="images\png\16x16\old_clock.png" />
+    <Content Include="images\png\16x16\old_phone.png" />
+    <Content Include="images\png\16x16\page.png" />
+    <Content Include="images\png\16x16\paint_brush.png" />
+    <Content Include="images\png\16x16\pause.png" />
+    <Content Include="images\png\16x16\phone.png" />
+    <Content Include="images\png\16x16\photo_camera.png" />
+    <Content Include="images\png\16x16\play.png" />
+    <Content Include="images\png\16x16\print.png" />
+    <Content Include="images\png\16x16\process.png" />
+    <Content Include="images\png\16x16\puzzle.png" />
+    <Content Include="images\png\16x16\record.png" />
+    <Content Include="images\png\16x16\refresh.png" />
+    <Content Include="images\png\16x16\remove.png" />
+    <Content Include="images\png\16x16\repeat.png" />
+    <Content Include="images\png\16x16\rewind.png" />
+    <Content Include="images\png\16x16\rss.png" />
+    <Content Include="images\png\16x16\save.png" />
+    <Content Include="images\png\16x16\search.png" />
+    <Content Include="images\png\16x16\security.png" />
+    <Content Include="images\png\16x16\shopping_cart.png" />
+    <Content Include="images\png\16x16\shut_down.png" />
+    <Content Include="images\png\16x16\skip_backward.png" />
+    <Content Include="images\png\16x16\skip_forward.png" />
+    <Content Include="images\png\16x16\sterling_pound.png" />
+    <Content Include="images\png\16x16\stop.png" />
+    <Content Include="images\png\16x16\target.png" />
+    <Content Include="images\png\16x16\television.png" />
+    <Content Include="images\png\16x16\tools.png" />
+    <Content Include="images\png\16x16\trash.png" />
+    <Content Include="images\png\16x16\umbrella.png" />
+    <Content Include="images\png\16x16\unlock.png" />
+    <Content Include="images\png\16x16\user.png" />
+    <Content Include="images\png\16x16\users.png" />
+    <Content Include="images\png\16x16\video_camera.png" />
+    <Content Include="images\png\16x16\volume_down.png" />
+    <Content Include="images\png\16x16\volume_up.png" />
+    <Content Include="images\png\16x16\warning.png" />
+    <Content Include="images\png\16x16\webcam.png" />
+    <Content Include="images\png\16x16\wired.png" />
+    <Content Include="images\png\16x16\wireless.png" />
+    <Content Include="images\png\16x16\yen.png" />
+    <Content Include="images\png\16x16\zoom_in.png" />
+    <Content Include="images\png\16x16\zoom_out.png" />
+    <Content Include="images\png\24x24\accept.png" />
+    <Content Include="images\png\24x24\add.png" />
+    <Content Include="images\png\24x24\apple.png" />
+    <Content Include="images\png\24x24\arrow_down.png" />
+    <Content Include="images\png\24x24\arrow_left.png" />
+    <Content Include="images\png\24x24\arrow_right.png" />
+    <Content Include="images\png\24x24\arrow_up.png" />
+    <Content Include="images\png\24x24\attachment.png" />
+    <Content Include="images\png\24x24\battery.png" />
+    <Content Include="images\png\24x24\battery_full.png" />
+    <Content Include="images\png\24x24\battery_low.png" />
+    <Content Include="images\png\24x24\briefcase.png" />
+    <Content Include="images\png\24x24\calculator.png" />
+    <Content Include="images\png\24x24\calendar_blank.png" />
+    <Content Include="images\png\24x24\calendar_full.png" />
+    <Content Include="images\png\24x24\chart.png" />
+    <Content Include="images\png\24x24\chart_pie.png" />
+    <Content Include="images\png\24x24\chess.png" />
+    <Content Include="images\png\24x24\clock.png" />
+    <Content Include="images\png\24x24\cloud_comment.png" />
+    <Content Include="images\png\24x24\coffee.png" />
+    <Content Include="images\png\24x24\comment.png" />
+    <Content Include="images\png\24x24\comments.png" />
+    <Content Include="images\png\24x24\computer.png" />
+    <Content Include="images\png\24x24\copy_page.png" />
+    <Content Include="images\png\24x24\cut.png" />
+    <Content Include="images\png\24x24\delete.png" />
+    <Content Include="images\png\24x24\dollar.png" />
+    <Content Include="images\png\24x24\edit.png" />
+    <Content Include="images\png\24x24\eject.png" />
+    <Content Include="images\png\24x24\email.png" />
+    <Content Include="images\png\24x24\euro.png" />
+    <Content Include="images\png\24x24\exclamation.png" />
+    <Content Include="images\png\24x24\fast_forward.png" />
+    <Content Include="images\png\24x24\favorite.png" />
+    <Content Include="images\png\24x24\flag.png" />
+    <Content Include="images\png\24x24\folder.png" />
+    <Content Include="images\png\24x24\games.png" />
+    <Content Include="images\png\24x24\heart.png" />
+    <Content Include="images\png\24x24\help.png" />
+    <Content Include="images\png\24x24\home.png" />
+    <Content Include="images\png\24x24\info.png" />
+    <Content Include="images\png\24x24\ipod.png" />
+    <Content Include="images\png\24x24\key.png" />
+    <Content Include="images\png\24x24\link.png" />
+    <Content Include="images\png\24x24\lock.png" />
+    <Content Include="images\png\24x24\mail.png" />
+    <Content Include="images\png\24x24\map.png" />
+    <Content Include="images\png\24x24\microphone.png" />
+    <Content Include="images\png\24x24\minus.png" />
+    <Content Include="images\png\24x24\mobile_phone.png" />
+    <Content Include="images\png\24x24\mouse.png" />
+    <Content Include="images\png\24x24\music_note.png" />
+    <Content Include="images\png\24x24\new.png" />
+    <Content Include="images\png\24x24\new_page.png" />
+    <Content Include="images\png\24x24\notebook.png" />
+    <Content Include="images\png\24x24\old_clock.png" />
+    <Content Include="images\png\24x24\old_phone.png" />
+    <Content Include="images\png\24x24\page.png" />
+    <Content Include="images\png\24x24\paint_brush.png" />
+    <Content Include="images\png\24x24\pause.png" />
+    <Content Include="images\png\24x24\phone.png" />
+    <Content Include="images\png\24x24\photo_camera.png" />
+    <Content Include="images\png\24x24\play.png" />
+    <Content Include="images\png\24x24\print.png" />
+    <Content Include="images\png\24x24\process.png" />
+    <Content Include="images\png\24x24\puzzle.png" />
+    <Content Include="images\png\24x24\record.png" />
+    <Content Include="images\png\24x24\refresh.png" />
+    <Content Include="images\png\24x24\remove.png" />
+    <Content Include="images\png\24x24\repeat.png" />
+    <Content Include="images\png\24x24\rewind.png" />
+    <Content Include="images\png\24x24\rss.png" />
+    <Content Include="images\png\24x24\save.png" />
+    <Content Include="images\png\24x24\search.png" />
+    <Content Include="images\png\24x24\security.png" />
+    <Content Include="images\png\24x24\shopping_cart.png" />
+    <Content Include="images\png\24x24\shut_down.png" />
+    <Content Include="images\png\24x24\skip_backward.png" />
+    <Content Include="images\png\24x24\skip_forward.png" />
+    <Content Include="images\png\24x24\sterling_pound.png" />
+    <Content Include="images\png\24x24\stop.png" />
+    <Content Include="images\png\24x24\target.png" />
+    <Content Include="images\png\24x24\television.png" />
+    <Content Include="images\png\24x24\tools.png" />
+    <Content Include="images\png\24x24\trash.png" />
+    <Content Include="images\png\24x24\umbrella.png" />
+    <Content Include="images\png\24x24\unlock.png" />
+    <Content Include="images\png\24x24\user.png" />
+    <Content Include="images\png\24x24\users.png" />
+    <Content Include="images\png\24x24\video_camera.png" />
+    <Content Include="images\png\24x24\volume_down.png" />
+    <Content Include="images\png\24x24\volume_up.png" />
+    <Content Include="images\png\24x24\warning.png" />
+    <Content Include="images\png\24x24\webcam.png" />
+    <Content Include="images\png\24x24\wired.png" />
+    <Content Include="images\png\24x24\wireless.png" />
+    <Content Include="images\png\24x24\yen.png" />
+    <Content Include="images\png\24x24\zoom_in.png" />
+    <Content Include="images\png\24x24\zoom_out.png" />
+    <Content Include="images\png\32x32\accept.png" />
+    <Content Include="images\png\32x32\add.png" />
+    <Content Include="images\png\32x32\apple.png" />
+    <Content Include="images\png\32x32\arrow_down.png" />
+    <Content Include="images\png\32x32\arrow_left.png" />
+    <Content Include="images\png\32x32\arrow_right.png" />
+    <Content Include="images\png\32x32\arrow_up.png" />
+    <Content Include="images\png\32x32\attachment.png" />
+    <Content Include="images\png\32x32\battery.png" />
+    <Content Include="images\png\32x32\battery_full.png" />
+    <Content Include="images\png\32x32\battery_low.png" />
+    <Content Include="images\png\32x32\briefcase.png" />
+    <Content Include="images\png\32x32\calculator.png" />
+    <Content Include="images\png\32x32\calendar_blank.png" />
+    <Content Include="images\png\32x32\calendar_full.png" />
+    <Content Include="images\png\32x32\chart.png" />
+    <Content Include="images\png\32x32\chart_pie.png" />
+    <Content Include="images\png\32x32\chess.png" />
+    <Content Include="images\png\32x32\clock.png" />
+    <Content Include="images\png\32x32\cloud_comment.png" />
+    <Content Include="images\png\32x32\coffee.png" />
+    <Content Include="images\png\32x32\comment.png" />
+    <Content Include="images\png\32x32\comments.png" />
+    <Content Include="images\png\32x32\computer.png" />
+    <Content Include="images\png\32x32\copy_page.png" />
+    <Content Include="images\png\32x32\cut.png" />
+    <Content Include="images\png\32x32\delete.png" />
+    <Content Include="images\png\32x32\dollar.png" />
+    <Content Include="images\png\32x32\edit.png" />
+    <Content Include="images\png\32x32\eject.png" />
+    <Content Include="images\png\32x32\email.png" />
+    <Content Include="images\png\32x32\euro.png" />
+    <Content Include="images\png\32x32\exclamation.png" />
+    <Content Include="images\png\32x32\fast_forward.png" />
+    <Content Include="images\png\32x32\favorite.png" />
+    <Content Include="images\png\32x32\flag.png" />
+    <Content Include="images\png\32x32\folder.png" />
+    <Content Include="images\png\32x32\games.png" />
+    <Content Include="images\png\32x32\heart.png" />
+    <Content Include="images\png\32x32\help.png" />
+    <Content Include="images\png\32x32\home.png" />
+    <Content Include="images\png\32x32\info.png" />
+    <Content Include="images\png\32x32\ipod.png" />
+    <Content Include="images\png\32x32\key.png" />
+    <Content Include="images\png\32x32\link.png" />
+    <Content Include="images\png\32x32\lock.png" />
+    <Content Include="images\png\32x32\mail.png" />
+    <Content Include="images\png\32x32\map.png" />
+    <Content Include="images\png\32x32\microphone.png" />
+    <Content Include="images\png\32x32\minus.png" />
+    <Content Include="images\png\32x32\mobile_phone.png" />
+    <Content Include="images\png\32x32\mouse.png" />
+    <Content Include="images\png\32x32\music_note.png" />
+    <Content Include="images\png\32x32\new.png" />
+    <Content Include="images\png\32x32\new_page.png" />
+    <Content Include="images\png\32x32\notebook.png" />
+    <Content Include="images\png\32x32\old_clock.png" />
+    <Content Include="images\png\32x32\old_phone.png" />
+    <Content Include="images\png\32x32\page.png" />
+    <Content Include="images\png\32x32\paint_brush.png" />
+    <Content Include="images\png\32x32\pause.png" />
+    <Content Include="images\png\32x32\phone.png" />
+    <Content Include="images\png\32x32\photo_camera.png" />
+    <Content Include="images\png\32x32\play.png" />
+    <Content Include="images\png\32x32\print.png" />
+    <Content Include="images\png\32x32\process.png" />
+    <Content Include="images\png\32x32\puzzle.png" />
+    <Content Include="images\png\32x32\record.png" />
+    <Content Include="images\png\32x32\refresh.png" />
+    <Content Include="images\png\32x32\remove.png" />
+    <Content Include="images\png\32x32\repeat.png" />
+    <Content Include="images\png\32x32\rewind.png" />
+    <Content Include="images\png\32x32\rss.png" />
+    <Content Include="images\png\32x32\save.png" />
+    <Content Include="images\png\32x32\search.png" />
+    <Content Include="images\png\32x32\security.png" />
+    <Content Include="images\png\32x32\shopping_cart.png" />
+    <Content Include="images\png\32x32\shut_down.png" />
+    <Content Include="images\png\32x32\skip_backward.png" />
+    <Content Include="images\png\32x32\skip_forward.png" />
+    <Content Include="images\png\32x32\sterling_pound.png" />
+    <Content Include="images\png\32x32\stop.png" />
+    <Content Include="images\png\32x32\target.png" />
+    <Content Include="images\png\32x32\television.png" />
+    <Content Include="images\png\32x32\tools.png" />
+    <Content Include="images\png\32x32\trash.png" />
+    <Content Include="images\png\32x32\umbrella.png" />
+    <Content Include="images\png\32x32\unlock.png" />
+    <Content Include="images\png\32x32\user.png" />
+    <Content Include="images\png\32x32\users.png" />
+    <Content Include="images\png\32x32\video_camera.png" />
+    <Content Include="images\png\32x32\volume_down.png" />
+    <Content Include="images\png\32x32\volume_up.png" />
+    <Content Include="images\png\32x32\warning.png" />
+    <Content Include="images\png\32x32\webcam.png" />
+    <Content Include="images\png\32x32\wired.png" />
+    <Content Include="images\png\32x32\wireless.png" />
+    <Content Include="images\png\32x32\yen.png" />
+    <Content Include="images\png\32x32\zoom_in.png" />
+    <Content Include="images\png\32x32\zoom_out.png" />
+    <Content Include="images\png\64x64\accept.png" />
+    <Content Include="images\png\64x64\add.png" />
+    <Content Include="images\png\64x64\apple.png" />
+    <Content Include="images\png\64x64\arrow_down.png" />
+    <Content Include="images\png\64x64\arrow_left.png" />
+    <Content Include="images\png\64x64\arrow_right.png" />
+    <Content Include="images\png\64x64\arrow_up.png" />
+    <Content Include="images\png\64x64\attachment.png" />
+    <Content Include="images\png\64x64\battery.png" />
+    <Content Include="images\png\64x64\battery_full.png" />
+    <Content Include="images\png\64x64\battery_low.png" />
+    <Content Include="images\png\64x64\briefcase.png" />
+    <Content Include="images\png\64x64\calculator.png" />
+    <Content Include="images\png\64x64\calendar_blank.png" />
+    <Content Include="images\png\64x64\calendar_full.png" />
+    <Content Include="images\png\64x64\chart.png" />
+    <Content Include="images\png\64x64\chart_pie.png" />
+    <Content Include="images\png\64x64\chess.png" />
+    <Content Include="images\png\64x64\clock.png" />
+    <Content Include="images\png\64x64\cloud_comment.png" />
+    <Content Include="images\png\64x64\coffee.png" />
+    <Content Include="images\png\64x64\comment.png" />
+    <Content Include="images\png\64x64\comments.png" />
+    <Content Include="images\png\64x64\computer.png" />
+    <Content Include="images\png\64x64\copy_page.png" />
+    <Content Include="images\png\64x64\cut.png" />
+    <Content Include="images\png\64x64\delete.png" />
+    <Content Include="images\png\64x64\dollar.png" />
+    <Content Include="images\png\64x64\edit.png" />
+    <Content Include="images\png\64x64\eject.png" />
+    <Content Include="images\png\64x64\email.png" />
+    <Content Include="images\png\64x64\euro.png" />
+    <Content Include="images\png\64x64\exclamation.png" />
+    <Content Include="images\png\64x64\fast_forward.png" />
+    <Content Include="images\png\64x64\favorite.png" />
+    <Content Include="images\png\64x64\flag.png" />
+    <Content Include="images\png\64x64\folder.png" />
+    <Content Include="images\png\64x64\games.png" />
+    <Content Include="images\png\64x64\heart.png" />
+    <Content Include="images\png\64x64\help.png" />
+    <Content Include="images\png\64x64\home.png" />
+    <Content Include="images\png\64x64\info.png" />
+    <Content Include="images\png\64x64\ipod.png" />
+    <Content Include="images\png\64x64\key.png" />
+    <Content Include="images\png\64x64\link.png" />
+    <Content Include="images\png\64x64\lock.png" />
+    <Content Include="images\png\64x64\mail.png" />
+    <Content Include="images\png\64x64\map.png" />
+    <Content Include="images\png\64x64\microphone.png" />
+    <Content Include="images\png\64x64\minus.png" />
+    <Content Include="images\png\64x64\mobile_phone.png" />
+    <Content Include="images\png\64x64\mouse.png" />
+    <Content Include="images\png\64x64\music_note.png" />
+    <Content Include="images\png\64x64\new.png" />
+    <Content Include="images\png\64x64\new_page.png" />
+    <Content Include="images\png\64x64\notebook.png" />
+    <Content Include="images\png\64x64\old_clock.png" />
+    <Content Include="images\png\64x64\old_phone.png" />
+    <Content Include="images\png\64x64\page.png" />
+    <Content Include="images\png\64x64\paint_brush.png" />
+    <Content Include="images\png\64x64\pause.png" />
+    <Content Include="images\png\64x64\phone.png" />
+    <Content Include="images\png\64x64\photo_camera.png" />
+    <Content Include="images\png\64x64\play.png" />
+    <Content Include="images\png\64x64\print.png" />
+    <Content Include="images\png\64x64\process.png" />
+    <Content Include="images\png\64x64\puzzle.png" />
+    <Content Include="images\png\64x64\record.png" />
+    <Content Include="images\png\64x64\refresh.png" />
+    <Content Include="images\png\64x64\remove.png" />
+    <Content Include="images\png\64x64\repeat.png" />
+    <Content Include="images\png\64x64\rewind.png" />
+    <Content Include="images\png\64x64\rss.png" />
+    <Content Include="images\png\64x64\save.png" />
+    <Content Include="images\png\64x64\search.png" />
+    <Content Include="images\png\64x64\security.png" />
+    <Content Include="images\png\64x64\shopping_cart.png" />
+    <Content Include="images\png\64x64\shut_down.png" />
+    <Content Include="images\png\64x64\skip_backward.png" />
+    <Content Include="images\png\64x64\skip_forward.png" />
+    <Content Include="images\png\64x64\sterling_pound.png" />
+    <Content Include="images\png\64x64\stop.png" />
+    <Content Include="images\png\64x64\target.png" />
+    <Content Include="images\png\64x64\television.png" />
+    <Content Include="images\png\64x64\tools.png" />
+    <Content Include="images\png\64x64\trash.png" />
+    <Content Include="images\png\64x64\umbrella.png" />
+    <Content Include="images\png\64x64\unlock.png" />
+    <Content Include="images\png\64x64\user.png" />
+    <Content Include="images\png\64x64\users.png" />
+    <Content Include="images\png\64x64\video_camera.png" />
+    <Content Include="images\png\64x64\volume_down.png" />
+    <Content Include="images\png\64x64\volume_up.png" />
+    <Content Include="images\png\64x64\warning.png" />
+    <Content Include="images\png\64x64\webcam.png" />
+    <Content Include="images\png\64x64\wired.png" />
+    <Content Include="images\png\64x64\wireless.png" />
+    <Content Include="images\png\64x64\yen.png" />
+    <Content Include="images\png\64x64\zoom_in.png" />
+    <Content Include="images\png\64x64\zoom_out.png" />
+    <Content Include="images\skins\orange\button_left.gif" />
+    <Content Include="images\skins\orange\button_left.png" />
+    <Content Include="images\skins\orange\button_right.gif" />
+    <Content Include="images\skins\orange\button_right.png" />
+    <Content Include="images\skins\silver\button_left.gif" />
+    <Content Include="images\skins\silver\button_left.png" />
+    <Content Include="images\skins\silver\button_right.gif" />
+    <Content Include="images\skins\silver\button_right.png" />
+    <Content Include="images\skins\simple\awesome-overlay-sprite.png" />
+    <Content Include="images\skins\yellow\button_left.gif" />
+    <Content Include="images\skins\yellow\button_left.png" />
+    <Content Include="images\skins\yellow\button_right.gif" />
+    <Content Include="images\skins\yellow\button_right.png" />
+    <Content Include="javascripts\absencesViewmodel.js">
+      <DependentUpon>absencesViewmodel.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
+    <Content Include="javascripts\persistence.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>persistence.coffee</DependentUpon>
+    </Content>
+    <Content Include="javascripts\resourceRoles.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>resourceRoles.coffee</DependentUpon>
+    </Content>
+    <Content Include="javascripts\timeline_instantion.js" />
+    <Content Include="javascripts\updateReleaseStatusViewmodel.js">
+      <DependentUpon>updateReleaseStatusViewmodel.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
+    <Content Include="javascripts\xxx_updateReleaseStatus.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>xxx_updateReleaseStatus.coffee</DependentUpon>
+    </Content>
+    <Content Include="Scripts\jquery.blockUI.js" />
+    <Content Include="stylesheets\sexybuttons.css" />
+    <Content Include="templates\absenceForm.tmpl.html" />
+    <Content Include="templates\assignmentForm.tmpl.html" />
+    <Content Include="templates\releaseOverview.tmpl.html" />
+    <Content Include="templates\phaseForm.tmpl.html" />
+    <Content Include="updateReleaseStatus.htm" />
+    <Content Include="javascripts\adminActivityViewmodel.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>adminActivityViewmodel.coffee</DependentUpon>
+    </Content>
+    <Content Include="javascripts\ko.bindingHandlers.assignmentsTimeline.js" />
+    <Content Include="javascripts\planningOverviewViewmodel.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>planningOverviewViewmodel.coffee</DependentUpon>
+    </Content>
+    <Content Include="planningOverview.htm" />
+    <Content Include="javascripts\adminDeliverableViewmodel.js">
+      <DependentUpon>adminDeliverableViewmodel.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
+    <Content Include="javascripts\xxx.ko.bindingHandlers.clickWithParameters.js" />
+    <Content Include="javascripts\ko.bindingHandlers.fadeVisible.js" />
+    <Content Include="javascripts\ko.bindingHandlers.editable.js" />
+    <Content Include="javascripts\planResourcesViewmodel.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>planResourcesViewmodel.coffee</DependentUpon>
+    </Content>
+    <Content Include="planResources.htm" />
+    <Content Include="images\bg_nav.PNG" />
+    <Content Include="adminRelease.htm" />
+    <Content Include="javascripts\adminProjectViewmodel.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>adminProjectViewmodel.coffee</DependentUpon>
+    </Content>
+    <Content Include="javascripts\adminReleaseViewmodel.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>adminReleaseViewmodel.coffee</DependentUpon>
+    </Content>
+    <Content Include="javascripts\adminResourceViewmodel.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>adminResourceViewmodel.coffee</DependentUpon>
+    </Content>
+    <Content Include="javascripts\xxx.ko.bindingHandlers.multipleSelect.js" />
+    <Content Include="javascripts\xxx.ko.bindingHandlers.period2.js" />
+    <Content Include="javascripts\phasesViewmodel.js">
+      <DependentUpon>phasesViewmodel.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
+    <Content Include="javascripts\simpleCrudViewmodel.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>simpleCrudViewmodel.coffee</DependentUpon>
+    </Content>
+    <Content Include="Phases.htm" />
+    <Content Include="Global.asax" />
+    <Content Include="images\apple-touch-icon-114x114.png" />
+    <Content Include="images\apple-touch-icon-72x72.png" />
+    <Content Include="images\apple-touch-icon.png" />
+    <Content Include="images\favicon.ico" />
+    <Content Include="Scripts\datehelper.js" />
+    <Content Include="Scripts\xxx jquery.qtip.min.js" />
+    <Content Include="Scripts\timeline-min.js" />
+    <Content Include="stylesheets\timeline.css" />
+    <Content Include="stylesheets\base_no_buttons.css" />
+    <Content Include="stylesheets\icon_styles.css" />
+    <Content Include="templates\navigation.tmpl.html" />
+    <Content Include="templates\milestoneForm.tmpl.html" />
+    <Content Include="templates\releaseForm.tmpl.html" />
+    <Content Include="javascripts\ajax.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>ajax.js</LastGenOutput>
+    </Content>
+    <Content Include="javascripts\ajax.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ajax.coffee</DependentUpon>
+    </Content>
+    <Content Include="javascripts\releaseViewmodel.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>releaseViewmodel.coffee</DependentUpon>
+    </Content>
+    <Content Include="javascripts\UseCases.js">
+      <DependentUpon>UseCases.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
+    <Content Include="Scripts\jExpand.js" />
+    <Content Include="javascripts\Mixin.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>Mixin.js</LastGenOutput>
+    </Content>
+    <Content Include="javascripts\Mixin.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Mixin.coffee</DependentUpon>
+    </Content>
+    <Content Include="javascripts\Roles.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>Roles.js</LastGenOutput>
+    </Content>
+    <Content Include="javascripts\Roles.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Roles.coffee</DependentUpon>
+    </Content>
+    <Content Include="Scripts\xxx jquery.delegate.js" />
+    <Content Include="Scripts\xxx jquery.dimensions.js" />
+    <Content Include="Scripts\xxx jquery.editinplace.js" />
+    <Content Include="Scripts\xxx jquery.tooltip.min.js" />
+    <Content Include="Scripts\jquery.ui.core.js" />
+    <Content Include="Scripts\jquery.ui.mouse.js" />
+    <Content Include="Scripts\xxx jquery.ui.progressbar.js" />
+    <Content Include="Scripts\xxx jquery.ui.slider.js" />
+    <Content Include="Scripts\jquery.ui.widget.js" />
+    <Content Include="Scripts\knockout-array-filter.js" />
+    <Content Include="Scripts\koExternalTemplateEngine_all.min.js" />
+    <Content Include="Scripts\tabs.js" />
+    <Content Include="Release.htm" />
+    <Content Include="Scripts\highcharts.js" />
+    <Content Include="Scripts\jquery-1.7.1.min.js" />
+    <Content Include="Scripts\jquery.dateFormat-1.0.js" />
+    <Content Include="Scripts\knockout-2.0.0.debug.js" />
+    <Content Include="Scripts\knockout-2.0.0.js" />
+    <Content Include="stylesheets\base.css" />
+    <Content Include="stylesheets\xxx jquery-ui-1.8.19.custom.css" />
+    <Content Include="stylesheets\xxx jquery.tooltip.css" />
+    <Content Include="stylesheets\xxx jquery.ui.progressbar.css" />
+    <Content Include="stylesheets\layout.css" />
+    <Content Include="stylesheets\skeleton.css" />
+    <Content Include="stylesheets\tables.css" />
+    <Content Include="javascripts\release.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>release.js</LastGenOutput>
+    </Content>
+    <Content Include="javascripts\release.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>release.coffee</DependentUpon>
+    </Content>
+    <Content Include="templates\addAssignment.tmpl.html" />
+    <Content Include="templates\releaseDetails.tmpl.html" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Content\Site.css" />
+    <Content Include="Scripts\jquery-1.4.1-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\xxx MicrosoftAjax.js" />
+    <Content Include="Scripts\xxx MicrosoftAjax.debug.js" />
+    <Content Include="Scripts\xxx MicrosoftMvcAjax.js" />
+    <Content Include="Scripts\xxx MicrosoftMvcAjax.debug.js" />
+    <Content Include="Scripts\xxx MicrosoftMvcValidation.js" />
+    <Content Include="Scripts\xxx MicrosoftMvcValidation.debug.js" />
+    <Content Include="Views\Account\ChangePassword.aspx" />
+    <Content Include="Views\Account\ChangePasswordSuccess.aspx" />
+    <Content Include="Views\Account\LogOn.aspx" />
+    <Content Include="Views\Account\Register.aspx" />
+    <Content Include="Views\Home\About.aspx" />
+    <Content Include="Views\Home\Index.aspx" />
+    <Content Include="Views\Shared\Error.aspx" />
+    <Content Include="Views\Shared\LogOnUserControl.ascx" />
+    <Content Include="Views\Shared\Site.Master" />
+    <Content Include="Views\Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="bin\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="javascripts\UseCases.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>UseCases.js</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="images\skins\ButtonTemplate.psd" />
+    <None Include="javascripts\adminActivityViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>adminActivityViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\adminProjectViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>adminProjectViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\adminReleaseViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>adminReleaseViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\adminResourceViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>adminResourceViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\adminDeliverableViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>adminDeliverableViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\absencesViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>absencesViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\assignmentsViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>assignmentsViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\releaseOverviewViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>releaseOverviewViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\resourceAvailabilityViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>resourceAvailabilityViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\persistence.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>persistence.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\resourceRoles.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>resourceRoles.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\updateReleaseStatusViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>updateReleaseStatusViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\phasesViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>phasesViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\planningOverviewViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>planningOverviewViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\planResourcesViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>planResourcesViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\releaseViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>releaseViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\simpleCrudViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>simpleCrudViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\xxx_updateReleaseStatus.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>xxx_updateReleaseStatus.js</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mnd.Helpers\Mnd.Helpers.csproj">
+      <Project>{8BF68AB0-A823-4BCE-B25C-B649B6AAB18E}</Project>
+      <Name>Mnd.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mnd.Mail\Mnd.Mail.csproj">
+      <Project>{BE647012-342F-4CFD-9103-D70219B09DA4}</Project>
+      <Name>Mnd.Mail</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Planner.DataAccess\Mnd.Planner.Data.csproj">
+      <Project>{8C21A4DA-043C-41E3-83CF-E6F0648E17BF}</Project>
+      <Name>Mnd.Planner.Data</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target> -->
+  <Target Name="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(ProjectDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>False</AutoAssignPort>
+          <DevelopmentServerPort>49166</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

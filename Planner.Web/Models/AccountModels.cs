@@ -8,7 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 
-namespace MvcApplication1.Models
+namespace Mnd.Planner.Web.Models
 {
 
     #region Models

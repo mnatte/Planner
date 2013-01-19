@@ -21,11 +21,20 @@
     }
 
     PhasesViewmodel.prototype.load = function(data) {
-      var act, activities, del, descr, icon, ms, obj, ph, proj, rel, style, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _len6, _m, _n, _ref, _ref2, _ref3, _ref4;
+      var a, act, activities, del, descr, icon, ms, obj, ph, proj, rel, relevantReleases, style, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _len6, _m, _n, _ref, _ref2, _ref3, _ref4;
       this.releases = [];
       this.displayData = [];
-      for (_i = 0, _len = data.length; _i < _len; _i++) {
-        rel = data[_i];
+      relevantReleases = (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = data.length; _i < _len; _i++) {
+          a = data[_i];
+          if (a.isCurrent()) _results.push(a);
+        }
+        return _results;
+      })();
+      for (_i = 0, _len = relevantReleases.length; _i < _len; _i++) {
+        rel = relevantReleases[_i];
         console.log(rel.title + ': ' + rel.endDate.dateString);
         _ref = rel.phases;
         for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {

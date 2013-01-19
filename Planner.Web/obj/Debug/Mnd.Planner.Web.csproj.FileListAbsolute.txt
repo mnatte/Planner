@@ -1,0 +1,11 @@
+C:\Projects\Planner\Planner.Web\bin\Mnd.Planner.Web.dll
+C:\Projects\Planner\Planner.Web\bin\Mnd.Planner.Web.pdb
+C:\Projects\Planner\Planner.Web\bin\Mnd.Helpers.dll
+C:\Projects\Planner\Planner.Web\bin\Mnd.Mail.dll
+C:\Projects\Planner\Planner.Web\bin\Mnd.Planner.DataAccess.dll
+C:\Projects\Planner\Planner.Web\bin\Mnd.Helpers.pdb
+C:\Projects\Planner\Planner.Web\bin\Mnd.Mail.pdb
+C:\Projects\Planner\Planner.Web\bin\Mnd.Planner.DataAccess.pdb
+C:\Projects\Planner\Planner.Web\obj\Debug\ResolveAssemblyReference.cache
+C:\Projects\Planner\Planner.Web\obj\Debug\Mnd.Planner.Web.dll
+C:\Projects\Planner\Planner.Web\obj\Debug\Mnd.Planner.Web.pdb

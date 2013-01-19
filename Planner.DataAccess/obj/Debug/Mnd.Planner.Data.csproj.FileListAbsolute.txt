@@ -1,0 +1,7 @@
+C:\Projects\Planner\Planner.DataAccess\bin\Debug\Mnd.Planner.DataAccess.dll
+C:\Projects\Planner\Planner.DataAccess\bin\Debug\Mnd.Planner.DataAccess.pdb
+C:\Projects\Planner\Planner.DataAccess\bin\Debug\Mnd.Helpers.dll
+C:\Projects\Planner\Planner.DataAccess\bin\Debug\Mnd.Helpers.pdb
+C:\Projects\Planner\Planner.DataAccess\obj\Debug\ResolveAssemblyReference.cache
+C:\Projects\Planner\Planner.DataAccess\obj\Debug\Mnd.Planner.DataAccess.dll
+C:\Projects\Planner\Planner.DataAccess\obj\Debug\Mnd.Planner.DataAccess.pdb
