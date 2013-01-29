@@ -127,6 +127,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>releaseOverviewViewmodel.coffee</DependentUpon>
     </Content>
+    <Content Include="javascripts\Timeline.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Timeline.coffee</DependentUpon>
+    </Content>
     <Content Include="releasePlanningOverview.htm" />
     <Content Include="javascripts\assignmentsViewmodel.js">
       <DependentUpon>assignmentsViewmodel.coffee</DependentUpon>
@@ -698,7 +703,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>planningOverviewViewmodel.coffee</DependentUpon>
     </Content>
-    <Content Include="planningOverview.htm" />
+    <Content Include="xxx_planningOverview.htm" />
     <Content Include="javascripts\adminDeliverableViewmodel.js">
       <DependentUpon>adminDeliverableViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -920,6 +925,10 @@
     <None Include="javascripts\resourceRoles.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>resourceRoles.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\Timeline.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>Timeline.js</LastGenOutput>
     </None>
     <None Include="javascripts\updateReleaseStatusViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>

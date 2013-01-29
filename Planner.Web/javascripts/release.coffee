@@ -122,7 +122,7 @@ class Period extends Mixin
 		amtDays = 0
 		if @containsDate(new Date())
 			amtDays = @workingDaysFromNow()
-		else
+		else if new Date() < @endDate.date
 			amtDays = @workingDays()
 		#if amtDays < 0 then 0 else amtDays
 		amtDays
@@ -427,7 +427,7 @@ class Resource extends Mixin
 
 class ResourceAssignment extends Mixin
 	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate, @activity, @milestone, @deliverable) ->
-		@period = new Period(startDate, endDate, @activity.title + ' ' + @release.title + ' (' + @focusFactor + ') ' + @project.title)
+		@period = new Period(startDate, endDate, @deliverable.title + ' ' + @activity.title + ' ' + @release.title + ' (' + @focusFactor + ') ' + @project.title)
 	@create: (jsonData, resource) ->
 		#console.log "create ResourceAssignment:" + ko.toJSON(jsonData)
 		milestone = Milestone.create jsonData.Milestone

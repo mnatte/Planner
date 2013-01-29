@@ -7,10 +7,10 @@
   AssignmentsViewmodel = (function() {
 
     function AssignmentsViewmodel(allResources) {
+      this.afterMail = __bind(this.afterMail, this);
+      this.updatePeriod = __bind(this.updatePeriod, this);
       var weekLater,
         _this = this;
-      this.allResources = allResources;
-      this.afterMail = __bind(this.afterMail, this);
       Period.extend(RCrud);
       Period.extend(RPeriodSerialize);
       Resource.extend(RTeamMember);
@@ -25,8 +25,35 @@
       this.selectedResource.subscribe(function(newValue) {
         return console.log('selectedResource changed: ' + newValue.fullName());
       });
+      this.allResources = ko.observableArray(allResources);
+      this.showResources = ko.observableArray(allResources);
+      this.includeResources = ko.observableArray();
+      this.includeResources.subscribe(function(newValue) {
+        var include;
+        console.log(newValue);
+        include = newValue.reduce(function(acc, x) {
+          var r, resource, _i, _len, _ref;
+          _ref = _this.allResources();
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            r = _ref[_i];
+            if (+r.id === +x) resource = r;
+          }
+          acc.push(resource);
+          return acc;
+        }, []);
+        return _this.showResources(include);
+      });
       weekLater = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 7);
       this.checkPeriod = ko.observable(new Period(new Date(), weekLater));
+      this.checkPeriod.subscribe(function(newValue) {
+        _this.load(_this.showResources().sort());
+        return drawTimeline(_this.showAssignments, _this.selectedTimelineItem);
+      });
+      this.showResources.subscribe(function(newValue) {
+        console.log('showResources changed: ' + newValue);
+        _this.load(_this.showResources().sort());
+        return drawTimeline(_this.showAssignments, _this.selectedTimelineItem);
+      });
     }
 
     AssignmentsViewmodel.prototype.load = function(data) {
@@ -89,6 +116,12 @@
       return this.showAssignments = this.displayData.sort(function(a, b) {
         return a.start - b.end;
       });
+    };
+
+    AssignmentsViewmodel.prototype.updatePeriod = function(data) {
+      var period;
+      period = new Period(DateFormatter.createFromString(this.checkPeriod().startDate.dateString), DateFormatter.createFromString(this.checkPeriod().endDate.dateString));
+      return this.checkPeriod(period);
     };
 
     AssignmentsViewmodel.prototype.mailPlanning = function(model) {

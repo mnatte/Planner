@@ -88,7 +88,9 @@ RTeamMember =
 				# somehow "reduce (x,y)" needs a space between name ('reduce') and args
 				if(overlappingAbsences? and typeof(overlappingAbsences) isnt 'undefined' and overlappingAbsences.length > 0)
 					absent = (absence.overlappingPeriod(period) for absence in overlappingAbsences).reduce (acc, x) ->
-							#console.log x
+							console.log "RTeamMember hoursAvailable"
+							console.log x
+							console.log x.remainingWorkingDays()
 							result = Math.round(x.remainingWorkingDays())
 							acc + result
 						, 0

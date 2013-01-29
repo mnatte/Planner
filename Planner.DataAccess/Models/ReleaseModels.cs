@@ -129,6 +129,7 @@ namespace Mnd.Planner.Data.Models
                     return _deliverables;
                 }
             }
+            public ReleaseModels.Release Release { get; set; }
         }
 
         public class Deliverable

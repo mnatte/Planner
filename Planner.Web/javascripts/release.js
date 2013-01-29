@@ -131,7 +131,7 @@
       amtDays = 0;
       if (this.containsDate(new Date())) {
         amtDays = this.workingDaysFromNow();
-      } else {
+      } else if (new Date() < this.endDate.date) {
         amtDays = this.workingDays();
       }
       return amtDays;
@@ -703,7 +703,7 @@
       this.activity = activity;
       this.milestone = milestone;
       this.deliverable = deliverable;
-      this.period = new Period(startDate, endDate, this.activity.title + ' ' + this.release.title + ' (' + this.focusFactor + ') ' + this.project.title);
+      this.period = new Period(startDate, endDate, this.deliverable.title + ' ' + this.activity.title + ' ' + this.release.title + ' (' + this.focusFactor + ') ' + this.project.title);
     }
 
     ResourceAssignment.create = function(jsonData, resource) {

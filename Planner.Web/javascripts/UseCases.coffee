@@ -72,7 +72,9 @@ class UDisplayPhases
 		@viewModel = new PhasesViewmodel(releases)
 		@viewModel.load releases.sort((a,b)->a.startDate.date - b.startDate.date)
 		ko.applyBindings(@viewModel)
-		drawTimeline(@viewModel.showPhases)
+		timeline = new Mnd.Timeline(@viewModel.showPhases)
+		timeline.draw()
+		#drawTimeline(@viewModel.showPhases)
 
 class UDisplayAbsences
 	constructor: ->
@@ -82,7 +84,9 @@ class UDisplayAbsences
 		@viewModel = new AbsencesViewmodel(resources)
 		@viewModel.load resources.sort()
 		ko.applyBindings(@viewModel)
-		drawTimeline(@viewModel.showAbsences, @viewModel.selectedTimelineItem)
+		timeline = new Mnd.Timeline(@viewModel.showAbsences, @viewModel.selectedTimelineItem)
+		timeline.draw()
+		#drawTimeline(@viewModel.showAbsences, @viewModel.selectedTimelineItem)
 
 class UDisplayAssignments
 	constructor: ->
@@ -91,12 +95,16 @@ class UDisplayAssignments
 		@viewModel = new AssignmentsViewmodel(resources)
 		@viewModel.load resources.sort()
 		ko.applyBindings(@viewModel)
-		drawTimeline(@viewModel.showAssignments, @viewModel.selectedTimelineItem)
+		timeline = new Mnd.Timeline(@viewModel.showAssignments, @viewModel.selectedTimelineItem)
+		timeline.draw()
+		#drawTimeline(@viewModel.showAssignments, @viewModel.selectedTimelineItem)
 
 class UReloadAbsenceInTimeline
 	constructor: (@allAbsences, @index, @refreshedTimelineItem) ->
 	execute: ->
-		drawTimeline(allAbsences, refreshedTimelineItem)
+		timeline = new Mnd.Timeline(allAbsences, refreshedTimelineItem)
+		timeline.draw()
+		#drawTimeline(allAbsences, refreshedTimelineItem)
 
 class ULoadAdminReleases
 	constructor: ->
@@ -250,7 +258,7 @@ class UDisplayReleaseTimeline
 		@displayData = []
 		console.log 'execute use case UDisplayReleaseTimeline'
 		for ph in @release.phases
-			obj = {group: @release.title, start: ph.startDate.date, end: ph.endDate.date, content: ph.title, info: ph.title }
+			obj = {group: @release.title, start: ph.startDate.date, end: ph.endDate.date, content: ph.title, info: ph.toString() }
 			@displayData.push obj
 		for ms in @release.milestones
 			icon = '<span class="icon icon-milestone" />'
@@ -278,42 +286,51 @@ class UDisplayReleaseTimeline
 				descr += '</ul>' # /projects
 			descr += '</li>' # /deliverable
 			descr += '</ul>' # /deliverables
-			obj = {group: @release.title, start: ms.date.date, content: ms.title + '<br />' + icon, info: 'test'}
+			obj = {group: @release.title, start: ms.date.date, content: ms.title + '<br />' + icon, info: ms.date.dateString + ' - ' + ms.time + '<br />' + descr}
 			@displayData.push obj
 		showData = @displayData.sort((a,b)-> a.start - b.end)
 		console.log showData
-		drawTimeline(showData, undefined, "100%", "200px", "mytimeline", "details")
+		timeline = new Mnd.Timeline(showData, undefined, "100%", "200px", "mytimeline", "details")
+		#drawTimeline(showData, undefined, "100%", "200px", "mytimeline", "details")
+		timeline.draw()
 		#@observableTimelineSource @displayData.sort((a,b)-> a.start - b.end)
 
 class UDisplayReleasePlanningInTimeline
 	# depends on timeline.js and having an HTML div with id 'mytimeline'
 	constructor: (@release, @observableTimelineSource) ->
+		@trackAssignments = []
 	execute: ->
 		@displayData = []
 		releaseTitle = @release.title
 		console.log 'execute use case UDisplayReleasePlanningInTimeline'
 		console.log @release
+		uniqueAsses = []
 		for ms in @release.milestones
 			#icon = '<span class="icon icon-milestone" />'
 			#style = 'style="color: green"'
 			#descr = '<ul>'
 			for del in ms.deliverables
+				console.log del
 				#console.log del.title
 				#descr += '<li>' + del.title + '<ul>'
 				for proj in del.scope
 					#descr += '<li>' + proj.title
 					#descr += '<ul>'
-					activities = proj.workload.reduce (acc, x) ->
-								for ass in x.assignedResources
+					# not necessary to group by activities:
+					# activities = proj.workload.reduce (acc, x) ->
+								#for ass in x.assignedResources
 									#console.log ass
-									acc.push { releaseTitle: releaseTitle, milestoneTitle: ms.title, deliverableTitle: del.title, projectTitle: proj.title, activityTitle :x.activity.title, resource: ass.resource.fullName(), focusFactor: ass.focusFactor, startDate: ass.assignedPeriod.startDate, endDate: ass.assignedPeriod.endDate }
-								acc
-							, []
-					# add assignments for all milestone deliverables per project
-					for assignment in activities
-						#console.log assignment
-						obj = {group: assignment.resource, start: assignment.startDate.date, end: assignment.endDate.date, content: assignment.activityTitle + ' [' + assignment.focusFactor + ']', info: assignment.releaseTitle + ' - ' + assignment.projectTitle + ' - ' + assignment.milestoneTitle + ' - ' + assignment.deliverableTitle + '<br /> ' + assignment.startDate.dateString + ' - ' + assignment.endDate.dateString + ' [' + assignment.focusFactor + ']'}
-						@displayData.push obj
+									#acc.push { releaseTitle: releaseTitle, milestoneTitle: ms.title, deliverableTitle: del.title, projectTitle: proj.title, activityTitle :x.activity.title, resource: ass.resource.fullName(), focusFactor: ass.focusFactor, startDate: ass.assignedPeriod.startDate, endDate: ass.assignedPeriod.endDate }
+								#acc
+							#, []
+					for activity in proj.workload
+						for assignment in activity.assignedResources
+							console.log assignment
+							dto = assignment # trick for adding info: dto.person = resource
+							resource = @createRowItem(assignment.resource.fullName(), 0)
+
+							obj = {group: resource, start: assignment.assignedPeriod.startDate.date, end: assignment.assignedPeriod.endDate.date, content: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.project.title, info: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.assignedPeriod.toString(), dataObject: dto}
+							@displayData.push obj
 					#for act in activities
 						#if act.hrs > act.planned
 							#icon = '<span class="icon icon-warning" />'
@@ -330,8 +347,18 @@ class UDisplayReleasePlanningInTimeline
 		#console.log activities
 		showData = @displayData.sort((a,b)-> a.start - b.end)
 		#console.log showData
-		drawTimeline(showData, undefined, "100%", "500px", "resourcePlanning", "assignmentDetails")
+		#drawTimeline(showData, undefined, "100%", "500px", "resourcePlanning", "assignmentDetails")
+		timeline = new Mnd.Timeline(showData, undefined, "100%", "500px", "resourcePlanning", "assignmentDetails")
+		timeline.draw()
 		#@observableTimelineSource @displayData.sort((a,b)-> a.start - b.end)
+	createRowItem: (item, index) ->
+		identifier = item + index
+		if @trackAssignments.indexOf(identifier) is -1
+			@trackAssignments.push(identifier)
+			item + '[' + index + ']'
+		else
+			index++
+			@createRowItem item, index
 
 class UDisplayReleasePhases
 	constructor: (@release, @viewModelObservableGraph) ->
@@ -340,7 +367,9 @@ class UDisplayReleasePhases
 		@viewModel = new PhasesViewmodel(releases)
 		@viewModel.load releases.sort((a,b)->a.startDate.date - b.startDate.date)
 		ko.applyBindings(@viewModel)
-		drawTimeline(@viewModel.showPhases)
+		timeline = new Mnd.Timeline(@viewModel.showPhases)
+		timeline.draw()
+		#drawTimeline(@viewModel.showPhases)
 
 # export to root object
 root.UDisplayReleaseStatus = UDisplayReleaseStatus

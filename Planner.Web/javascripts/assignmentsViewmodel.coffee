@@ -5,7 +5,7 @@
 root = global ? window
 
 class AssignmentsViewmodel
-	constructor: (@allResources) ->
+	constructor: (allResources) ->
 		# ctor is executed in context of INSTANCE. Therfore @ refers here to CURRENT INSTANCE and attaches selectedPhase to all instances (since object IS ctor)
 		#@selectedPhase = ko.observable()
 		#@canShowDetails = ko.observable(false)
@@ -25,8 +25,33 @@ class AssignmentsViewmodel
 		@selectedResource.subscribe((newValue) =>
 			console.log 'selectedResource changed: ' + newValue.fullName()
 			)
-		weekLater = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 7 ) # 30 = amt days
+		@allResources = ko.observableArray(allResources)
+		@showResources = ko.observableArray(allResources)
+		@includeResources = ko.observableArray()
+		@includeResources.subscribe((newValue) => 
+			console.log newValue
+			include = newValue.reduce (acc, x) =>
+							#console.log x
+							resource = r for r in @allResources() when +r.id is +x
+							#console.log resource
+							acc.push resource
+						 acc
+					, []
+			@showResources(include)
+			)
+		weekLater = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 7 ) # 7 = amt days
 		@checkPeriod = ko.observable(new Period(new Date(), weekLater))
+		@checkPeriod.subscribe((newValue) =>
+			#console.log 'dateview changed: ' + newValue
+			@load(@showResources().sort())
+			drawTimeline(@showAssignments, @selectedTimelineItem)
+			)
+		@showResources.subscribe((newValue) =>
+			console.log 'showResources changed: ' + newValue
+			@load(@showResources().sort())
+			drawTimeline(@showAssignments, @selectedTimelineItem)
+			)
+
 
 	load: (data) ->
 		# all properties besides ctor are ATTACHED to prototype. these are EXECUTED in context of INSTANCE.
@@ -49,6 +74,12 @@ class AssignmentsViewmodel
 				@displayData.push obj
 				i++
 		@showAssignments = @displayData.sort((a,b)-> a.start - b.end)
+
+
+	updatePeriod: (data) =>
+		# we only have dateString for use, not the entire DatePlus object. Therefore instantiate a new Period and update Period observable checkPeriod
+		period = new Period(DateFormatter.createFromString(@checkPeriod().startDate.dateString), DateFormatter.createFromString(@checkPeriod().endDate.dateString))
+		@checkPeriod period
 
 	mailPlanning: (model) ->
 		ajx = new Ajax

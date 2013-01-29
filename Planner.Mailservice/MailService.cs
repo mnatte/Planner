@@ -8,6 +8,8 @@ using System.ServiceProcess;
 using System.Text;
 using System.Timers;
 using Mnd.Mail;
+using Mnd.Planner.Data.DataAccess;
+using Mnd.Helpers;
 
 namespace Mnd.Planner.Mailservice
 {
@@ -38,7 +40,6 @@ namespace Mnd.Planner.Mailservice
                 _mailer.SendMail("mnatte@gmail.com", "Exception in write to eventlog", ex1.Message);
             }
             
-            _timer_Elapsed(null, null);
             _timer.Elapsed += new ElapsedEventHandler(_timer_Elapsed);
             // milliseconds
             _timer.Interval = _servicePollInterval;
@@ -51,12 +52,38 @@ namespace Mnd.Planner.Mailservice
         {
             try
             {
-                // DO THE WORK
-                throw new Exception("FOUT!");
+                // TODO: use sp_get_milestones_for_nextdays and retrieve deliverablestatuses to mail
+                //throw new Exception("FOUT!");
+                var repository = new MilestoneRepository();
+                var milestones = repository.GetMilestonesForComingDays(30);
+                var builder = new StringBuilder();
+                //var projRep = new ProjectRepository();
+
+                foreach (var ms in milestones)
+                {
+                    //var projects = projRep.GetConfiguredProjectsForRelease(ms.Release.Id);
+                    builder.Append("\n***********************************************");
+                    builder.Append(string.Format("\n{0} - {1} - {2} {3}:", ms.Release.Title, ms.Title, ms.Date.ToDutchString(), ms.Time));
+                    var statuses = repository.GetActivityStatusForMilestones(ms);
+                    builder.Append("\n----------------------------------------------");
+                    foreach (var state in statuses)
+                    {
+
+                        builder.Append(string.Format("\n{0}: {1}", "Project", state.Project.Title));
+                        builder.Append(string.Format("\n{0} - {1} - {2} hrs remaining", state.Deliverable.Title, state.Activity.Title, state.HoursRemaining));
+                        builder.Append("\n----------------------------------------------");
+                    }
+
+                    builder.Append("\n***********************************************");
+                    builder.Append("\n\n");
+                }
+                var content = builder.ToString();
+                _mailer.SendMail("martijn.natte@consultant.vfsco.com", "Milestones coming up", content);
+
             }
             catch (Exception ex)
             {
-                eventLog1.WriteEntry(ex.Message);
+                eventLog1.WriteEntry(ex.Message, EventLogEntryType.Error);
             }
         }
 

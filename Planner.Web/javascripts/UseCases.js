@@ -76,14 +76,15 @@
     function UDisplayPhases() {}
 
     UDisplayPhases.prototype.execute = function(data) {
-      var releases;
+      var releases, timeline;
       releases = Release.createCollection(data);
       this.viewModel = new PhasesViewmodel(releases);
       this.viewModel.load(releases.sort(function(a, b) {
         return a.startDate.date - b.startDate.date;
       }));
       ko.applyBindings(this.viewModel);
-      return drawTimeline(this.viewModel.showPhases);
+      timeline = new Mnd.Timeline(this.viewModel.showPhases);
+      return timeline.draw();
     };
 
     return UDisplayPhases;
@@ -95,12 +96,13 @@
     function UDisplayAbsences() {}
 
     UDisplayAbsences.prototype.execute = function(data) {
-      var resources;
+      var resources, timeline;
       resources = Resource.createCollection(data);
       this.viewModel = new AbsencesViewmodel(resources);
       this.viewModel.load(resources.sort());
       ko.applyBindings(this.viewModel);
-      return drawTimeline(this.viewModel.showAbsences, this.viewModel.selectedTimelineItem);
+      timeline = new Mnd.Timeline(this.viewModel.showAbsences, this.viewModel.selectedTimelineItem);
+      return timeline.draw();
     };
 
     return UDisplayAbsences;
@@ -112,12 +114,13 @@
     function UDisplayAssignments() {}
 
     UDisplayAssignments.prototype.execute = function(data) {
-      var resources;
+      var resources, timeline;
       resources = Resource.createCollection(data);
       this.viewModel = new AssignmentsViewmodel(resources);
       this.viewModel.load(resources.sort());
       ko.applyBindings(this.viewModel);
-      return drawTimeline(this.viewModel.showAssignments, this.viewModel.selectedTimelineItem);
+      timeline = new Mnd.Timeline(this.viewModel.showAssignments, this.viewModel.selectedTimelineItem);
+      return timeline.draw();
     };
 
     return UDisplayAssignments;
@@ -133,7 +136,9 @@
     }
 
     UReloadAbsenceInTimeline.prototype.execute = function() {
-      return drawTimeline(allAbsences, refreshedTimelineItem);
+      var timeline;
+      timeline = new Mnd.Timeline(allAbsences, refreshedTimelineItem);
+      return timeline.draw();
     };
 
     return UReloadAbsenceInTimeline;
@@ -440,7 +445,7 @@
     }
 
     UDisplayReleaseTimeline.prototype.execute = function() {
-      var act, activities, del, descr, icon, ms, obj, ph, proj, showData, style, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref, _ref2, _ref3, _ref4;
+      var act, activities, del, descr, icon, ms, obj, ph, proj, showData, style, timeline, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref, _ref2, _ref3, _ref4;
       this.displayData = [];
       console.log('execute use case UDisplayReleaseTimeline');
       _ref = this.release.phases;
@@ -451,7 +456,7 @@
           start: ph.startDate.date,
           end: ph.endDate.date,
           content: ph.title,
-          info: ph.title
+          info: ph.toString()
         };
         this.displayData.push(obj);
       }
@@ -501,7 +506,7 @@
           group: this.release.title,
           start: ms.date.date,
           content: ms.title + '<br />' + icon,
-          info: 'test'
+          info: ms.date.dateString + ' - ' + ms.time + '<br />' + descr
         };
         this.displayData.push(obj);
       }
@@ -509,7 +514,8 @@
         return a.start - b.end;
       });
       console.log(showData);
-      return drawTimeline(showData, void 0, "100%", "200px", "mytimeline", "details");
+      timeline = new Mnd.Timeline(showData, void 0, "100%", "200px", "mytimeline", "details");
+      return timeline.draw();
     };
 
     return UDisplayReleaseTimeline;
@@ -521,52 +527,45 @@
     function UDisplayReleasePlanningInTimeline(release, observableTimelineSource) {
       this.release = release;
       this.observableTimelineSource = observableTimelineSource;
+      this.trackAssignments = [];
     }
 
     UDisplayReleasePlanningInTimeline.prototype.execute = function() {
-      var activities, assignment, del, ms, obj, proj, releaseTitle, showData, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3;
+      var activity, assignment, del, dto, ms, obj, proj, releaseTitle, resource, showData, timeline, uniqueAsses, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref, _ref2, _ref3, _ref4, _ref5;
       this.displayData = [];
       releaseTitle = this.release.title;
       console.log('execute use case UDisplayReleasePlanningInTimeline');
       console.log(this.release);
+      uniqueAsses = [];
       _ref = this.release.milestones;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         ms = _ref[_i];
         _ref2 = ms.deliverables;
         for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
           del = _ref2[_j];
+          console.log(del);
           _ref3 = del.scope;
           for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
             proj = _ref3[_k];
-            activities = proj.workload.reduce(function(acc, x) {
-              var ass, _l, _len4, _ref4;
-              _ref4 = x.assignedResources;
-              for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
-                ass = _ref4[_l];
-                acc.push({
-                  releaseTitle: releaseTitle,
-                  milestoneTitle: ms.title,
-                  deliverableTitle: del.title,
-                  projectTitle: proj.title,
-                  activityTitle: x.activity.title,
-                  resource: ass.resource.fullName(),
-                  focusFactor: ass.focusFactor,
-                  startDate: ass.assignedPeriod.startDate,
-                  endDate: ass.assignedPeriod.endDate
-                });
+            _ref4 = proj.workload;
+            for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
+              activity = _ref4[_l];
+              _ref5 = activity.assignedResources;
+              for (_m = 0, _len5 = _ref5.length; _m < _len5; _m++) {
+                assignment = _ref5[_m];
+                console.log(assignment);
+                dto = assignment;
+                resource = this.createRowItem(assignment.resource.fullName(), 0);
+                obj = {
+                  group: resource,
+                  start: assignment.assignedPeriod.startDate.date,
+                  end: assignment.assignedPeriod.endDate.date,
+                  content: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.project.title,
+                  info: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.assignedPeriod.toString(),
+                  dataObject: dto
+                };
+                this.displayData.push(obj);
               }
-              return acc;
-            }, []);
-            for (_l = 0, _len4 = activities.length; _l < _len4; _l++) {
-              assignment = activities[_l];
-              obj = {
-                group: assignment.resource,
-                start: assignment.startDate.date,
-                end: assignment.endDate.date,
-                content: assignment.activityTitle + ' [' + assignment.focusFactor + ']',
-                info: assignment.releaseTitle + ' - ' + assignment.projectTitle + ' - ' + assignment.milestoneTitle + ' - ' + assignment.deliverableTitle + '<br /> ' + assignment.startDate.dateString + ' - ' + assignment.endDate.dateString + ' [' + assignment.focusFactor + ']'
-              };
-              this.displayData.push(obj);
             }
           }
         }
@@ -574,7 +573,20 @@
       showData = this.displayData.sort(function(a, b) {
         return a.start - b.end;
       });
-      return drawTimeline(showData, void 0, "100%", "500px", "resourcePlanning", "assignmentDetails");
+      timeline = new Mnd.Timeline(showData, void 0, "100%", "500px", "resourcePlanning", "assignmentDetails");
+      return timeline.draw();
+    };
+
+    UDisplayReleasePlanningInTimeline.prototype.createRowItem = function(item, index) {
+      var identifier;
+      identifier = item + index;
+      if (this.trackAssignments.indexOf(identifier) === -1) {
+        this.trackAssignments.push(identifier);
+        return item + '[' + index + ']';
+      } else {
+        index++;
+        return this.createRowItem(item, index);
+      }
     };
 
     return UDisplayReleasePlanningInTimeline;
@@ -589,12 +601,14 @@
     }
 
     UDisplayReleasePhases.prototype.execute = function() {
+      var timeline;
       this.viewModel = new PhasesViewmodel(releases);
       this.viewModel.load(releases.sort(function(a, b) {
         return a.startDate.date - b.startDate.date;
       }));
       ko.applyBindings(this.viewModel);
-      return drawTimeline(this.viewModel.showPhases);
+      timeline = new Mnd.Timeline(this.viewModel.showPhases);
+      return timeline.draw();
     };
 
     return UDisplayReleasePhases;

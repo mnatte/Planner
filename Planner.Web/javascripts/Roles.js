@@ -159,6 +159,9 @@
               return _results;
             })()).reduce(function(acc, x) {
               var result;
+              console.log("RTeamMember hoursAvailable");
+              console.log(x);
+              console.log(x.remainingWorkingDays());
               result = Math.round(x.remainingWorkingDays());
               return acc + result;
             }, 0);

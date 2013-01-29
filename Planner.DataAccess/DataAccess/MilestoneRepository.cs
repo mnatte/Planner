@@ -161,5 +161,52 @@ namespace Mnd.Planner.Data.DataAccess
             return lst;
         }
 
+        public List<ReleaseModels.Milestone> GetMilestonesForComingDays(int amountDays)
+        {
+            var conn = new SqlConnection(this.ConnectionString);
+
+            var cmd = new SqlCommand("sp_get_milestones_for_next_days", conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.Add("@AmountDays", System.Data.SqlDbType.Int).Value = amountDays;
+            var lst = new List<ReleaseModels.Milestone>();
+
+            using (conn)
+            {
+                conn.Open();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var milestone = new ReleaseModels.Milestone { Id = int.Parse(reader["Id"].ToString()), Title = reader["Title"].ToString(), Date = DateTime.Parse(reader["Date"].ToString()), Time = reader["Time"].ToString(), Description = reader["Description"].ToString(), Release = new ReleaseModels.Release { Id = int.Parse(reader["ReleaseId"].ToString()), Title = reader["ReleaseTitle"].ToString() } };
+                        lst.Add(milestone);
+                    }
+                }
+            }
+            return lst;
+        }
+
+        public List<ReleaseModels.ActivityStatus> GetActivityStatusForMilestones(ReleaseModels.Milestone milestone)
+        {
+            var conn = new SqlConnection(this.ConnectionString);
+
+            var cmd = new SqlCommand("sp_get_deliverable_status_for_milestone", conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = milestone.Id;
+            var lst = new List<ReleaseModels.ActivityStatus>();
+
+            using (conn)
+            {
+                conn.Open();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var actStatus = new ReleaseModels.ActivityStatus { Activity = new ReleaseModels.Activity { Title = reader["ActivityTitle"].ToString() }, Deliverable = new ReleaseModels.Deliverable { Title = reader["DeliverableTitle"].ToString(), Format = reader["DeliverableFormat"].ToString() }, Project = new ReleaseModels.Project { Title = reader["ProjectTitle"].ToString() }, HoursRemaining = int.Parse(reader["HoursRemaining"].ToString()) };
+                        lst.Add(actStatus);
+                    }
+                }
+            }
+            return lst;
+        }
     }
 }

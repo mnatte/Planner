@@ -71,10 +71,17 @@
         <!-- /ko -->
         <!-- ko with: $root.checkPeriod -->
         <section id="period" class="sixteen columns">
-            <label>Start date (dd/mm/yyyy):</label><input type="text" data-bind="value: startDate.dateString, event: { blur: $root.checkAvailability.bind($data) }" style="display:inline; width:100px; height:30px"/>
-            <label>End date (dd/mm/yyyy):</label><input type="text" data-bind="value: endDate.dateString, event: { blur: $root.checkAvailability.bind($data) }" style="display:inline; width:100px; height:30px"/>
-            <!--<button class="sexybutton" data-bind="click: $root.checkAvailability.bind($data), enable: $root.checkPeriod()"><span><span><span class="view">Check</span></span></span></button>-->
-            <span id="amtHrs" data-bind="text: $root.checkPeriod().remainingWorkingHours() + ' working hours * 0.8 (focus factor) = ' + Math.round($root.checkPeriod().remainingWorkingHours() * 0.8) + ' remaining'"></span>
+            <div style="float:left;margin-right:20px;">
+                <label for="startdate" style="display:inline;">Start date (dd/mm/yyyy):</label>
+                <input id="startdate" type="text" data-bind="value: startDate.dateString, event: { blur: $root.checkAvailability.bind($data) }" style="display:inline; width:100px; height:30px"/>
+            </div>
+            <div style="float:left;">
+                <label for="enddate" style="display:inline;">End date (dd/mm/yyyy):</label>
+                <input id="enddate" type="text" data-bind="value: endDate.dateString, event: { blur: $root.checkAvailability.bind($data) }" style="display:inline; width:100px; height:30px"/>
+            </div>
+            <div style="display:block;" >
+                <div style="display:block;" id="amtHrs" data-bind="text: $root.checkPeriod().remainingWorkingHours() + ' working hours * 0.8 (focus factor) = ' + Math.round($root.checkPeriod().remainingWorkingHours() * 0.8) + ' remaining'"></div>
+            </div>
         </section>
         <!-- /ko -->
 
@@ -84,7 +91,7 @@
                 <div data-bind="foreach: allResources()">
                     <!--'value' sets the value to the array and matches on it. by default it is the toString() method of the object that is used-->
                     <div>
-                        <input type="checkbox" data-bind="checked: $root.includeResources, value: $data.id" /><data data-bind="text: fullName() + ' - ' + availableHoursForPlanning($root.checkPeriod()) + ' hours available'"></data>
+                        <input type="checkbox" data-bind="checked: $root.includeResources, value: $data.id" /><data data-bind="text: fullName() + ' - ' + availableHoursForPlanning($root.checkPeriod()) + ' hrs'"></data>
                         <button class="sexybutton sexyicononly" data-bind="click: $root.inspectOverplanning.bind($data)"><span><span><span class="view"></span></span></span></button>
                         <img src="images/png/16x16/warning.png" data-bind="visible: hasOverplannedPeriods($root.checkPeriod())">
                     </div>
