@@ -674,7 +674,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>resourceRoles.coffee</DependentUpon>
     </Content>
-    <Content Include="javascripts\timeline_instantion.js" />
+    <Content Include="javascripts\xxx_timeline_instantion.js" />
     <Content Include="javascripts\updateReleaseStatusViewmodel.js">
       <DependentUpon>updateReleaseStatusViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>

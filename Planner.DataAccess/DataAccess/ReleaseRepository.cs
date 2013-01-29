@@ -491,9 +491,18 @@ namespace Mnd.Planner.Data.DataAccess
                     cmd.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = obj.ProjectId;
                     cmd.Parameters.Add("@ActivityId", System.Data.SqlDbType.Int).Value = 0;
                     cmd.Parameters.Add("@HoursRemaining", System.Data.SqlDbType.Int).Value = 0;
-                    
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
+                    // add to history table for reporting purposes
+                    var cmd2 = new SqlCommand("sp_insert_remainingwork_history_table", conn);
+                    cmd2.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = obj.ReleaseId;
+                    cmd2.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = obj.MilestoneId;
+                    cmd2.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = obj.DeliverableId;
+                    cmd2.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = obj.ProjectId;
+                    cmd2.Parameters.Add("@ActivityId", System.Data.SqlDbType.Int).Value = 0;
+                    cmd2.Parameters.Add("@HoursRemaining", System.Data.SqlDbType.Int).Value = 0;
+                    cmd2.CommandType = System.Data.CommandType.StoredProcedure;
+                    
                     // completely renew the ProjectActivityStatuses for the Milestone Deliverables as set in the client app
                     var cmdDelCross = new SqlCommand(string.Format("DELETE FROM MilestoneStatus WHERE ReleaseId = {0} AND MilestoneId = {1} AND DeliverableId = {2} AND ProjectId = {3}", obj.ReleaseId, obj.MilestoneId, obj.DeliverableId, obj.ProjectId), conn);
                     cmdDelCross.ExecuteNonQuery();
@@ -503,9 +512,14 @@ namespace Mnd.Planner.Data.DataAccess
                         //cmd.Parameters["@ProjectId"].Value = itm.ProjectId;
                         cmd.Parameters["@ActivityId"].Value = itm.ActivityId;
                         cmd.Parameters["@HoursRemaining"].Value = itm.HoursRemaining;
-
                         cmd.ExecuteNonQuery();
+
+                        cmd2.Parameters["@ActivityId"].Value = itm.ActivityId;
+                        cmd2.Parameters["@HoursRemaining"].Value = itm.HoursRemaining;
+                        cmd2.ExecuteNonQuery();
                     }
+
+                    
                 }
             }
             catch (Exception ex)
