@@ -42,7 +42,7 @@
         if (sel[0] !== void 0) {
           item = this.data[sel[0].row];
           if (typeof item.info !== "undefined") $(details).html(item.info);
-          if (typeof observableSelected !== "undefined") {
+          if (typeof this.observableSelected !== "undefined") {
             return this.observableSelected(item);
           }
         }

@@ -70,7 +70,9 @@ class AbsencesViewmodel
 		#timeline.deleteItem(index)
 		#timeline.redraw
 		@selectedTimelineItem timelineItem
-		drawTimeline(@showAbsences, @selectedTimelineItem)
+		#drawTimeline(@showAbsences, @selectedTimelineItem)
+		timeline = new Mnd.Timeline(@showAbsences, @selectedTimelineItem)
+		timeline.draw()
 
 	saveSelectedAbsence: =>
 		i = -1 # index set to 0 for new absences

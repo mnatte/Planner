@@ -73,7 +73,7 @@
     };
 
     AbsencesViewmodel.prototype.refreshTimeline = function(index, newItem) {
-      var absence, p, timelineItem, _i, _len, _ref;
+      var absence, p, timeline, timelineItem, _i, _len, _ref;
       console.log("refreshTimeline");
       absence = Period.create(newItem);
       _ref = this.allResources;
@@ -96,7 +96,8 @@
         this.showAbsences.splice(index, 0, timelineItem);
       }
       this.selectedTimelineItem(timelineItem);
-      return drawTimeline(this.showAbsences, this.selectedTimelineItem);
+      timeline = new Mnd.Timeline(this.showAbsences, this.selectedTimelineItem);
+      return timeline.draw();
     };
 
     AbsencesViewmodel.prototype.saveSelectedAbsence = function() {

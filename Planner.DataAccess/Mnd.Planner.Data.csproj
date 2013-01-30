@@ -56,6 +56,7 @@
     <Compile Include="Models\ReleaseAssignmentsInputModel.cs" />
     <Compile Include="Models\ReleaseInputModel.cs" />
     <Compile Include="Models\ReleaseModels.cs" />
+    <Compile Include="Models\ReleaseProgressReport.cs" />
     <Compile Include="Models\ResourceAssignmentInputModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataAccess\ReleaseRepository.cs" />

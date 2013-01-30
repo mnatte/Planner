@@ -70,6 +70,10 @@
       return $.format.date(this.date, formatString);
     };
 
+    DatePlus.prototype.timeStamp = function() {
+      return this.date.getTime();
+    };
+
     return DatePlus;
 
   })();

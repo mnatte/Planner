@@ -36,7 +36,7 @@ class Mnd.Timeline
                 item = @data[sel[0].row]
                 if typeof item.info isnt "undefined"
                     $(details).html(item.info)
-                if typeof observableSelected isnt "undefined"
+                if typeof @observableSelected isnt "undefined"
                     @observableSelected(item)
 	#onChange: =>
 		#sel = @timeline.getSelection()

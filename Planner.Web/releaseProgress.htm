@@ -1,0 +1,196 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+	<title>Release Progress</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="stylesheets/base_no_buttons.css">
+	<link rel="stylesheet" href="stylesheets/skeleton.css">
+	<link rel="stylesheet" href="stylesheets/layout.css">
+    <link rel="stylesheet" href="stylesheets/tables.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/timeline.css" />
+    <link rel="stylesheet" href="stylesheets/icon_styles.css">
+    <link rel="stylesheet" href="stylesheets/sexybuttons.css">
+    <link href="stylesheets/highcharts_highslide.css" rel="stylesheet" type="text/css" />
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+    
+    <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.dateFormat-1.0.js"></script>
+    <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
+    <script type="text/javascript" src="Scripts/knockout-array-filter.js"></script>
+    <script type="text/javascript" src="Scripts/koExternalTemplateEngine_all.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.blockUI.js"></script>
+    <script type="text/javascript" src="Scripts/datehelper.js"></script>
+    <script type="text/javascript" src="Scripts/timeline-min.js"></script>
+    <script type="text/javascript" src="Scripts/highcharts.js"></script>
+    <script src="Scripts/highcharts_highslide-full.min.js" type="text/javascript"></script>
+    <script src="Scripts/highcharts_highslide.config.js" type="text/javascript"></script>
+    <script src="Scripts/highcharts_exporting.js" type="text/javascript"></script>
+    
+    <script type="text/javascript" src="javascripts/Timeline.js"></script>       
+    <script type="text/javascript" src="javascripts/Mixin.js"></script>
+    <script type="text/javascript" src="javascripts/release.js"></script>
+    <script type="text/javascript" src="javascripts/persistence.js"></script>
+    <!--<script type="text/javascript" src="javascripts/releaseProgressViewmodel.js"></script>-->
+    <script type="text/javascript" src="javascripts/ajax.js"></script>
+    <script type="text/javascript" src="javascripts/Roles.js"></script>
+    <script type="text/javascript" src="javascripts/UseCases.js"></script>
+</head>
+<body>
+<!-- Primary Page Layout
+	================================================== -->
+
+	<div class="container">
+    <!--navigation-->
+        <!-- ko template: {name: 'navigation'} -->
+        <!-- /ko -->
+        <div id="space" style="height: 100px">&nbsp;</div>
+        <!--releases overview-->
+        <div id="graph" class="twelve columns">
+        </div>
+</div><!-- container -->
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            infuser.defaults.templateSuffix = ".tmpl.html";
+            infuser.defaults.templateUrl = "/planner/templates";
+
+            // define the options
+            var options = {
+
+                chart: {
+                    renderTo: 'graph'
+                },
+
+                title: {
+                    text: 'Daily visits at www.highcharts.com'
+                },
+
+                subtitle: {
+                    text: 'Source: Sjaak zn reet'
+                },
+
+                xAxis: {
+                    type: 'datetime',
+                    tickInterval: 7 * 24 * 3600 * 1000, // one week
+                    tickWidth: 0,
+                    gridLineWidth: 1,
+                    labels: {
+                        align: 'left',
+                        x: 3,
+                        y: -3
+                    }
+                },
+
+                yAxis: [{ // left y axis
+                    title: {
+                        text: null
+                    },
+                    labels: {
+                        align: 'left',
+                        x: 3,
+                        y: 16,
+                        formatter: function () {
+                            return Highcharts.numberFormat(this.value, 0);
+                        }
+                    },
+                    showFirstLabel: false
+                }, { // right y axis
+                    linkedTo: 0,
+                    gridLineWidth: 0,
+                    opposite: true,
+                    title: {
+                        text: null
+                    },
+                    labels: {
+                        align: 'right',
+                        x: -3,
+                        y: 16,
+                        formatter: function () {
+                            return Highcharts.numberFormat(this.value, 0);
+                        }
+                    },
+                    showFirstLabel: false
+                }],
+
+                legend: {
+                    align: 'left',
+                    verticalAlign: 'top',
+                    y: 20,
+                    floating: true,
+                    borderWidth: 0
+                },
+
+                tooltip: {
+                    shared: true,
+                    crosshairs: true
+                },
+
+                plotOptions: {
+                    series: {
+                        cursor: 'pointer',
+                        point: {
+                            events: {
+                                click: function () {
+                                    hs.htmlExpand(null, {
+                                        pageOrigin: {
+                                            x: this.pageX,
+                                            y: this.pageY
+                                        },
+                                        headingText: this.series.name,
+                                        maincontentText: Highcharts.dateFormat('%A, %b %e, %Y', this.x) + ':<br/> ' +
+                                        this.y + ' visits',
+                                        width: 200
+                                    });
+                                }
+                            }
+                        },
+                        marker: {
+                            lineWidth: 1
+                        }
+                    }
+                },
+
+                series: [{
+                    name: 'All visits',
+                    lineWidth: 4,
+                    marker: {
+                        radius: 4
+                    }
+                }, {
+                    name: 'New visitors'
+                }]
+            };
+
+            var uc = new UDisplayReleaseProgress();
+            var ajax = new Ajax();
+            ajax.getReleaseProgress(106, function (data) { uc.execute(data, options) });
+        });
+    </script>
+
+</body>
+</html>

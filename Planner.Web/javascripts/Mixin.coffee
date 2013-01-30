@@ -42,6 +42,8 @@ class DatePlus
 		@dateString = $.format.date(date, 'dd/MM/yyyy')
 	format: (formatString) ->
 		$.format.date(@date, formatString)
+	timeStamp: ->
+		@date.getTime()
 
 # export to root object
 root.Mixin = Mixin

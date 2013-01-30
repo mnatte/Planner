@@ -371,6 +371,92 @@ class UDisplayReleasePhases
 		timeline.draw()
 		#drawTimeline(@viewModel.showPhases)
 
+class UDisplayReleaseProgress
+	constructor: (@release) ->
+	execute: (jsonData, options) ->
+		#chartOptions = 
+		#	chart:
+		#		renderTo: 'graph'
+		#	title:
+		#		text: 'Progress overview'
+		#	xAxis: 
+		#		type: 'datetime',
+		#		tickInterval: 7 * 24 * 3600 * 1000,
+		#		tickWidth: 0,
+		#		gridLineWidth: 1,
+		#		labels:
+		#			align: 'left',
+		#			x: 3,
+		#			y: -3
+		#	yAxis:[{ # left y axis
+         #           title:
+          #              text: null
+           #         labels:
+            #            align: 'left',
+             #           x: 3,
+              #          y: 16,
+               #         formatter: -> 
+                #            Highcharts.numberFormat(@value, 0)                     
+                 #   showFirstLabel: false
+         #       }, { # right y axis
+          #          linkedTo: 0,
+         #           gridLineWidth: 0,
+         #           opposite: true,
+          #          title:
+          #              text: null
+           #         labels:
+            #            align: 'right',
+             #           x: -3,
+              #          y: 16,
+               #         formatter: ->
+                #            Highcharts.numberFormat(@value, 0)
+       #             showFirstLabel: false
+       #         }],
+	#		legend:
+     #               align: 'left',
+      #              verticalAlign: 'top',
+       #             y: 20,
+        #            floating: true,
+        #            borderWidth: 0
+        #        tooltip:
+        #            shared: true,
+        #            crosshairs: true
+        #        plotOptions:
+        #            series:
+        #                cursor: 'pointer',
+        #                point:
+        #                    events:
+        #                        click: ->
+        #                            hs.htmlExpand(null, {
+        #                                pageOrigin: {
+        #                                    x: this.pageX,
+        #                                    y: this.pageY
+        #                                },
+        #                                headingText: this.series.name,
+        #                                maincontentText: Highcharts.dateFormat('%A, %b %e, %Y', this.x) + ':<br/> ' +
+        #                                this.y + ' visits',
+        #                                width: 200
+        #                            });
+        #                marker:
+        #                    lineWidth: 1
+        #        series: [
+        #            name: 'All visits',
+        #            lineWidth: 4,
+        #            marker:
+        #                radius: 4
+        #            name: 'New visitors'
+        #        ]
+			
+		art = []
+		#console.log jsonData
+		for artefact in jsonData
+			statusDate = new DatePlus(DateFormatter.createJsDateFromJson(artefact.StatusDate))
+			art.push([statusDate.timeStamp(), artefact.HoursRemaining])
+		console.log art
+		options.series[0].data = art #[ [1283644800000, 966], [1283731200000, 2475], [1283817600000, 3336], [1283904000000, 3211], [1283990400000, 3229], [1284076800000, 2802] ]
+		#options.series[1].data = newVisitors;
+		chart = new Highcharts.Chart(options)
+
 # export to root object
 root.UDisplayReleaseStatus = UDisplayReleaseStatus
 root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFromNow
@@ -392,6 +478,7 @@ root.UDisplayAssignments = UDisplayAssignments
 root.UDisplayReleaseOverview = UDisplayReleaseOverview
 root.UDisplayReleaseTimeline = UDisplayReleaseTimeline
 root.UDisplayReleasePlanningInTimeline = UDisplayReleasePlanningInTimeline
+root.UDisplayReleaseProgress = UDisplayReleaseProgress
 
 
 

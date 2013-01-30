@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Data;
 using Mnd.Planner.Data.Models;
 using Mnd.Helpers;
+using Mnd.Planner.DataAccess.Models;
 
 namespace Mnd.Planner.Data.DataAccess
 {
@@ -744,6 +745,38 @@ namespace Mnd.Planner.Data.DataAccess
 
                     var result = cmd.ExecuteScalar().ToString();
                 }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public List<ArtefactActivityProgressReport> GetArtefactsProgress(int id)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            var lst = new List<ArtefactActivityProgressReport>();
+            try
+            {
+                using (conn)
+                {
+                    conn.Open();
+
+                    var cmd = new SqlCommand("sp_get_release_progress", conn);
+                    cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = id;
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var status = new ArtefactActivityProgressReport { HoursRemaining = int.Parse(reader["HoursRemaining"].ToString()), StatusDate = DateTime.Parse(reader["StatusDate"].ToString()), Release = reader["Release"].ToString(), Artefact = reader["Artefact"].ToString() };
+
+                            lst.Add(status);
+                        }
+                    }
+                }
+                return lst;
             }
             catch (Exception ex)
             {

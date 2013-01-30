@@ -1,5 +1,5 @@
 (function() {
-  var UDeleteResourceAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyResourceAssignment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, root;
+  var UDeleteResourceAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyResourceAssignment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -615,6 +615,29 @@
 
   })();
 
+  UDisplayReleaseProgress = (function() {
+
+    function UDisplayReleaseProgress(release) {
+      this.release = release;
+    }
+
+    UDisplayReleaseProgress.prototype.execute = function(jsonData, options) {
+      var art, artefact, chart, statusDate, _i, _len;
+      art = [];
+      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
+        artefact = jsonData[_i];
+        statusDate = new DatePlus(DateFormatter.createJsDateFromJson(artefact.StatusDate));
+        art.push([statusDate.timeStamp(), artefact.HoursRemaining]);
+      }
+      console.log(art);
+      options.series[0].data = art;
+      return chart = new Highcharts.Chart(options);
+    };
+
+    return UDisplayReleaseProgress;
+
+  })();
+
   root.UDisplayReleaseStatus = UDisplayReleaseStatus;
 
   root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFromNow;
@@ -654,5 +677,7 @@
   root.UDisplayReleaseTimeline = UDisplayReleaseTimeline;
 
   root.UDisplayReleasePlanningInTimeline = UDisplayReleasePlanningInTimeline;
+
+  root.UDisplayReleaseProgress = UDisplayReleaseProgress;
 
 }).call(this);

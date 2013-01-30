@@ -122,6 +122,7 @@
     <Content Include="adminActivity.htm" />
     <Content Include="absences.htm" />
     <Content Include="assignments.htm" />
+    <Content Include="releaseProgress.htm" />
     <Content Include="javascripts\releaseOverviewViewmodel.js">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -685,7 +686,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>xxx_updateReleaseStatus.coffee</DependentUpon>
     </Content>
+    <Content Include="Scripts\highcharts.js" />
+    <Content Include="Scripts\highcharts_exporting.js" />
+    <Content Include="Scripts\highcharts_highslide-full.min.js" />
+    <Content Include="Scripts\highcharts_highslide.config.js" />
     <Content Include="Scripts\jquery.blockUI.js" />
+    <Content Include="stylesheets\highcharts_highslide.css" />
     <Content Include="stylesheets\sexybuttons.css" />
     <Content Include="templates\absenceForm.tmpl.html" />
     <Content Include="templates\assignmentForm.tmpl.html" />
@@ -813,7 +819,6 @@
     <Content Include="Scripts\koExternalTemplateEngine_all.min.js" />
     <Content Include="Scripts\tabs.js" />
     <Content Include="Release.htm" />
-    <Content Include="Scripts\highcharts.js" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
     <Content Include="Scripts\jquery.dateFormat-1.0.js" />
     <Content Include="Scripts\knockout-2.0.0.debug.js" />
