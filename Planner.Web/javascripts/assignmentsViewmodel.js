@@ -46,13 +46,17 @@
       weekLater = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 7);
       this.checkPeriod = ko.observable(new Period(new Date(), weekLater));
       this.checkPeriod.subscribe(function(newValue) {
+        var timeline;
         _this.load(_this.showResources().sort());
-        return drawTimeline(_this.showAssignments, _this.selectedTimelineItem);
+        timeline = new Mnd.Timeline(_this.showAssignments, _this.selectedTimelineItem);
+        return timeline.draw();
       });
       this.showResources.subscribe(function(newValue) {
+        var timeline;
         console.log('showResources changed: ' + newValue);
         _this.load(_this.showResources().sort());
-        return drawTimeline(_this.showAssignments, _this.selectedTimelineItem);
+        timeline = new Mnd.Timeline(_this.showAssignments, _this.selectedTimelineItem);
+        return timeline.draw();
       });
     }
 

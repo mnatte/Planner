@@ -26,8 +26,8 @@ function _getInt(str, i, minlength, maxlength) {
 // getTime() of the date. If it does not match, it returns 0.
 // ------------------------------------------------------------------
 function getDateFromFormat(val, format) {
-    console.log(val);
-    console.log(format);
+    //console.log(val);
+    //console.log(format);
     val = val + "";
     format = format + "";
     var i_val = 0;

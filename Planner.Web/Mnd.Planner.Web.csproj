@@ -122,6 +122,11 @@
     <Content Include="adminActivity.htm" />
     <Content Include="absences.htm" />
     <Content Include="assignments.htm" />
+    <Content Include="javascripts\TimeChart.js">
+      <DependentUpon>TimeChart.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
     <Content Include="releaseProgress.htm" />
     <Content Include="javascripts\releaseOverviewViewmodel.js">
       <AutoGen>True</AutoGen>
@@ -691,6 +696,8 @@
     <Content Include="Scripts\highcharts_highslide-full.min.js" />
     <Content Include="Scripts\highcharts_highslide.config.js" />
     <Content Include="Scripts\jquery.blockUI.js" />
+    <Content Include="stylesheets\graphics\closeX.png" />
+    <Content Include="stylesheets\graphics\resize.gif" />
     <Content Include="stylesheets\highcharts_highslide.css" />
     <Content Include="stylesheets\sexybuttons.css" />
     <Content Include="templates\absenceForm.tmpl.html" />
@@ -914,6 +921,10 @@
     <None Include="javascripts\assignmentsViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>assignmentsViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\TimeChart.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>TimeChart.js</LastGenOutput>
     </None>
     <None Include="javascripts\releaseOverviewViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>

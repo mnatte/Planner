@@ -44,12 +44,16 @@ class AssignmentsViewmodel
 		@checkPeriod.subscribe((newValue) =>
 			#console.log 'dateview changed: ' + newValue
 			@load(@showResources().sort())
-			drawTimeline(@showAssignments, @selectedTimelineItem)
+			#drawTimeline(@showAssignments, @selectedTimelineItem)
+			timeline = new Mnd.Timeline(@showAssignments, @selectedTimelineItem)
+			timeline.draw()
 			)
 		@showResources.subscribe((newValue) =>
 			console.log 'showResources changed: ' + newValue
 			@load(@showResources().sort())
-			drawTimeline(@showAssignments, @selectedTimelineItem)
+			#drawTimeline(@showAssignments, @selectedTimelineItem)
+			timeline = new Mnd.Timeline(@showAssignments, @selectedTimelineItem)
+			timeline.draw()
 			)
 
 

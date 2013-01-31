@@ -373,89 +373,47 @@ class UDisplayReleasePhases
 
 class UDisplayReleaseProgress
 	constructor: (@release) ->
+		@dates = []
 	execute: (jsonData, options) ->
-		#chartOptions = 
-		#	chart:
-		#		renderTo: 'graph'
-		#	title:
-		#		text: 'Progress overview'
-		#	xAxis: 
-		#		type: 'datetime',
-		#		tickInterval: 7 * 24 * 3600 * 1000,
-		#		tickWidth: 0,
-		#		gridLineWidth: 1,
-		#		labels:
-		#			align: 'left',
-		#			x: 3,
-		#			y: -3
-		#	yAxis:[{ # left y axis
-         #           title:
-          #              text: null
-           #         labels:
-            #            align: 'left',
-             #           x: 3,
-              #          y: 16,
-               #         formatter: -> 
-                #            Highcharts.numberFormat(@value, 0)                     
-                 #   showFirstLabel: false
-         #       }, { # right y axis
-          #          linkedTo: 0,
-         #           gridLineWidth: 0,
-         #           opposite: true,
-          #          title:
-          #              text: null
-           #         labels:
-            #            align: 'right',
-             #           x: -3,
-              #          y: 16,
-               #         formatter: ->
-                #            Highcharts.numberFormat(@value, 0)
-       #             showFirstLabel: false
-       #         }],
-	#		legend:
-     #               align: 'left',
-      #              verticalAlign: 'top',
-       #             y: 20,
-        #            floating: true,
-        #            borderWidth: 0
-        #        tooltip:
-        #            shared: true,
-        #            crosshairs: true
-        #        plotOptions:
-        #            series:
-        #                cursor: 'pointer',
-        #                point:
-        #                    events:
-        #                        click: ->
-        #                            hs.htmlExpand(null, {
-        #                                pageOrigin: {
-        #                                    x: this.pageX,
-        #                                    y: this.pageY
-        #                                },
-        #                                headingText: this.series.name,
-        #                                maincontentText: Highcharts.dateFormat('%A, %b %e, %Y', this.x) + ':<br/> ' +
-        #                                this.y + ' visits',
-        #                                width: 200
-        #                            });
-        #                marker:
-        #                    lineWidth: 1
-        #        series: [
-        #            name: 'All visits',
-        #            lineWidth: 4,
-        #            marker:
-        #                radius: 4
-        #            name: 'New visitors'
-        #        ]
+		#needed for ko framework, in this case just for navigation loading
+		ko.applyBindings()
 			
-		art = []
-		#console.log jsonData
-		for artefact in jsonData
-			statusDate = new DatePlus(DateFormatter.createJsDateFromJson(artefact.StatusDate))
-			art.push([statusDate.timeStamp(), artefact.HoursRemaining])
-		console.log art
-		options.series[0].data = art #[ [1283644800000, 966], [1283731200000, 2475], [1283817600000, 3336], [1283904000000, 3211], [1283990400000, 3229], [1284076800000, 2802] ]
-		#options.series[1].data = newVisitors;
-		chart = new Highcharts.Chart(options)
+		# create array with artefacts: arts['Functional Design'], arts['Final estimates'], etc.They contain objects as {artfct, date, hrs} but possibly multiple with same values since multiple activities are configured
+		artefacts = jsonData.reduce (acc, x) =>
+							id = x.Artefact
+							if (not acc[id])
+								# beware! the following creates a property on the acc array with the name of the id value, so: acc.'Functional Design' = [], but then written as acc['FD'] = []
+								# seems necessary for dynamic properties
+								acc[id] = []
+							statusDate = new DatePlus(DateFormatter.createJsDateFromJson(x.StatusDate))
+							acc[id].push({ statusDate:statusDate, hoursRemaining: x.HoursRemaining })
+						 acc
+					, []
+		states = []
+		
+		# deduplicate and add up remaining hours per day since multiple activities for the same artefact should be one datapoint with date and hrs remaining
+		for k,v of artefacts # use different kind of loop (object loop) since the artefacts are not elements in the array but properties (see comment above)
+			totalsPerDay = v.reduce (acc, x) =>
+								id = x.statusDate.dateString
+								if (not acc[id]) 
+									acc[id] = 0
+								acc[id] += x.hoursRemaining
+							 acc
+						, []
+
+			states.push({ artefact: k, statuses: totalsPerDay })
+
+		chart = new Mnd.TimeChart('graph', 'Release 9.5.5', 'FDCG')
+		i = 0
+		for s in states
+			artefactStatuses = []
+			for k,v of s.statuses
+				date = new DatePlus(DateFormatter.createFromString(k))
+				artefactStatuses.push([date.timeStamp(), v])
+			chart.addLineName s.artefact
+			chart.addLineData(i, artefactStatuses)
+			i++
+		chart.draw()
 
 # export to root object
 root.UDisplayReleaseStatus = UDisplayReleaseStatus

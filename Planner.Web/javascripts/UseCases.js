@@ -619,19 +619,55 @@
 
     function UDisplayReleaseProgress(release) {
       this.release = release;
+      this.dates = [];
     }
 
     UDisplayReleaseProgress.prototype.execute = function(jsonData, options) {
-      var art, artefact, chart, statusDate, _i, _len;
-      art = [];
-      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
-        artefact = jsonData[_i];
-        statusDate = new DatePlus(DateFormatter.createJsDateFromJson(artefact.StatusDate));
-        art.push([statusDate.timeStamp(), artefact.HoursRemaining]);
+      var artefactStatuses, artefacts, chart, date, i, k, s, states, totalsPerDay, v, _i, _len, _ref,
+        _this = this;
+      ko.applyBindings();
+      artefacts = jsonData.reduce(function(acc, x) {
+        var id, statusDate;
+        id = x.Artefact;
+        if (!acc[id]) acc[id] = [];
+        statusDate = new DatePlus(DateFormatter.createJsDateFromJson(x.StatusDate));
+        acc[id].push({
+          statusDate: statusDate,
+          hoursRemaining: x.HoursRemaining
+        });
+        return acc;
+      }, []);
+      states = [];
+      for (k in artefacts) {
+        v = artefacts[k];
+        totalsPerDay = v.reduce(function(acc, x) {
+          var id;
+          id = x.statusDate.dateString;
+          if (!acc[id]) acc[id] = 0;
+          acc[id] += x.hoursRemaining;
+          return acc;
+        }, []);
+        states.push({
+          artefact: k,
+          statuses: totalsPerDay
+        });
       }
-      console.log(art);
-      options.series[0].data = art;
-      return chart = new Highcharts.Chart(options);
+      chart = new Mnd.TimeChart('graph', 'Release 9.5.5', 'FDCG');
+      i = 0;
+      for (_i = 0, _len = states.length; _i < _len; _i++) {
+        s = states[_i];
+        artefactStatuses = [];
+        _ref = s.statuses;
+        for (k in _ref) {
+          v = _ref[k];
+          date = new DatePlus(DateFormatter.createFromString(k));
+          artefactStatuses.push([date.timeStamp(), v]);
+        }
+        chart.addLineName(s.artefact);
+        chart.addLineData(i, artefactStatuses);
+        i++;
+      }
+      return chart.draw();
     };
 
     return UDisplayReleaseProgress;
