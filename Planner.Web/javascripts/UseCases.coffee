@@ -306,23 +306,9 @@ class UDisplayReleasePlanningInTimeline
 		console.log @release
 		uniqueAsses = []
 		for ms in @release.milestones
-			#icon = '<span class="icon icon-milestone" />'
-			#style = 'style="color: green"'
-			#descr = '<ul>'
 			for del in ms.deliverables
 				console.log del
-				#console.log del.title
-				#descr += '<li>' + del.title + '<ul>'
 				for proj in del.scope
-					#descr += '<li>' + proj.title
-					#descr += '<ul>'
-					# not necessary to group by activities:
-					# activities = proj.workload.reduce (acc, x) ->
-								#for ass in x.assignedResources
-									#console.log ass
-									#acc.push { releaseTitle: releaseTitle, milestoneTitle: ms.title, deliverableTitle: del.title, projectTitle: proj.title, activityTitle :x.activity.title, resource: ass.resource.fullName(), focusFactor: ass.focusFactor, startDate: ass.assignedPeriod.startDate, endDate: ass.assignedPeriod.endDate }
-								#acc
-							#, []
 					for activity in proj.workload
 						for assignment in activity.assignedResources
 							console.log assignment
@@ -331,26 +317,9 @@ class UDisplayReleasePlanningInTimeline
 
 							obj = {group: resource, start: assignment.assignedPeriod.startDate.date, end: assignment.assignedPeriod.endDate.date, content: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.project.title, info: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.assignedPeriod.toString(), dataObject: dto}
 							@displayData.push obj
-					#for act in activities
-						#if act.hrs > act.planned
-							#icon = '<span class="icon icon-warning" />'
-							#style = 'style="color: red"'
-						#else
-							#style = 'style="color: green"'
-						#descr += '<li ' + style + '>' + act.activityTitle + ': ' + act.hrs + ' hours remaining, ' + act.planned + ' hours planned</li>'
-					#descr += '</ul>' # /activities
-					#descr += '</li>' # /project
-				#descr += '</ul>' # /projects
-			#descr += '</li>' # /deliverable
-			#descr += '</ul>' # /deliverables
-		#console.log activities
-		#console.log activities
 		showData = @displayData.sort((a,b)-> a.start - b.end)
-		#console.log showData
-		#drawTimeline(showData, undefined, "100%", "500px", "resourcePlanning", "assignmentDetails")
 		timeline = new Mnd.Timeline(showData, undefined, "100%", "500px", "resourcePlanning", "assignmentDetails")
 		timeline.draw()
-		#@observableTimelineSource @displayData.sort((a,b)-> a.start - b.end)
 	createRowItem: (item, index) ->
 		identifier = item + index
 		if @trackAssignments.indexOf(identifier) is -1
@@ -377,43 +346,64 @@ class UDisplayReleaseProgress
 	execute: (jsonData, options) ->
 		#needed for ko framework, in this case just for navigation loading
 		ko.applyBindings()
-			
-		# create array with artefacts: arts['Functional Design'], arts['Final estimates'], etc.They contain objects as {artfct, date, hrs} but possibly multiple with same values since multiple activities are configured
-		artefacts = jsonData.reduce (acc, x) =>
-							id = x.Artefact
+		
+		# create array with milestones: milestones['DG'], milestones['FDCG'], etc.They contain objects as {artfct, date, hrs} but possibly multiple with same values since multiple activities are configured
+		milestones = jsonData.reduce (acc, x) =>
+							id = x.Milestone
 							if (not acc[id])
-								# beware! the following creates a property on the acc array with the name of the id value, so: acc.'Functional Design' = [], but then written as acc['FD'] = []
-								# seems necessary for dynamic properties
-								acc[id] = []
-							statusDate = new DatePlus(DateFormatter.createJsDateFromJson(x.StatusDate))
-							acc[id].push({ statusDate:statusDate, hoursRemaining: x.HoursRemaining })
+								# add artefact statuses per milestone
+								# create array with artefacts: arts['Functional Design'], arts['Final estimates'], etc.They contain objects as {artfct, date, hrs} but possibly multiple with same values since multiple activities are configured
+								artefacts = jsonData.reduce (acc, x) =>
+													if x.Milestone is id
+														if (not acc[x.Artefact])
+															# beware! the following creates a property on the acc array with the name of the id value, so: acc.'Functional Design' = [], but then written as acc['FD'] = []
+															# seems necessary for dynamic properties
+															acc[x.Artefact] = []
+														statusDate = new DatePlus(DateFormatter.createJsDateFromJson(x.StatusDate))
+														acc[x.Artefact].push({ statusDate:statusDate, hoursRemaining: x.HoursRemaining })
+												 acc
+											, []
+								# beware! the following creates a property on the acc array with the name of the id value, so: acc.'FDCG' = [], but then written as acc['FDCG'] = []
+								# necessary for dynamic properties
+								acc[id] = artefacts
 						 acc
 					, []
-		states = []
-		
-		# deduplicate and add up remaining hours per day since multiple activities for the same artefact should be one datapoint with date and hrs remaining
-		for k,v of artefacts # use different kind of loop (object loop) since the artefacts are not elements in the array but properties (see comment above)
-			totalsPerDay = v.reduce (acc, x) =>
-								id = x.statusDate.dateString
-								if (not acc[id]) 
-									acc[id] = 0
-								acc[id] += x.hoursRemaining
-							 acc
-						, []
 
-			states.push({ artefact: k, statuses: totalsPerDay })
+		# create graph per milestone
+		#console.log milestones
+		amt = 0
+		for k,v of milestones
+			console.log k
+			console.log v
+			states = []
+			# deduplicate and add up remaining hours per day since multiple activities for the same artefact should be one datapoint with date and hrs remaining
+			for key,value of v # use different kind of loop (object loop) since the artefacts are not elements in the array but properties (see comment above)
+				totalsPerDay = value.reduce (acc, x) =>
+									id = x.statusDate.dateString
+									if (not acc[id]) 
+										acc[id] = 0
+									acc[id] += x.hoursRemaining
+								 acc
+							, []
 
-		chart = new Mnd.TimeChart('graph', 'Release 9.5.5', 'FDCG')
-		i = 0
-		for s in states
-			artefactStatuses = []
-			for k,v of s.statuses
-				date = new DatePlus(DateFormatter.createFromString(k))
-				artefactStatuses.push([date.timeStamp(), v])
-			chart.addLineName s.artefact
-			chart.addLineData(i, artefactStatuses)
-			i++
-		chart.draw()
+				states.push({ artefact: key, statuses: totalsPerDay })
+			div = 'graph' + amt
+			console.log div
+			chart = new Mnd.TimeChart(div, 'Release 9.5.5', k)
+			i = 0
+			for s in states
+				console.log s
+				artefactStatuses = []
+				for k2,v2 of s.statuses
+					console.log k2
+					console.log v2
+					date = new DatePlus(DateFormatter.createFromString(k2))
+					artefactStatuses.push([date.timeStamp(), v2])
+				chart.addLineName s.artefact
+				chart.addLineData(i, artefactStatuses)
+				i++
+			chart.draw()
+			amt++
 
 # export to root object
 root.UDisplayReleaseStatus = UDisplayReleaseStatus

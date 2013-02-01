@@ -770,7 +770,7 @@ namespace Mnd.Planner.Data.DataAccess
                     {
                         while (reader.Read())
                         {
-                            var status = new ArtefactActivityProgressReport { HoursRemaining = int.Parse(reader["HoursRemaining"].ToString()), StatusDate = DateTime.Parse(reader["StatusDate"].ToString()), Release = reader["Release"].ToString(), Artefact = reader["Artefact"].ToString() };
+                            var status = new ArtefactActivityProgressReport { HoursRemaining = int.Parse(reader["HoursRemaining"].ToString()), StatusDate = DateTime.Parse(reader["StatusDate"].ToString()), Release = reader["Release"].ToString(), Artefact = reader["Artefact"].ToString(), Milestone = reader["Milestone"].ToString() };
 
                             lst.Add(status);
                         }

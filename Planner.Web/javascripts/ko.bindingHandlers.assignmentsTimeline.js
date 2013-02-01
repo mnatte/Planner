@@ -6,9 +6,10 @@
             var periods = [];
             var grp = 0;
             var sameRelease = 1;
-            var releaseAndProject = '';
+            var key = '';
             var release = '';
             var releases = [];
+            var trackAssignments = [];
 
             // valueAccessor is model passed to binding, viewModel is complete viewModel within scope
             console.log("viewModel: " + ko.toJSON(viewModel));
@@ -19,18 +20,21 @@
 
             for (_i = 0, _len = resource.assignments.length; _i < _len; _i++) {
                 ass = resource.assignments[_i];
-                console.log(ass)
+                //console.log(ass)
                 //console.log(ass.period.title + ': ' + ass.period.endDate.dateString);
-                releaseAndProject = ass.release.title + ass.project.title;
-                if (releases.indexOf(releaseAndProject) === -1) {
-                    grp++;
-                    releases.push(releaseAndProject);
-                    release = ass.release.title;
-                    sameRelease = 1;
-                } else {
-                    release = ass.release.title + '[' + sameRelease + ']'
-                    sameRelease++;
-                }
+                //key = ass.release.title + ass.project.title + ass.activity.title + ass.deliverable.title;
+                ///console.log(key);
+
+                release = createRowItem(ass.release.title, 0);
+                //if (releases.indexOf(key) === -1) {
+                    //grp++;
+                    //releases.push(key);
+                    //release = ass.release.title;
+                    //sameRelease++;
+               // } else {
+                   // release = ass.release.title + '[' + sameRelease + ']'
+                    //sameRelease++;
+                //}
                 console.log(release);
 
                 obj = {
@@ -76,7 +80,7 @@
             var options = {
                 "width": "100%",
                 // distinct releases + Away
-                "height": ((grp + 1) * 100) + "px",
+                "height": ((trackAssignments.length + 1) * 100) + "px",
                 "style": "box",
                 "eventMargin": 5, // minimal margin between events 
                 "intervalMin": 1000 * 60 * 60 * 24,          // one day in milliseconds
@@ -99,6 +103,18 @@
                     }
                 }
             }
+
+            function createRowItem(item, index) {
+                var identifier;
+                identifier = item + index;
+                if (trackAssignments.indexOf(identifier) === -1) {
+                    trackAssignments.push(identifier);
+                    return item + '[' + index + ']';
+                } else {
+                    index++;
+                    return createRowItem(item, index);
+                }
+            };
 
             // attach an event listener using the links events handler
             links.events.addListener(timeline, 'select', onSelectedChanged);

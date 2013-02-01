@@ -69,8 +69,11 @@
         <!-- /ko -->
         <div id="Div1" style="height: 100px">&nbsp;</div>
         <!--releases overview-->
-        <div id="graph" class="sixteen columns">
-        </div>
+        <div id="graph0" class="sixteen columns"></div>
+        <div id="graph1" class="sixteen columns"></div>
+        <div id="graph2" class="sixteen columns"></div>
+        <div id="graph3" class="sixteen columns"></div>
+        <div id="graph4" class="sixteen columns"></div>
 </div><!-- container -->
     <script type="text/javascript">
 
@@ -80,7 +83,7 @@
 
             var uc = new UDisplayReleaseProgress();
             var ajax = new Ajax();
-            ajax.getReleaseProgress(168, function (data) { uc.execute(data) });
+            ajax.getReleaseProgress(160, function (data) { uc.execute(data) });
         });
     </script>
 

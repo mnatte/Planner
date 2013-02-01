@@ -13,6 +13,7 @@ namespace Mnd.Planner.DataAccess.Models
     public class ArtefactActivityProgressReport
     {
         public string Release { get; set; }
+        public string Milestone { get; set; }
         public DateTime StatusDate { get; set; }
         public string Artefact { get; set; }
         public int HoursRemaining { get; set; }

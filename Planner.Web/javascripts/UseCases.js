@@ -623,51 +623,74 @@
     }
 
     UDisplayReleaseProgress.prototype.execute = function(jsonData, options) {
-      var artefactStatuses, artefacts, chart, date, i, k, s, states, totalsPerDay, v, _i, _len, _ref,
+      var amt, artefactStatuses, chart, date, div, i, k, k2, key, milestones, s, states, totalsPerDay, v, v2, value, _i, _len, _ref, _results,
         _this = this;
       ko.applyBindings();
-      artefacts = jsonData.reduce(function(acc, x) {
-        var id, statusDate;
-        id = x.Artefact;
-        if (!acc[id]) acc[id] = [];
-        statusDate = new DatePlus(DateFormatter.createJsDateFromJson(x.StatusDate));
-        acc[id].push({
-          statusDate: statusDate,
-          hoursRemaining: x.HoursRemaining
-        });
+      milestones = jsonData.reduce(function(acc, x) {
+        var artefacts, id;
+        id = x.Milestone;
+        if (!acc[id]) {
+          artefacts = jsonData.reduce(function(acc, x) {
+            var statusDate;
+            if (x.Milestone === id) {
+              if (!acc[x.Artefact]) acc[x.Artefact] = [];
+              statusDate = new DatePlus(DateFormatter.createJsDateFromJson(x.StatusDate));
+              acc[x.Artefact].push({
+                statusDate: statusDate,
+                hoursRemaining: x.HoursRemaining
+              });
+            }
+            return acc;
+          }, []);
+          acc[id] = artefacts;
+        }
         return acc;
       }, []);
-      states = [];
-      for (k in artefacts) {
-        v = artefacts[k];
-        totalsPerDay = v.reduce(function(acc, x) {
-          var id;
-          id = x.statusDate.dateString;
-          if (!acc[id]) acc[id] = 0;
-          acc[id] += x.hoursRemaining;
-          return acc;
-        }, []);
-        states.push({
-          artefact: k,
-          statuses: totalsPerDay
-        });
-      }
-      chart = new Mnd.TimeChart('graph', 'Release 9.5.5', 'FDCG');
-      i = 0;
-      for (_i = 0, _len = states.length; _i < _len; _i++) {
-        s = states[_i];
-        artefactStatuses = [];
-        _ref = s.statuses;
-        for (k in _ref) {
-          v = _ref[k];
-          date = new DatePlus(DateFormatter.createFromString(k));
-          artefactStatuses.push([date.timeStamp(), v]);
+      amt = 0;
+      _results = [];
+      for (k in milestones) {
+        v = milestones[k];
+        console.log(k);
+        console.log(v);
+        states = [];
+        for (key in v) {
+          value = v[key];
+          totalsPerDay = value.reduce(function(acc, x) {
+            var id;
+            id = x.statusDate.dateString;
+            if (!acc[id]) acc[id] = 0;
+            acc[id] += x.hoursRemaining;
+            return acc;
+          }, []);
+          states.push({
+            artefact: key,
+            statuses: totalsPerDay
+          });
         }
-        chart.addLineName(s.artefact);
-        chart.addLineData(i, artefactStatuses);
-        i++;
+        div = 'graph' + amt;
+        console.log(div);
+        chart = new Mnd.TimeChart(div, 'Release 9.5.5', k);
+        i = 0;
+        for (_i = 0, _len = states.length; _i < _len; _i++) {
+          s = states[_i];
+          console.log(s);
+          artefactStatuses = [];
+          _ref = s.statuses;
+          for (k2 in _ref) {
+            v2 = _ref[k2];
+            console.log(k2);
+            console.log(v2);
+            date = new DatePlus(DateFormatter.createFromString(k2));
+            artefactStatuses.push([date.timeStamp(), v2]);
+          }
+          chart.addLineName(s.artefact);
+          chart.addLineData(i, artefactStatuses);
+          i++;
+        }
+        chart.draw();
+        _results.push(amt++);
       }
-      return chart.draw();
+      return _results;
     };
 
     return UDisplayReleaseProgress;
