@@ -151,6 +151,18 @@ class Ajax
 				console.log "AJAX status: #{status}"
 				console.log "AJAX XHR: #{XHR}"
 				console.log "AJAX errorThrown: #{errorThrown}"
+	getReleasesForProgressReport: (callback) ->
+		url = "/planner/Release/GetReleaseSnapshotsWithProgressStatus"
+		$.ajax url,
+			dataType: "json"
+			type: "GET"
+			success: (data, status, XHR) ->
+				console.log "Release snapshots data loaded"
+				callback data
+			error: (XHR, status, errorThrown) ->
+				console.log "AJAX status: #{status}"
+				console.log "AJAX XHR: #{XHR}"
+				console.log "AJAX errorThrown: #{errorThrown}"
 	test: ->
 		console.log "testing AJAX class"
 

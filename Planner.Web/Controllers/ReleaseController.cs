@@ -105,6 +105,14 @@ namespace Mnd.Planner.Web.Controllers
             return this.Json(result, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpGet]
+        public JsonResult GetReleaseSnapshotsWithProgressStatus()
+        {
+            var rep = new ReleaseRepository();
+            var result = rep.GetReleaseSnapshotsWithProgressData();
+            return this.Json(result, JsonRequestBehavior.AllowGet);
+        }
+
         #region Unneeded
 
         //

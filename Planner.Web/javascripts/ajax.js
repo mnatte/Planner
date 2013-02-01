@@ -232,6 +232,24 @@
       });
     };
 
+    Ajax.prototype.getReleasesForProgressReport = function(callback) {
+      var url;
+      url = "/planner/Release/GetReleaseSnapshotsWithProgressStatus";
+      return $.ajax(url, {
+        dataType: "json",
+        type: "GET",
+        success: function(data, status, XHR) {
+          console.log("Release snapshots data loaded");
+          return callback(data);
+        },
+        error: function(XHR, status, errorThrown) {
+          console.log("AJAX status: " + status);
+          console.log("AJAX XHR: " + XHR);
+          return console.log("AJAX errorThrown: " + errorThrown);
+        }
+      });
+    };
+
     Ajax.prototype.test = function() {
       return console.log("testing AJAX class");
     };

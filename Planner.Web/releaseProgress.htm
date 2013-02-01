@@ -45,7 +45,7 @@
     <script type="text/javascript" src="Scripts/koExternalTemplateEngine_all.min.js"></script>
     <script type="text/javascript" src="Scripts/jquery.blockUI.js"></script>
     <script type="text/javascript" src="Scripts/datehelper.js"></script>
-        
+    <script type="text/javascript" src="javascripts/releaseProgressViewmodel.js"></script>    
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
     <script type="text/javascript" src="javascripts/ajax.js"></script>
@@ -68,6 +68,16 @@
         <!-- ko template: {name: 'navigation'} -->
         <!-- /ko -->
         <div id="Div1" style="height: 100px">&nbsp;</div>
+        <div id="releases" class="three columns">
+            <ul>
+                <!-- ko foreach: $root.allReleases -->
+                <li>
+                    <span data-bind="text: title" class="two columns"></span>
+                    <button class="sexybutton sexyicononly one column" data-bind="click: $root.viewReleaseProgress.bind($data)"><span><span><span class="view"></span></span></span></button>
+                </li>
+                <!-- /ko -->
+            </ul>
+        </div>
         <!--releases overview-->
         <div id="graph0" class="sixteen columns"></div>
         <div id="graph1" class="sixteen columns"></div>
@@ -81,9 +91,13 @@
             infuser.defaults.templateSuffix = ".tmpl.html";
             infuser.defaults.templateUrl = "/planner/templates";
 
-            var uc = new UDisplayReleaseProgress();
+            var uc = new UDisplayReleaseProgressOverview();
             var ajax = new Ajax();
-            ajax.getReleaseProgress(160, function (data) { uc.execute(data) });
+            ajax.getReleasesForProgressReport(uc.execute);
+
+//            var uc = new UDisplayReleaseProgress();
+//            var ajax = new Ajax();
+//            ajax.getReleaseProgress(160, function (data) { uc.execute(data) });
         });
     </script>
 

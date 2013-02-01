@@ -122,6 +122,11 @@
     <Content Include="adminActivity.htm" />
     <Content Include="absences.htm" />
     <Content Include="assignments.htm" />
+    <Content Include="javascripts\releaseProgressViewmodel.js">
+      <DependentUpon>releaseProgressViewmodel.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
     <Content Include="javascripts\TimeChart.js">
       <DependentUpon>TimeChart.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -921,6 +926,10 @@
     <None Include="javascripts\assignmentsViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>assignmentsViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\releaseProgressViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>releaseProgressViewmodel.js</LastGenOutput>
     </None>
     <None Include="javascripts\TimeChart.coffee">
       <Generator>CoffeeScriptGenerator</Generator>

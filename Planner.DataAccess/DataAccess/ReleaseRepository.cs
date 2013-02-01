@@ -783,5 +783,36 @@ namespace Mnd.Planner.Data.DataAccess
                 throw;
             }
         }
+
+        public List<ReleaseModels.Release> GetReleaseSnapshotsWithProgressData()
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            var lst = new List<ReleaseModels.Release>();
+            try
+            {
+                using (conn)
+                {
+                    conn.Open();
+
+                    var cmd = new SqlCommand("sp_get_release_snapshots_with_progress_data", conn);
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var status = new ReleaseModels.Release { Id = int.Parse(reader["Id"].ToString()), Title = reader["Title"].ToString() };
+
+                            lst.Add(status);
+                        }
+                    }
+                }
+                return lst;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }

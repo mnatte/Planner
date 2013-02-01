@@ -340,13 +340,22 @@ class UDisplayReleasePhases
 		timeline.draw()
 		#drawTimeline(@viewModel.showPhases)
 
+class UDisplayReleaseProgressOverview
+	constructor: ->
+	execute: (data) ->
+		releases = Release.createCollection(data)
+		console.log releases
+		@viewModel = new ReleaseProgressViewmodel(releases)
+		ko.applyBindings(@viewModel)
+
 class UDisplayReleaseProgress
-	constructor: (@release) ->
+	constructor: (@releaseTitle) ->
 		@dates = []
 	execute: (jsonData, options) ->
-		#needed for ko framework, in this case just for navigation loading
-		ko.applyBindings()
-		
+		$('graph0').html('')
+		$('graph1').html('')
+		$('graph2').html('')
+		$('graph3').html('')
 		# create array with milestones: milestones['DG'], milestones['FDCG'], etc.They contain objects as {artfct, date, hrs} but possibly multiple with same values since multiple activities are configured
 		milestones = jsonData.reduce (acc, x) =>
 							id = x.Milestone
@@ -389,7 +398,7 @@ class UDisplayReleaseProgress
 				states.push({ artefact: key, statuses: totalsPerDay })
 			div = 'graph' + amt
 			console.log div
-			chart = new Mnd.TimeChart(div, 'Release 9.5.5', k)
+			chart = new Mnd.TimeChart(div, @releaseTitle, k)
 			i = 0
 			for s in states
 				console.log s
@@ -427,6 +436,8 @@ root.UDisplayReleaseOverview = UDisplayReleaseOverview
 root.UDisplayReleaseTimeline = UDisplayReleaseTimeline
 root.UDisplayReleasePlanningInTimeline = UDisplayReleasePlanningInTimeline
 root.UDisplayReleaseProgress = UDisplayReleaseProgress
+root.UDisplayReleaseProgressOverview = UDisplayReleaseProgressOverview
+
 
 
 

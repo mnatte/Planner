@@ -1,5 +1,5 @@
 (function() {
-  var UDeleteResourceAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyResourceAssignment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, root;
+  var UDeleteResourceAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyResourceAssignment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -615,17 +615,36 @@
 
   })();
 
+  UDisplayReleaseProgressOverview = (function() {
+
+    function UDisplayReleaseProgressOverview() {}
+
+    UDisplayReleaseProgressOverview.prototype.execute = function(data) {
+      var releases;
+      releases = Release.createCollection(data);
+      console.log(releases);
+      this.viewModel = new ReleaseProgressViewmodel(releases);
+      return ko.applyBindings(this.viewModel);
+    };
+
+    return UDisplayReleaseProgressOverview;
+
+  })();
+
   UDisplayReleaseProgress = (function() {
 
-    function UDisplayReleaseProgress(release) {
-      this.release = release;
+    function UDisplayReleaseProgress(releaseTitle) {
+      this.releaseTitle = releaseTitle;
       this.dates = [];
     }
 
     UDisplayReleaseProgress.prototype.execute = function(jsonData, options) {
       var amt, artefactStatuses, chart, date, div, i, k, k2, key, milestones, s, states, totalsPerDay, v, v2, value, _i, _len, _ref, _results,
         _this = this;
-      ko.applyBindings();
+      $('graph0').html('');
+      $('graph1').html('');
+      $('graph2').html('');
+      $('graph3').html('');
       milestones = jsonData.reduce(function(acc, x) {
         var artefacts, id;
         id = x.Milestone;
@@ -669,7 +688,7 @@
         }
         div = 'graph' + amt;
         console.log(div);
-        chart = new Mnd.TimeChart(div, 'Release 9.5.5', k);
+        chart = new Mnd.TimeChart(div, this.releaseTitle, k);
         i = 0;
         for (_i = 0, _len = states.length; _i < _len; _i++) {
           s = states[_i];
@@ -738,5 +757,7 @@
   root.UDisplayReleasePlanningInTimeline = UDisplayReleasePlanningInTimeline;
 
   root.UDisplayReleaseProgress = UDisplayReleaseProgress;
+
+  root.UDisplayReleaseProgressOverview = UDisplayReleaseProgressOverview;
 
 }).call(this);
