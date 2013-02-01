@@ -641,10 +641,10 @@
     UDisplayReleaseProgress.prototype.execute = function(jsonData, options) {
       var amt, artefactStatuses, chart, date, div, i, k, k2, key, milestones, s, states, totalsPerDay, v, v2, value, _i, _len, _ref, _results,
         _this = this;
-      $('graph0').html('');
-      $('graph1').html('');
-      $('graph2').html('');
-      $('graph3').html('');
+      $('#graph0').html('');
+      $('#graph1').html('');
+      $('#graph2').html('');
+      $('#graph3').html('');
       milestones = jsonData.reduce(function(acc, x) {
         var artefacts, id;
         id = x.Milestone;

@@ -352,10 +352,10 @@ class UDisplayReleaseProgress
 	constructor: (@releaseTitle) ->
 		@dates = []
 	execute: (jsonData, options) ->
-		$('graph0').html('')
-		$('graph1').html('')
-		$('graph2').html('')
-		$('graph3').html('')
+		$('#graph0').html('')
+		$('#graph1').html('')
+		$('#graph2').html('')
+		$('#graph3').html('')
 		# create array with milestones: milestones['DG'], milestones['FDCG'], etc.They contain objects as {artfct, date, hrs} but possibly multiple with same values since multiple activities are configured
 		milestones = jsonData.reduce (acc, x) =>
 							id = x.Milestone
