@@ -445,17 +445,18 @@
     }
 
     UDisplayReleaseTimeline.prototype.execute = function() {
-      var act, activities, del, descr, icon, ms, obj, ph, proj, showData, style, timeline, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref, _ref2, _ref3, _ref4;
+      var act, activities, cont, del, descr, icon, ms, obj, ph, proj, showData, style, timeline, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref, _ref2, _ref3, _ref4;
       this.displayData = [];
       console.log('execute use case UDisplayReleaseTimeline');
       _ref = this.release.phases;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         ph = _ref[_i];
+        cont = ph.title;
         obj = {
           group: this.release.title,
           start: ph.startDate.date,
           end: ph.endDate.date,
-          content: ph.title,
+          content: cont,
           info: ph.toString()
         };
         this.displayData.push(obj);

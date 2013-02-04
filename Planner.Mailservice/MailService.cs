@@ -59,6 +59,8 @@ namespace Mnd.Planner.Mailservice
                 var builder = new StringBuilder();
                 //var projRep = new ProjectRepository();
 
+                var evernote = new EvernoteMailer(eventLog1);
+
                 foreach (var ms in milestones)
                 {
                     //var projects = projRep.GetConfiguredProjectsForRelease(ms.Release.Id);
@@ -76,6 +78,8 @@ namespace Mnd.Planner.Mailservice
 
                     builder.Append("\n***********************************************");
                     builder.Append("\n\n");
+
+                    evernote.CreateEvernoteItem(ms.Release.Title + " - " + ms.Title, ms.Date, ms.Time);
                 }
                 var content = builder.ToString();
                 _mailer.SendMail("martijn.natte@consultant.vfsco.com", "Milestones coming up", content);

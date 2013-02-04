@@ -258,7 +258,9 @@ class UDisplayReleaseTimeline
 		@displayData = []
 		console.log 'execute use case UDisplayReleaseTimeline'
 		for ph in @release.phases
-			obj = {group: @release.title, start: ph.startDate.date, end: ph.endDate.date, content: ph.title, info: ph.toString() }
+			#cont = '<span style="background-color:pink" />' + ph.title + '</span>'
+			cont = ph.title
+			obj = {group: @release.title, start: ph.startDate.date, end: ph.endDate.date, content:  cont, info: ph.toString() }
 			@displayData.push obj
 		for ms in @release.milestones
 			icon = '<span class="icon icon-milestone" />'
