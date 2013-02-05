@@ -5,13 +5,14 @@ using System.Web;
 using System.Web.Mvc;
 using System.Data.SqlClient;
 using Mnd.Planner.Web.Models;
-using Mnd.Planner.Data.Models;
-using Mnd.Planner.Data.DataAccess;
-using Planne.Data.DataAccess;
+using Mnd.Planner.Domain;
+using Mnd.Planner.Domain.Persistence;
+using Mnd.Planner.Domain.Repositories;
+using Mnd.Mvc.Rest;
 
 namespace Mnd.Planner.Web.Controllers
 {
-    public class DeliverableController : BaseCrudController<ReleaseModels.Deliverable, DeliverableInputModel>
+    public class DeliverableController : BaseCrudController<Deliverable, DeliverableInputModel>
     {
         private ActivityRepository _actRepository;
 

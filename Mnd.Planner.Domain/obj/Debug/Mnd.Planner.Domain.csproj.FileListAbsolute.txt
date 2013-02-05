@@ -1,0 +1,13 @@
+C:\Projects\Planner\Mnd.Planner.Domain\bin\Debug\Mnd.Planner.Domain.dll
+C:\Projects\Planner\Mnd.Planner.Domain\bin\Debug\Mnd.Planner.Domain.pdb
+C:\Projects\Planner\Mnd.Planner.Domain\bin\Debug\Mnd.DataAccess.dll
+C:\Projects\Planner\Mnd.Planner.Domain\bin\Debug\Mnd.Domain.dll
+C:\Projects\Planner\Mnd.Planner.Domain\bin\Debug\Mnd.Helpers.dll
+C:\Projects\Planner\Mnd.Planner.Domain\bin\Debug\Mnd.Mail.dll
+C:\Projects\Planner\Mnd.Planner.Domain\bin\Debug\Mnd.Domain.pdb
+C:\Projects\Planner\Mnd.Planner.Domain\bin\Debug\Mnd.Helpers.pdb
+C:\Projects\Planner\Mnd.Planner.Domain\bin\Debug\Mnd.Mail.pdb
+C:\Projects\Planner\Mnd.Planner.Domain\bin\Debug\Mnd.DataAccess.pdb
+C:\Projects\Planner\Mnd.Planner.Domain\obj\Debug\ResolveAssemblyReference.cache
+C:\Projects\Planner\Mnd.Planner.Domain\obj\Debug\Mnd.Planner.Domain.dll
+C:\Projects\Planner\Mnd.Planner.Domain\obj\Debug\Mnd.Planner.Domain.pdb

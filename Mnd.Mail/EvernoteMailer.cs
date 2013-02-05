@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Net.Mail;
 using System.Diagnostics;
+using Mnd.Domain;
 
 namespace Mnd.Mail
 {
@@ -18,10 +19,16 @@ namespace Mnd.Mail
             _log = log;
         }
 
+        public EvernoteMailer()
+        {}
+
         public void CreateEvernoteItem(string subject, string body, string notebook)
         {
-            _log.WriteEntry(subject);
-            _log.WriteEntry(body);
+            if (_log != null)
+            {
+                _log.WriteEntry(subject);
+                _log.WriteEntry(body);
+            }
             var subj = subject;
             if (!String.IsNullOrEmpty(notebook))
                 subj += " @" + notebook;

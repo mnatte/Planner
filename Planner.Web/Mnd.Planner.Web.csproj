@@ -107,7 +107,6 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
     <Compile Include="Controllers\ReleaseController.cs" />
-    <Compile Include="Controllers\BaseCrudController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -993,9 +992,17 @@
       <Project>{BE647012-342F-4CFD-9103-D70219B09DA4}</Project>
       <Name>Mnd.Mail</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Planner.DataAccess\Mnd.Planner.Data.csproj">
+    <ProjectReference Include="..\Mnd.Mvc.Rest\Mnd.Mvc.Rest.csproj">
+      <Project>{2246AFFF-8697-4CA6-9EB3-E566483C1B10}</Project>
+      <Name>Mnd.Mvc.Rest</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mnd.Planner.Domain\Mnd.Planner.Domain.csproj">
+      <Project>{DF7FF4D2-1DF1-4454-9DFB-B0705765F173}</Project>
+      <Name>Mnd.Planner.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Planner.DataAccess\Mnd.DataAccess.csproj">
       <Project>{8C21A4DA-043C-41E3-83CF-E6F0648E17BF}</Project>
-      <Name>Mnd.Planner.Data</Name>
+      <Name>Mnd.DataAccess</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

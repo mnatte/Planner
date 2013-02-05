@@ -8,13 +8,15 @@ using System.Net;
 using System.Text;
 using System.Net.Mail;
 using Mnd.Mail;
-using Mnd.Planner.Data.Models;
-using Mnd.Planner.Data.DataAccess;
 using Mnd.Helpers;
+using Mnd.Planner.Domain;
+using Mnd.Planner.Domain.Persistence;
+using Mnd.Planner.Domain.Repositories;
+using Mnd.Mvc.Rest;
 
 namespace Mnd.Planner.Web.Controllers
 {
-    public class ResourceController : BaseCrudController<ReleaseModels.Resource, PersonInputModel>
+    public class ResourceController : BaseCrudController<Resource, PersonInputModel>
     {
         public ResourceController()
             : base(new ResourceRepository())
@@ -45,7 +47,7 @@ namespace Mnd.Planner.Web.Controllers
         [HttpPost]
         public JsonResult MailPlanning(PeriodInputModel model)
         {
-            var viewPeriod = new ReleaseModels.Period { StartDate = model.StartDate.ToDateTimeFromDutchString(), EndDate = model.EndDate.ToDateTimeFromDutchString() };
+            var viewPeriod = new Period { StartDate = model.StartDate.ToDateTimeFromDutchString(), EndDate = model.EndDate.ToDateTimeFromDutchString() };
             var subject = string.Format("Resource Planning {0} - {1}", model.StartDate, model.EndDate);
 
 

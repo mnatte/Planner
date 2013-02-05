@@ -1,0 +1,7 @@
+C:\Projects\Planner\Mnd.Mvc.Rest\bin\Debug\Mnd.Mvc.Rest.dll
+C:\Projects\Planner\Mnd.Mvc.Rest\bin\Debug\Mnd.Mvc.Rest.pdb
+C:\Projects\Planner\Mnd.Mvc.Rest\bin\Debug\Mnd.DataAccess.dll
+C:\Projects\Planner\Mnd.Mvc.Rest\bin\Debug\Mnd.DataAccess.pdb
+C:\Projects\Planner\Mnd.Mvc.Rest\obj\Debug\ResolveAssemblyReference.cache
+C:\Projects\Planner\Mnd.Mvc.Rest\obj\Debug\Mnd.Mvc.Rest.dll
+C:\Projects\Planner\Mnd.Mvc.Rest\obj\Debug\Mnd.Mvc.Rest.pdb

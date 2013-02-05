@@ -5,8 +5,9 @@ using System.Web;
 using System.Web.Mvc;
 using System.Data.SqlClient;
 using System.Net;
-using Mnd.Planner.Data.Models;
-using Mnd.Planner.Data.DataAccess;
+using Mnd.Planner.Domain;
+using Mnd.Planner.Domain.Persistence;
+using Mnd.Planner.Domain.Repositories;
 
 namespace Mnd.Planner.Web.Controllers
 {

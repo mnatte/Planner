@@ -8,8 +8,11 @@ using System.ServiceProcess;
 using System.Text;
 using System.Timers;
 using Mnd.Mail;
-using Mnd.Planner.Data.DataAccess;
 using Mnd.Helpers;
+using Mnd.Planner.Domain.Persistence;
+using Mnd.Planner.Domain.Repositories;
+using Mnd.Planner.UseCases;
+using Mnd.Planner.Domain;
 
 namespace Mnd.Planner.Mailservice
 {
@@ -95,24 +98,14 @@ namespace Mnd.Planner.Mailservice
 
         void CreateAgendaItems()
         {
-            var repository = new MilestoneRepository();
-            var milestones = repository.GetMilestonesForComingDays(30);
-            var evernoteMailer = new EvernoteMailer(eventLog1);
-            
-            foreach (var ms in milestones)
+            try
             {
-                var builder = new StringBuilder();
-                var deliverables = repository.GetConfiguredDeliverables(ms);
-                foreach (var del in deliverables)
-                {
-                    builder.Append(string.Format("* {0}", del.Title));
-                    builder.Append("\n");
-                }
-
-                builder.Append("\n\n");
-
-                var item = AwesomeNoteItem.Create(ms.Release.Title + " - " + ms.Title, ms.Date, ms.Time, builder.ToString(), "Work");
-                evernoteMailer.UploadAwesomeNoteItem(item);
+                var uc = new CreateVisualCuesForGates(30, new AwesomeNoteWriter());
+                uc.Execute();
+            }
+            catch (Exception ex)
+            {
+                eventLog1.WriteEntry(ex.Message, EventLogEntryType.Error);
             }
         }
 

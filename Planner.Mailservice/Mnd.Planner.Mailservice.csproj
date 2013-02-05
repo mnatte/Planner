@@ -78,9 +78,17 @@
       <Project>{BE647012-342F-4CFD-9103-D70219B09DA4}</Project>
       <Name>Mnd.Mail</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Planner.DataAccess\Mnd.Planner.Data.csproj">
+    <ProjectReference Include="..\Mnd.Planner.Domain\Mnd.Planner.Domain.csproj">
+      <Project>{DF7FF4D2-1DF1-4454-9DFB-B0705765F173}</Project>
+      <Name>Mnd.Planner.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mnd.Planner.UseCases\Mnd.Planner.UseCases.csproj">
+      <Project>{1F2C2600-4CA9-45E2-8FEB-487D30716B94}</Project>
+      <Name>Mnd.Planner.UseCases</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Planner.DataAccess\Mnd.DataAccess.csproj">
       <Project>{8C21A4DA-043C-41E3-83CF-E6F0648E17BF}</Project>
-      <Name>Mnd.Planner.Data</Name>
+      <Name>Mnd.DataAccess</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

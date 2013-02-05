@@ -5,7 +5,9 @@ using System.Web;
 using System.Web.Mvc;
 using Mnd.Planner.Web.Models;
 using System.Data.SqlClient;
-using Mnd.Planner.Data.Models;
+using Mnd.Planner.Domain;
+using Mnd.Planner.Domain.Persistence;
+using Mnd.Planner.Domain.Repositories;
 
 namespace Mnd.Planner.Web.Controllers
 {
@@ -23,7 +25,7 @@ namespace Mnd.Planner.Web.Controllers
         {
             // add MultipleActiveResultSets=true to enable nested datareaders
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
-            ReleaseModels.Periods periods = new ReleaseModels.Periods();
+            Periods periods = new Periods();
 
             using (conn)
             {
@@ -34,13 +36,13 @@ namespace Mnd.Planner.Web.Controllers
                 {
                     while (reader.Read())
                     {
-                        var release = new ReleaseModels.Release { EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString() };
+                        var release = new Release { EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString() };
                         var cmd2 = new SqlCommand(string.Format("Select * from Phases where ParentId = {0}", reader["Id"].ToString()), conn);
                         using (var reader2 = cmd2.ExecuteReader())
                         {
                             while (reader2.Read())
                             {
-                                release.Phases.Add(new ReleaseModels.Phase { EndDate = DateTime.Parse(reader2["EndDate"].ToString()), StartDate = DateTime.Parse(reader2["StartDate"].ToString()), Title = reader2["Title"].ToString() });
+                                release.Phases.Add(new Phase { EndDate = DateTime.Parse(reader2["EndDate"].ToString()), StartDate = DateTime.Parse(reader2["StartDate"].ToString()), Title = reader2["Title"].ToString() });
                             }
                         }
                         periods.Releases.Add(release);
@@ -52,7 +54,7 @@ namespace Mnd.Planner.Web.Controllers
                 {
                     while (reader3.Read())
                     {
-                        periods.Absences.Add(new ReleaseModels.Absence { EndDate = DateTime.Parse(reader3["EndDate"].ToString()), StartDate = DateTime.Parse(reader3["StartDate"].ToString()), Title = string.Format("{0} - {1}", reader3["Initials"].ToString(), reader3["Title"].ToString()), Person = new ReleaseModels.Resource { Initials = reader3["Initials"].ToString() } });
+                        periods.Absences.Add(new Absence { EndDate = DateTime.Parse(reader3["EndDate"].ToString()), StartDate = DateTime.Parse(reader3["StartDate"].ToString()), Title = string.Format("{0} - {1}", reader3["Initials"].ToString(), reader3["Title"].ToString()), Person = new Resource { Initials = reader3["Initials"].ToString() } });
                     }
                 }
 

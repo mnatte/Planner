@@ -4,13 +4,15 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Data.SqlClient;
-using Mnd.Planner.Data.Models;
-using Mnd.Planner.Data.DataAccess;
+using Mnd.Planner.Domain.Persistence;
+using Mnd.Planner.Domain.Repositories;
 using Mnd.Helpers;
+using Mnd.Planner.Domain;
+using Mnd.Mvc.Rest;
 
 namespace Mnd.Planner.Web.Controllers
 {
-    public class ResourceAssignmentController : BaseCrudController<ReleaseModels.ResourceAssignment, ResourceAssignmentInputModel>
+    public class ResourceAssignmentController : BaseCrudController<ResourceAssignment, ResourceAssignmentInputModel>
     {
         protected ResourceRepository ResourceRepository { get; set; }
         // TODO: refactor to ResourceAssignment being a child of the Resource aggregate root
@@ -42,7 +44,7 @@ namespace Mnd.Planner.Web.Controllers
         {
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
             int newId = 0;
-            ReleaseModels.Resource resource;
+            Resource resource;
             try
             {
                 using (conn)
@@ -86,7 +88,7 @@ namespace Mnd.Planner.Web.Controllers
         public JsonResult DeleteAssignment(ResourceAssignmentInputModel model)
         {
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
-            ReleaseModels.Resource resource;
+            Resource resource;
             try
             {
                 using (conn)
@@ -179,24 +181,24 @@ namespace Mnd.Planner.Web.Controllers
         //    cmd.CommandText = string.Format("delete from ReleaseResources where id = {0}", id);
         //}
 
-        protected ReleaseModels.ResourceAssignment CreateItemByDbRow(System.Data.SqlClient.SqlDataReader reader)
+        protected ResourceAssignment CreateItemByDbRow(System.Data.SqlClient.SqlDataReader reader)
         {
             var resRep = new ResourceRepository();
-            var resource = new ReleaseModels.Resource { Id = int.Parse(reader["PersonId"].ToString()), FirstName = reader["FirstName"].ToString(), MiddleName = reader["MiddleName"].ToString(), LastName = reader["LastName"].ToString() };
+            var resource = new Resource { Id = int.Parse(reader["PersonId"].ToString()), FirstName = reader["FirstName"].ToString(), MiddleName = reader["MiddleName"].ToString(), LastName = reader["LastName"].ToString() };
             resource.PeriodsAway.AddRange(resRep.GetAbsences(resource.Id));
-            return new ReleaseModels.ResourceAssignment
+            return new ResourceAssignment
             {
                 Id = int.Parse(reader["Id"].ToString()),
                 FocusFactor = double.Parse(reader["FocusFactor"].ToString()),
-                Phase = new ReleaseModels.Phase { Id = int.Parse(reader["PhaseId"].ToString()), Title = reader["phasetitle"].ToString() },
+                Phase = new Phase { Id = int.Parse(reader["PhaseId"].ToString()), Title = reader["phasetitle"].ToString() },
                 Resource = resource,
-                Project = new ReleaseModels.Project { Id = int.Parse(reader["ProjectId"].ToString()), Title = reader["ProjectTitle"].ToString() },
+                Project = new Project { Id = int.Parse(reader["ProjectId"].ToString()), Title = reader["ProjectTitle"].ToString() },
                 //TODO: fill ActivitiesNeeded
-                Deliverable = new ReleaseModels.Deliverable { Id = int.Parse(reader["DeliverableId"].ToString()), Title = reader["DeliverableTitle"].ToString() },
-                Milestone = new ReleaseModels.Milestone { Id = int.Parse(reader["MilestoneId"].ToString()), Title = reader["MilestoneTitle"].ToString() },
+                Deliverable = new Deliverable { Id = int.Parse(reader["DeliverableId"].ToString()), Title = reader["DeliverableTitle"].ToString() },
+                Milestone = new Milestone { Id = int.Parse(reader["MilestoneId"].ToString()), Title = reader["MilestoneTitle"].ToString() },
                 StartDate = DateTime.Parse(reader["StartDate"].ToString()),
                 EndDate = DateTime.Parse(reader["EndDate"].ToString()),
-                Activity = new ReleaseModels.Activity { Id = int.Parse(reader["ActivityId"].ToString()), Title = reader["ActivityTitle"].ToString() }
+                Activity = new Activity { Id = int.Parse(reader["ActivityId"].ToString()), Title = reader["ActivityTitle"].ToString() }
             };
         }
 
@@ -204,7 +206,7 @@ namespace Mnd.Planner.Web.Controllers
         public JsonResult GetAssignmentsByPhaseIdAndProjectId(int phaseId, int projectId)
         {
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
-            var items = new List<ReleaseModels.ResourceAssignment>();
+            var items = new List<ResourceAssignment>();
 
             using (conn)
             {
@@ -234,7 +236,7 @@ namespace Mnd.Planner.Web.Controllers
         public JsonResult GetAssignmentsByPhaseIdAndProjectIdAndMilestoneIdAndDeliverableId(int phaseId, int projectId, int milestoneId, int deliverableId)
         {
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
-            var items = new List<ReleaseModels.ResourceAssignment>();
+            var items = new List<ResourceAssignment>();
 
             using (conn)
             {
@@ -266,7 +268,7 @@ namespace Mnd.Planner.Web.Controllers
         public JsonResult GetAssignmentsByPhaseId(int phaseId)
         {
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
-            var items = new List<ReleaseModels.ResourceAssignment>();
+            var items = new List<ResourceAssignment>();
 
             using (conn)
             {

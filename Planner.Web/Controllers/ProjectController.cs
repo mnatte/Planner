@@ -4,8 +4,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Data.SqlClient;
-using Mnd.Planner.Data.Models;
-using Mnd.Planner.Data.DataAccess;
+using Mnd.Planner.Domain;
+using Mnd.Planner.Domain.Persistence;
+using Mnd.Planner.Domain.Repositories;
 
 namespace Mnd.Planner.Web.Controllers
 {
@@ -22,7 +23,7 @@ namespace Mnd.Planner.Web.Controllers
         public JsonResult GetProjects()
         {
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
-            var projects = new List<ReleaseModels.Project>();
+            var projects = new List<Project>();
 
             using (conn)
             {
@@ -34,7 +35,7 @@ namespace Mnd.Planner.Web.Controllers
                 {
                     while (reader.Read())
                     {
-                        var p = new ReleaseModels.Project { Id = int.Parse(reader["Id"].ToString()), Title = reader["Title"].ToString(), Description = reader["Description"].ToString(), ShortName = reader["ShortName"].ToString(), TfsDevBranch = reader["TfsDevBranch"].ToString(), TfsIterationPath = reader["TfsIterationPath"].ToString() };
+                        var p = new Project { Id = int.Parse(reader["Id"].ToString()), Title = reader["Title"].ToString(), Description = reader["Description"].ToString(), ShortName = reader["ShortName"].ToString() };
                         projects.Add(p);
                     }
                 }

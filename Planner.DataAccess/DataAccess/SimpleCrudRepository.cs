@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Data.SqlClient;
 
-namespace Mnd.Planner.Data.DataAccess
+namespace Mnd.DataAccess
 {
     public abstract class SimpleCrudRepository<T, TInputModel> : BaseCrudRepository<T, TInputModel> where TInputModel : IBasicCrudUsable
     {
