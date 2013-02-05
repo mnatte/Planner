@@ -24,7 +24,7 @@ namespace Mnd.Planner.Data.DataAccess
                 using (var reader = cmd.ExecuteReader())
                 {
                     reader.Read();
-                    p = new ReleaseModels.Project { Id = int.Parse(reader["Id"].ToString()), Title = reader["Title"].ToString(), Description = reader["Description"].ToString(), ShortName = reader["ShortName"].ToString(), TfsDevBranch = reader["TfsDevBranch"].ToString(), TfsIterationPath = reader["TfsIterationPath"].ToString() };
+                    p = new ReleaseModels.Project { Id = int.Parse(reader["Id"].ToString()), Title = reader["Title"].ToString(), Description = reader["Description"].ToString(), ShortName = reader["ShortName"].ToString() };
                 }
 
                 // Backlog

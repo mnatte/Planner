@@ -60,7 +60,7 @@ namespace Mnd.Planner.Data.DataAccess
             return deliverable;
         }
 
-        protected List<ReleaseModels.Deliverable> GetConfiguredDeliverables(ReleaseModels.Milestone milestone)
+        public List<ReleaseModels.Deliverable> GetConfiguredDeliverables(ReleaseModels.Milestone milestone)
         {
             var lst = new List<ReleaseModels.Deliverable>();
             var conn = new SqlConnection(this.ConnectionString);

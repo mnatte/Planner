@@ -50,6 +50,8 @@ namespace Planne.Data.DataAccess
 
         protected override void AddChildCollection(DeliverableInputModel obj, int parentId)
         {
+            // TODO: clean up already configured activities NOT in the input model from DeliverableActivities and Status tables, otherwise status-orphans will exist
+            // TODO: then remove the deletions from DeliverableActivities as coded in sp_upsert_deliverable
             if (obj.Activities != null && obj.Activities.Count > 0)
             {
                 using (var conn = new SqlConnection(this.ConnectionString))

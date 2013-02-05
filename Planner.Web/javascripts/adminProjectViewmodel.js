@@ -20,11 +20,11 @@
     }
 
     AdminProjectViewmodel.prototype.createNewItem = function(jsonData) {
-      return new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch);
+      return new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description);
     };
 
     AdminProjectViewmodel.prototype.createNewEmptyItem = function() {
-      return new Project(0, "", "", "", "", "");
+      return new Project(0, "", "", "");
     };
 
     return AdminProjectViewmodel;

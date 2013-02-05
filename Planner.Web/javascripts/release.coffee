@@ -269,14 +269,14 @@ class Release extends Phase
 
 # Release - Projects - Features & AssignedResources
 class Project extends Mixin
-	constructor: (@id, @title, @shortName, @descr, @tfsIterationPath, @tfsDevBranch, @release) ->
+	constructor: (@id, @title, @shortName, @descr, @release) ->
 		@resources = []
 		@backlog = []
 		@workload = []
 	@create: (jsonData, release) ->
 		#console.log "create project - jsonData"
 		#console.log jsonData
-		project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch, release)
+		project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, release)
 		# console.log project
 		for res in jsonData.AssignedResources
 			project.resources.push AssignedResource.create(res, project, release)
@@ -288,7 +288,7 @@ class Project extends Mixin
 		#console.log project
 		project
 	@createSnapshot: (jsonData) ->
-		project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch)
+		project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description)
 		project
 	@createCollection: (jsonData, release) ->
 		#console.log "Project.createCollection"

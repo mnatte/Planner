@@ -52,5 +52,14 @@ namespace Mnd.Mail
         {
            this.SendMail(toAddress, subject, body, new string[0]);
         }
+
+        public void SendMail(MailMessage msg)
+        {
+            using (msg)
+            {
+                msg.CC.Add(_ccAddress);
+               _smtpClient.Send(msg);
+            }
+        }
     }
 }

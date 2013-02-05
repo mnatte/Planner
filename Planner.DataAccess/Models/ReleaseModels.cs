@@ -271,8 +271,6 @@ namespace Mnd.Planner.Data.Models
             public string Title { get; set; }
             public string ShortName { get; set; }
             public string Description { get; set; }
-            public string TfsIterationPath { get; set; }
-            public string TfsDevBranch { get; set; }
             private List<ResourceAssignment> _assignedResources;
             public IList<ResourceAssignment> AssignedResources
             {

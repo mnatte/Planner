@@ -377,13 +377,11 @@
 
     __extends(Project, _super);
 
-    function Project(id, title, shortName, descr, tfsIterationPath, tfsDevBranch, release) {
+    function Project(id, title, shortName, descr, release) {
       this.id = id;
       this.title = title;
       this.shortName = shortName;
       this.descr = descr;
-      this.tfsIterationPath = tfsIterationPath;
-      this.tfsDevBranch = tfsDevBranch;
       this.release = release;
       this.resources = [];
       this.backlog = [];
@@ -392,7 +390,7 @@
 
     Project.create = function(jsonData, release) {
       var act, feature, project, res, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
-      project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch, release);
+      project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, release);
       _ref = jsonData.AssignedResources;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         res = _ref[_i];
@@ -413,7 +411,7 @@
 
     Project.createSnapshot = function(jsonData) {
       var project;
-      project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch);
+      project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description);
       return project;
     };
 

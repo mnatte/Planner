@@ -15,10 +15,10 @@ class AdminProjectViewmodel extends SimpleCrudViewmodel
 		super #shortcut for super(allProjects)
 
 	createNewItem: (jsonData) =>
-		new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, jsonData.TfsIterationPath, jsonData.TfsDevBranch)
+		new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description)
 
 	createNewEmptyItem: =>
-		new Project(0, "", "", "", "", "")
+		new Project(0, "", "", "")
 
 # export to root object
 root.AdminProjectViewmodel = AdminProjectViewmodel

@@ -50,6 +50,11 @@ namespace Mnd.Planner.Mailservice
 
         void _timer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            this.CreateAgendaItems();
+        }
+
+        void SendStatusMail()
+        {
             try
             {
                 // TODO: use sp_get_milestones_for_nextdays and retrieve deliverablestatuses to mail
@@ -58,8 +63,6 @@ namespace Mnd.Planner.Mailservice
                 var milestones = repository.GetMilestonesForComingDays(30);
                 var builder = new StringBuilder();
                 //var projRep = new ProjectRepository();
-
-                var evernote = new EvernoteMailer(eventLog1);
 
                 foreach (var ms in milestones)
                 {
@@ -79,7 +82,6 @@ namespace Mnd.Planner.Mailservice
                     builder.Append("\n***********************************************");
                     builder.Append("\n\n");
 
-                    evernote.CreateEvernoteItem(ms.Release.Title + " - " + ms.Title, ms.Date, ms.Time);
                 }
                 var content = builder.ToString();
                 _mailer.SendMail("martijn.natte@consultant.vfsco.com", "Milestones coming up", content);
@@ -88,6 +90,29 @@ namespace Mnd.Planner.Mailservice
             catch (Exception ex)
             {
                 eventLog1.WriteEntry(ex.Message, EventLogEntryType.Error);
+            }
+        }
+
+        void CreateAgendaItems()
+        {
+            var repository = new MilestoneRepository();
+            var milestones = repository.GetMilestonesForComingDays(30);
+            var evernoteMailer = new EvernoteMailer(eventLog1);
+            
+            foreach (var ms in milestones)
+            {
+                var builder = new StringBuilder();
+                var deliverables = repository.GetConfiguredDeliverables(ms);
+                foreach (var del in deliverables)
+                {
+                    builder.Append(string.Format("* {0}", del.Title));
+                    builder.Append("\n");
+                }
+
+                builder.Append("\n\n");
+
+                var item = AwesomeNoteItem.Create(ms.Release.Title + " - " + ms.Title, ms.Date, ms.Time, builder.ToString(), "Work");
+                evernoteMailer.UploadAwesomeNoteItem(item);
             }
         }
 

@@ -15,14 +15,8 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_27915048862C4F3497E07DF81619EC4D"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_3C26DEBEDCD985E5BDBB290140392C90"
-        "OwnerKey" = "8:_27915048862C4F3497E07DF81619EC4D"
+        "OwnerKey" = "8:_63501C241DF048E5B8DA5466F50B6403"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -34,13 +28,19 @@
         "Entry"
         {
         "MsmKey" = "8:_4EF06989D2BDDAED94D3E775630DBB66"
-        "OwnerKey" = "8:_27915048862C4F3497E07DF81619EC4D"
+        "OwnerKey" = "8:_63501C241DF048E5B8DA5466F50B6403"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_63501C241DF048E5B8DA5466F50B6403"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_C38871684F33769ADCA83A44C5C70AE4"
-        "OwnerKey" = "8:_27915048862C4F3497E07DF81619EC4D"
+        "OwnerKey" = "8:_63501C241DF048E5B8DA5466F50B6403"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -52,7 +52,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_27915048862C4F3497E07DF81619EC4D"
+        "OwnerKey" = "8:_63501C241DF048E5B8DA5466F50B6403"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -107,59 +107,59 @@
     {
         "CustomAction"
         {
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_1C3478A0D51A43BB87A3B1462BD781CC"
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_08DE5E74897C4769BE9C527ABAD147E7"
             {
             "Name" = "8:Primary output from Mnd.Planner.Mailservice (Active)"
             "Condition" = "8:"
-            "Object" = "8:_27915048862C4F3497E07DF81619EC4D"
-            "FileType" = "3:2"
-            "InstallAction" = "3:3"
-            "Arguments" = "8:"
-            "EntryPoint" = "8:"
-            "Sequence" = "3:1"
-            "Identifier" = "8:_A3F01D3D_21E3_4706_AC6F_B06498D160BE"
-            "InstallerClass" = "11:TRUE"
-            "CustomActionData" = "8:"
-            }
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_338998F403F94DA68C2FED3C7192224C"
-            {
-            "Name" = "8:Primary output from Mnd.Planner.Mailservice (Active)"
-            "Condition" = "8:"
-            "Object" = "8:_27915048862C4F3497E07DF81619EC4D"
-            "FileType" = "3:2"
-            "InstallAction" = "3:4"
-            "Arguments" = "8:"
-            "EntryPoint" = "8:"
-            "Sequence" = "3:1"
-            "Identifier" = "8:_A77EAFC3_F457_4028_8F7F_5955B2A12D42"
-            "InstallerClass" = "11:TRUE"
-            "CustomActionData" = "8:"
-            }
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_78996541E59B453E87C3E1B07840B880"
-            {
-            "Name" = "8:Primary output from Mnd.Planner.Mailservice (Active)"
-            "Condition" = "8:"
-            "Object" = "8:_27915048862C4F3497E07DF81619EC4D"
-            "FileType" = "3:2"
-            "InstallAction" = "3:1"
-            "Arguments" = "8:"
-            "EntryPoint" = "8:"
-            "Sequence" = "3:1"
-            "Identifier" = "8:_4021FA93_A4DE_4811_B27F_913A15CCC927"
-            "InstallerClass" = "11:TRUE"
-            "CustomActionData" = "8:"
-            }
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_F0793949CC2E4B6F9D9F2DA87E88EF94"
-            {
-            "Name" = "8:Primary output from Mnd.Planner.Mailservice (Active)"
-            "Condition" = "8:"
-            "Object" = "8:_27915048862C4F3497E07DF81619EC4D"
+            "Object" = "8:_63501C241DF048E5B8DA5466F50B6403"
             "FileType" = "3:2"
             "InstallAction" = "3:2"
             "Arguments" = "8:"
             "EntryPoint" = "8:"
             "Sequence" = "3:1"
-            "Identifier" = "8:_8A5DE0AF_75D3_4546_BFE0_915A8E19F656"
+            "Identifier" = "8:_8F59F544_BE7A_4266_9AE3_5528E5319B54"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_3A7EBD3306414EC4AB1E4BBCD2FD95E1"
+            {
+            "Name" = "8:Primary output from Mnd.Planner.Mailservice (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_63501C241DF048E5B8DA5466F50B6403"
+            "FileType" = "3:2"
+            "InstallAction" = "3:4"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_6364540A_AADD_436A_99E0_B23A4B3B92E9"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_8FCFA3FFA80B4DBD8C490FCF8D65E387"
+            {
+            "Name" = "8:Primary output from Mnd.Planner.Mailservice (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_63501C241DF048E5B8DA5466F50B6403"
+            "FileType" = "3:2"
+            "InstallAction" = "3:3"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_2A2B4BBC_7721_4C95_8406_CCF586AC863D"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_9F36CEE9E3D84E2287D679A9BB202DAE"
+            {
+            "Name" = "8:Primary output from Mnd.Planner.Mailservice (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_63501C241DF048E5B8DA5466F50B6403"
+            "FileType" = "3:2"
+            "InstallAction" = "3:1"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_C6FE2D1B_DE8C_466C_8C76_40A02E8958F9"
             "InstallerClass" = "11:TRUE"
             "CustomActionData" = "8:"
             }
@@ -336,7 +336,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MailServiceSetup"
         "ProductCode" = "8:{57D44F78-1976-4BAE-A850-9FAE173B8593}"
-        "PackageCode" = "8:{7B6FE56B-F2B0-41EB-9680-8673E94C8B98}"
+        "PackageCode" = "8:{D1318F69-98B5-414C-9BB1-9A6652EBA3FF}"
         "UpgradeCode" = "8:{11585239-15DE-4378-BC52-C784772E6D79}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -855,7 +855,7 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_27915048862C4F3497E07DF81619EC4D"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_63501C241DF048E5B8DA5466F50B6403"
             {
             "SourcePath" = "8:..\\Planner.Mailservice\\obj\\x86\\Debug\\Mnd.Planner.Mailservice.exe"
             "TargetName" = "8:"
