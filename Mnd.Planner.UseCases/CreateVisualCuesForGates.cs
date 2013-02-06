@@ -3,24 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Mnd.Planner.Domain.Repositories;
-using Mnd.Planner.Domain.Roles;
 using Mnd.Domain;
 using Mnd.Planner.UseCases.Roles;
+using Mnd.Domain.Roles;
 
 namespace Mnd.Planner.UseCases
 {
-    public class CreateVisualCuesForGates
+    public class CreateVisualCuesForGates : AbstractUseCase
     {
         int _amtDays;
-        RVisualCueCreator _creator;
+        RCueItemUploader _creator;
 
-        public CreateVisualCuesForGates(int amtDays, RVisualCueCreator creator)
+        public CreateVisualCuesForGates(int amtDays, RCueItemUploader creator)
         {
             _amtDays = amtDays;
             _creator = creator;
         }
 
-        public void Execute()
+        public override void Execute()
         {
             var repository = new MilestoneRepository();
             var milestones = repository.GetMilestonesForComingDays(_amtDays);

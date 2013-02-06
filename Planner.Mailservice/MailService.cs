@@ -13,6 +13,7 @@ using Mnd.Planner.Domain.Persistence;
 using Mnd.Planner.Domain.Repositories;
 using Mnd.Planner.UseCases;
 using Mnd.Planner.Domain;
+using Mnd.Domain;
 
 namespace Mnd.Planner.Mailservice
 {
@@ -54,41 +55,15 @@ namespace Mnd.Planner.Mailservice
         void _timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             this.CreateAgendaItems();
+            this.SendStatusMail();
         }
 
         void SendStatusMail()
         {
             try
             {
-                // TODO: use sp_get_milestones_for_nextdays and retrieve deliverablestatuses to mail
-                //throw new Exception("FOUT!");
-                var repository = new MilestoneRepository();
-                var milestones = repository.GetMilestonesForComingDays(30);
-                var builder = new StringBuilder();
-                //var projRep = new ProjectRepository();
-
-                foreach (var ms in milestones)
-                {
-                    //var projects = projRep.GetConfiguredProjectsForRelease(ms.Release.Id);
-                    builder.Append("\n***********************************************");
-                    builder.Append(string.Format("\n{0} - {1} - {2} {3}:", ms.Release.Title, ms.Title, ms.Date.ToDutchString(), ms.Time));
-                    var statuses = repository.GetActivityStatusForMilestones(ms);
-                    builder.Append("\n----------------------------------------------");
-                    foreach (var state in statuses)
-                    {
-
-                        builder.Append(string.Format("\n{0}: {1}", "Project", state.Project.Title));
-                        builder.Append(string.Format("\n{0} - {1} - {2} hrs remaining", state.Deliverable.Title, state.Activity.Title, state.HoursRemaining));
-                        builder.Append("\n----------------------------------------------");
-                    }
-
-                    builder.Append("\n***********************************************");
-                    builder.Append("\n\n");
-
-                }
-                var content = builder.ToString();
-                _mailer.SendMail("martijn.natte@consultant.vfsco.com", "Milestones coming up", content);
-
+                var uc = new EmailMilestoneStatuses("martijn.natte@consultant.vfsco.com", 30);
+                uc.Execute();
             }
             catch (Exception ex)
             {

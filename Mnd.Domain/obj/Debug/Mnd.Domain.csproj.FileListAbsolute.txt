@@ -1,5 +1,7 @@
 C:\Projects\Planner\Mnd.Domain\bin\Debug\Mnd.Domain.dll
 C:\Projects\Planner\Mnd.Domain\bin\Debug\Mnd.Domain.pdb
+C:\Projects\Planner\Mnd.Domain\bin\Debug\Mnd.Mail.dll
+C:\Projects\Planner\Mnd.Domain\bin\Debug\Mnd.Mail.pdb
 C:\Projects\Planner\Mnd.Domain\obj\Debug\ResolveAssemblyReference.cache
 C:\Projects\Planner\Mnd.Domain\obj\Debug\Mnd.Domain.dll
 C:\Projects\Planner\Mnd.Domain\obj\Debug\Mnd.Domain.pdb

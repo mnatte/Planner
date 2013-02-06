@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Net.Mail;
 using System.Diagnostics;
-using Mnd.Domain;
 
 namespace Mnd.Mail
 {
@@ -40,9 +39,9 @@ namespace Mnd.Mail
             this.CreateEvernoteItem(subject, body, null);
         }
 
-        public void UploadAwesomeNoteItem(AwesomeNoteItem item)
-        {
-            this.CreateEvernoteItem(item.Title, item.Content, item.Notebook);
-        }
+        //public void UploadAwesomeNoteItem(AwesomeNoteItem item)
+        //{
+        //    this.CreateEvernoteItem(item.Title, item.Content, item.Notebook);
+        //}
     }
 }

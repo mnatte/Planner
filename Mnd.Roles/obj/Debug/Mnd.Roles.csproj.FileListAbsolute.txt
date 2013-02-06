@@ -1,0 +1,5 @@
+C:\Projects\Planner\Mnd.Roles\bin\Debug\Mnd.Roles.dll
+C:\Projects\Planner\Mnd.Roles\bin\Debug\Mnd.Roles.pdb
+C:\Projects\Planner\Mnd.Roles\obj\Debug\ResolveAssemblyReference.cache
+C:\Projects\Planner\Mnd.Roles\obj\Debug\Mnd.Roles.dll
+C:\Projects\Planner\Mnd.Roles\obj\Debug\Mnd.Roles.pdb

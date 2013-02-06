@@ -44,12 +44,6 @@
     <Compile Include="MailSender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Mnd.Domain\Mnd.Domain.csproj">
-      <Project>{2E313C70-21D8-4146-8081-DF08CBC8EFF8}</Project>
-      <Name>Mnd.Domain</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

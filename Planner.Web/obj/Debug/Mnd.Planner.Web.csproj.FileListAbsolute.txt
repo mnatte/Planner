@@ -5,13 +5,15 @@ C:\Projects\Planner\Planner.Web\bin\Mnd.Helpers.dll
 C:\Projects\Planner\Planner.Web\bin\Mnd.Mail.dll
 C:\Projects\Planner\Planner.Web\bin\Mnd.Mvc.Rest.dll
 C:\Projects\Planner\Planner.Web\bin\Mnd.Planner.Domain.dll
-C:\Projects\Planner\Planner.Web\bin\Mnd.Domain.dll
 C:\Projects\Planner\Planner.Web\bin\Mnd.Helpers.pdb
 C:\Projects\Planner\Planner.Web\bin\Mnd.Mail.pdb
 C:\Projects\Planner\Planner.Web\bin\Mnd.Mvc.Rest.pdb
 C:\Projects\Planner\Planner.Web\bin\Mnd.Planner.Domain.pdb
 C:\Projects\Planner\Planner.Web\bin\Mnd.DataAccess.pdb
-C:\Projects\Planner\Planner.Web\bin\Mnd.Domain.pdb
 C:\Projects\Planner\Planner.Web\obj\Debug\ResolveAssemblyReference.cache
 C:\Projects\Planner\Planner.Web\obj\Debug\Mnd.Planner.Web.dll
 C:\Projects\Planner\Planner.Web\obj\Debug\Mnd.Planner.Web.pdb
+C:\Projects\Planner\Planner.Web\bin\Mnd.Domain.dll
+C:\Projects\Planner\Planner.Web\bin\Mnd.Planner.UseCases.dll
+C:\Projects\Planner\Planner.Web\bin\Mnd.Domain.pdb
+C:\Projects\Planner\Planner.Web\bin\Mnd.Planner.UseCases.pdb

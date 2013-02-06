@@ -70,6 +70,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Mnd.Domain\Mnd.Domain.csproj">
+      <Project>{2E313C70-21D8-4146-8081-DF08CBC8EFF8}</Project>
+      <Name>Mnd.Domain</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Mnd.Helpers\Mnd.Helpers.csproj">
       <Project>{8BF68AB0-A823-4BCE-B25C-B649B6AAB18E}</Project>
       <Name>Mnd.Helpers</Name>

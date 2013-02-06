@@ -40,9 +40,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbstractUseCase.cs" />
     <Compile Include="AwesomeNoteItem.cs" />
+    <Compile Include="AwesomeNoteWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VisualCue.cs" />
+    <Compile Include="CueItem.cs" />
+    <Compile Include="Roles\RCueItemUploader.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mnd.Mail\Mnd.Mail.csproj">
+      <Project>{BE647012-342F-4CFD-9103-D70219B09DA4}</Project>
+      <Name>Mnd.Mail</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

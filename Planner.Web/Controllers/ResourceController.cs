@@ -13,6 +13,7 @@ using Mnd.Planner.Domain;
 using Mnd.Planner.Domain.Persistence;
 using Mnd.Planner.Domain.Repositories;
 using Mnd.Mvc.Rest;
+using Mnd.Planner.UseCases;
 
 namespace Mnd.Planner.Web.Controllers
 {
@@ -48,37 +49,8 @@ namespace Mnd.Planner.Web.Controllers
         public JsonResult MailPlanning(PeriodInputModel model)
         {
             var viewPeriod = new Period { StartDate = model.StartDate.ToDateTimeFromDutchString(), EndDate = model.EndDate.ToDateTimeFromDutchString() };
-            var subject = string.Format("Resource Planning {0} - {1}", model.StartDate, model.EndDate);
-
-
-            var rep = this.Repository as ResourceRepository;
-            var resources = rep.GetItems();
-            var builder = new StringBuilder();
-
-            foreach(var res in resources)
-            {
-                builder.Append("\n***********************************************");
-                builder.Append(string.Format("\n{0}:", res.DisplayName));
-                foreach (var ass in res.Assignments.Where(x=>x.Period.Overlaps(viewPeriod)))
-                {
-                    var overlap = ass.Period.OverlappingPeriod(viewPeriod);
-                    builder.Append(string.Format("\n{0} - {1}:", overlap.StartDate.ToDutchString(), overlap.EndDate.ToDutchString()));
-                    builder.Append(string.Format("\n{0} - {1} - {2}: {3} ({4}%)", ass.Phase.Title, ass.Project.Title, ass.Deliverable.Title, ass.Activity.Title, ass.FocusFactor * 100));
-                    builder.Append(string.Format("\nDeadline {0}: {1}", ass.Deliverable.Title, ass.Milestone.Date.ToDutchString()));
-                    builder.Append("\n----------------------------------------------");
-                }
-                foreach (var abs in res.PeriodsAway.Where(x=>x.Period.Overlaps(viewPeriod)))
-                {
-                    builder.Append(string.Format("\nAbsent: {0} - {1} {2}", abs.StartDate.ToDutchString(), abs.EndDate.ToDutchString(), abs.Title));
-                }
-                builder.Append("\n***********************************************");
-                builder.Append("\n\n");
-            }
-            var content = builder.ToString();
-
-            var mailSender = new MailSender();
-            mailSender.SendMail("martijn.natte@consultant.vfsco.com", subject, content);
-
+            var uc = new EmailResourcePlanning(viewPeriod);
+            uc.Execute();
             return this.Json(string.Format("Resourceplanning is mailed for {0} - {1}", model.StartDate, model.EndDate), JsonRequestBehavior.AllowGet);
         }
     }
