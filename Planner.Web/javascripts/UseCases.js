@@ -1,5 +1,5 @@
 (function() {
-  var UDeleteResourceAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyResourceAssignment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, root;
+  var UDeleteResourceAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyResourceAssignment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -196,6 +196,22 @@
     };
 
     return ULoadAdminProjects;
+
+  })();
+
+  ULoadAdminMeetings = (function() {
+
+    function ULoadAdminMeetings() {}
+
+    ULoadAdminMeetings.prototype.execute = function(data) {
+      var items;
+      items = Meeting.createCollection(data);
+      this.viewModel = new AdminMeetingViewmodel(items);
+      this.viewModel.selectItem(this.viewModel.allItems()[0]);
+      return ko.applyBindings(this.viewModel);
+    };
+
+    return ULoadAdminMeetings;
 
   })();
 
@@ -732,6 +748,8 @@
   root.ULoadAdminReleases = ULoadAdminReleases;
 
   root.ULoadAdminProjects = ULoadAdminProjects;
+
+  root.ULoadAdminMeetings = ULoadAdminMeetings;
 
   root.ULoadAdminResources = ULoadAdminResources;
 

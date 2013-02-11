@@ -101,6 +101,7 @@
   <ItemGroup>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\DeliverableController.cs" />
+    <Compile Include="Controllers\MeetingController.cs" />
     <Compile Include="Controllers\ResourceAssignmentController.cs" />
     <Compile Include="Controllers\ResourceController.cs" />
     <Compile Include="Controllers\PhasesController.cs" />
@@ -121,6 +122,12 @@
     <Content Include="adminActivity.htm" />
     <Content Include="absences.htm" />
     <Content Include="assignments.htm" />
+    <Content Include="adminMeeting.htm" />
+    <Content Include="javascripts\adminMeetingViewmodel.js">
+      <DependentUpon>adminMeetingViewmodel.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
     <Content Include="javascripts\releaseProgressViewmodel.js">
       <DependentUpon>releaseProgressViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -706,6 +713,7 @@
     <Content Include="stylesheets\sexybuttons.css" />
     <Content Include="templates\absenceForm.tmpl.html" />
     <Content Include="templates\assignmentForm.tmpl.html" />
+    <Content Include="templates\meetingForm.tmpl.html" />
     <Content Include="templates\releaseOverview.tmpl.html" />
     <Content Include="templates\phaseForm.tmpl.html" />
     <Content Include="updateReleaseStatus.htm" />
@@ -925,6 +933,10 @@
     <None Include="javascripts\assignmentsViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>assignmentsViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\adminMeetingViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>adminMeetingViewmodel.js</LastGenOutput>
     </None>
     <None Include="javascripts\releaseProgressViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>

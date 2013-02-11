@@ -133,6 +133,14 @@ class ULoadAdminProjects
 		@viewModel.selectItem @viewModel.allItems()[0]
 		ko.applyBindings(@viewModel)
 
+class ULoadAdminMeetings
+	constructor: ->
+	execute: (data) ->
+		items = Meeting.createCollection data
+		@viewModel = new AdminMeetingViewmodel(items)
+		@viewModel.selectItem @viewModel.allItems()[0]
+		ko.applyBindings(@viewModel)
+
 class UDisplayPlanningOverview
 	constructor: ->
 	execute: (data) ->
@@ -425,6 +433,7 @@ root.UDisplayPlanningOverview = UDisplayPlanningOverview
 root.UDisplayResourcesAvailability = UDisplayResourcesAvailability
 root.ULoadAdminReleases = ULoadAdminReleases
 root.ULoadAdminProjects = ULoadAdminProjects
+root.ULoadAdminMeetings = ULoadAdminMeetings
 root.ULoadAdminResources = ULoadAdminResources
 root.ULoadAdminDeliverables = ULoadAdminDeliverables
 root.ULoadAdminActivities = ULoadAdminActivities

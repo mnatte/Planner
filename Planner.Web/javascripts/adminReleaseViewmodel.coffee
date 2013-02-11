@@ -20,6 +20,7 @@ class AdminReleaseViewmodel
 		@selectedRelease = ko.observable()
 		@selectedPhase = ko.observable()
 		@selectedMilestone = ko.observable()
+		@selectedMeeting = ko.observable()
 		@formType = ko.observable("release")
 		@allReleases = ko.observableArray(allReleases)
 		@allProjects = ko.observableArray(allProjects)
@@ -39,6 +40,7 @@ class AdminReleaseViewmodel
 		for ms in rel.milestones()
 			@setMilestoneDeliverables ms
 		@setPhases rel
+		@setMeetings rel
 
 	setReleaseProjects: (rel) ->
 		# assign projects and transform projects array to observableArray so changes will be registered
@@ -77,6 +79,10 @@ class AdminReleaseViewmodel
 		rel.milestones = ko.observableArray(milestones)
 		#console.log rel.phases()
 
+	setMeetings: (rel) =>
+		meetings = rel.meetings.slice() # use slice to create independent copy
+		rel.meetings = ko.observableArray(meetings)
+
 	# functions for observable necessary to pass view model data to it from html
 	selectRelease: (data) =>
 		#console.log "selectRelease - function"
@@ -94,6 +100,11 @@ class AdminReleaseViewmodel
 		@selectedMilestone data
 		console.log @selectedMilestone()
 
+	selectMeeting: (data) =>
+		@formType "meeting"
+		@selectedMeeting data
+		console.log @selectedMeeting()
+
 	refreshRelease: (index, jsonData) =>
 		# use given index or take new index ('length' is one larger than max index) when item is not in @allReleases (value is -1). 
 		# when not in @allReleases, the item is new and will be inserted at the end. no item will be removed prior to adding it.
@@ -106,6 +117,7 @@ class AdminReleaseViewmodel
 			@setObservables rel
 			rel.phases.sort((a,b)->a.startDate.date - b.startDate.date)
 			rel.milestones.sort((a,b)->a.date.date - b.date.date)
+			rel.meetings.sort((a,b)->a.date.date - b.date.date)
 
 			# i = index of item to remove, 1 is amount to be removed, rel is item to be inserted there
 			@allReleases.splice i, 1, rel
@@ -147,6 +159,36 @@ class AdminReleaseViewmodel
 		phase = (a for a in @selectedRelease().phases() when a.id is data.id)[0]
 		i = @selectedRelease().phases().indexOf(phase)
 		@selectedRelease().phases.splice(i, 1)
+
+	addMeeting: (data) =>
+		@formType "meeting"
+		
+		allMeetingsArr = @allReleases().reduce (acc, x) ->
+					acc.push [x]
+					acc.push x.meetings()
+					acc
+				, []
+
+		allMeetings = allMeetingsArr.reduce (acc, x) ->
+					# when using concat the original array (acc, is '[]' here) never changes. concat returns a new array as result
+					result = acc.concat x
+					result
+				, []
+
+		maxId = allMeetings.reduce (acc, x) ->
+					max = if acc > x.id then acc else x.id
+					max
+				,0
+		newId = maxId + 1
+		# constructor: (@id, @title, @objective, @descr, @moment, @date, @time, @releaseId) ->
+		@selectMeeting new Meeting(newId, "", "", "", "", new Date(), "09:00", @selectedRelease().id)
+		console.log "selectedMeeting: #{ko.toJSON(@selectedMeeting())}"
+		#console.log "selectedRelease id: #{@selectedRelease().id}"
+
+	removeMeeting: (data) =>
+		meeting = (a for a in @selectedRelease().meetings() when a.id is data.id)[0]
+		i = @selectedRelease().meetings().indexOf(meeting)
+		@selectedRelease().meetings.splice(i, 1)
 
 	addNewMilestone: (release) =>
 		@formType "milestone"
@@ -208,6 +250,11 @@ class AdminReleaseViewmodel
 		ms = (a for a in @selectedRelease().milestones() when a.id is @selectedMilestone().id)[0]
 		# add milestone to release when new
 		if(typeof(ms) is "undefined" || ms is null || ms.id is 0) then @selectedRelease().addMilestone(@selectedMilestone())
+
+	saveSelectedMeeting: =>
+		m = (a for a in @selectedRelease().meetings() when a.id is @selectedMeeting().id)[0]
+		# add meeting to release when new
+		if(typeof(m) is "undefined" || m is null || m.id is 0) then @selectedRelease().addMeeting(@selectedMeeting())
 	
 	confirmDelete: =>
 		@deleteRelease @itemToDelete(), $.unblockUI()

@@ -250,8 +250,20 @@
       });
     };
 
-    Ajax.prototype.test = function() {
-      return console.log("testing AJAX class");
+    Ajax.prototype.getMeetings = function(callback) {
+      var url;
+      url = "/planner/Meeting/GetItems";
+      return $.ajax(url, {
+        dataType: "json",
+        type: "GET",
+        success: function(data, status, XHR) {
+          console.log("Meetings data loaded");
+          return callback(data);
+        },
+        error: function(XHR, status, errorThrown) {
+          return console.log("AJAX Releases error: " + status);
+        }
+      });
     };
 
     return Ajax;

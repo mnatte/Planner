@@ -1,5 +1,5 @@
 (function() {
-  var Activity, AssignedResource, Deliverable, Feature, Milestone, Period, Phase, Project, ProjectActivityStatus, Release, ReleaseAssignments, Resource, ResourceAssignment, Week, root,
+  var Activity, AssignedResource, Deliverable, Feature, Meeting, Milestone, Period, Phase, Project, ProjectActivityStatus, Release, ReleaseAssignments, Resource, ResourceAssignment, Week, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -311,6 +311,7 @@
       this.phases = [];
       this.projects = [];
       this.milestones = [];
+      this.meetings = [];
     }
 
     Release.prototype.addPhase = function(phase) {
@@ -325,8 +326,12 @@
       return this.milestones.push(milestone);
     };
 
+    Release.prototype.addMeeting = function(meeting) {
+      return this.meetings.push(meeting);
+    };
+
     Release.create = function(jsonData) {
-      var milestone, phase, project, release, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
+      var meeting, milestone, phase, project, release, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _ref4;
       release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId);
       if (jsonData.Phases !== null && jsonData.Phases !== void 0) {
         _ref = jsonData.Phases;
@@ -347,6 +352,13 @@
         for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
           milestone = _ref3[_k];
           release.addMilestone(Milestone.create(milestone, jsonData.Id));
+        }
+      }
+      if (jsonData.Meetings !== null && jsonData.Meetings !== void 0) {
+        _ref4 = jsonData.Meetings;
+        for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
+          meeting = _ref4[_l];
+          release.addMeeting(Meeting.create(meeting, jsonData.Id));
         }
       }
       return release;
@@ -603,6 +615,42 @@
 
   })(Mixin);
 
+  Meeting = (function(_super) {
+
+    __extends(Meeting, _super);
+
+    function Meeting(id, title, objective, descr, moment, date, time, releaseId) {
+      this.id = id;
+      this.title = title;
+      this.objective = objective;
+      this.descr = descr;
+      this.moment = moment;
+      this.date = date;
+      this.time = time;
+      this.releaseId = releaseId;
+    }
+
+    Meeting.create = function(jsonData) {
+      var meeting;
+      meeting = new Meeting(jsonData.Id, jsonData.Title, jsonData.Objective, jsonData.Description, jsonData.Moment, jsonData.Date, jsonData.Time);
+      return meeting;
+    };
+
+    Meeting.createCollection = function(jsonData) {
+      var meeting, meetings, _i, _len;
+      meetings = [];
+      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
+        meeting = jsonData[_i];
+        this.meeting = Meeting.create(meeting);
+        meetings.push(this.meeting);
+      }
+      return meetings;
+    };
+
+    return Meeting;
+
+  })(Mixin);
+
   Resource = (function(_super) {
 
     __extends(Resource, _super);
@@ -759,6 +807,8 @@
   root.Resource = Resource;
 
   root.Project = Project;
+
+  root.Meeting = Meeting;
 
   root.Deliverable = Deliverable;
 

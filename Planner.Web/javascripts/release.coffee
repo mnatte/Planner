@@ -223,6 +223,7 @@ class Release extends Phase
 		#@resources = []
 		@projects = []
 		@milestones = []
+		@meetings = []
 	addPhase: (phase) ->
 		@phases.push(phase)
 	#addFeature: (feature) ->
@@ -234,6 +235,8 @@ class Release extends Phase
 		@projects.push(project)
 	addMilestone: (milestone) ->
 		@milestones.push(milestone)
+	addMeeting: (meeting) ->
+		@meetings.push(meeting)
 	@create: (jsonData) ->
 		#console.log "create Release"
 		#console.log jsonData
@@ -254,6 +257,9 @@ class Release extends Phase
 		if jsonData.Milestones != null and jsonData.Milestones  != undefined
 			for milestone in jsonData.Milestones
 				release.addMilestone Milestone.create(milestone, jsonData.Id)
+		if jsonData.Meetings != null and jsonData.Meetings  != undefined
+			for meeting in jsonData.Meetings
+				release.addMeeting Meeting.create(meeting, jsonData.Id)
 		#console.log release
 		release
 	@createSnapshot: (jsonData) ->
@@ -383,6 +389,19 @@ class Activity extends Mixin
 			activities.push @act
 		activities
 
+# Release - Meetings (- Roles?)
+class Meeting extends Mixin
+	constructor: (@id, @title, @objective, @descr, @moment, @date, @time, @releaseId) ->
+	@create: (jsonData) ->
+		meeting = new Meeting(jsonData.Id, jsonData.Title, jsonData.Objective, jsonData.Description, jsonData.Moment, jsonData.Date, jsonData.Time)
+		meeting
+	@createCollection: (jsonData) ->
+		meetings = []
+		for meeting in jsonData
+			@meeting = Meeting.create(meeting)
+			meetings.push @meeting
+		meetings
+
 class Resource extends Mixin
 	constructor: (@id, @firstName, @middleName, @lastName, @initials, @hoursPerWeek, @email, @phoneNumber, @company, @function) ->
 		@periodsAway = []
@@ -460,6 +479,7 @@ root.Release = Release
 root.Feature = Feature
 root.Resource = Resource
 root.Project = Project
+root.Meeting = Meeting
 root.Deliverable = Deliverable
 root.Activity = Activity
 root.AssignedResource = AssignedResource

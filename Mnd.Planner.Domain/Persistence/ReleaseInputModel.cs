@@ -15,6 +15,7 @@ namespace Mnd.Planner.Domain.Persistence
         public int ParentId { get; set; }
         public List<ReleaseInputModel> Phases { get; set; }
         public List<ProjectInputModel> Projects { get; set; }
+        public List<MeetingInputModel> Meetings { get; set; }
     }
 
     /* serialized graph:

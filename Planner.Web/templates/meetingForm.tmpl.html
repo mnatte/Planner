@@ -1,0 +1,8 @@
+﻿<form>
+    <label>Meeting Title:</label><input type="text" data-bind="value: title, valueUpdate: 'afterkeydown'" />
+    <label>Objective:</label><input type="text" data-bind="value: objective" />
+    <label>Description:</label><input type="text" data-bind="value: descr" />
+    <label>Date (dd/mm/yyyy):</label><input type="text" data-bind="value: date.dateString" />
+    <label>Time:</label><input type="text" data-bind="value: time" />
+    <button class="sexybutton" data-bind="click: $parent.saveSelectedMeeting.bind($data)"><span><span><span class="link">Link</span></span></span></button>
+</form>

@@ -89,6 +89,12 @@
                             <!-- /ko -->
                     </section>
                     <!--/ko-->
+                    <!-- ko if: $root.formType() == "meeting" -->
+                    <section id="meetingFormSection" class="sixteen columns" data-bind="fadeVisible: $root.selectedRelease(), fadeDuration: 500">
+                            <!-- ko template: {name: 'meetingForm', data: $root.selectedMeeting()} -->
+                            <!-- /ko -->
+                    </section>
+                    <!--/ko-->
                 </div>
                 <div class="five columns omega">
                     <div class="colheader">
@@ -129,6 +135,17 @@
                             <button class="sexybutton sexyicononly" data-bind="click: $root.unAssignMilestone.bind($data)"><span><span><span class="unassign"></span></span></span></button>
                             <span class="selectable" data-bind="text: title, click: $root.selectMilestone.bind($data), style: { color: $root.formType() == 'milestone' && $root.selectedMilestone() != undefined && $data.id == $root.selectedMilestone().id ? 'red' : 'black' }"></span>
                             <!--<span class="icon16 icon-remove16 interact" data-bind="click: $root.unAssignMilestone.bind($data)"></span>-->
+                        </li>
+                    </ul>
+                    <div class="colheader">
+                        <span class="icon32 icon-users"></span>
+                        <span>Meetings</span>
+                        <button class="sexybutton" data-bind="click: $root.addMeeting.bind($data), enable:$root.selectedRelease() && $root.selectedRelease().id > 0"><span><span><span class="add">New</span></span></span></button>
+                    </div>
+                    <ul data-bind="foreach: $root.selectedRelease().meetings">
+                        <li>
+                            <button class="sexybutton sexyicononly" data-bind="click: $root.removeMeeting.bind($data)"><span><span><span class="unassign"></span></span></span></button>
+                            <span class="selectable" data-bind="text: title, click: $root.selectMeeting.bind($data), style: { color: $root.formType() == 'meeting' && $root.selectedMeeting() != undefined && $data.id == $root.selectedMeeting().id ? 'red' : 'black' }"></span>
                         </li>
                     </ul>
                  </div>

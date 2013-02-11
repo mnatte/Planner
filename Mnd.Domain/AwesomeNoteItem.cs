@@ -10,6 +10,9 @@ namespace Mnd.Domain
         private static string _style = "| Style : Background0, Font0, Size16 |";
         private static Dictionary<int, string> _months = new Dictionary<int, string>();
 
+        // example bi-weekly repeat & alarm 15 min before: | To-do : Incomplete | Due date : Aug 22, 2012 8:00 PM | Repeat : Weekly,2 | Alarm : Min,15 |
+        // example regular days repeat: | To-do : Incomplete | Due date : Feb 7, 2013, 11:00 AM | Repeat : Tue,Thu,Fri | Alarm : Day,1 |
+
         /// <summary>
         /// The entry as displayed in Awesome note
         /// </summary>

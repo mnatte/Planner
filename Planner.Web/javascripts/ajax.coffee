@@ -163,8 +163,16 @@ class Ajax
 				console.log "AJAX status: #{status}"
 				console.log "AJAX XHR: #{XHR}"
 				console.log "AJAX errorThrown: #{errorThrown}"
-	test: ->
-		console.log "testing AJAX class"
+	getMeetings: (callback) ->
+		url = "/planner/Meeting/GetItems"
+		$.ajax url,
+			dataType: "json"
+			type: "GET"
+			success: (data, status, XHR) ->
+				console.log "Meetings data loaded"
+				callback data
+			error: (XHR, status, errorThrown) ->
+				console.log "AJAX Releases error: #{status}"
 
 # export to root object
 root.Ajax = Ajax

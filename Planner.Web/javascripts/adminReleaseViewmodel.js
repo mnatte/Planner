@@ -10,17 +10,22 @@
       this.deleteRelease = __bind(this.deleteRelease, this);
       this.setItemToDelete = __bind(this.setItemToDelete, this);
       this.confirmDelete = __bind(this.confirmDelete, this);
+      this.saveSelectedMeeting = __bind(this.saveSelectedMeeting, this);
       this.saveSelectedMilestone = __bind(this.saveSelectedMilestone, this);
       this.saveSelectedPhase = __bind(this.saveSelectedPhase, this);
       this.saveSelected = __bind(this.saveSelected, this);
       this.unAssignMilestone = __bind(this.unAssignMilestone, this);
       this.addNewMilestone = __bind(this.addNewMilestone, this);
+      this.removeMeeting = __bind(this.removeMeeting, this);
+      this.addMeeting = __bind(this.addMeeting, this);
       this.removePhase = __bind(this.removePhase, this);
       this.addPhase = __bind(this.addPhase, this);
       this.refreshRelease = __bind(this.refreshRelease, this);
+      this.selectMeeting = __bind(this.selectMeeting, this);
       this.selectMilestone = __bind(this.selectMilestone, this);
       this.selectPhase = __bind(this.selectPhase, this);
       this.selectRelease = __bind(this.selectRelease, this);
+      this.setMeetings = __bind(this.setMeetings, this);
       this.setMilestones = __bind(this.setMilestones, this);
       this.setPhases = __bind(this.setPhases, this);
       var rel, _i, _len, _ref;
@@ -40,6 +45,7 @@
       this.selectedRelease = ko.observable();
       this.selectedPhase = ko.observable();
       this.selectedMilestone = ko.observable();
+      this.selectedMeeting = ko.observable();
       this.formType = ko.observable("release");
       this.allReleases = ko.observableArray(allReleases);
       this.allProjects = ko.observableArray(allProjects);
@@ -69,7 +75,8 @@
         ms = _ref[_i];
         this.setMilestoneDeliverables(ms);
       }
-      return this.setPhases(rel);
+      this.setPhases(rel);
+      return this.setMeetings(rel);
     };
 
     AdminReleaseViewmodel.prototype.setReleaseProjects = function(rel) {
@@ -126,6 +133,12 @@
       return rel.milestones = ko.observableArray(milestones);
     };
 
+    AdminReleaseViewmodel.prototype.setMeetings = function(rel) {
+      var meetings;
+      meetings = rel.meetings.slice();
+      return rel.meetings = ko.observableArray(meetings);
+    };
+
     AdminReleaseViewmodel.prototype.selectRelease = function(data) {
       this.formType("release");
       return this.selectedRelease(data);
@@ -142,6 +155,12 @@
       return console.log(this.selectedMilestone());
     };
 
+    AdminReleaseViewmodel.prototype.selectMeeting = function(data) {
+      this.formType("meeting");
+      this.selectedMeeting(data);
+      return console.log(this.selectedMeeting());
+    };
+
     AdminReleaseViewmodel.prototype.refreshRelease = function(index, jsonData) {
       var i, rel;
       i = index >= 0 ? index : this.allReleases().length;
@@ -152,6 +171,9 @@
           return a.startDate.date - b.startDate.date;
         });
         rel.milestones.sort(function(a, b) {
+          return a.date.date - b.date.date;
+        });
+        rel.meetings.sort(function(a, b) {
           return a.date.date - b.date.date;
         });
         this.allReleases.splice(i, 1, rel);
@@ -204,6 +226,45 @@
       }).call(this))[0];
       i = this.selectedRelease().phases().indexOf(phase);
       return this.selectedRelease().phases.splice(i, 1);
+    };
+
+    AdminReleaseViewmodel.prototype.addMeeting = function(data) {
+      var allMeetings, allMeetingsArr, maxId, newId;
+      this.formType("meeting");
+      allMeetingsArr = this.allReleases().reduce(function(acc, x) {
+        acc.push([x]);
+        acc.push(x.meetings());
+        return acc;
+      }, []);
+      allMeetings = allMeetingsArr.reduce(function(acc, x) {
+        var result;
+        result = acc.concat(x);
+        return result;
+      }, []);
+      maxId = allMeetings.reduce(function(acc, x) {
+        var max;
+        max = acc > x.id ? acc : x.id;
+        return max;
+      }, 0);
+      newId = maxId + 1;
+      this.selectMeeting(new Meeting(newId, "", "", "", "", new Date(), "09:00", this.selectedRelease().id));
+      return console.log("selectedMeeting: " + (ko.toJSON(this.selectedMeeting())));
+    };
+
+    AdminReleaseViewmodel.prototype.removeMeeting = function(data) {
+      var a, i, meeting;
+      meeting = ((function() {
+        var _i, _len, _ref, _results;
+        _ref = this.selectedRelease().meetings();
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          a = _ref[_i];
+          if (a.id === data.id) _results.push(a);
+        }
+        return _results;
+      }).call(this))[0];
+      i = this.selectedRelease().meetings().indexOf(meeting);
+      return this.selectedRelease().meetings.splice(i, 1);
     };
 
     AdminReleaseViewmodel.prototype.addNewMilestone = function(release) {
@@ -298,6 +359,23 @@
       }).call(this))[0];
       if (typeof ms === "undefined" || ms === null || ms.id === 0) {
         return this.selectedRelease().addMilestone(this.selectedMilestone());
+      }
+    };
+
+    AdminReleaseViewmodel.prototype.saveSelectedMeeting = function() {
+      var a, m;
+      m = ((function() {
+        var _i, _len, _ref, _results;
+        _ref = this.selectedRelease().meetings();
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          a = _ref[_i];
+          if (a.id === this.selectedMeeting().id) _results.push(a);
+        }
+        return _results;
+      }).call(this))[0];
+      if (typeof m === "undefined" || m === null || m.id === 0) {
+        return this.selectedRelease().addMeeting(this.selectedMeeting());
       }
     };
 
