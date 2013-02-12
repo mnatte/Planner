@@ -11,7 +11,6 @@ namespace Mnd.Planner.Domain.Persistence
         public string Descr { get; set; }
         public string StartDate { get; set; }
         public string EndDate { get; set; }
-        public string TfsIterationPath { get; set; }
         public int ParentId { get; set; }
         public List<ReleaseInputModel> Phases { get; set; }
         public List<ProjectInputModel> Projects { get; set; }
@@ -47,7 +46,6 @@ namespace Mnd.Planner.Domain.Persistence
         public string Descr { get; set; }
         public string StartDate { get; set; }
         public string EndDate { get; set; }
-        public string TfsIterationPath { get; set; }
         //public List<PhaseConfigurationInputModel> Phases { get; set; }
         private List<PhaseConfigurationInputModel> _phases;
         public List<PhaseConfigurationInputModel> Phases
@@ -90,7 +88,6 @@ namespace Mnd.Planner.Domain.Persistence
         public string Descr { get; set; }
         public string StartDate { get; set; }
         public string EndDate { get; set; }
-        public string TfsIterationPath { get; set; }
     }
 
     public class ProjectConfigurationInputModel
@@ -99,8 +96,6 @@ namespace Mnd.Planner.Domain.Persistence
         public string Title { get; set; }
         public string Descr { get; set; }
         public string ShortName { get; set; }
-        public string TfsDevBranch { get; set; }
-        public string TfsIterationPath { get; set; }
     }
 
     public class MilestoneConfigurationInputModel

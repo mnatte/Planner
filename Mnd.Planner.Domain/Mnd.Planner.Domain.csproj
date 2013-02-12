@@ -78,6 +78,7 @@
     <Compile Include="Models\Role.cs" />
     <Compile Include="Models\Team.cs" />
     <Compile Include="Models\TeamMember.cs" />
+    <Compile Include="Roles\RMeetingSchedule.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mnd.Domain\Mnd.Domain.csproj">
@@ -97,9 +98,7 @@
       <Name>Mnd.DataAccess</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Roles\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -102,6 +102,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\DeliverableController.cs" />
     <Compile Include="Controllers\MeetingController.cs" />
+    <Compile Include="InputModels\PlanMeetingModel.cs" />
     <Compile Include="Controllers\ResourceAssignmentController.cs" />
     <Compile Include="Controllers\ResourceController.cs" />
     <Compile Include="Controllers\PhasesController.cs" />

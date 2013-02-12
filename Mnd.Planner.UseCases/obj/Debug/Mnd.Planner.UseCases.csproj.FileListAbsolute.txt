@@ -1,4 +1,3 @@
-C:\Projects\Planner\Mnd.Planner.UseCases\obj\Debug\ResolveAssemblyReference.cache
 C:\Projects\Planner\Mnd.Planner.UseCases\bin\Debug\Mnd.Planner.UseCases.dll
 C:\Projects\Planner\Mnd.Planner.UseCases\bin\Debug\Mnd.Planner.UseCases.pdb
 C:\Projects\Planner\Mnd.Planner.UseCases\bin\Debug\Mnd.DataAccess.dll
@@ -11,5 +10,6 @@ C:\Projects\Planner\Mnd.Planner.UseCases\bin\Debug\Mnd.Helpers.pdb
 C:\Projects\Planner\Mnd.Planner.UseCases\bin\Debug\Mnd.Mail.pdb
 C:\Projects\Planner\Mnd.Planner.UseCases\bin\Debug\Mnd.Planner.Domain.pdb
 C:\Projects\Planner\Mnd.Planner.UseCases\bin\Debug\Mnd.DataAccess.pdb
+C:\Projects\Planner\Mnd.Planner.UseCases\obj\Debug\ResolveAssemblyReference.cache
 C:\Projects\Planner\Mnd.Planner.UseCases\obj\Debug\Mnd.Planner.UseCases.dll
 C:\Projects\Planner\Mnd.Planner.UseCases\obj\Debug\Mnd.Planner.UseCases.pdb

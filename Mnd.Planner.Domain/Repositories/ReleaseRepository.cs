@@ -203,7 +203,6 @@ namespace Mnd.Planner.Domain.Repositories
                     cmd.Parameters.Add("@Descr", System.Data.SqlDbType.VarChar).Value = "";// obj.Descr;
                     cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = obj.StartDate.ToDateTimeFromDutchString();
                     cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = obj.EndDate.ToDateTimeFromDutchString();
-                    cmd.Parameters.Add("@IterationPath", System.Data.SqlDbType.VarChar).Value = obj.TfsIterationPath ?? "";
                     cmd.Parameters.Add("@ParentId", System.Data.SqlDbType.Int).Value = obj.ParentId;
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
@@ -246,6 +245,32 @@ namespace Mnd.Planner.Domain.Repositories
                 var rel = this.GetReleaseSummary(newId);
                 this.GenerateStatusRecords(rel);
 
+                return rel;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public Release UpdateDates(ReleaseInputModel obj)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            try
+            {
+                using (conn)
+                {
+                    conn.Open();
+
+                    var cmd = new SqlCommand("sp_update_phase_dates", conn);
+                    cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = obj.Id;
+                    cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = obj.StartDate.ToDateTimeFromDutchString();
+                    cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = obj.EndDate.ToDateTimeFromDutchString();
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    cmd.ExecuteNonQuery();
+                }
+                var rel = this.GetReleaseSummary(obj.Id);
                 return rel;
             }
             catch (Exception ex)
@@ -576,7 +601,6 @@ namespace Mnd.Planner.Domain.Repositories
                     cmd.Parameters.Add("@Descr", System.Data.SqlDbType.VarChar).Value = "";// obj.Descr;
                     cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = obj.StartDate.ToDateTimeFromDutchString();
                     cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = obj.EndDate.ToDateTimeFromDutchString();
-                    cmd.Parameters.Add("@IterationPath", System.Data.SqlDbType.VarChar).Value = obj.TfsIterationPath ?? "";
                     cmd.Parameters.Add("@ParentId", System.Data.SqlDbType.Int).Value = DBNull.Value;
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
@@ -740,7 +764,6 @@ namespace Mnd.Planner.Domain.Repositories
                     cmd.Parameters.Add("@Descr", System.Data.SqlDbType.VarChar).Value = "";// obj.Descr;
                     cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = obj.StartDate.ToDateTimeFromDutchString();
                     cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = obj.EndDate.ToDateTimeFromDutchString();
-                    cmd.Parameters.Add("@IterationPath", System.Data.SqlDbType.VarChar).Value = obj.TfsIterationPath ?? "";
                     cmd.Parameters.Add("@ParentId", System.Data.SqlDbType.Int).Value = parentId;
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
