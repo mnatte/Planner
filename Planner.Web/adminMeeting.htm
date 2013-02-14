@@ -76,6 +76,12 @@
                         <label>Moment:</label><input type="text" data-bind="value: moment" />
                         <button class="sexybutton" data-bind="click: $parent.saveSelected.bind($data)"><span><span><span class="save">Save</span></span></span></button> 
                     </form>
+                    <form>
+                        <label>ReleaseId:</label><input type="text" data-bind="value: $root.releaseId" />
+                        <label>Date:</label><input type="text" data-bind="value: $root.date" />
+                        <label>Time:</label><input type="text" data-bind="value: $root.time" style="width:400px;" />
+                        <button class="sexybutton" data-bind="click: $root.scheduleMeeting.bind($data)"><span><span><span class="save">Schedule</span></span></span></button> 
+                    </form>
                 </div>
                 <div class="ten columns omega">
                     <div class="colheader">

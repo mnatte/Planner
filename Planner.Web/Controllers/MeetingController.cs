@@ -24,9 +24,9 @@ namespace Mnd.Planner.Web.Controllers
         {}
 
         [HttpPost]
-        public JsonResult PlanMeeting(PlanMeetingInputModel model)
+        public JsonResult Schedule(ScheduleReleaseEventInputModel model)
         {
-            var uc = new PlanMeeting(new Meeting { Id = model.MeetingId }, new Release { Id = model.ReleaseId }, model.Date.ToDateTimeFromDutchString(), model.Time);
+            var uc = new PlanMeeting(new Meeting { Id = model.EventId }, new Release { Id = model.ReleaseId }, model.Date.ToDateTimeFromDutchString(), model.Time);
             uc.Execute();
             return this.Json(string.Format("Meeting is planned"), JsonRequestBehavior.AllowGet);
         }

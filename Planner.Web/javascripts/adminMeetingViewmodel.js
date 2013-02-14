@@ -11,10 +11,16 @@
     __extends(AdminMeetingViewmodel, _super);
 
     function AdminMeetingViewmodel(allMeetings) {
+      this.scheduleMeeting = __bind(this.scheduleMeeting, this);
       this.createNewEmptyItem = __bind(this.createNewEmptyItem, this);
       this.createNewItem = __bind(this.createNewItem, this);      Meeting.extend(RSimpleCrud);
+      Meeting.extend(RScheduleItem);
       Meeting.setSaveUrl("/planner/Meeting/Save");
       Meeting.setDeleteUrl("/planner/Meeting/Delete");
+      Meeting.setScheduleUrl("/planner/Meeting/Schedule");
+      this.date = ko.observable();
+      this.time = ko.observable();
+      this.releaseId = ko.observable();
       AdminMeetingViewmodel.__super__.constructor.apply(this, arguments);
     }
 
@@ -24,6 +30,13 @@
 
     AdminMeetingViewmodel.prototype.createNewEmptyItem = function() {
       return new Meeting(0, "", "", "", "");
+    };
+
+    AdminMeetingViewmodel.prototype.scheduleMeeting = function() {
+      var _this = this;
+      return this.selectedItem().schedule(this.selectedItem().id, this.releaseId(), this.date(), this.time(), function(data) {
+        return _this.refreshItem(i, data);
+      });
     };
 
     return AdminMeetingViewmodel;

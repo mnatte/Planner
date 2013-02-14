@@ -1,5 +1,5 @@
 (function() {
-  var RCrud, RGroupBy, RMoveItem, RSimpleCrud, RTeamMember, root,
+  var RCrud, RGroupBy, RMoveItem, RScheduleItem, RSimpleCrud, RTeamMember, root,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     _this = this;
 
@@ -329,6 +329,36 @@
     }
   };
 
+  RScheduleItem = {
+    setScheduleUrl: function(url) {
+      return _this.scheduleUrl = url;
+    },
+    extended: function() {
+      return this.include({
+        schedule: function(itemId, relId, dateString, timeString, callback) {
+          return $.ajax(scheduleUrl, {
+            dataType: "json",
+            data: ko.toJSON({
+              time: timeString,
+              date: dateString,
+              releaseId: relId,
+              eventId: itemId
+            }),
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            success: function(data, status, XHR) {
+              console.log("" + data + " saved");
+              return callback(data);
+            },
+            error: function(XHR, status, errorThrown) {
+              return console.log("AJAX SAVE error: " + errorThrown);
+            }
+          });
+        }
+      });
+    }
+  };
+
   root.RMoveItem = RMoveItem;
 
   root.RGroupBy = RGroupBy;
@@ -338,5 +368,7 @@
   root.RCrud = RCrud;
 
   root.RSimpleCrud = RSimpleCrud;
+
+  root.RScheduleItem = RScheduleItem;
 
 }).call(this);

@@ -24,7 +24,7 @@ namespace Mnd.Planner.UseCases.Roles
                 {
                     conn.Open();
 
-                    var cmd = new SqlCommand("sp_update_meeting_planning", conn);
+                    var cmd = new SqlCommand("sp_upsert_meeting_planning", conn);
                     cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = evt.Id;
                     cmd.Parameters.Add("@Date", System.Data.SqlDbType.DateTime).Value = date;
                     cmd.Parameters.Add("@Time", System.Data.SqlDbType.VarChar).Value = time;
