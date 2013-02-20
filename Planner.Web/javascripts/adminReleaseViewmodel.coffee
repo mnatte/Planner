@@ -85,7 +85,7 @@ class AdminReleaseViewmodel
 
 	# functions for observable necessary to pass view model data to it from html
 	selectRelease: (data) =>
-		#console.log "selectRelease - function"
+		#console.log data.milestones()[0].deliverables()
 		@formType "release"
 		@selectedRelease data
 		#console.log @selectedRelease().phases()
@@ -235,7 +235,7 @@ class AdminReleaseViewmodel
 		rel = (a for a in @allReleases() when a.id is @selectedRelease().id)[0]
 		i = @allReleases().indexOf(rel)
 		# console.log @selectedRelease().phases()
-		# console.log @selectedRelease().toConfigurationSnapshotJson()
+		console.log @selectedRelease().toConfigurationSnapshotJson()
 		@selectedRelease().save("/planner/Release/SaveReleaseConfiguration", @selectedRelease().toConfigurationSnapshotJson(), (data) => @refreshRelease(i, data))
 
 	saveSelectedPhase: =>
@@ -246,7 +246,7 @@ class AdminReleaseViewmodel
 
 	saveSelectedMilestone: =>
 		#console.log "saveSelectedMilestone: selectedMilestone: #{@selectedMilestone()}"
-		#console.log ko.toJSON(@selectedMilestone())
+		console.log ko.toJSON(@selectedMilestone())
 		ms = (a for a in @selectedRelease().milestones() when a.id is @selectedMilestone().id)[0]
 		# add milestone to release when new
 		if(typeof(ms) is "undefined" || ms is null || ms.id is 0) then @selectedRelease().addMilestone(@selectedMilestone())

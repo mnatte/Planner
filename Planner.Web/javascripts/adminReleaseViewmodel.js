@@ -323,6 +323,7 @@
         return _results;
       }).call(this))[0];
       i = this.allReleases().indexOf(rel);
+      console.log(this.selectedRelease().toConfigurationSnapshotJson());
       return this.selectedRelease().save("/planner/Release/SaveReleaseConfiguration", this.selectedRelease().toConfigurationSnapshotJson(), function(data) {
         return _this.refreshRelease(i, data);
       });
@@ -347,6 +348,7 @@
 
     AdminReleaseViewmodel.prototype.saveSelectedMilestone = function() {
       var a, ms;
+      console.log(ko.toJSON(this.selectedMilestone()));
       ms = ((function() {
         var _i, _len, _ref, _results;
         _ref = this.selectedRelease().milestones();
