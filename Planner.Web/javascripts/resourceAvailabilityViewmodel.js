@@ -99,7 +99,8 @@
         }
         return _results;
       }).call(this);
-      return this.inspectResource(resWithAssAndAbsInDate);
+      this.inspectResource(resWithAssAndAbsInDate);
+      return this.selectedAssignment(null);
     };
 
     ResourceAvailabilityViewmodel.prototype.refreshData = function(index, data) {

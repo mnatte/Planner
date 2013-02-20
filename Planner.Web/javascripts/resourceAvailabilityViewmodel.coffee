@@ -70,6 +70,7 @@ class ResourceAvailabilityViewmodel
 		resWithAssAndAbsInDate.assignments = (a for a in resource.assignments when a.period.overlaps(@checkPeriod()))
 		resWithAssAndAbsInDate.periodsAway = (a for a in resource.periodsAway when a.overlaps(@checkPeriod()))
 		@inspectResource resWithAssAndAbsInDate
+		@selectedAssignment null
 
 	refreshData: (index, data) =>
 		console.log 'refreshData'

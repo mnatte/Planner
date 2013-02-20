@@ -734,6 +734,17 @@ namespace Mnd.Planner.Domain.Repositories
                         }
                     }
 
+                    // clean up resource assignments of the removed milestonedeliverables for the release
+                    var cmdClean = new SqlCommand("sp_remove_orphan_resource_assignments", conn);
+                    cmdClean.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = releaseId;
+                    cmdClean.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmdClean.ExecuteNonQuery();
+
+                    // clean up work status history of the removed milestonedeliverables for the release
+                    var cmdClean2 = new SqlCommand("sp_remove_orphan_work_history_milestone_deliverables", conn);
+                    cmdClean2.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = releaseId;
+                    cmdClean2.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmdClean2.ExecuteNonQuery();
                 }
 
                 //var rel = this.GetReleaseSummary(releaseId);
