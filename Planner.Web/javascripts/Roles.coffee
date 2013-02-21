@@ -134,6 +134,17 @@ RTeamMember =
 				ret = @getOverplannedPeriods(period).length > 0
 				#console.log ret
 				ret
+			plan: (rel, proj, ms, del, act, per, ff) ->
+				$.ajax "/planner/Resource/PlanResource/",
+					dataType: "json"
+					data: ko.toJSON({ release: rel, project: proj, milestone: ms, deliverable: del, activity: act, period: per, focusFactor: ff })
+					type: "POST"
+					contentType: "application/json; charset=utf-8"
+					success: (data, status, XHR) ->
+						console.log "planned resource saved"
+						callback data
+					error: (XHR, status, errorThrown) ->
+						console.log "AJAX SAVE error: #{errorThrown}"
 
 #RAbsenceTimelineItem = 
 #	extended: ->

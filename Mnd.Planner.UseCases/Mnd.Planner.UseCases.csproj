@@ -47,8 +47,10 @@
     <Compile Include="EmailMilestoneStatuses.cs" />
     <Compile Include="EmailResourcePlanning.cs" />
     <Compile Include="PlanMeeting.cs" />
+    <Compile Include="PlanResource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Roles\RCueItemUploader.cs" />
+    <Compile Include="Roles\RHumanResource.cs" />
     <Compile Include="Roles\RMeetingSchedule.cs" />
   </ItemGroup>
   <ItemGroup>

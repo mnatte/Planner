@@ -79,6 +79,7 @@
     <Compile Include="Models\Team.cs" />
     <Compile Include="Models\TeamMember.cs" />
     <Compile Include="Roles\RMeetingSchedule.cs" />
+    <Compile Include="Roles\RHumanResource.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mnd.Domain\Mnd.Domain.csproj">

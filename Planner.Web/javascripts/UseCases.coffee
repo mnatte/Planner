@@ -258,6 +258,12 @@ class UDisplayReleaseOverview
 		console.log releases
 		@viewModel = new ReleaseOverviewViewmodel(releases)
 		ko.applyBindings(@viewModel)
+
+class UPlanResource
+	constructor: (@resource, @release, @project, @milestone, @deliverable, @activity, @period, @focusFactor) ->
+	execute: ->
+		Resource.extend RTeamMember
+		@resource.plan(@release, @project, @milestone, @deliverable, @activity, @period, @focusFactor)
 	
 class UDisplayReleaseTimeline
 	# depends on timeline.js and having an HTML div with id 'mytimeline'
@@ -448,6 +454,7 @@ root.UDisplayReleaseTimeline = UDisplayReleaseTimeline
 root.UDisplayReleasePlanningInTimeline = UDisplayReleasePlanningInTimeline
 root.UDisplayReleaseProgress = UDisplayReleaseProgress
 root.UDisplayReleaseProgressOverview = UDisplayReleaseProgressOverview
+root.UPlanResource = UPlanResource
 
 
 

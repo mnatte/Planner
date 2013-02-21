@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Mnd.Planner.Domain.Roles;
 
 namespace Mnd.Planner.Domain
 {
-    public class Resource : ResourceSnapshot
+    public class Resource : ResourceSnapshot, RHumanResource
     {
         public int AvailableHoursPerWeek { get; set; }
         public Role Function { get; set; }
@@ -32,6 +33,5 @@ namespace Mnd.Planner.Domain
                 return _assignments;
             }
         }
-
     }
 }

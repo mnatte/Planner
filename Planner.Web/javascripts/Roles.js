@@ -217,6 +217,29 @@
           var ret;
           ret = this.getOverplannedPeriods(period).length > 0;
           return ret;
+        },
+        plan: function(rel, proj, ms, del, act, per, ff) {
+          return $.ajax("/planner/Resource/PlanResource/", {
+            dataType: "json",
+            data: ko.toJSON({
+              release: rel,
+              project: proj,
+              milestone: ms,
+              deliverable: del,
+              activity: act,
+              period: per,
+              focusFactor: ff
+            }),
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            success: function(data, status, XHR) {
+              console.log("planned resource saved");
+              return callback(data);
+            },
+            error: function(XHR, status, errorThrown) {
+              return console.log("AJAX SAVE error: " + errorThrown);
+            }
+          });
         }
       });
     }

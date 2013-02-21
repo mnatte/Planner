@@ -136,6 +136,32 @@ namespace Mnd.Planner.Domain.Repositories
             return abs;
         }
 
+        public void SaveAssignment(int releaseId, int projectId, int personId, int milestoneId, int deliverableId, int activityId, DateTime startDate, DateTime endDate, double focusFactor)
+        {
+            var conn = new SqlConnection(this.ConnectionString);
+
+            var cmd = new SqlCommand("sp_insert_resource_assignment", conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            // TODO: add params
+            cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = 0; // not needed
+            cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = releaseId;
+            cmd.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = projectId;
+            cmd.Parameters.Add("@PersonId", System.Data.SqlDbType.Int).Value = personId;
+            cmd.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = milestoneId;
+            cmd.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = deliverableId;
+            cmd.Parameters.Add("@ActivityId", System.Data.SqlDbType.Int).Value = activityId;
+            cmd.Parameters.Add("@FocusFactor", System.Data.SqlDbType.Decimal).Value = focusFactor;
+            cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = startDate;
+            cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = endDate;
+
+            using (conn)
+            {
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+
+        }
+
         public int DeleteAbsence(int id)
         {
             var conn = new SqlConnection(this.ConnectionString);

@@ -1,5 +1,5 @@
 (function() {
-  var UDeleteResourceAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyResourceAssignment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, root;
+  var UDeleteResourceAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyResourceAssignment, UPlanResource, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -453,6 +453,28 @@
 
   })();
 
+  UPlanResource = (function() {
+
+    function UPlanResource(resource, release, project, milestone, deliverable, activity, period, focusFactor) {
+      this.resource = resource;
+      this.release = release;
+      this.project = project;
+      this.milestone = milestone;
+      this.deliverable = deliverable;
+      this.activity = activity;
+      this.period = period;
+      this.focusFactor = focusFactor;
+    }
+
+    UPlanResource.prototype.execute = function() {
+      Resource.extend(RTeamMember);
+      return this.resource.plan(this.release, this.project, this.milestone, this.deliverable, this.activity, this.period, this.focusFactor);
+    };
+
+    return UPlanResource;
+
+  })();
+
   UDisplayReleaseTimeline = (function() {
 
     function UDisplayReleaseTimeline(release, observableTimelineSource) {
@@ -778,5 +800,7 @@
   root.UDisplayReleaseProgress = UDisplayReleaseProgress;
 
   root.UDisplayReleaseProgressOverview = UDisplayReleaseProgressOverview;
+
+  root.UPlanResource = UPlanResource;
 
 }).call(this);
