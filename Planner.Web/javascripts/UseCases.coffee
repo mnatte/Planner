@@ -201,12 +201,37 @@ class UModifyResourceAssignment
 		serialized = @assignment.toFlatJSON()
 		json = ko.toJSON(serialized)
 		console.log json
-		@assignment.save("/planner/Resource/Assignments/Save", json, (data) => @refreshData(data))
+		#@assignment.save("/planner/Resource/Assignments/Save", json, (data) => @refreshData(data))
 	refreshData: (resourceData) ->
 		newResource = Resource.create resourceData
 		@updateViewUsecase.newResource = newResource
 		#useCase = new URefreshView(@viewModelObservableCollection, newResource, @checkPeriod, @viewModelObservableGraph, @viewModelObservableForm)
 		#useCase.execute()
+		@updateViewUsecase.execute()
+
+class UModifyAssignment
+	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in
+	# @selectedObservable is the refreshed item itself, set here and used in callback to refresh the view on its properties
+	# @updateViewUsecase is the callback usecase, @observableShowform is the observable used for whether the form is displayed
+	constructor: (@assignment, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform) ->
+	execute: ->
+		console.log 'execute use case'
+		serialized = @assignment.toFlatJSON()
+		json = ko.toJSON(serialized)
+		console.log json
+		@assignment.save("/planner/Resource/Plan", json, (data) => @refreshData(data))
+	refreshData: (json) ->
+		console.log json
+		freshRelease = Release.create json
+		# replace old item in collection for new one
+		oldItem = r for r in @viewModelObservableCollection() when r.id is freshRelease.id
+		#console.log oldItem
+		index = @viewModelObservableCollection().indexOf(oldItem)
+		#console.log index
+		@observableShowform null
+		# i = index of item to remove, 1 is amount to be removed, rel is item to be inserted there
+		@viewModelObservableCollection.splice index, 1, freshRelease
+		@selectedObservable freshRelease
 		@updateViewUsecase.execute()
 
 class UDeleteResourceAssignment
@@ -224,24 +249,24 @@ class UDeleteResourceAssignment
 		@updateViewUsecase.execute()
 	
 class URefreshView
-	constructor: (@viewModelObservableCollection, @newResource, @checkPeriod, @viewModelObservableGraph, @viewModelObservableForm) ->
+	constructor: (@viewModelObservableCollection, @newItem, @checkPeriod, @viewModelObservableGraph, @viewModelObservableForm) ->
 	execute: ->
 		#console.log resourceData
 		#console.log resource
 		#console.log @viewModelObservableCollection() 
-		oldResource = r for r in @viewModelObservableCollection() when r.id is @newResource.id
+		oldItem = r for r in @viewModelObservableCollection() when r.id is @newItem.id
 		#console.log oldResource
-		index = @viewModelObservableCollection().indexOf(oldResource)
+		index = @viewModelObservableCollection().indexOf(oldItem)
 		#console.log index
 		#console.log oldResource
-		resWithAssAndAbsInDate = @newResource
-		resWithAssAndAbsInDate.assignments = (a for a in @newResource.assignments when a.period.overlaps(@checkPeriod))
-		resWithAssAndAbsInDate.periodsAway = (a for a in @newResource.periodsAway when a.overlaps(@checkPeriod))
+		resWithAssAndAbsInDate = @newItem
+		resWithAssAndAbsInDate.assignments = (a for a in @newItem.assignments when a.period.overlaps(@checkPeriod))
+		resWithAssAndAbsInDate.periodsAway = (a for a in @newItem.periodsAway when a.overlaps(@checkPeriod))
 		#console.log resWithAssAndAbsInDate
 		@viewModelObservableGraph resWithAssAndAbsInDate
 		@viewModelObservableForm null
 		# i = index of item to remove, 1 is amount to be removed, rel is item to be inserted there
-		@viewModelObservableCollection.splice index, 1, @newResource
+		@viewModelObservableCollection.splice index, 1, @newItem
 
 class URefreshViewAfterCheckPeriod
 	constructor: (@checkPeriod, @viewModelObservableGraph, @viewModelObservableForm) ->
@@ -287,7 +312,7 @@ class UDisplayReleaseTimeline
 					descr += '<li>' + proj.title
 					descr += '<ul>'
 					activities = proj.workload.reduce (acc, x) ->
-								acc.push {activityTitle :x.activity.title, hrs: x.hoursRemaining, planned: x.assignedResources.reduce ((acc, x) -> acc + x.availableHours()), 0 }
+								acc.push {activityTitle :x.activity.title, hrs: x.hoursRemaining, planned: x.assignedResources.reduce ((acc, x) -> acc + x.resourceAvailableHours()), 0 }
 								acc
 							, []
 					for act in activities
@@ -307,21 +332,19 @@ class UDisplayReleaseTimeline
 		showData = @displayData.sort((a,b)-> a.start - b.end)
 		console.log showData
 		timeline = new Mnd.Timeline(showData, undefined, "100%", "200px", "mytimeline", "details")
-		#drawTimeline(showData, undefined, "100%", "200px", "mytimeline", "details")
 		timeline.draw()
-		#@observableTimelineSource @displayData.sort((a,b)-> a.start - b.end)
 
 class UDisplayReleasePlanningInTimeline
-	# depends on timeline.js and having an HTML div with id 'mytimeline'
-	constructor: (@release, @observableTimelineSource) ->
+	# depends on timeline.js
+	constructor: (@observableRelease, @observableTimelineSource) ->
 		@trackAssignments = []
 	execute: ->
 		@displayData = []
-		releaseTitle = @release.title
+		releaseTitle = @observableRelease().title
 		console.log 'execute use case UDisplayReleasePlanningInTimeline'
-		console.log @release
+		console.log @observableRelease()
 		uniqueAsses = []
-		for ms in @release.milestones
+		for ms in @observableRelease().milestones
 			for del in ms.deliverables
 				console.log del
 				for proj in del.scope
@@ -331,10 +354,10 @@ class UDisplayReleasePlanningInTimeline
 							dto = assignment # trick for adding info: dto.person = resource
 							resource = @createRowItem(assignment.resource.fullName(), 0)
 
-							obj = {group: resource, start: assignment.assignedPeriod.startDate.date, end: assignment.assignedPeriod.endDate.date, content: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.project.title, info: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.assignedPeriod.toString(), dataObject: dto}
+							obj = {group: resource, start: assignment.period.startDate.date, end: assignment.period.endDate.date, content: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.project.title, info: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.period.toString(), dataObject: dto}
 							@displayData.push obj
 		showData = @displayData.sort((a,b)-> a.start - b.end)
-		timeline = new Mnd.Timeline(showData, undefined, "100%", "500px", "resourcePlanning", "assignmentDetails")
+		timeline = new Mnd.Timeline(showData, @observableTimelineSource, "100%", "500px", "resourcePlanning", "assignmentDetails")
 		timeline.draw()
 	createRowItem: (item, index) ->
 		identifier = item + index
@@ -446,6 +469,7 @@ root.ULoadAdminActivities = ULoadAdminActivities
 root.ULoadPlanResources = ULoadPlanResources
 root.ULoadUpdateReleaseStatus = ULoadUpdateReleaseStatus
 root.UModifyResourceAssignment = UModifyResourceAssignment
+root.UModifyAssignment = UModifyAssignment
 root.UDeleteResourceAssignment = UDeleteResourceAssignment
 root.URefreshView = URefreshView
 root.UDisplayAssignments = UDisplayAssignments

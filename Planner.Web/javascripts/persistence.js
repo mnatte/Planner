@@ -1,5 +1,5 @@
 (function() {
-  var RAssignedResourceSerialize, RDeliverableSerialize, RMilestoneSerialize, RPeriodSerialize, RPhaseSerialize, RProjectActivityStatusSerialize, RProjectSerialize, RReleaseSerialize, RResourceAssignmentSerialize, root;
+  var RAssignmentSerialize, RDeliverableSerialize, RMilestoneSerialize, RPeriodSerialize, RPhaseSerialize, RProjectActivityStatusSerialize, RProjectSerialize, RReleaseSerialize, RResourceAssignmentSerialize, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -155,12 +155,13 @@
     }
   };
 
-  RAssignedResourceSerialize = {
+  RAssignmentSerialize = {
     extended: function() {
       return this.include({
-        toJSON: function() {
+        toFlatJSON: function() {
           var copy;
           copy = ko.toJS(this);
+          console.log(copy);
           delete copy.release;
           delete copy.phase;
           delete copy.resource;
@@ -172,8 +173,8 @@
           copy.resourceId = this.resource.id;
           if (this.release != null) copy.phaseId = this.release.id;
           copy.projectId = this.project.id;
-          copy.startDate = this.assignedPeriod.startDate.dateString;
-          copy.endDate = this.assignedPeriod.endDate.dateString;
+          copy.startDate = this.period.startDate.dateString;
+          copy.endDate = this.period.endDate.dateString;
           copy.milestoneId = this.milestone.id;
           copy.deliverableId = this.deliverable.id;
           copy.activityId = this.activity.id;
@@ -230,9 +231,7 @@
 
   root.RReleaseSerialize = RReleaseSerialize;
 
-  root.RAssignedResourceSerialize = RAssignedResourceSerialize;
-
-  root.RResourceAssignmentSerialize = RResourceAssignmentSerialize;
+  root.RAssignmentSerialize = RAssignmentSerialize;
 
   root.RPhaseSerialize = RPhaseSerialize;
 

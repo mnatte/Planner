@@ -29,6 +29,7 @@ namespace Mnd.Planner.UseCases
             _activity = activity;
             _focusFactor = focusFactor;
             _period = period;
+            _project = project;
         }
 
         public override void Execute()

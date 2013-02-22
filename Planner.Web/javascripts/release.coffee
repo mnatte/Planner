@@ -187,10 +187,10 @@ class Milestone extends Mixin
 
 class Phase extends Period
 	# attach seperate startDate, endDate and title properties to each instance
-	constructor: (@id, @startDate, @endDate, @title, @tfsIterationPath, @parentId) ->
+	constructor: (@id, @startDate, @endDate, @title, @parentId) ->
 		super @startDate, @endDate, @title, @id
 	@create: (jsonData, parentId) ->
-		new Phase(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, parentId)
+		new Phase(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, parentId)
 	@createCollection: (jsonData) ->
 		phases = []
 		for phase in jsonData
@@ -215,7 +215,7 @@ class Week
 		parseInt(@weekNr.substring(4,6),10)
 
 class Release extends Phase
-	constructor: (@id, @startDate, @endDate, @title, @tfsIterationPath, @parentId) ->
+	constructor: (@id, @startDate, @endDate, @title, @parentId) ->
 		# pass along all args to parent ctor by using 'super' instead of 'super()'
 		super
 		@phases = [] # ko.observableArray()
@@ -244,7 +244,7 @@ class Release extends Phase
 		#console.log jsonData.Projects
 		#console.log jsonData.Projects.length
 		#console.log "#{jsonData.StartDate} #{jsonData.EndDate}"
-		release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId)
+		release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.ParentId)
 		if jsonData.Phases != null and jsonData.Phases  != undefined
 			for phase in jsonData.Phases
 				release.addPhase Phase.create(phase, jsonData.Id)
@@ -263,7 +263,7 @@ class Release extends Phase
 		#console.log release
 		release
 	@createSnapshot: (jsonData) ->
-		release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.TfsIterationPath, jsonData.ParentId)
+		release = new Release(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.ParentId)
 		release
 	@createCollection: (jsonDdata) ->
 		releases = []
@@ -285,7 +285,7 @@ class Project extends Mixin
 		project = new Project(jsonData.Id, jsonData.Title, jsonData.ShortName, jsonData.Description, release)
 		# console.log project
 		for res in jsonData.AssignedResources
-			project.resources.push AssignedResource.create(res, project, release)
+			project.resources.push Assignment.create(res, null, project, release)
 		for feature in jsonData.Backlog
 			project.backlog.push Feature.create(feature, project)
 		for act in jsonData.Workload
@@ -303,40 +303,6 @@ class Project extends Mixin
 			@project = Project.create(project, release)
 			projects.push @project
 		projects
-
-class AssignedResource extends Mixin
-	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate, @activity, @milestone, @deliverable) ->
-		#@resource = new Resource(resourceId, firstName, middleName, lastName)
-		#@project = new Project(projectId, projectTitle)
-		#@phase = new Phase(phaseId, "", "", phaseTitle)
-		@assignedPeriod = new Period(startDate, endDate, "")
-		# console.log "create AssignedResource:" + ko.toJSON(@assignedPeriod)
-	@create: (jsonData, project, release) ->
-		#console.log "create AssignedResource:" + ko.toJSON(jsonData)
-		# create resource from json
-		resource = Resource.create jsonData.Resource
-		milestone = Milestone.create jsonData.Milestone
-		deliverable = Deliverable.create jsonData.Deliverable
-		activity = Activity.create jsonData.Activity
-		# create under given project and release
-		ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), activity, milestone, deliverable)
-		#console.log ass
-		ass
-	@createCollection: (jsonData, project, release) ->
-		assignments = []
-		for assignment in jsonData
-			#console.log assignment
-			@assignment = AssignedResource.create(assignment, project, release)
-			assignments.push @assignment
-		assignments
-	availableHours: ->
-		#console.log "assigned period #{@assignedPeriod}"
-		#console.log "resource #{@resource.initials}"
-		hoursPresent = @resource.hoursAvailable @assignedPeriod
-		#console.log "hours present #{hoursPresent}"
-		available = Math.round(hoursPresent * @focusFactor)
-		#console.log "hours available corrected with assignment focus factor #{@focusFactor}: #{available}"
-		available
 
 class Feature
 	constructor: (@businessId, @contactPerson, @estimatedHours, @hoursWorked, @priority, @project, @remainingHours, @title, @state) ->
@@ -374,8 +340,8 @@ class ProjectActivityStatus extends Mixin
 		#proj = Project.create(jsonData.Project)
 		act = Activity.create(jsonData.Activity)
 		status = new ProjectActivityStatus(jsonData.HoursRemaining, act)
-		for res in jsonData.AssignedResources
-			status.assignedResources.push AssignedResource.create(res, project)
+		for json in jsonData.AssignedResources
+			status.assignedResources.push Assignment.create(json, null, project, null)
 		status
 
 class Activity extends Mixin
@@ -444,6 +410,38 @@ class Resource extends Mixin
 	toString: ->
 		@fullName()
 
+class Assignment extends Mixin
+	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate, @activity, @milestone, @deliverable) ->
+		@period = new Period(startDate, endDate, @deliverable.title + ' ' + @activity.title + ' ' + @release.title + ' (' + @focusFactor + ') ' + @project.title)
+	@create: (jsonData, resource, project, release) ->
+		#console.log "create Assignment:" + ko.toJSON(jsonData)
+		# use when given else create from json data
+		if(typeof(resource) is "undefined" or resource is null)
+			resource = Resource.create jsonData.Resource
+		if(typeof(release) is "undefined" or release is null)
+			release = Release.createSnapshot jsonData.Phase
+		if(typeof(project) is "undefined" or project is null)
+			project = Project.createSnapshot jsonData.Project
+
+		milestone = Milestone.create jsonData.Milestone
+		deliverable = Deliverable.create jsonData.Deliverable
+		activity = Activity.create jsonData.Activity
+		
+		ass = new Assignment(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), activity, milestone, deliverable)
+		#console.log ass
+		ass
+	@createCollection: (jsonData, resource, project, release) ->
+		assignments = []
+		for assignment in jsonData
+			#console.log assignment
+			@assignment = Assignment.create(assignment, resource, project, release)
+			assignments.push @assignment
+		assignments
+	resourceAvailableHours: ->
+		hoursPresent = @resource.hoursAvailable @period
+		available = Math.round(hoursPresent * @focusFactor)
+		available
+
 class ResourceAssignment extends Mixin
 	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate, @activity, @milestone, @deliverable) ->
 		@period = new Period(startDate, endDate, @deliverable.title + ' ' + @activity.title + ' ' + @release.title + ' (' + @focusFactor + ') ' + @project.title)
@@ -466,6 +464,40 @@ class ResourceAssignment extends Mixin
 			assignments.push @assignment
 		assignments
 
+class AssignedResource extends Mixin
+	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate, @activity, @milestone, @deliverable) ->
+		#@resource = new Resource(resourceId, firstName, middleName, lastName)
+		#@project = new Project(projectId, projectTitle)
+		#@phase = new Phase(phaseId, "", "", phaseTitle)
+		@assignedPeriod = new Period(startDate, endDate, "")
+		# console.log "create AssignedResource:" + ko.toJSON(@assignedPeriod)
+	@create: (jsonData, project, release) ->
+		#console.log "create AssignedResource:" + ko.toJSON(jsonData)
+		# create resource from json
+		resource = Resource.create jsonData.Resource
+		milestone = Milestone.create jsonData.Milestone
+		deliverable = Deliverable.create jsonData.Deliverable
+		activity = Activity.create jsonData.Activity
+		# create under given project and release
+		ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), activity, milestone, deliverable)
+		#console.log ass
+		ass
+	@createCollection: (jsonData, project, release) ->
+		assignments = []
+		for assignment in jsonData
+			#console.log assignment
+			@assignment = AssignedResource.create(assignment, project, release)
+			assignments.push @assignment
+		assignments
+	availableHours: ->
+		#console.log "assigned period #{@assignedPeriod}"
+		#console.log "resource #{@resource.initials}"
+		hoursPresent = @resource.hoursAvailable @assignedPeriod
+		#console.log "hours present #{hoursPresent}"
+		available = Math.round(hoursPresent * @focusFactor)
+		#console.log "hours available corrected with assignment focus factor #{@focusFactor}: #{available}"
+		available
+
 # datastructure for submitting all assignments with release
 class ReleaseAssignments extends Mixin
 	constructor: (@phaseId, @projectId, @assignments) ->
@@ -482,6 +514,7 @@ root.Project = Project
 root.Meeting = Meeting
 root.Deliverable = Deliverable
 root.Activity = Activity
+root.Assignment = Assignment
 root.AssignedResource = AssignedResource
 root.ResourceAssignment = ResourceAssignment
 root.ProjectActivityStatus = ProjectActivityStatus

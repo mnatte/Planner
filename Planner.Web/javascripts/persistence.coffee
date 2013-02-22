@@ -140,12 +140,12 @@ RDeliverableSerialize =
 				delete copy.milestone
 				copy
 
-RAssignedResourceSerialize = 
+RAssignmentSerialize = 
 	extended: ->
 		@include
-			toJSON: ->
+			toFlatJSON: ->
 				copy = ko.toJS(@) #get a clean copy
-				#console.log copy
+				console.log copy
 				delete copy.release #remove property
 				delete copy.phase #remove property
 				delete copy.resource #remove property
@@ -158,8 +158,8 @@ RAssignedResourceSerialize =
 				copy.resourceId = @resource.id
 				copy.phaseId =  @release.id if @release?
 				copy.projectId = @project.id
-				copy.startDate = @assignedPeriod.startDate.dateString
-				copy.endDate = @assignedPeriod.endDate.dateString
+				copy.startDate = @period.startDate.dateString
+				copy.endDate = @period.endDate.dateString
 				copy.milestoneId = @milestone.id
 				copy.deliverableId = @deliverable.id
 				copy.activityId = @activity.id
@@ -205,8 +205,8 @@ RProjectActivityStatusSerialize =
 root.RMilestoneSerialize = RMilestoneSerialize
 root.RDeliverableSerialize = RDeliverableSerialize
 root.RReleaseSerialize = RReleaseSerialize
-root.RAssignedResourceSerialize = RAssignedResourceSerialize
-root.RResourceAssignmentSerialize = RResourceAssignmentSerialize
+root.RAssignmentSerialize = RAssignmentSerialize
+#root.RResourceAssignmentSerialize = RResourceAssignmentSerialize
 root.RPhaseSerialize = RPhaseSerialize
 root.RProjectSerialize = RProjectSerialize
 root.RPeriodSerialize = RPeriodSerialize
