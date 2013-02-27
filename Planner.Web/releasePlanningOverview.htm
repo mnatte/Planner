@@ -10,7 +10,7 @@
 	<!-- Basic Page Needs
   ================================================== -->
 	<meta charset="utf-8">
-	<title>Phases</title>
+	<title>Release Planning</title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 	<!--[if lt IE 9]>
@@ -56,6 +56,7 @@
     <script type="text/javascript" src="javascripts/Roles.js"></script>
     <script type="text/javascript" src="javascripts/persistence.js"></script>
     <script type="text/javascript" src="javascripts/UseCases.js"></script>
+    <script type="text/javascript" src="javascripts/ko.bindingHandlers.assignmentsTimeline.js"></script>
 </head>
 <body>
 <!-- Primary Page Layout
@@ -77,16 +78,28 @@
                     <!-- /ko -->
                 </ul>
             </div>
-           <div id="timeline" class="twelve columns">
-                <div id="mytimeline"></div>
-                <div id="details"></div>
+            <div id="phases" class="twelve columns">
+                <div id="releaseTimeline"></div>
+                <div id="releaseDetails"></div>
+                <div id="Div1" style="height: 20px">&nbsp;</div>
            </div>
-           <div id="spacebar" style="height: 50px" class="twelve columns">&nbsp;</div>
-           <div id="resources" class="twelve columns">
-                <div id="resourcePlanning"></div>
-                <div id="assignmentDetails"></div>
+           
+        </div>
+        <div id="addAssignment" class="sixteen columns">
+            <div id="form2" class="four columns">
+            <!-- ko if: $root.newAssignment() -->
+            <section id="newAssignmentFormSection" data-bind="fadeVisible: true, fadeDuration: 500">
+                <!-- ko template: {name: 'addReleaseAssignmentForm', data: $root.newAssignment()} -->
+                <!-- /ko -->
+            </section>
+            <!--/ko-->
+            </div>
+            <div  id="resource" class="eleven columns">
+               <div id="resourceTimeline"></div>
+               <div id="resourceDetails"></div>
            </div>
-
+        </div>
+        <div id="editAssignment" class="sixteen columns">
             <div id="form" class="four columns">
             <!-- ko if: $root.selectedAssignment() -->
             <section id="assignmentFormSection" class="fourteen columns" data-bind="fadeVisible: true, fadeDuration: 500">
@@ -95,18 +108,43 @@
             </section>
             <!--/ko-->
             </div>
+            <div id="resources" class="twelve columns">
+                <div id="resourcePlanning"></div>
+                <div id="assignmentDetails"></div>
+            </div>
         </div>
-</div><!-- container -->
+    </div><!-- container -->
     <script type="text/javascript">
 
-        $(document).ready(function () {
-            infuser.defaults.templateSuffix = ".tmpl.html";
-            infuser.defaults.templateUrl = "/planner/templates";
+//        $(document).ready(function () {
+//            infuser.defaults.templateSuffix = ".tmpl.html";
+//            infuser.defaults.templateUrl = "/planner/templates";
 
-            var uc = new UDisplayReleaseOverview();
-            var ajax = new Ajax();
-            ajax.getReleaseSummaries(uc.execute);
-        });
+//            var uc = new UDisplayReleaseOverview();
+//            var ajax = new Ajax();
+//            ajax.getReleaseSummaries(uc.execute);
+
+            function loadReleases(resources, activities) {
+                var uc = new UDisplayReleaseOverview();
+                var ajx = new Ajax();
+                // use closure around execute method to pass 'projects' argument as well as 'data' from getReleaseSummaries callback
+                ajx.getReleaseSummaries(function (data) { uc.execute(data, resources, activities) });
+            }
+
+            // 'releases' is callback data provided by former Ajax call
+            function loadActivities(resources) {
+                var ajx = new Ajax();
+                ajx.getActivities(function (data) { loadReleases(resources, data) });
+            }
+
+            $(document).ready(function () {
+                infuser.defaults.templateSuffix = ".tmpl.html";
+                infuser.defaults.templateUrl = "/planner/templates";
+
+                var ajax = new Ajax();
+                ajax.getResources(loadActivities);
+            });
+//        });
     </script>
 
 </body>

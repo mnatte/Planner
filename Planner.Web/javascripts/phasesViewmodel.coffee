@@ -38,7 +38,7 @@ class PhasesViewmodel
 						descr += '<li>' + proj.title
 						descr += '<ul>'
 						activities = proj.workload.reduce (acc, x) ->
-									acc.push {activityTitle :x.activity.title, hrs: x.hoursRemaining, planned: x.assignedResources.reduce ((acc, x) -> acc + x.availableHours()), 0 }
+									acc.push {activityTitle :x.activity.title, hrs: x.hoursRemaining, planned: x.assignedResources.reduce ((acc, x) -> acc + x.resourceAvailableHours()), 0 }
 									acc
 								, []
 						for act in activities

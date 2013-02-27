@@ -23,7 +23,7 @@
       this.selectProject = __bind(this.selectProject, this);
       this.selectRelease = __bind(this.selectRelease, this);
       var _this = this;
-      AssignedResource.extend(RAssignedResourceSerialize);
+      Assignment.extend(RAssignmentSerialize);
       ReleaseAssignments.extend(RCrud);
       PlanResourcesViewmodel.extend(RGroupBy);
       Resource.extend(RTeamMember);
@@ -38,7 +38,7 @@
       this.assignedEndDate = ko.observable();
       this.selectedMilestone.subscribe(function(newValue) {
         if (typeof newValue !== "undefined" && newValue !== null) {
-          _this.newAssignment(new AssignedResource(0, "", "", "", 0.8, new Date(), newValue.date.date, "", new Milestone(), new Deliverable()));
+          _this.newAssignment(new Assignment(0, "", "", "", 0.8, new Date(), newValue.date.date, "", new Milestone(), new Deliverable()));
           return console.log(_this.newAssignment());
         }
       });
@@ -47,7 +47,7 @@
         return console.log(newValue);
       });
       this.setEndDate = ko.observable(new Date());
-      this.newAssignment = ko.observable(new AssignedResource(0, "", "", "", 0.8, new Date(), new Date(), "", new Milestone(), new Deliverable()));
+      this.newAssignment = ko.observable(new Assignment(0, "", "", "", 0.8, new Date(), new Date(), "", new Milestone(), new Deliverable()));
       this.allReleases = ko.observableArray(allReleases);
       this.allResources = ko.observableArray(allResources);
       this.assignments = ko.observableArray();
@@ -69,7 +69,7 @@
 
     PlanResourcesViewmodel.prototype.setAssignments = function(jsonData) {
       this.assignments.removeAll();
-      return this.assignments(AssignedResource.createCollection(jsonData, this.selectedProject(), this.selectedRelease()));
+      return this.assignments(Assignment.createCollection(jsonData, null, this.selectedProject(), this.selectedRelease()));
     };
 
     PlanResourcesViewmodel.prototype.loadAssignments = function() {
@@ -108,7 +108,7 @@
     PlanResourcesViewmodel.prototype.addAssignment = function() {
       var ass;
       console.log("addAssignment");
-      ass = new AssignedResource(0, this.selectedRelease(), this.selectedResource(), this.selectedProject(), this.newAssignment().focusFactor, DateFormatter.createFromString(this.newAssignment().assignedPeriod.startDate.dateString), DateFormatter.createFromString(this.newAssignment().assignedPeriod.endDate.dateString), this.selectedActivity(), this.selectedMilestone(), this.selectedDeliverable());
+      ass = new Assignment(0, this.selectedRelease(), this.selectedResource(), this.selectedProject(), this.newAssignment().focusFactor, DateFormatter.createFromString(this.newAssignment().period.startDate.dateString), DateFormatter.createFromString(this.newAssignment().period.endDate.dateString), this.selectedActivity(), this.selectedMilestone(), this.selectedDeliverable());
       console.log(ass);
       this.assignments.push(ass);
       return this.canShowForm(false);
@@ -126,6 +126,7 @@
       var dto,
         _this = this;
       dto = new ReleaseAssignments(this.selectedRelease().id, this.selectedProject().id, this.assignments());
+      console.log(this.assignments());
       console.log('saveAssignments');
       console.log(ko.toJSON(dto));
       return dto.save("/planner/ResourceAssignment/SaveAssignments", ko.toJSON(dto), function(data) {

@@ -158,7 +158,7 @@
   RAssignmentSerialize = {
     extended: function() {
       return this.include({
-        toFlatJSON: function() {
+        toJSON: function() {
           var copy;
           copy = ko.toJS(this);
           console.log(copy);
@@ -166,10 +166,11 @@
           delete copy.phase;
           delete copy.resource;
           delete copy.project;
-          delete copy.assignedPeriod;
+          delete copy.period;
           delete copy.milestone;
           delete copy.deliverable;
           delete copy.activity;
+          delete copy.resourceAvailableHours;
           copy.resourceId = this.resource.id;
           if (this.release != null) copy.phaseId = this.release.id;
           copy.projectId = this.project.id;

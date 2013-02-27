@@ -1,0 +1,16 @@
+﻿<form>
+    <!--data context is $root.newAssignment-->
+    <label data-bind="text: releaseName + ' - ' + milestoneName" ></label>
+    <label>Resource:</label>
+    <select data-bind="options: $root.allResources, optionsText: function(item) { return item.fullName() }, value: $root.selectedResource, optionsCaption: 'Choose...'" style="display:inline" ></select>
+    <label>Artefact:</label>
+    <select data-bind="options: deliverables, optionsText: function(item) { return item.title }, value: $root.selectedDeliverable, optionsCaption: 'Choose...'" style="display:inline" ></select>
+    <!-- ko if: $root.selectedDeliverable() -->
+    <label>Activity:</label>
+    <select data-bind="options: $root.selectedDeliverable().activities, optionsText: function(item) { return item.title }, value: $root.selectedActivity, optionsCaption: 'Choose...'" style="display:inline" ></select>
+    <!--/ko-->
+    <label>Start date (dd-mm-yyyy):</label><input type="text" data-bind="value: period.startDate.dateString" />
+    <label>End date (dd-mm-yyyy):</label><input type="text" data-bind="value: period.endDate.dateString" />
+    <label>Focus factor:</label><input type="text" data-bind="value: focusFactor" />
+    <button class="sexybutton" data-bind="click: $root.saveNewAssignment.bind($data)"><span><span><span class="save">Save</span></span></span></button>
+</form>

@@ -143,17 +143,18 @@ RDeliverableSerialize =
 RAssignmentSerialize = 
 	extended: ->
 		@include
-			toFlatJSON: ->
+			toJSON: ->
 				copy = ko.toJS(@) #get a clean copy
 				console.log copy
 				delete copy.release #remove property
 				delete copy.phase #remove property
 				delete copy.resource #remove property
 				delete copy.project #remove property
-				delete copy.assignedPeriod
+				delete copy.period
 				delete copy.milestone
 				delete copy.deliverable
 				delete copy.activity
+				delete copy.resourceAvailableHours #remove function
 				#console.log(@resource)
 				copy.resourceId = @resource.id
 				copy.phaseId =  @release.id if @release?

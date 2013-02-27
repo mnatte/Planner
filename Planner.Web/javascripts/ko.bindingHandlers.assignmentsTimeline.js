@@ -2,6 +2,7 @@
 (function () {
     ko.bindingHandlers.assignmentsTimeline = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel) {
+            console.log("viewModel: " + ko.toJSON(viewModel));
             var resource, obj, ass, abs, _i, _j, _k, _len, _len2, obj2, observableModel;
             var periods = [];
             var grp = 0;
@@ -12,7 +13,7 @@
             var trackAssignments = [];
 
             // valueAccessor is model passed to binding, viewModel is complete viewModel within scope
-            console.log("viewModel: " + ko.toJSON(viewModel));
+            
             console.log("valueAccessor: " + valueAccessor());
             resource = valueAccessor();
             observableModel = allBindingsAccessor().observableModel;

@@ -714,6 +714,7 @@
     <Content Include="stylesheets\sexybuttons.css" />
     <Content Include="templates\absenceForm.tmpl.html" />
     <Content Include="templates\assignmentForm.tmpl.html" />
+    <Content Include="templates\addReleaseAssignmentForm.tmpl.html" />
     <Content Include="templates\meetingForm.tmpl.html" />
     <Content Include="templates\releaseOverview.tmpl.html" />
     <Content Include="templates\phaseForm.tmpl.html" />

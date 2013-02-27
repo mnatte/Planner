@@ -1,5 +1,5 @@
 (function() {
-  var UDeleteResourceAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UModifyResourceAssignment, UPlanResource, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, root;
+  var UDeleteResourceAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UModifyResourceAssignment, UPlanResource, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -479,15 +479,90 @@
 
     function UDisplayReleaseOverview() {}
 
-    UDisplayReleaseOverview.prototype.execute = function(data) {
-      var releases;
-      releases = Release.createCollection(data);
+    UDisplayReleaseOverview.prototype.execute = function(rels, resources, activities) {
+      var allActivities, allResources, releases;
+      releases = Release.createCollection(rels);
+      allResources = Resource.createCollection(resources);
+      allActivities = Activity.createCollection(activities);
       console.log(releases);
-      this.viewModel = new ReleaseOverviewViewmodel(releases);
+      this.viewModel = new ReleaseOverviewViewmodel(releases, allResources, allActivities);
       return ko.applyBindings(this.viewModel);
     };
 
     return UDisplayReleaseOverview;
+
+  })();
+
+  UDisplayPlanningForResource = (function() {
+
+    function UDisplayPlanningForResource(resource, period) {
+      this.resource = resource;
+      this.period = period;
+    }
+
+    UDisplayPlanningForResource.prototype.execute = function() {
+      var abs, absence, ass, assignment, displayData, dto, i, obj, showAssignments, timeline, _i, _j, _len, _len2, _ref, _ref2;
+      displayData = [];
+      console.log(this.resource.fullName());
+      i = 0;
+      _ref = (function() {
+        var _j, _len, _ref, _results;
+        _ref = this.resource.periodsAway;
+        _results = [];
+        for (_j = 0, _len = _ref.length; _j < _len; _j++) {
+          abs = _ref[_j];
+          if (abs.overlaps(this.period)) _results.push(abs);
+        }
+        return _results;
+      }).call(this);
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        absence = _ref[_i];
+        dto = absence;
+        dto.person = this.resource;
+        obj = {
+          group: this.resource.fullName() + '[' + i + ']',
+          start: absence.startDate.date,
+          end: absence.endDate.date,
+          content: absence.title,
+          info: absence.toString(),
+          dataObject: dto
+        };
+        displayData.push(obj);
+        i++;
+      }
+      _ref2 = (function() {
+        var _k, _len2, _ref2, _results;
+        _ref2 = this.resource.assignments;
+        _results = [];
+        for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+          ass = _ref2[_k];
+          if (ass.period.overlaps(this.period)) _results.push(ass);
+        }
+        return _results;
+      }).call(this);
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        assignment = _ref2[_j];
+        dto = assignment;
+        dto.person = this.resource;
+        obj = {
+          group: this.resource.fullName() + '[' + i + ']',
+          start: assignment.period.startDate.date,
+          end: assignment.period.endDate.date,
+          content: assignment.period.title,
+          info: assignment.period.toString(),
+          dataObject: dto
+        };
+        displayData.push(obj);
+        i++;
+      }
+      showAssignments = displayData.sort(function(a, b) {
+        return a.start - b.end;
+      });
+      timeline = new Mnd.Timeline(showAssignments, null, "100%", "200px", "resourceTimeline", "resourceDetails");
+      return timeline.draw();
+    };
+
+    return UDisplayPlanningForResource;
 
   })();
 
@@ -583,7 +658,8 @@
           group: this.release.title,
           start: ms.date.date,
           content: ms.title + '<br />' + icon,
-          info: ms.date.dateString + ' - ' + ms.time + '<br />' + descr
+          info: ms.date.dateString + ' - ' + ms.time + '<br />' + descr,
+          dataObject: ms
         };
         this.displayData.push(obj);
       }
@@ -591,7 +667,7 @@
         return a.start - b.end;
       });
       console.log(showData);
-      timeline = new Mnd.Timeline(showData, void 0, "100%", "200px", "mytimeline", "details");
+      timeline = new Mnd.Timeline(showData, this.observableTimelineSource, "100%", "200px", "releaseTimeline", "releaseDetails");
       return timeline.draw();
     };
 
@@ -842,5 +918,7 @@
   root.UDisplayReleaseProgressOverview = UDisplayReleaseProgressOverview;
 
   root.UPlanResource = UPlanResource;
+
+  root.UDisplayPlanningForResource = UDisplayPlanningForResource;
 
 }).call(this);

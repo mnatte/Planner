@@ -16,8 +16,8 @@
         _this = this;
       console.log(allResources);
       Resource.extend(RTeamMember);
-      ResourceAssignment.extend(RResourceAssignmentSerialize);
-      ResourceAssignment.extend(RCrud);
+      Assignment.extend(RAssignmentSerialize);
+      Assignment.extend(RCrud);
       this.allResources = ko.observableArray(allResources);
       this.includeResources = ko.observableArray();
       this.inspectResource = ko.observable();

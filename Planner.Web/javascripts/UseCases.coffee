@@ -278,11 +278,35 @@ class URefreshViewAfterCheckPeriod
 
 class UDisplayReleaseOverview
 	constructor: ->
-	execute: (data) ->
-		releases = Release.createCollection(data)
+	execute: (rels, resources, activities) ->
+		releases = Release.createCollection(rels)
+		allResources = Resource.createCollection(resources)
+		allActivities = Activity.createCollection(activities)
 		console.log releases
-		@viewModel = new ReleaseOverviewViewmodel(releases)
+		@viewModel = new ReleaseOverviewViewmodel(releases, allResources, allActivities)
 		ko.applyBindings(@viewModel)
+
+class UDisplayPlanningForResource
+	constructor: (@resource, @period) ->
+	execute: ->
+		displayData = []
+		console.log @resource.fullName()
+		i = 0
+		for absence in (abs for abs in @resource.periodsAway when abs.overlaps(@period)) # resource.periodsAway
+			dto = absence
+			dto.person = @resource
+			obj = {group: @resource.fullName() + '[' + i + ']', start: absence.startDate.date, end: absence.endDate.date, content: absence.title, info: absence.toString(), dataObject: dto}
+			displayData.push obj
+			i++
+		for assignment in (ass for ass in @resource.assignments when ass.period.overlaps(@period)) #resource.assignments
+			dto = assignment
+			dto.person = @resource
+			obj = {group: @resource.fullName() + '[' + i + ']', start: assignment.period.startDate.date, end: assignment.period.endDate.date, content: assignment.period.title, info: assignment.period.toString(), dataObject: dto}
+			displayData.push obj
+			i++
+		showAssignments = displayData.sort((a,b)-> a.start - b.end)
+		timeline = new Mnd.Timeline(showAssignments, null, "100%", "200px", "resourceTimeline", "resourceDetails")
+		timeline.draw()
 
 class UPlanResource
 	constructor: (@resource, @release, @project, @milestone, @deliverable, @activity, @period, @focusFactor) ->
@@ -327,11 +351,11 @@ class UDisplayReleaseTimeline
 				descr += '</ul>' # /projects
 			descr += '</li>' # /deliverable
 			descr += '</ul>' # /deliverables
-			obj = {group: @release.title, start: ms.date.date, content: ms.title + '<br />' + icon, info: ms.date.dateString + ' - ' + ms.time + '<br />' + descr}
+			obj = {group: @release.title, start: ms.date.date, content: ms.title + '<br />' + icon, info: ms.date.dateString + ' - ' + ms.time + '<br />' + descr, dataObject: ms}
 			@displayData.push obj
 		showData = @displayData.sort((a,b)-> a.start - b.end)
 		console.log showData
-		timeline = new Mnd.Timeline(showData, undefined, "100%", "200px", "mytimeline", "details")
+		timeline = new Mnd.Timeline(showData, @observableTimelineSource, "100%", "200px", "releaseTimeline", "releaseDetails")
 		timeline.draw()
 
 class UDisplayReleasePlanningInTimeline
@@ -479,6 +503,7 @@ root.UDisplayReleasePlanningInTimeline = UDisplayReleasePlanningInTimeline
 root.UDisplayReleaseProgress = UDisplayReleaseProgress
 root.UDisplayReleaseProgressOverview = UDisplayReleaseProgressOverview
 root.UPlanResource = UPlanResource
+root.UDisplayPlanningForResource = UDisplayPlanningForResource
 
 
 

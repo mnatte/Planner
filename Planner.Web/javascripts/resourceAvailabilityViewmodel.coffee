@@ -9,8 +9,8 @@ class ResourceAvailabilityViewmodel
 		console.log allResources
 		# ctor is executed in context of INSTANCE. Therfore @ refers here to CURRENT INSTANCE and attaches all props and functions to all instances (since object IS ctor)
 		Resource.extend RTeamMember
-		ResourceAssignment.extend RResourceAssignmentSerialize
-		ResourceAssignment.extend RCrud
+		Assignment.extend RAssignmentSerialize
+		Assignment.extend RCrud
 		@allResources = ko.observableArray(allResources)
 		@includeResources = ko.observableArray()
 		@inspectResource = ko.observable()

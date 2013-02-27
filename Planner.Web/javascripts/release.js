@@ -1,5 +1,5 @@
 (function() {
-  var Activity, AssignedResource, Assignment, Deliverable, Feature, Meeting, Milestone, Period, Phase, Project, ProjectActivityStatus, Release, ReleaseAssignments, Resource, ResourceAssignment, Week, root,
+  var Activity, Assignment, Deliverable, Feature, Meeting, Milestone, Period, Phase, Project, ProjectActivityStatus, Release, ReleaseAssignments, Resource, Week, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -656,7 +656,7 @@
       _ref2 = jsonData.Assignments;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         assignment = _ref2[_j];
-        res.addAssignment(ResourceAssignment.create(assignment, Resource.createSnapshot(jsonData)));
+        res.addAssignment(Assignment.create(assignment, Resource.createSnapshot(jsonData)));
       }
       return res;
     };
@@ -742,96 +742,6 @@
 
   })(Mixin);
 
-  ResourceAssignment = (function(_super) {
-
-    __extends(ResourceAssignment, _super);
-
-    function ResourceAssignment(id, release, resource, project, focusFactor, startDate, endDate, activity, milestone, deliverable) {
-      this.id = id;
-      this.release = release;
-      this.resource = resource;
-      this.project = project;
-      this.focusFactor = focusFactor;
-      this.activity = activity;
-      this.milestone = milestone;
-      this.deliverable = deliverable;
-      this.period = new Period(startDate, endDate, this.deliverable.title + ' ' + this.activity.title + ' ' + this.release.title + ' (' + this.focusFactor + ') ' + this.project.title);
-    }
-
-    ResourceAssignment.create = function(jsonData, resource) {
-      var activity, ass, deliverable, milestone, project, release;
-      milestone = Milestone.create(jsonData.Milestone);
-      deliverable = Deliverable.create(jsonData.Deliverable);
-      activity = Activity.create(jsonData.Activity);
-      release = Release.createSnapshot(jsonData.Phase);
-      project = Project.createSnapshot(jsonData.Project);
-      ass = new ResourceAssignment(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), activity, milestone, deliverable);
-      return ass;
-    };
-
-    ResourceAssignment.createCollection = function(jsonData, resource) {
-      var assignment, assignments, _i, _len;
-      assignments = [];
-      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
-        assignment = jsonData[_i];
-        this.assignment = ResourceAssignment.create(assignment, resource);
-        assignments.push(this.assignment);
-      }
-      return assignments;
-    };
-
-    return ResourceAssignment;
-
-  })(Mixin);
-
-  AssignedResource = (function(_super) {
-
-    __extends(AssignedResource, _super);
-
-    function AssignedResource(id, release, resource, project, focusFactor, startDate, endDate, activity, milestone, deliverable) {
-      this.id = id;
-      this.release = release;
-      this.resource = resource;
-      this.project = project;
-      this.focusFactor = focusFactor;
-      this.activity = activity;
-      this.milestone = milestone;
-      this.deliverable = deliverable;
-      this.assignedPeriod = new Period(startDate, endDate, "");
-    }
-
-    AssignedResource.create = function(jsonData, project, release) {
-      var activity, ass, deliverable, milestone, resource;
-      resource = Resource.create(jsonData.Resource);
-      milestone = Milestone.create(jsonData.Milestone);
-      deliverable = Deliverable.create(jsonData.Deliverable);
-      activity = Activity.create(jsonData.Activity);
-      ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), activity, milestone, deliverable);
-      return ass;
-    };
-
-    AssignedResource.createCollection = function(jsonData, project, release) {
-      var assignment, assignments, _i, _len;
-      assignments = [];
-      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
-        assignment = jsonData[_i];
-        this.assignment = AssignedResource.create(assignment, project, release);
-        assignments.push(this.assignment);
-      }
-      return assignments;
-    };
-
-    AssignedResource.prototype.availableHours = function() {
-      var available, hoursPresent;
-      hoursPresent = this.resource.hoursAvailable(this.assignedPeriod);
-      available = Math.round(hoursPresent * this.focusFactor);
-      return available;
-    };
-
-    return AssignedResource;
-
-  })(Mixin);
-
   ReleaseAssignments = (function(_super) {
 
     __extends(ReleaseAssignments, _super);
@@ -869,10 +779,6 @@
   root.Activity = Activity;
 
   root.Assignment = Assignment;
-
-  root.AssignedResource = AssignedResource;
-
-  root.ResourceAssignment = ResourceAssignment;
 
   root.ProjectActivityStatus = ProjectActivityStatus;
 

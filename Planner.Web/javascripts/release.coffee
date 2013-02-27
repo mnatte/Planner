@@ -392,7 +392,7 @@ class Resource extends Mixin
 			# console.log "jsonData absence: " + absence
 			res.addAbsence(new Period(DateFormatter.createJsDateFromJson(absence.StartDate), DateFormatter.createJsDateFromJson(absence.EndDate), absence.Title, absence.Id))
 		for assignment in jsonData.Assignments
-			res.addAssignment(ResourceAssignment.create(assignment, Resource.createSnapshot jsonData))
+			res.addAssignment(Assignment.create(assignment, Resource.createSnapshot jsonData))
 		#console.log res
 		res
 	@createSnapshot: (jsonData) ->
@@ -442,61 +442,55 @@ class Assignment extends Mixin
 		available = Math.round(hoursPresent * @focusFactor)
 		available
 
-class ResourceAssignment extends Mixin
-	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate, @activity, @milestone, @deliverable) ->
-		@period = new Period(startDate, endDate, @deliverable.title + ' ' + @activity.title + ' ' + @release.title + ' (' + @focusFactor + ') ' + @project.title)
-	@create: (jsonData, resource) ->
-		#console.log "create ResourceAssignment:" + ko.toJSON(jsonData)
-		milestone = Milestone.create jsonData.Milestone
-		deliverable = Deliverable.create jsonData.Deliverable
-		activity = Activity.create jsonData.Activity
-		release = Release.createSnapshot jsonData.Phase
-		project = Project.createSnapshot jsonData.Project
-		# create under given project and release
-		ass = new ResourceAssignment(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), activity, milestone, deliverable)
-		#console.log ass
-		ass
-	@createCollection: (jsonData, resource) ->
-		assignments = []
-		for assignment in jsonData
-			#console.log assignment
-			@assignment = ResourceAssignment.create(assignment, resource)
-			assignments.push @assignment
-		assignments
+#class ResourceAssignment extends Mixin
+#	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate, @activity, @milestone, @deliverable) ->
+#		@period = new Period(startDate, endDate, @deliverable.title + ' ' + @activity.title + ' ' + @release.title + ' (' + @focusFactor + ') ' + @project.title)
+#	@create: (jsonData, resource) ->
+#		#console.log "create ResourceAssignment:" + ko.toJSON(jsonData)
+#		milestone = Milestone.create jsonData.Milestone
+#		deliverable = Deliverable.create jsonData.Deliverable
+#		activity = Activity.create jsonData.Activity
+#		release = Release.createSnapshot jsonData.Phase
+#		project = Project.createSnapshot jsonData.Project
+#		# create under given project and release
+#		ass = new ResourceAssignment(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), activity, milestone, deliverable)
+#		#console.log ass
+#		ass
+#	@createCollection: (jsonData, resource) ->
+#		assignments = []
+#		for assignment in jsonData
+#			#console.log assignment
+#			@assignment = ResourceAssignment.create(assignment, resource)
+#			assignments.push @assignment
+#		assignments
 
-class AssignedResource extends Mixin
-	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate, @activity, @milestone, @deliverable) ->
-		#@resource = new Resource(resourceId, firstName, middleName, lastName)
-		#@project = new Project(projectId, projectTitle)
-		#@phase = new Phase(phaseId, "", "", phaseTitle)
-		@assignedPeriod = new Period(startDate, endDate, "")
-		# console.log "create AssignedResource:" + ko.toJSON(@assignedPeriod)
-	@create: (jsonData, project, release) ->
-		#console.log "create AssignedResource:" + ko.toJSON(jsonData)
-		# create resource from json
-		resource = Resource.create jsonData.Resource
-		milestone = Milestone.create jsonData.Milestone
-		deliverable = Deliverable.create jsonData.Deliverable
-		activity = Activity.create jsonData.Activity
+#class AssignedResource extends Mixin
+#	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate, @activity, @milestone, @deliverable) ->
+#		@assignedPeriod = new Period(startDate, endDate, "")
+#	@create: (jsonData, project, release) ->
+#		resource = Resource.create jsonData.Resource
+#		milestone = Milestone.create jsonData.Milestone
+#		deliverable = Deliverable.create jsonData.Deliverable
+#		activity = Activity.create jsonData.Activity
 		# create under given project and release
-		ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), activity, milestone, deliverable)
+#		ass = new AssignedResource(jsonData.Id, release, resource, project, jsonData.FocusFactor, DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), activity, milestone, deliverable)
 		#console.log ass
-		ass
-	@createCollection: (jsonData, project, release) ->
-		assignments = []
-		for assignment in jsonData
+#		ass
+#	@createCollection: (jsonData, project, release) ->
+#		assignments = []
+#		for assignment in jsonData
 			#console.log assignment
-			@assignment = AssignedResource.create(assignment, project, release)
-			assignments.push @assignment
-		assignments
-	availableHours: ->
+#			@assignment = AssignedResource.create(assignment, project, release)
+#			assignments.push @assignment
+#		assignments
+#	availableHours: ->
 		#console.log "assigned period #{@assignedPeriod}"
 		#console.log "resource #{@resource.initials}"
-		hoursPresent = @resource.hoursAvailable @assignedPeriod
+#		hoursPresent = @resource.hoursAvailable @assignedPeriod
 		#console.log "hours present #{hoursPresent}"
-		available = Math.round(hoursPresent * @focusFactor)
+#		available = Math.round(hoursPresent * @focusFactor)
 		#console.log "hours available corrected with assignment focus factor #{@focusFactor}: #{available}"
-		available
+#		available
 
 # datastructure for submitting all assignments with release
 class ReleaseAssignments extends Mixin
@@ -515,8 +509,8 @@ root.Meeting = Meeting
 root.Deliverable = Deliverable
 root.Activity = Activity
 root.Assignment = Assignment
-root.AssignedResource = AssignedResource
-root.ResourceAssignment = ResourceAssignment
+#root.AssignedResource = AssignedResource
+#root.ResourceAssignment = ResourceAssignment
 root.ProjectActivityStatus = ProjectActivityStatus
 root.ReleaseAssignments = ReleaseAssignments
 

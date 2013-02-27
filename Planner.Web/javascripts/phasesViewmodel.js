@@ -69,7 +69,7 @@
                   activityTitle: x.activity.title,
                   hrs: x.hoursRemaining,
                   planned: x.assignedResources.reduce((function(acc, x) {
-                    return acc + x.availableHours();
+                    return acc + x.resourceAvailableHours();
                   }), 0)
                 });
                 return acc;
