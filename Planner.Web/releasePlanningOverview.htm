@@ -100,17 +100,17 @@
            </div>
         </div>
         <div id="editAssignment" class="sixteen columns">
-            <div id="form" class="four columns">
+            <div id="resources" class="nine columns">
+                <div id="resourcePlanning"></div>
+                <div id="assignmentDetails"></div>
+            </div>
+            <div id="form" class="three columns">
             <!-- ko if: $root.selectedAssignment() -->
             <section id="assignmentFormSection" class="fourteen columns" data-bind="fadeVisible: true, fadeDuration: 500">
                 <!-- ko template: {name: 'assignmentForm', data: $root.selectedAssignment()} -->
                 <!-- /ko -->
             </section>
             <!--/ko-->
-            </div>
-            <div id="resources" class="twelve columns">
-                <div id="resourcePlanning"></div>
-                <div id="assignmentDetails"></div>
             </div>
         </div>
     </div><!-- container -->
