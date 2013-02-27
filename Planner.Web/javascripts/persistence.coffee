@@ -144,6 +144,7 @@ RAssignmentSerialize =
 	extended: ->
 		@include
 			toJSON: ->
+				console.log copy
 				copy = ko.toJS(@) #get a clean copy
 				console.log copy
 				delete copy.release #remove property

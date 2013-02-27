@@ -1,5 +1,5 @@
 (function() {
-  var UDeleteResourceAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UModifyResourceAssignment, UPlanResource, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, root;
+  var UDeleteResourceAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UModifyResourceAssignment, UPlanResource, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, UUpdateScreen, root;
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -338,78 +338,6 @@
 
   })();
 
-  UModifyAssignment = (function() {
-
-    function UModifyAssignment(assignment, viewModelObservableCollection, selectedObservable, updateViewUsecase, observableShowform) {
-      this.assignment = assignment;
-      this.viewModelObservableCollection = viewModelObservableCollection;
-      this.selectedObservable = selectedObservable;
-      this.updateViewUsecase = updateViewUsecase;
-      this.observableShowform = observableShowform;
-    }
-
-    UModifyAssignment.prototype.execute = function() {
-      var json, serialized,
-        _this = this;
-      console.log('execute use case');
-      serialized = this.assignment.toFlatJSON();
-      json = ko.toJSON(serialized);
-      console.log(json);
-      return this.assignment.save("/planner/Resource/Plan", json, function(data) {
-        return _this.refreshData(data);
-      });
-    };
-
-    UModifyAssignment.prototype.refreshData = function(json) {
-      var freshRelease, index, oldItem, r, _i, _len, _ref;
-      console.log(json);
-      freshRelease = Release.create(json);
-      _ref = this.viewModelObservableCollection();
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        r = _ref[_i];
-        if (r.id === freshRelease.id) oldItem = r;
-      }
-      index = this.viewModelObservableCollection().indexOf(oldItem);
-      this.observableShowform(null);
-      this.viewModelObservableCollection.splice(index, 1, freshRelease);
-      this.selectedObservable(freshRelease);
-      return this.updateViewUsecase.execute();
-    };
-
-    return UModifyAssignment;
-
-  })();
-
-  UDeleteResourceAssignment = (function() {
-
-    function UDeleteResourceAssignment(assignment, updateViewUsecase) {
-      this.assignment = assignment;
-      this.updateViewUsecase = updateViewUsecase;
-    }
-
-    UDeleteResourceAssignment.prototype.execute = function() {
-      var json, serialized,
-        _this = this;
-      console.log('execute use case');
-      serialized = this.assignment.toFlatJSON();
-      json = ko.toJSON(serialized);
-      console.log(json);
-      return this.assignment.save("/planner/Resource/Assignments/Delete", json, function(data) {
-        return _this.refreshData(data);
-      });
-    };
-
-    UDeleteResourceAssignment.prototype.refreshData = function(resourceData) {
-      var newResource;
-      newResource = Resource.create(resourceData);
-      this.updateViewUsecase.newResource = newResource;
-      return this.updateViewUsecase.execute();
-    };
-
-    return UDeleteResourceAssignment;
-
-  })();
-
   URefreshView = (function() {
 
     function URefreshView(viewModelObservableCollection, newItem, checkPeriod, viewModelObservableGraph, viewModelObservableForm) {
@@ -588,10 +516,99 @@
 
   })();
 
+  UModifyAssignment = (function() {
+
+    function UModifyAssignment(assignment, viewModelObservableCollection, selectedObservable, updateViewUsecase, observableShowform) {
+      this.assignment = assignment;
+      this.viewModelObservableCollection = viewModelObservableCollection;
+      this.selectedObservable = selectedObservable;
+      this.updateViewUsecase = updateViewUsecase;
+      this.observableShowform = observableShowform;
+    }
+
+    UModifyAssignment.prototype.execute = function() {
+      var json;
+      console.log('execute UModifyAssignment');
+      console.log(this.assignment);
+      json = ko.toJSON(this.assignment);
+      return console.log(json);
+    };
+
+    UModifyAssignment.prototype.refreshData = function(json) {
+      var freshRelease, index, oldItem, r, _i, _len, _ref;
+      console.log(json);
+      freshRelease = Release.create(json);
+      _ref = this.viewModelObservableCollection();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        r = _ref[_i];
+        if (r.id === freshRelease.id) oldItem = r;
+      }
+      index = this.viewModelObservableCollection().indexOf(oldItem);
+      this.observableShowform(null);
+      this.viewModelObservableCollection.splice(index, 1, freshRelease);
+      this.selectedObservable(freshRelease);
+      return this.updateViewUsecase.execute();
+    };
+
+    return UModifyAssignment;
+
+  })();
+
+  UDeleteResourceAssignment = (function() {
+
+    function UDeleteResourceAssignment(assignment, updateViewUsecase) {
+      this.assignment = assignment;
+      this.updateViewUsecase = updateViewUsecase;
+    }
+
+    UDeleteResourceAssignment.prototype.execute = function() {
+      var json, serialized,
+        _this = this;
+      console.log('execute use case');
+      serialized = this.assignment.toFlatJSON();
+      json = ko.toJSON(serialized);
+      console.log(json);
+      return this.assignment.save("/planner/Resource/Assignments/Delete", json, function(data) {
+        return _this.refreshData(data);
+      });
+    };
+
+    UDeleteResourceAssignment.prototype.refreshData = function(resourceData) {
+      var newResource;
+      newResource = Resource.create(resourceData);
+      this.updateViewUsecase.newResource = newResource;
+      return this.updateViewUsecase.execute();
+    };
+
+    return UDeleteResourceAssignment;
+
+  })();
+
+  UUpdateScreen = (function() {
+
+    function UUpdateScreen(usecases) {
+      this.usecases = usecases;
+    }
+
+    UUpdateScreen.prototype.execute = function() {
+      var uc, _i, _len, _ref, _results;
+      _ref = this.usecases;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        uc = _ref[_i];
+        _results.push(uc.execute());
+      }
+      return _results;
+    };
+
+    return UUpdateScreen;
+
+  })();
+
   UDisplayReleaseTimeline = (function() {
 
-    function UDisplayReleaseTimeline(release, observableTimelineSource) {
-      this.release = release;
+    function UDisplayReleaseTimeline(observableRelease, observableTimelineSource) {
+      this.observableRelease = observableRelease;
       this.observableTimelineSource = observableTimelineSource;
     }
 
@@ -599,12 +616,12 @@
       var act, activities, cont, del, descr, icon, ms, obj, ph, proj, showData, style, timeline, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref, _ref2, _ref3, _ref4;
       this.displayData = [];
       console.log('execute use case UDisplayReleaseTimeline');
-      _ref = this.release.phases;
+      _ref = this.observableRelease().phases;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         ph = _ref[_i];
         cont = ph.title;
         obj = {
-          group: this.release.title,
+          group: this.observableRelease().title,
           start: ph.startDate.date,
           end: ph.endDate.date,
           content: cont,
@@ -612,7 +629,7 @@
         };
         this.displayData.push(obj);
       }
-      _ref2 = this.release.milestones;
+      _ref2 = this.observableRelease().milestones;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         ms = _ref2[_j];
         icon = '<span class="icon icon-milestone" />';
@@ -655,7 +672,7 @@
         descr += '</li>';
         descr += '</ul>';
         obj = {
-          group: this.release.title,
+          group: this.observableRelease().title,
           start: ms.date.date,
           content: ms.title + '<br />' + icon,
           info: ms.date.dateString + ' - ' + ms.time + '<br />' + descr,
@@ -677,14 +694,14 @@
 
   UDisplayReleasePlanningInTimeline = (function() {
 
-    function UDisplayReleasePlanningInTimeline(observableRelease, observableTimelineSource) {
+    function UDisplayReleasePlanningInTimeline(observableRelease, observableTimelineItem) {
       this.observableRelease = observableRelease;
-      this.observableTimelineSource = observableTimelineSource;
-      this.trackAssignments = [];
+      this.observableTimelineItem = observableTimelineItem;
     }
 
     UDisplayReleasePlanningInTimeline.prototype.execute = function() {
       var activity, assignment, del, dto, ms, obj, proj, releaseTitle, resource, showData, timeline, uniqueAsses, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref, _ref2, _ref3, _ref4, _ref5;
+      this.trackAssignments = [];
       this.displayData = [];
       releaseTitle = this.observableRelease().title;
       console.log('execute use case UDisplayReleasePlanningInTimeline');
@@ -726,7 +743,7 @@
       showData = this.displayData.sort(function(a, b) {
         return a.start - b.end;
       });
-      timeline = new Mnd.Timeline(showData, this.observableTimelineSource, "100%", "500px", "resourcePlanning", "assignmentDetails");
+      timeline = new Mnd.Timeline(showData, this.observableTimelineItem, "100%", "500px", "resourcePlanning", "assignmentDetails");
       return timeline.draw();
     };
 
@@ -920,5 +937,7 @@
   root.UPlanResource = UPlanResource;
 
   root.UDisplayPlanningForResource = UDisplayPlanningForResource;
+
+  root.UUpdateScreen = UUpdateScreen;
 
 }).call(this);

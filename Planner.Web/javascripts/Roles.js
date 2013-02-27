@@ -219,7 +219,7 @@
           return ret;
         },
         plan: function(rel, proj, ms, del, act, per, ff) {
-          return $.ajax("/planner/Resource/PlanResource/", {
+          return $.ajax("/planner/Resource/Plan", {
             dataType: "json",
             data: ko.toJSON({
               release: rel,

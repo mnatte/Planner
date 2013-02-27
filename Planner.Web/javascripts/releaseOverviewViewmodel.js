@@ -7,7 +7,8 @@
   ReleaseOverviewViewmodel = (function() {
 
     function ReleaseOverviewViewmodel(allReleases, allResources, allActivities) {
-      var _this = this;
+      var updateScreenUseCases,
+        _this = this;
       this.allResources = allResources;
       this.allActivities = allActivities;
       this.deleteSelectedAssignment = __bind(this.deleteSelectedAssignment, this);
@@ -29,13 +30,34 @@
         return uc.execute();
       });
       this.selectedMilestone.subscribe(function(newValue) {
-        var x;
+        var del, deliverables, ms, x, _i, _len, _ref;
         console.log(newValue);
-        x = newValue.dataObject;
-        x.releaseName = _this.inspectRelease().title;
-        x.milestoneName = newValue.dataObject.title;
-        x.period = new Period(new Date(), newValue.dataObject.date.date, "planned period");
-        x.focusFactor = 0.8;
+        ms = newValue.dataObject;
+        deliverables = [];
+        console.log(newValue);
+        _ref = newValue.dataObject.deliverables;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          del = _ref[_i];
+          deliverables.push({
+            id: del.id,
+            title: del.title,
+            activities: del.activities
+          });
+        }
+        ms.deliverables = deliverables;
+        x = {
+          id: 0,
+          release: {
+            id: _this.inspectRelease().id,
+            title: _this.inspectRelease().title
+          },
+          focusFactor: 0.8,
+          period: new Period(new Date(), newValue.dataObject.date.date, "new assignment"),
+          milestone: ms,
+          resource: _this.selectedResource,
+          deliverable: _this.selectedDeliverable,
+          activity: _this.selectedActivity
+        };
         return _this.newAssignment(x);
       });
       this.selectedTimelineItem = ko.observable();
@@ -49,32 +71,30 @@
         console.log(x);
         return _this.selectedAssignment(x);
       });
+      updateScreenUseCases = [];
+      updateScreenUseCases.push(new UDisplayReleaseTimeline(this.inspectRelease, this.selectedMilestone));
+      updateScreenUseCases.push(new UDisplayReleasePlanningInTimeline(this.inspectRelease, this.selectedTimelineItem));
+      this.updateScreenUseCase = new UUpdateScreen(updateScreenUseCases);
       Resource.extend(RTeamMember);
       Assignment.extend(RAssignmentSerialize);
       Assignment.extend(RCrud);
     }
 
     ReleaseOverviewViewmodel.prototype.viewReleasePlanning = function(selectedRelease) {
-      var uc, uc2;
       console.log(selectedRelease);
       this.inspectRelease(selectedRelease);
-      uc = new UDisplayReleaseTimeline(selectedRelease, this.selectedMilestone);
-      uc.execute();
-      uc2 = new UDisplayReleasePlanningInTimeline(this.inspectRelease, this.selectedTimelineItem);
-      return uc2.execute();
+      return this.updateScreenUseCase.execute();
     };
 
     ReleaseOverviewViewmodel.prototype.saveSelectedAssignment = function() {
-      var updateUc, useCase;
-      updateUc = new UDisplayReleasePlanningInTimeline(this.inspectRelease, this.selectedTimelineItem);
-      useCase = new UModifyAssignment(this.selectedAssignment(), this.allReleases, this.inspectRelease, updateUc, this.selectedAssignment);
+      var useCase;
+      useCase = new UModifyAssignment(this.selectedAssignment(), this.allReleases, this.inspectRelease, this.updateScreenUseCase, this.selectedAssignment);
       return useCase.execute();
     };
 
     ReleaseOverviewViewmodel.prototype.saveNewAssignment = function() {
-      var updateUc, useCase;
-      updateUc = new UDisplayReleasePlanningInTimeline(this.inspectRelease, this.selectedTimelineItem);
-      useCase = new UModifyAssignment(this.newAssignment(), this.allReleases, this.inspectRelease, updateUc, this.newAssignment);
+      var useCase;
+      useCase = new UModifyAssignment(this.newAssignment(), this.allReleases, this.inspectRelease, this.updateScreenUseCase, this.newAssignment);
       return useCase.execute();
     };
 

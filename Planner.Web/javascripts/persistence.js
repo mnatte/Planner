@@ -160,6 +160,7 @@
       return this.include({
         toJSON: function() {
           var copy;
+          console.log(copy);
           copy = ko.toJS(this);
           console.log(copy);
           delete copy.release;

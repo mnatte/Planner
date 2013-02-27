@@ -209,45 +209,6 @@ class UModifyResourceAssignment
 		#useCase.execute()
 		@updateViewUsecase.execute()
 
-class UModifyAssignment
-	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in
-	# @selectedObservable is the refreshed item itself, set here and used in callback to refresh the view on its properties
-	# @updateViewUsecase is the callback usecase, @observableShowform is the observable used for whether the form is displayed
-	constructor: (@assignment, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform) ->
-	execute: ->
-		console.log 'execute use case'
-		serialized = @assignment.toFlatJSON()
-		json = ko.toJSON(serialized)
-		console.log json
-		@assignment.save("/planner/Resource/Plan", json, (data) => @refreshData(data))
-	refreshData: (json) ->
-		console.log json
-		freshRelease = Release.create json
-		# replace old item in collection for new one
-		oldItem = r for r in @viewModelObservableCollection() when r.id is freshRelease.id
-		#console.log oldItem
-		index = @viewModelObservableCollection().indexOf(oldItem)
-		#console.log index
-		@observableShowform null
-		# i = index of item to remove, 1 is amount to be removed, rel is item to be inserted there
-		@viewModelObservableCollection.splice index, 1, freshRelease
-		@selectedObservable freshRelease
-		@updateViewUsecase.execute()
-
-class UDeleteResourceAssignment
-	constructor: (@assignment, @updateViewUsecase) ->
-	execute: ->
-		console.log 'execute use case'
-		serialized = @assignment.toFlatJSON()
-		json = ko.toJSON(serialized)
-		console.log json
-		# since we POST a graph we cannot use HTTP DELETE. The RCrud method 'save' is abused here
-		@assignment.save("/planner/Resource/Assignments/Delete", json, (data) => @refreshData(data))
-	refreshData: (resourceData) ->
-		newResource = Resource.create resourceData
-		@updateViewUsecase.newResource = newResource
-		@updateViewUsecase.execute()
-	
 class URefreshView
 	constructor: (@viewModelObservableCollection, @newItem, @checkPeriod, @viewModelObservableGraph, @viewModelObservableForm) ->
 	execute: ->
@@ -313,19 +274,65 @@ class UPlanResource
 	execute: ->
 		Resource.extend RTeamMember
 		@resource.plan(@release, @project, @milestone, @deliverable, @activity, @period, @focusFactor)
-	
+
+class UModifyAssignment
+	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in
+	# @selectedObservable is the refreshed item itself, set here and used in callback to refresh the view on its properties
+	# @updateViewUsecase is the callback usecase, @observableShowform is the observable used for whether the form is displayed
+	constructor: (@assignment, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform) ->
+	execute: ->
+		console.log 'execute UModifyAssignment'
+		console.log @assignment
+		#serialized = @assignment.toJSON()
+		json = ko.toJSON(@assignment)
+		console.log json
+		# @assignment.save("/planner/Resource/Plan", json, (data) => @refreshData(data))
+	refreshData: (json) ->
+		console.log json
+		freshRelease = Release.create json
+		# replace old item in collection for new one
+		oldItem = r for r in @viewModelObservableCollection() when r.id is freshRelease.id
+		#console.log oldItem
+		index = @viewModelObservableCollection().indexOf(oldItem)
+		#console.log index
+		@observableShowform null
+		# i = index of item to remove, 1 is amount to be removed, rel is item to be inserted there
+		@viewModelObservableCollection.splice index, 1, freshRelease
+		@selectedObservable freshRelease
+		@updateViewUsecase.execute()
+
+class UDeleteResourceAssignment
+	constructor: (@assignment, @updateViewUsecase) ->
+	execute: ->
+		console.log 'execute use case'
+		serialized = @assignment.toFlatJSON()
+		json = ko.toJSON(serialized)
+		console.log json
+		# since we POST a graph we cannot use HTTP DELETE. The RCrud method 'save' is abused here
+		@assignment.save("/planner/Resource/Assignments/Delete", json, (data) => @refreshData(data))
+	refreshData: (resourceData) ->
+		newResource = Resource.create resourceData
+		@updateViewUsecase.newResource = newResource
+		@updateViewUsecase.execute()
+
+class UUpdateScreen
+	constructor: (@usecases) ->
+	execute: ->
+		for uc in @usecases
+			uc.execute()
+
 class UDisplayReleaseTimeline
 	# depends on timeline.js and having an HTML div with id 'mytimeline'
-	constructor: (@release, @observableTimelineSource) ->
+	constructor: (@observableRelease, @observableTimelineSource) ->
 	execute: ->
 		@displayData = []
 		console.log 'execute use case UDisplayReleaseTimeline'
-		for ph in @release.phases
+		for ph in @observableRelease().phases
 			#cont = '<span style="background-color:pink" />' + ph.title + '</span>'
 			cont = ph.title
-			obj = {group: @release.title, start: ph.startDate.date, end: ph.endDate.date, content:  cont, info: ph.toString() }
+			obj = {group: @observableRelease().title, start: ph.startDate.date, end: ph.endDate.date, content:  cont, info: ph.toString() }
 			@displayData.push obj
-		for ms in @release.milestones
+		for ms in @observableRelease().milestones
 			icon = '<span class="icon icon-milestone" />'
 			style = 'style="color: green"'
 			descr = '<ul>'
@@ -351,7 +358,7 @@ class UDisplayReleaseTimeline
 				descr += '</ul>' # /projects
 			descr += '</li>' # /deliverable
 			descr += '</ul>' # /deliverables
-			obj = {group: @release.title, start: ms.date.date, content: ms.title + '<br />' + icon, info: ms.date.dateString + ' - ' + ms.time + '<br />' + descr, dataObject: ms}
+			obj = {group: @observableRelease().title, start: ms.date.date, content: ms.title + '<br />' + icon, info: ms.date.dateString + ' - ' + ms.time + '<br />' + descr, dataObject: ms}
 			@displayData.push obj
 		showData = @displayData.sort((a,b)-> a.start - b.end)
 		console.log showData
@@ -360,9 +367,9 @@ class UDisplayReleaseTimeline
 
 class UDisplayReleasePlanningInTimeline
 	# depends on timeline.js
-	constructor: (@observableRelease, @observableTimelineSource) ->
-		@trackAssignments = []
+	constructor: (@observableRelease, @observableTimelineItem) ->
 	execute: ->
+		@trackAssignments = []
 		@displayData = []
 		releaseTitle = @observableRelease().title
 		console.log 'execute use case UDisplayReleasePlanningInTimeline'
@@ -381,7 +388,7 @@ class UDisplayReleasePlanningInTimeline
 							obj = {group: resource, start: assignment.period.startDate.date, end: assignment.period.endDate.date, content: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.project.title, info: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.period.toString(), dataObject: dto}
 							@displayData.push obj
 		showData = @displayData.sort((a,b)-> a.start - b.end)
-		timeline = new Mnd.Timeline(showData, @observableTimelineSource, "100%", "500px", "resourcePlanning", "assignmentDetails")
+		timeline = new Mnd.Timeline(showData, @observableTimelineItem, "100%", "500px", "resourcePlanning", "assignmentDetails")
 		timeline.draw()
 	createRowItem: (item, index) ->
 		identifier = item + index
@@ -504,6 +511,7 @@ root.UDisplayReleaseProgress = UDisplayReleaseProgress
 root.UDisplayReleaseProgressOverview = UDisplayReleaseProgressOverview
 root.UPlanResource = UPlanResource
 root.UDisplayPlanningForResource = UDisplayPlanningForResource
+root.UUpdateScreen = UUpdateScreen
 
 
 

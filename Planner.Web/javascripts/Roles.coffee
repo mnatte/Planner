@@ -135,7 +135,7 @@ RTeamMember =
 				#console.log ret
 				ret
 			plan: (rel, proj, ms, del, act, per, ff) ->
-				$.ajax "/planner/Resource/PlanResource/",
+				$.ajax "/planner/Resource/Plan",
 					dataType: "json"
 					data: ko.toJSON({ release: rel, project: proj, milestone: ms, deliverable: del, activity: act, period: per, focusFactor: ff })
 					type: "POST"
