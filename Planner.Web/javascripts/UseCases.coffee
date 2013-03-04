@@ -270,10 +270,10 @@ class UDisplayPlanningForResource
 		timeline.draw()
 
 class UPlanResource
-	constructor: (@resource, @release, @project, @milestone, @deliverable, @activity, @period, @focusFactor) ->
+	constructor: (@resource, @release, @project, @milestone, @deliverable, @activity, @period, @focusFactor, @callback) ->
 	execute: ->
 		Resource.extend RTeamMember
-		@resource.plan(@release, @project, @milestone, @deliverable, @activity, @period, @focusFactor)
+		@resource.plan(@release, @project, @milestone, @deliverable, @activity, @period, @focusFactor, @callback)
 
 class UModifyAssignment
 	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in
@@ -286,7 +286,10 @@ class UModifyAssignment
 		#serialized = @assignment.toJSON()
 		json = ko.toJSON(@assignment)
 		console.log json
-		# @assignment.save("/planner/Resource/Plan", json, (data) => @refreshData(data))
+		#Resource.extend(RTeamMember)
+		# rel, proj, ms, del, act, per, ff
+		@assignment.resource.plan(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, @assignment.focusFactor, (data) => @refreshData(data))
+		#@assignment.save("/planner/Resource/Plan", json, (data) => @refreshData(data))
 	refreshData: (json) ->
 		console.log json
 		freshRelease = Release.create json

@@ -17,6 +17,7 @@
       this.viewReleasePlanning = __bind(this.viewReleasePlanning, this);
       this.inspectRelease = ko.observable();
       this.selectedMilestone = ko.observable();
+      this.selectedProject = ko.observable();
       this.newAssignment = ko.observable();
       this.canShowDetails = ko.observable(false);
       this.allReleases = ko.observableArray(allReleases);
@@ -93,8 +94,19 @@
     };
 
     ReleaseOverviewViewmodel.prototype.saveNewAssignment = function() {
-      var useCase;
-      useCase = new UModifyAssignment(this.newAssignment(), this.allReleases, this.inspectRelease, this.updateScreenUseCase, this.newAssignment);
+      var ms, res, useCase, x;
+      res = new Resource(this.selectedResource().id, this.selectedResource().firstName, this.selectedResource().middleName, this.selectedResource().lastName);
+      ms = {
+        id: this.newAssignment().milestone.id,
+        title: this.newAssignment().milestone.title
+      };
+      x = this.newAssignment();
+      x.resource = res;
+      x.milestone = ms;
+      x.project = this.selectedProject();
+      x.activity = this.selectedActivity();
+      x.deliverable = this.selectedDeliverable();
+      useCase = new UModifyAssignment(x, this.allReleases, this.inspectRelease, this.updateScreenUseCase, this.newAssignment);
       return useCase.execute();
     };
 

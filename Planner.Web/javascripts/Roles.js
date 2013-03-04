@@ -218,17 +218,19 @@
           ret = this.getOverplannedPeriods(period).length > 0;
           return ret;
         },
-        plan: function(rel, proj, ms, del, act, per, ff) {
+        plan: function(rel, proj, ms, del, act, per, ff, callback) {
           return $.ajax("/planner/Resource/Plan", {
             dataType: "json",
             data: ko.toJSON({
-              release: rel,
-              project: proj,
-              milestone: ms,
-              deliverable: del,
-              activity: act,
-              period: per,
-              focusFactor: ff
+              phaseId: rel.id,
+              projectId: proj.id,
+              milestoneId: ms.id,
+              deliverableId: del.id,
+              activityId: act.id,
+              startDate: per.startDate.dateString,
+              endDate: per.endDate.dateString,
+              focusFactor: ff,
+              resourceId: this.id
             }),
             type: "POST",
             contentType: "application/json; charset=utf-8",

@@ -496,7 +496,7 @@
 
   UPlanResource = (function() {
 
-    function UPlanResource(resource, release, project, milestone, deliverable, activity, period, focusFactor) {
+    function UPlanResource(resource, release, project, milestone, deliverable, activity, period, focusFactor, callback) {
       this.resource = resource;
       this.release = release;
       this.project = project;
@@ -505,11 +505,12 @@
       this.activity = activity;
       this.period = period;
       this.focusFactor = focusFactor;
+      this.callback = callback;
     }
 
     UPlanResource.prototype.execute = function() {
       Resource.extend(RTeamMember);
-      return this.resource.plan(this.release, this.project, this.milestone, this.deliverable, this.activity, this.period, this.focusFactor);
+      return this.resource.plan(this.release, this.project, this.milestone, this.deliverable, this.activity, this.period, this.focusFactor, this.callback);
     };
 
     return UPlanResource;
@@ -527,11 +528,15 @@
     }
 
     UModifyAssignment.prototype.execute = function() {
-      var json;
+      var json,
+        _this = this;
       console.log('execute UModifyAssignment');
       console.log(this.assignment);
       json = ko.toJSON(this.assignment);
-      return console.log(json);
+      console.log(json);
+      return this.assignment.resource.plan(this.assignment.release, this.assignment.project, this.assignment.milestone, this.assignment.deliverable, this.assignment.activity, this.assignment.period, this.assignment.focusFactor, function(data) {
+        return _this.refreshData(data);
+      });
     };
 
     UModifyAssignment.prototype.refreshData = function(json) {

@@ -134,10 +134,10 @@ RTeamMember =
 				ret = @getOverplannedPeriods(period).length > 0
 				#console.log ret
 				ret
-			plan: (rel, proj, ms, del, act, per, ff) ->
+			plan: (rel, proj, ms, del, act, per, ff, callback) ->
 				$.ajax "/planner/Resource/Plan",
 					dataType: "json"
-					data: ko.toJSON({ release: rel, project: proj, milestone: ms, deliverable: del, activity: act, period: per, focusFactor: ff })
+					data: ko.toJSON({ phaseId: rel.id, projectId: proj.id, milestoneId: ms.id, deliverableId: del.id, activityId: act.id, startDate: per.startDate.dateString, endDate: per.endDate.dateString, focusFactor: ff, resourceId: @id })
 					type: "POST"
 					contentType: "application/json; charset=utf-8"
 					success: (data, status, XHR) ->

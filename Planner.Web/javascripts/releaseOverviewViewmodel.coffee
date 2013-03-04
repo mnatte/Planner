@@ -9,6 +9,7 @@ class ReleaseOverviewViewmodel
 		# ctor is executed in context of INSTANCE. Therefore @ refers here to CURRENT INSTANCE and attaches selectedPhase to all instances (since object IS ctor)
 		@inspectRelease = ko.observable()
 		@selectedMilestone = ko.observable()
+		@selectedProject = ko.observable()
 		@newAssignment = ko.observable()
 		@canShowDetails = ko.observable(false)
 		#@assignments = ko.observableArray()
@@ -34,6 +35,7 @@ class ReleaseOverviewViewmodel
 			for del in newValue.dataObject.deliverables
 				deliverables.push({id: del.id, title: del.title, activities: del.activities})
 			ms.deliverables = deliverables
+			# resource: { id: @selectedResource().id, firstName: @selectedResource().firstName, lastName: @selectedResource().lastName, middleName: @selectedResource().middleName }
 			x = { id: 0, release: { id: @inspectRelease().id, title: @inspectRelease().title }, focusFactor: 0.8, period: new Period(new Date(), newValue.dataObject.date.date, "new assignment"), milestone: ms, resource: @selectedResource, deliverable: @selectedDeliverable, activity: @selectedActivity }
 			@newAssignment x
 			)
@@ -73,7 +75,16 @@ class ReleaseOverviewViewmodel
 	saveNewAssignment: =>
 		# 2nd parameter null will be filled in the callback of the UModifyResourceAssignment usecase with new Release instance from server data
 		#updateUc = new UDisplayReleasePlanningInTimeline(@inspectRelease(), @selectedTimelineItem)
-		useCase = new UModifyAssignment(@newAssignment(), @allReleases, @inspectRelease, @updateScreenUseCase, @newAssignment)
+
+		res = new Resource(@selectedResource().id, @selectedResource().firstName, @selectedResource().middleName, @selectedResource().lastName)
+		ms = { id: @newAssignment().milestone.id, title: @newAssignment().milestone.title }
+		x = @newAssignment()
+		x.resource = res
+		x.milestone = ms
+		x.project = @selectedProject()
+		x.activity = @selectedActivity()
+		x.deliverable = @selectedDeliverable()
+		useCase = new UModifyAssignment(x, @allReleases, @inspectRelease, @updateScreenUseCase, @newAssignment)
 		useCase.execute()
 
 	deleteSelectedAssignment: =>
