@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UnAssignResource.cs" />
     <Compile Include="CreateAlertsForHighAttentionItems.cs" />
     <Compile Include="CreateRemindersForTasks.cs" />
     <Compile Include="CreateVisualCuesForGates.cs" />

@@ -561,27 +561,38 @@
 
   UDeleteResourceAssignment = (function() {
 
-    function UDeleteResourceAssignment(assignment, updateViewUsecase) {
+    function UDeleteResourceAssignment(assignment, viewModelObservableCollection, selectedObservable, updateViewUsecase, observableShowform) {
       this.assignment = assignment;
+      this.viewModelObservableCollection = viewModelObservableCollection;
+      this.selectedObservable = selectedObservable;
       this.updateViewUsecase = updateViewUsecase;
+      this.observableShowform = observableShowform;
     }
 
     UDeleteResourceAssignment.prototype.execute = function() {
-      var json, serialized,
+      var json,
         _this = this;
-      console.log('execute use case');
-      serialized = this.assignment.toFlatJSON();
-      json = ko.toJSON(serialized);
+      console.log('execute UDeleteResourceAssignment');
+      json = ko.toJSON(this.assignment);
       console.log(json);
-      return this.assignment.save("/planner/Resource/Assignments/Delete", json, function(data) {
+      return this.assignment.resource.unassign(this.assignment.release, this.assignment.project, this.assignment.milestone, this.assignment.deliverable, this.assignment.activity, this.assignment.period, function(data) {
         return _this.refreshData(data);
       });
     };
 
-    UDeleteResourceAssignment.prototype.refreshData = function(resourceData) {
-      var newResource;
-      newResource = Resource.create(resourceData);
-      this.updateViewUsecase.newResource = newResource;
+    UDeleteResourceAssignment.prototype.refreshData = function(json) {
+      var freshRelease, index, oldItem, r, _i, _len, _ref;
+      console.log(json);
+      freshRelease = Release.create(json);
+      _ref = this.viewModelObservableCollection();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        r = _ref[_i];
+        if (r.id === freshRelease.id) oldItem = r;
+      }
+      index = this.viewModelObservableCollection().indexOf(oldItem);
+      this.observableShowform(null);
+      this.viewModelObservableCollection.splice(index, 1, freshRelease);
+      this.selectedObservable(freshRelease);
       return this.updateViewUsecase.execute();
     };
 

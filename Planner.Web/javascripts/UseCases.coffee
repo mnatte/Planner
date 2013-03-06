@@ -305,18 +305,32 @@ class UModifyAssignment
 		@updateViewUsecase.execute()
 
 class UDeleteResourceAssignment
-	constructor: (@assignment, @updateViewUsecase) ->
+	constructor: (@assignment, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform) ->
 	execute: ->
-		console.log 'execute use case'
-		serialized = @assignment.toFlatJSON()
-		json = ko.toJSON(serialized)
+		console.log 'execute UDeleteResourceAssignment'
+		#serialized = @assignment.toFlatJSON()
+		json = ko.toJSON(@assignment)
 		console.log json
 		# since we POST a graph we cannot use HTTP DELETE. The RCrud method 'save' is abused here
-		@assignment.save("/planner/Resource/Assignments/Delete", json, (data) => @refreshData(data))
-	refreshData: (resourceData) ->
-		newResource = Resource.create resourceData
-		@updateViewUsecase.newResource = newResource
+		#@assignment.save("/planner/Resource/Assignments/Delete", json, (data) => @refreshData(data))
+		@assignment.resource.unassign(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, (data) => @refreshData(data))
+	refreshData: (json) ->
+		#newResource = Resource.create resourceData
+		#@updateViewUsecase.newResource = newResource
+		#@updateViewUsecase.execute()
+		console.log json
+		freshRelease = Release.create json
+		# replace old item in collection for new one
+		oldItem = r for r in @viewModelObservableCollection() when r.id is freshRelease.id
+		#console.log oldItem
+		index = @viewModelObservableCollection().indexOf(oldItem)
+		#console.log index
+		@observableShowform null
+		# i = index of item to remove, 1 is amount to be removed, rel is item to be inserted there
+		@viewModelObservableCollection.splice index, 1, freshRelease
+		@selectedObservable freshRelease
 		@updateViewUsecase.execute()
+
 
 class UUpdateScreen
 	constructor: (@usecases) ->

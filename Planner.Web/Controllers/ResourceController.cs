@@ -66,5 +66,18 @@ namespace Mnd.Planner.Web.Controllers
             var release = rep.GetReleaseSummary(model.PhaseId);
             return this.Json(release, JsonRequestBehavior.AllowGet);
         }
+
+        [HttpPost]
+        public JsonResult RemoveAssignment(ResourceAssignmentInputModel model)
+        {
+            var period = new Period { StartDate = model.StartDate.ToDateTimeFromDutchString(), EndDate = model.EndDate.ToDateTimeFromDutchString() };
+            var uc = new UnAssignResource(new Resource { Id = model.ResourceId }, new Release { Id = model.PhaseId }, new Project { Id = model.ProjectId }, new Milestone { Id = model.MilestoneId }, new Deliverable { Id = model.DeliverableId }, new Activity { Id = model.ActivityId }, period);
+            uc.Execute();
+
+            // return release summary for release planning overview page
+            var rep = new ReleaseRepository();
+            var release = rep.GetReleaseSummary(model.PhaseId);
+            return this.Json(release, JsonRequestBehavior.AllowGet);
+        }
     }
 }

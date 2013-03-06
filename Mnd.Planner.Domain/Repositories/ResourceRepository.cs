@@ -180,5 +180,41 @@ namespace Mnd.Planner.Domain.Repositories
             }
             return amt;
         }
+
+        public Resource DeleteAssignment(int releaseId, int projectId, int personId, int milestoneId, int deliverableId, int activityId, DateTime startDate, DateTime endDate)
+        {
+            var conn = new SqlConnection(this.ConnectionString);
+            Resource resource;
+            try
+            {
+                using (conn)
+                {
+                    conn.Open();
+
+                    // DDD: We don't need to find assignments by Id, we can simply delete all items and add new ones. No history needed.
+                    // Therefore we might say that Assignment is an entity under the Release root since it is accessed as an IMMUTABLE collection: no updates, just new instances.
+
+                    var cmd = new SqlCommand("sp_delete_resource_assignment", conn);
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = releaseId;
+                    cmd.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = projectId;
+                    cmd.Parameters.Add("@PersonId", System.Data.SqlDbType.Int).Value = personId;
+                    cmd.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = milestoneId;
+                    cmd.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = deliverableId;
+                    cmd.Parameters.Add("@ActivityId", System.Data.SqlDbType.Int).Value = activityId;
+                    cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = startDate;
+                    cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = endDate;
+                    cmd.ExecuteNonQuery();
+
+                    // return entire resource so we have all assignments and absences
+                    resource = this.GetItemById(personId);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            return resource;
+        }
     }
 }

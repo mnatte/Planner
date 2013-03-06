@@ -110,7 +110,11 @@
       return useCase.execute();
     };
 
-    ReleaseOverviewViewmodel.prototype.deleteSelectedAssignment = function() {};
+    ReleaseOverviewViewmodel.prototype.deleteSelectedAssignment = function() {
+      var useCase;
+      useCase = new UDeleteResourceAssignment(this.selectedAssignment(), this.allReleases, this.inspectRelease, this.updateScreenUseCase, this.selectedAssignment);
+      return useCase.execute();
+    };
 
     return ReleaseOverviewViewmodel;
 

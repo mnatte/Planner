@@ -87,12 +87,9 @@ class ReleaseOverviewViewmodel
 		useCase = new UModifyAssignment(x, @allReleases, @inspectRelease, @updateScreenUseCase, @newAssignment)
 		useCase.execute()
 
-	deleteSelectedAssignment: =>
-		#useCase = new UDeleteResourceAssignment(@selectedAssignment(), @checkPeriod(), @inspectResource, @selectedAssignment, @allResources)
-		# 2nd parameter null will be filled in the callback of the usecase with server data
-		#updateUc = new URefreshView(@allResources, null, @checkPeriod(), @inspectResource, @selectedAssignment)
-		#useCase = new UDeleteResourceAssignment(@selectedAssignment(), updateUc)
-		#useCase.execute()
+	deleteSelectedAssignment: => #(@assignment, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase
+		useCase = new UDeleteResourceAssignment(@selectedAssignment(), @allReleases, @inspectRelease, @updateScreenUseCase, @selectedAssignment)
+		useCase.execute()
 
 # export to root object
 root.ReleaseOverviewViewmodel = ReleaseOverviewViewmodel
