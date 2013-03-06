@@ -74,7 +74,6 @@ class UDisplayPhases
 		ko.applyBindings(@viewModel)
 		timeline = new Mnd.Timeline(@viewModel.showPhases)
 		timeline.draw()
-		#drawTimeline(@viewModel.showPhases)
 
 class UDisplayAbsences
 	constructor: ->
@@ -86,7 +85,6 @@ class UDisplayAbsences
 		ko.applyBindings(@viewModel)
 		timeline = new Mnd.Timeline(@viewModel.showAbsences, @viewModel.selectedTimelineItem)
 		timeline.draw()
-		#drawTimeline(@viewModel.showAbsences, @viewModel.selectedTimelineItem)
 
 class UDisplayAssignments
 	constructor: ->
@@ -97,14 +95,12 @@ class UDisplayAssignments
 		ko.applyBindings(@viewModel)
 		timeline = new Mnd.Timeline(@viewModel.showAssignments, @viewModel.selectedTimelineItem)
 		timeline.draw()
-		#drawTimeline(@viewModel.showAssignments, @viewModel.selectedTimelineItem)
 
 class UReloadAbsenceInTimeline
 	constructor: (@allAbsences, @index, @refreshedTimelineItem) ->
 	execute: ->
 		timeline = new Mnd.Timeline(allAbsences, refreshedTimelineItem)
 		timeline.draw()
-		#drawTimeline(allAbsences, refreshedTimelineItem)
 
 class ULoadAdminReleases
 	constructor: ->
@@ -114,7 +110,6 @@ class ULoadAdminReleases
 		deliverables = Deliverable.createCollection jsonDeliverables
 		@viewModel = new AdminReleaseViewmodel(releases, projects, deliverables)
 		@viewModel.selectRelease @viewModel.allReleases()[0]
-		#@viewModel.selectPhase @viewModel.allReleases()[0].phases[0]
 		ko.applyBindings(@viewModel, null, {independentBindings: true})
 
 class ULoadUpdateReleaseStatus
@@ -190,50 +185,8 @@ class ULoadPlanResources
 		activities = Activity.createCollection activities
 		# console.log resources
 		@viewModel = new PlanResourcesViewmodel(releases, resources, activities)
-		#@viewModel = new PlanResourcesViewmodel(releases)
 		@viewModel.selectRelease @viewModel.allReleases()[0]
 		ko.applyBindings(@viewModel)
-
-class UModifyResourceAssignment
-	constructor: (@assignment, @updateViewUsecase) ->
-	execute: ->
-		console.log 'execute use case'
-		serialized = @assignment.toFlatJSON()
-		json = ko.toJSON(serialized)
-		console.log json
-		#@assignment.save("/planner/Resource/Assignments/Save", json, (data) => @refreshData(data))
-	refreshData: (resourceData) ->
-		newResource = Resource.create resourceData
-		@updateViewUsecase.newResource = newResource
-		#useCase = new URefreshView(@viewModelObservableCollection, newResource, @checkPeriod, @viewModelObservableGraph, @viewModelObservableForm)
-		#useCase.execute()
-		@updateViewUsecase.execute()
-
-class URefreshView
-	constructor: (@viewModelObservableCollection, @newItem, @checkPeriod, @viewModelObservableGraph, @viewModelObservableForm) ->
-	execute: ->
-		#console.log resourceData
-		#console.log resource
-		#console.log @viewModelObservableCollection() 
-		oldItem = r for r in @viewModelObservableCollection() when r.id is @newItem.id
-		#console.log oldResource
-		index = @viewModelObservableCollection().indexOf(oldItem)
-		#console.log index
-		#console.log oldResource
-		resWithAssAndAbsInDate = @newItem
-		resWithAssAndAbsInDate.assignments = (a for a in @newItem.assignments when a.period.overlaps(@checkPeriod))
-		resWithAssAndAbsInDate.periodsAway = (a for a in @newItem.periodsAway when a.overlaps(@checkPeriod))
-		#console.log resWithAssAndAbsInDate
-		@viewModelObservableGraph resWithAssAndAbsInDate
-		@viewModelObservableForm null
-		# i = index of item to remove, 1 is amount to be removed, rel is item to be inserted there
-		@viewModelObservableCollection.splice index, 1, @newItem
-
-class URefreshViewAfterCheckPeriod
-	constructor: (@checkPeriod, @viewModelObservableGraph, @viewModelObservableForm) ->
-	execute: ->
-		@viewModelObservableGraph null
-		@viewModelObservableForm null
 
 # show Release planning
 
@@ -269,74 +222,92 @@ class UDisplayPlanningForResource
 		timeline = new Mnd.Timeline(showAssignments, null, "100%", "200px", "resourceTimeline", "resourceDetails")
 		timeline.draw()
 
-class UPlanResource
-	constructor: (@resource, @release, @project, @milestone, @deliverable, @activity, @period, @focusFactor, @callback) ->
+class URefreshView
+	constructor: (@selectedObservable, @checkPeriod) ->
 	execute: ->
-		Resource.extend RTeamMember
-		@resource.plan(@release, @project, @milestone, @deliverable, @activity, @period, @focusFactor, @callback)
+		resWithAssAndAbsInDate = @selectedObservable()
+		resWithAssAndAbsInDate.assignments = (a for a in @selectedObservable().assignments when a.period.overlaps(@checkPeriod))
+		resWithAssAndAbsInDate.periodsAway = (a for a in @selectedObservable().periodsAway when a.overlaps(@checkPeriod))
+		#console.log resWithAssAndAbsInDate
+		@selectedObservable resWithAssAndAbsInDate
+
+class URefreshViewAfterCheckPeriod
+	constructor: (@checkPeriod, @viewModelObservableGraph, @viewModelObservableForm) ->
+	execute: ->
+		@viewModelObservableGraph null
+		@viewModelObservableForm null
 
 class UModifyAssignment
 	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in
-	# @selectedObservable is the refreshed item itself, set here and used in callback to refresh the view on its properties
-	# @updateViewUsecase is the callback usecase, @observableShowform is the observable used for whether the form is displayed
-	constructor: (@assignment, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform) ->
+	# @selectedObservable is the observable to set to the refreshed item itself, used in callback to refresh the view on its properties
+	# @updateViewUsecase is the callback usecase, @observableShowform is the observable used for hiding the form after processing
+	# @dehydrate is the function used in the callback to instantiate the new item by the returned json data, @sourceView determines what item to return
+	constructor: (@assignment, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @sourceView, @dehydrate) ->
+		console.log @sourceView
 	execute: ->
 		console.log 'execute UModifyAssignment'
 		console.log @assignment
-		#serialized = @assignment.toJSON()
 		json = ko.toJSON(@assignment)
 		console.log json
-		#Resource.extend(RTeamMember)
-		# rel, proj, ms, del, act, per, ff
-		@assignment.resource.plan(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, @assignment.focusFactor, (data) => @refreshData(data))
-		#@assignment.save("/planner/Resource/Plan", json, (data) => @refreshData(data))
+		console.log @sourceView
+		if @sourceView is "release"
+			# rel, proj, ms, del, act, per, ff
+			@assignment.resource.planForRelease(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, @assignment.focusFactor, (data) => @refreshData(data))
+		else if @sourceView is "resource"
+			# rel, proj, ms, del, act, per, ff
+			@assignment.resource.plan(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, @assignment.focusFactor, (data) => @refreshData(data))
 	refreshData: (json) ->
 		console.log json
-		freshRelease = Release.create json
+		console.log @dehydrate
+		refreshed = @dehydrate json
 		# replace old item in collection for new one
-		oldItem = r for r in @viewModelObservableCollection() when r.id is freshRelease.id
+		oldItem = r for r in @viewModelObservableCollection() when r.id is refreshed.id
 		#console.log oldItem
 		index = @viewModelObservableCollection().indexOf(oldItem)
-		#console.log index
 		@observableShowform null
 		# i = index of item to remove, 1 is amount to be removed, rel is item to be inserted there
-		@viewModelObservableCollection.splice index, 1, freshRelease
-		@selectedObservable freshRelease
+		@viewModelObservableCollection.splice index, 1, refreshed
+		@selectedObservable refreshed
 		@updateViewUsecase.execute()
 
-class UDeleteResourceAssignment
-	constructor: (@assignment, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform) ->
+class UDeleteAssignment
+	constructor: (@assignment, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @sourceView, @dehydrate) ->
 	execute: ->
 		console.log 'execute UDeleteResourceAssignment'
-		#serialized = @assignment.toFlatJSON()
 		json = ko.toJSON(@assignment)
 		console.log json
 		# since we POST a graph we cannot use HTTP DELETE. The RCrud method 'save' is abused here
-		#@assignment.save("/planner/Resource/Assignments/Delete", json, (data) => @refreshData(data))
-		@assignment.resource.unassign(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, (data) => @refreshData(data))
+		if @sourceView is "release"
+			# rel, proj, ms, del, act, per, ff
+			@assignment.resource.unassignFromRelease(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, (data) => @refreshData(data))
+		else if @sourceView is "resource"
+			# rel, proj, ms, del, act, per, ff
+			@assignment.resource.unassign(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, (data) => @refreshData(data))
 	refreshData: (json) ->
-		#newResource = Resource.create resourceData
-		#@updateViewUsecase.newResource = newResource
-		#@updateViewUsecase.execute()
 		console.log json
-		freshRelease = Release.create json
+		console.log @dehydrate
+		refreshed = @dehydrate json
 		# replace old item in collection for new one
-		oldItem = r for r in @viewModelObservableCollection() when r.id is freshRelease.id
+		oldItem = r for r in @viewModelObservableCollection() when r.id is refreshed.id
 		#console.log oldItem
 		index = @viewModelObservableCollection().indexOf(oldItem)
-		#console.log index
 		@observableShowform null
 		# i = index of item to remove, 1 is amount to be removed, rel is item to be inserted there
-		@viewModelObservableCollection.splice index, 1, freshRelease
-		@selectedObservable freshRelease
+		@viewModelObservableCollection.splice index, 1, refreshed
+		@selectedObservable refreshed
 		@updateViewUsecase.execute()
 
 
 class UUpdateScreen
-	constructor: (@usecases) ->
+	constructor: (@usecases, @delegates) ->
 	execute: ->
-		for uc in @usecases
-			uc.execute()
+		if @usecases
+			for uc in @usecases
+				uc.execute()
+		if @delegates
+			for del in @delegates
+				del()
+				true
 
 class UDisplayReleaseTimeline
 	# depends on timeline.js and having an HTML div with id 'mytimeline'
@@ -381,6 +352,7 @@ class UDisplayReleaseTimeline
 		console.log showData
 		timeline = new Mnd.Timeline(showData, @observableTimelineSource, "100%", "200px", "releaseTimeline", "releaseDetails")
 		timeline.draw()
+		timeline.clearDetails()
 
 class UDisplayReleasePlanningInTimeline
 	# depends on timeline.js
@@ -407,6 +379,7 @@ class UDisplayReleasePlanningInTimeline
 		showData = @displayData.sort((a,b)-> a.start - b.end)
 		timeline = new Mnd.Timeline(showData, @observableTimelineItem, "100%", "500px", "resourcePlanning", "assignmentDetails")
 		timeline.draw()
+		timeline.clearDetails()
 	createRowItem: (item, index) ->
 		identifier = item + index
 		if @trackAssignments.indexOf(identifier) is -1
@@ -516,9 +489,8 @@ root.ULoadAdminDeliverables = ULoadAdminDeliverables
 root.ULoadAdminActivities = ULoadAdminActivities
 root.ULoadPlanResources = ULoadPlanResources
 root.ULoadUpdateReleaseStatus = ULoadUpdateReleaseStatus
-root.UModifyResourceAssignment = UModifyResourceAssignment
 root.UModifyAssignment = UModifyAssignment
-root.UDeleteResourceAssignment = UDeleteResourceAssignment
+root.UDeleteAssignment = UDeleteAssignment
 root.URefreshView = URefreshView
 root.UDisplayAssignments = UDisplayAssignments
 root.UDisplayReleaseOverview = UDisplayReleaseOverview
@@ -526,7 +498,6 @@ root.UDisplayReleaseTimeline = UDisplayReleaseTimeline
 root.UDisplayReleasePlanningInTimeline = UDisplayReleasePlanningInTimeline
 root.UDisplayReleaseProgress = UDisplayReleaseProgress
 root.UDisplayReleaseProgressOverview = UDisplayReleaseProgressOverview
-root.UPlanResource = UPlanResource
 root.UDisplayPlanningForResource = UDisplayPlanningForResource
 root.UUpdateScreen = UUpdateScreen
 

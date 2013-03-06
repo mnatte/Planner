@@ -146,7 +146,29 @@ RTeamMember =
 					error: (XHR, status, errorThrown) ->
 						console.log "AJAX SAVE error: #{errorThrown}"
 			unassign: (rel, proj, ms, del, act, per, callback) ->
-				$.ajax "/planner/Resource/Assignments/Delete",
+				$.ajax "/planner/Resource/UnAssign",
+					dataType: "json"
+					data: ko.toJSON({ phaseId: rel.id, projectId: proj.id, milestoneId: ms.id, deliverableId: del.id, activityId: act.id, startDate: per.startDate.dateString, endDate: per.endDate.dateString, resourceId: @id })
+					type: "POST"
+					contentType: "application/json; charset=utf-8"
+					success: (data, status, XHR) ->
+						console.log "resource unassigned"
+						callback data
+					error: (XHR, status, errorThrown) ->
+						console.log "AJAX SAVE error: #{errorThrown}"
+			planForRelease: (rel, proj, ms, del, act, per, ff, callback) ->
+				$.ajax "/planner/Resource/Release/Plan",
+					dataType: "json"
+					data: ko.toJSON({ phaseId: rel.id, projectId: proj.id, milestoneId: ms.id, deliverableId: del.id, activityId: act.id, startDate: per.startDate.dateString, endDate: per.endDate.dateString, focusFactor: ff, resourceId: @id })
+					type: "POST"
+					contentType: "application/json; charset=utf-8"
+					success: (data, status, XHR) ->
+						console.log "planned resource saved"
+						callback data
+					error: (XHR, status, errorThrown) ->
+						console.log "AJAX SAVE error: #{errorThrown}"
+			unassignFromRelease: (rel, proj, ms, del, act, per, callback) ->
+				$.ajax "/planner/Resource/Release/UnAssign",
 					dataType: "json"
 					data: ko.toJSON({ phaseId: rel.id, projectId: proj.id, milestoneId: ms.id, deliverableId: del.id, activityId: act.id, startDate: per.startDate.dateString, endDate: per.endDate.dateString, resourceId: @id })
 					type: "POST"

@@ -9,10 +9,9 @@
     function ResourceAvailabilityViewmodel(allResources) {
       this.deleteSelectedAssignment = __bind(this.deleteSelectedAssignment, this);
       this.saveSelectedAssignment = __bind(this.saveSelectedAssignment, this);
-      this.refreshData = __bind(this.refreshData, this);
       this.inspectOverplanning = __bind(this.inspectOverplanning, this);
       this.checkAvailability = __bind(this.checkAvailability, this);
-      var monthLater,
+      var monthLater, updateScreenUseCases,
         _this = this;
       console.log(allResources);
       Resource.extend(RTeamMember);
@@ -41,6 +40,9 @@
       this.allResources.subscribe(function(newValue) {
         return console.log('allResources changed: ' + newValue);
       });
+      updateScreenUseCases = [];
+      updateScreenUseCases.push(new URefreshView(this.inspectResource, this.checkPeriod()));
+      this.updateScreenUseCase = new UUpdateScreen(updateScreenUseCases);
       this.checkPeriod.subscribe(function(newValue) {
         return _this.inspectResource();
       });
@@ -103,23 +105,19 @@
       return this.selectedAssignment(null);
     };
 
-    ResourceAvailabilityViewmodel.prototype.refreshData = function(index, data) {
-      console.log('refreshData');
-      console.log(index);
-      return console.log(data);
-    };
-
     ResourceAvailabilityViewmodel.prototype.saveSelectedAssignment = function() {
-      var updateUc, useCase;
-      updateUc = new URefreshView(this.allResources, null, this.checkPeriod(), this.inspectResource, this.selectedAssignment);
-      useCase = new UModifyResourceAssignment(this.selectedAssignment(), updateUc);
+      var useCase;
+      useCase = new UModifyAssignment(this.selectedAssignment(), this.allResources, this.inspectResource, this.updateScreenUseCase, this.selectedAssignment, "resource", function(json) {
+        return Resource.create(json);
+      });
       return useCase.execute();
     };
 
     ResourceAvailabilityViewmodel.prototype.deleteSelectedAssignment = function() {
-      var updateUc, useCase;
-      updateUc = new URefreshView(this.allResources, null, this.checkPeriod(), this.inspectResource, this.selectedAssignment);
-      useCase = new UDeleteResourceAssignment(this.selectedAssignment(), updateUc);
+      var useCase;
+      useCase = new UDeleteAssignment(this.selectedAssignment(), this.allResources, this.inspectResource, this.updateScreenUseCase, this.selectedAssignment, "resource", function(json) {
+        return Resource.create(json);
+      });
       return useCase.execute();
     };
 

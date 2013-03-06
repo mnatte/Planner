@@ -244,7 +244,56 @@
           });
         },
         unassign: function(rel, proj, ms, del, act, per, callback) {
-          return $.ajax("/planner/Resource/Assignments/Delete", {
+          return $.ajax("/planner/Resource/UnAssign", {
+            dataType: "json",
+            data: ko.toJSON({
+              phaseId: rel.id,
+              projectId: proj.id,
+              milestoneId: ms.id,
+              deliverableId: del.id,
+              activityId: act.id,
+              startDate: per.startDate.dateString,
+              endDate: per.endDate.dateString,
+              resourceId: this.id
+            }),
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            success: function(data, status, XHR) {
+              console.log("resource unassigned");
+              return callback(data);
+            },
+            error: function(XHR, status, errorThrown) {
+              return console.log("AJAX SAVE error: " + errorThrown);
+            }
+          });
+        },
+        planForRelease: function(rel, proj, ms, del, act, per, ff, callback) {
+          return $.ajax("/planner/Resource/Release/Plan", {
+            dataType: "json",
+            data: ko.toJSON({
+              phaseId: rel.id,
+              projectId: proj.id,
+              milestoneId: ms.id,
+              deliverableId: del.id,
+              activityId: act.id,
+              startDate: per.startDate.dateString,
+              endDate: per.endDate.dateString,
+              focusFactor: ff,
+              resourceId: this.id
+            }),
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            success: function(data, status, XHR) {
+              console.log("planned resource saved");
+              return callback(data);
+            },
+            error: function(XHR, status, errorThrown) {
+              return console.log("AJAX SAVE error: " + errorThrown);
+            }
+          });
+        },
+        unassignFromRelease: function(rel, proj, ms, del, act, per, callback) {
+          return $.ajax("/planner/Resource/Release/UnAssign", {
             dataType: "json",
             data: ko.toJSON({
               phaseId: rel.id,

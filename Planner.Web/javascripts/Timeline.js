@@ -27,21 +27,25 @@
       };
       this.timeline = new links.Timeline(document.getElementById(this.divName));
       links.events.addListener(this.timeline, 'select', this.onSelectedChanged);
+      this.details = document.getElementById(this.detailsDiv);
     }
 
     Timeline.prototype.draw = function() {
       return this.timeline.draw(this.data, this.options);
     };
 
+    Timeline.prototype.clearDetails = function() {
+      return $(this.details).html('');
+    };
+
     Timeline.prototype.onSelectedChanged = function(properties) {
-      var details, item, sel;
-      details = document.getElementById(this.detailsDiv);
-      $(details).html('');
+      var item, sel;
+      $(this.details).html('');
       sel = this.timeline.getSelection();
       if (sel.length) {
         if (sel[0] !== void 0) {
           item = this.data[sel[0].row];
-          if (typeof item.info !== "undefined") $(details).html(item.info);
+          if (typeof item.info !== "undefined") $(this.details).html(item.info);
           if (typeof this.observableSelected !== "undefined") {
             return this.observableSelected(item);
           }

@@ -21,12 +21,16 @@ class Mnd.Timeline
 		# attach an event listener using the links events handler
 		links.events.addListener(@timeline, 'select', @onSelectedChanged)
 		#links.events.addListener(@timeline, 'change', @onChange)
+		@details = document.getElementById(@detailsDiv)
 	draw: ->
 	    # Draw our timeline with the created data and options 
 		@timeline.draw(@data, @options)
+	clearDetails: ->
+		#@timeline.setSelection []
+		$(@details).html('')
+
 	onSelectedChanged: (properties)  =>
-        details = document.getElementById(@detailsDiv)
-        $(details).html('')
+        $(@details).html('')
         sel = @timeline.getSelection()
         #console.log 'selection:'
         #console.log sel
@@ -35,7 +39,7 @@ class Mnd.Timeline
             if sel[0] isnt undefined 
                 item = @data[sel[0].row]
                 if typeof item.info isnt "undefined"
-                    $(details).html(item.info)
+                    $(@details).html(item.info)
                 if typeof @observableSelected isnt "undefined"
                     @observableSelected(item)
 	#onChange: =>

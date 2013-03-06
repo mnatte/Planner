@@ -118,25 +118,16 @@
     </div><!-- container -->
     <script type="text/javascript">
 
-//        $(document).ready(function () {
-//            infuser.defaults.templateSuffix = ".tmpl.html";
-//            infuser.defaults.templateUrl = "/planner/templates";
+            function loadReleases(resources) {
+                var ajx = new Ajax();
+                ajx.getReleaseSummaries(function (data) { loadActivities(data, resources) });
+            }
 
-//            var uc = new UDisplayReleaseOverview();
-//            var ajax = new Ajax();
-//            ajax.getReleaseSummaries(uc.execute);
-
-            function loadReleases(resources, activities) {
+            function loadActivities(releases, resources) {
                 var uc = new UDisplayReleaseOverview();
                 var ajx = new Ajax();
                 // use closure around execute method to pass 'projects' argument as well as 'data' from getReleaseSummaries callback
-                ajx.getReleaseSummaries(function (data) { uc.execute(data, resources, activities) });
-            }
-
-            // 'releases' is callback data provided by former Ajax call
-            function loadActivities(resources) {
-                var ajx = new Ajax();
-                ajx.getActivities(function (data) { loadReleases(resources, data) });
+                ajx.getActivities(function (data) { uc.execute(releases, resources, data) });
             }
 
             $(document).ready(function () {
@@ -144,9 +135,8 @@
                 infuser.defaults.templateUrl = "/planner/templates";
 
                 var ajax = new Ajax();
-                ajax.getResources(loadActivities);
+                ajax.getResources(loadReleases);
             });
-//        });
     </script>
 
 </body>

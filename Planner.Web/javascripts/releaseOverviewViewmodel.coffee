@@ -28,15 +28,13 @@ class ReleaseOverviewViewmodel
 		#	)
 		@selectedMilestone.subscribe((newValue) => 
 			console.log newValue
-			#(@id, @release, @resource, @project, @focusFactor, startDate, endDate, @activity, @milestone, @deliverable)
-			ms = newValue.dataObject
-			deliverables = []
-			console.log newValue
-			for del in newValue.dataObject.deliverables
-				deliverables.push({id: del.id, title: del.title, activities: del.activities})
-			ms.deliverables = deliverables
-			# resource: { id: @selectedResource().id, firstName: @selectedResource().firstName, lastName: @selectedResource().lastName, middleName: @selectedResource().middleName }
-			x = { id: 0, release: { id: @inspectRelease().id, title: @inspectRelease().title }, focusFactor: 0.8, period: new Period(new Date(), newValue.dataObject.date.date, "new assignment"), milestone: ms, resource: @selectedResource, deliverable: @selectedDeliverable, activity: @selectedActivity }
+			if newValue
+				ms = newValue.dataObject
+				deliverables = []
+				for del in newValue.dataObject.deliverables
+					deliverables.push({id: del.id, title: del.title, activities: del.activities})
+				ms.deliverables = deliverables
+				x = { id: 0, release: { id: @inspectRelease().id, title: @inspectRelease().title }, focusFactor: 0.8, period: new Period(new Date(), newValue.dataObject.date.date, "new assignment"), milestone: ms, resource: @selectedResource, deliverable: @selectedDeliverable, activity: @selectedActivity }
 			@newAssignment x
 			)
 		# used for update selected assignment
@@ -44,19 +42,23 @@ class ReleaseOverviewViewmodel
 		@selectedAssignment = ko.observable()
 		@selectedTimelineItem.subscribe((newValue) => 
 			console.log newValue
-			x = newValue.dataObject
-			x.resourceName = newValue.dataObject.resource.fullName()
-			x.resourceId = newValue.dataObject.resource.id
-			#x.period = newValue.dataObject.assignedPeriod
-			console.log x
+			if newValue
+				x = newValue.dataObject
+				x.resourceName = newValue.dataObject.resource.fullName()
+				x.resourceId = newValue.dataObject.resource.id
+				#x.period = newValue.dataObject.assignedPeriod
+				console.log x
 			@selectedAssignment x
 			)
 		updateScreenUseCases = []
+		updateScreenFunctions = []
 		# @selectedMilestone is the observable to trigger new assignment functionality
 		updateScreenUseCases.push(new UDisplayReleaseTimeline(@inspectRelease, @selectedMilestone))
 		# @selectedTimelineItem is the observable to trigger selected assignment functionality
 		updateScreenUseCases.push(new UDisplayReleasePlanningInTimeline(@inspectRelease, @selectedTimelineItem))
-		@updateScreenUseCase = new UUpdateScreen updateScreenUseCases
+		updateScreenFunctions.push(=> @selectedTimelineItem null)
+		updateScreenFunctions.push(=> @selectedMilestone null)
+		@updateScreenUseCase = new UUpdateScreen updateScreenUseCases, updateScreenFunctions
 		Resource.extend RTeamMember
 		Assignment.extend RAssignmentSerialize
 		Assignment.extend RCrud
@@ -67,15 +69,10 @@ class ReleaseOverviewViewmodel
 		@updateScreenUseCase.execute()
 
 	saveSelectedAssignment: =>
-		# 2nd parameter null will be filled in the callback of the UModifyResourceAssignment usecase with new Release instance from server data
-		#updateUc = new UDisplayReleasePlanningInTimeline(@inspectRelease(), @selectedTimelineItem)
-		useCase = new UModifyAssignment(@selectedAssignment(), @allReleases, @inspectRelease, @updateScreenUseCase, @selectedAssignment)
+		useCase = new UModifyAssignment(@selectedAssignment(), @allReleases, @inspectRelease, @updateScreenUseCase, @selectedAssignment, "release", (json) -> Release.create json)
 		useCase.execute()
 
 	saveNewAssignment: =>
-		# 2nd parameter null will be filled in the callback of the UModifyResourceAssignment usecase with new Release instance from server data
-		#updateUc = new UDisplayReleasePlanningInTimeline(@inspectRelease(), @selectedTimelineItem)
-
 		res = new Resource(@selectedResource().id, @selectedResource().firstName, @selectedResource().middleName, @selectedResource().lastName)
 		ms = { id: @newAssignment().milestone.id, title: @newAssignment().milestone.title }
 		x = @newAssignment()
@@ -84,11 +81,12 @@ class ReleaseOverviewViewmodel
 		x.project = @selectedProject()
 		x.activity = @selectedActivity()
 		x.deliverable = @selectedDeliverable()
-		useCase = new UModifyAssignment(x, @allReleases, @inspectRelease, @updateScreenUseCase, @newAssignment)
+
+		useCase = new UModifyAssignment(x, @allReleases, @inspectRelease, @updateScreenUseCase, @newAssignment, "release", (json) -> Release.create json)
 		useCase.execute()
 
 	deleteSelectedAssignment: => #(@assignment, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase
-		useCase = new UDeleteResourceAssignment(@selectedAssignment(), @allReleases, @inspectRelease, @updateScreenUseCase, @selectedAssignment)
+		useCase = new UDeleteAssignment(@selectedAssignment(), @allReleases, @inspectRelease, @updateScreenUseCase, @selectedAssignment, "release", (json) -> Release.create json)
 		useCase.execute()
 
 # export to root object

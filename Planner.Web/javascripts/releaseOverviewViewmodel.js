@@ -7,7 +7,7 @@
   ReleaseOverviewViewmodel = (function() {
 
     function ReleaseOverviewViewmodel(allReleases, allResources, allActivities) {
-      var updateScreenUseCases,
+      var updateScreenFunctions, updateScreenUseCases,
         _this = this;
       this.allResources = allResources;
       this.allActivities = allActivities;
@@ -33,32 +33,33 @@
       this.selectedMilestone.subscribe(function(newValue) {
         var del, deliverables, ms, x, _i, _len, _ref;
         console.log(newValue);
-        ms = newValue.dataObject;
-        deliverables = [];
-        console.log(newValue);
-        _ref = newValue.dataObject.deliverables;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          del = _ref[_i];
-          deliverables.push({
-            id: del.id,
-            title: del.title,
-            activities: del.activities
-          });
+        if (newValue) {
+          ms = newValue.dataObject;
+          deliverables = [];
+          _ref = newValue.dataObject.deliverables;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            del = _ref[_i];
+            deliverables.push({
+              id: del.id,
+              title: del.title,
+              activities: del.activities
+            });
+          }
+          ms.deliverables = deliverables;
+          x = {
+            id: 0,
+            release: {
+              id: _this.inspectRelease().id,
+              title: _this.inspectRelease().title
+            },
+            focusFactor: 0.8,
+            period: new Period(new Date(), newValue.dataObject.date.date, "new assignment"),
+            milestone: ms,
+            resource: _this.selectedResource,
+            deliverable: _this.selectedDeliverable,
+            activity: _this.selectedActivity
+          };
         }
-        ms.deliverables = deliverables;
-        x = {
-          id: 0,
-          release: {
-            id: _this.inspectRelease().id,
-            title: _this.inspectRelease().title
-          },
-          focusFactor: 0.8,
-          period: new Period(new Date(), newValue.dataObject.date.date, "new assignment"),
-          milestone: ms,
-          resource: _this.selectedResource,
-          deliverable: _this.selectedDeliverable,
-          activity: _this.selectedActivity
-        };
         return _this.newAssignment(x);
       });
       this.selectedTimelineItem = ko.observable();
@@ -66,16 +67,25 @@
       this.selectedTimelineItem.subscribe(function(newValue) {
         var x;
         console.log(newValue);
-        x = newValue.dataObject;
-        x.resourceName = newValue.dataObject.resource.fullName();
-        x.resourceId = newValue.dataObject.resource.id;
-        console.log(x);
+        if (newValue) {
+          x = newValue.dataObject;
+          x.resourceName = newValue.dataObject.resource.fullName();
+          x.resourceId = newValue.dataObject.resource.id;
+          console.log(x);
+        }
         return _this.selectedAssignment(x);
       });
       updateScreenUseCases = [];
+      updateScreenFunctions = [];
       updateScreenUseCases.push(new UDisplayReleaseTimeline(this.inspectRelease, this.selectedMilestone));
       updateScreenUseCases.push(new UDisplayReleasePlanningInTimeline(this.inspectRelease, this.selectedTimelineItem));
-      this.updateScreenUseCase = new UUpdateScreen(updateScreenUseCases);
+      updateScreenFunctions.push(function() {
+        return _this.selectedTimelineItem(null);
+      });
+      updateScreenFunctions.push(function() {
+        return _this.selectedMilestone(null);
+      });
+      this.updateScreenUseCase = new UUpdateScreen(updateScreenUseCases, updateScreenFunctions);
       Resource.extend(RTeamMember);
       Assignment.extend(RAssignmentSerialize);
       Assignment.extend(RCrud);
@@ -89,7 +99,9 @@
 
     ReleaseOverviewViewmodel.prototype.saveSelectedAssignment = function() {
       var useCase;
-      useCase = new UModifyAssignment(this.selectedAssignment(), this.allReleases, this.inspectRelease, this.updateScreenUseCase, this.selectedAssignment);
+      useCase = new UModifyAssignment(this.selectedAssignment(), this.allReleases, this.inspectRelease, this.updateScreenUseCase, this.selectedAssignment, "release", function(json) {
+        return Release.create(json);
+      });
       return useCase.execute();
     };
 
@@ -106,13 +118,17 @@
       x.project = this.selectedProject();
       x.activity = this.selectedActivity();
       x.deliverable = this.selectedDeliverable();
-      useCase = new UModifyAssignment(x, this.allReleases, this.inspectRelease, this.updateScreenUseCase, this.newAssignment);
+      useCase = new UModifyAssignment(x, this.allReleases, this.inspectRelease, this.updateScreenUseCase, this.newAssignment, "release", function(json) {
+        return Release.create(json);
+      });
       return useCase.execute();
     };
 
     ReleaseOverviewViewmodel.prototype.deleteSelectedAssignment = function() {
       var useCase;
-      useCase = new UDeleteResourceAssignment(this.selectedAssignment(), this.allReleases, this.inspectRelease, this.updateScreenUseCase, this.selectedAssignment);
+      useCase = new UDeleteAssignment(this.selectedAssignment(), this.allReleases, this.inspectRelease, this.updateScreenUseCase, this.selectedAssignment, "release", function(json) {
+        return Release.create(json);
+      });
       return useCase.execute();
     };
 
