@@ -237,11 +237,39 @@ class URefreshViewAfterCheckPeriod
 		@viewModelObservableGraph null
 		@viewModelObservableForm null
 
-class UModifyAssignment
-	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in
+class UPersistAndRefresh
 	# @selectedObservable is the observable to set to the refreshed item itself, used in callback to refresh the view on its properties
 	# @updateViewUsecase is the callback usecase, @observableShowform is the observable used for hiding the form after processing
 	# @dehydrate is the function used in the callback to instantiate the new item by the returned json data, @sourceView determines what item to return
+	constructor: (@viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate) ->
+	execute: ->
+		throw new Error('Abstract method execute of UPersistAndRefresh UseCase')
+	refreshData: (json) ->
+		console.log json
+		console.log @dehydrate
+		refreshed = @dehydrate json
+		# replace old item in collection for new one
+		oldItem = r for r in @viewModelObservableCollection() when r.id is refreshed.id
+		#console.log oldItem
+		index = @viewModelObservableCollection().indexOf(oldItem)
+		@observableShowform null
+		# i = index of item to remove, 1 is amount to be removed, rel is item to be inserted there
+		@viewModelObservableCollection.splice index, 1, refreshed
+		@selectedObservable refreshed
+		@updateViewUsecase.execute()
+
+class URescheduleMilestone extends UPersistAndRefresh
+	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in
+	constructor: (@milestone, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate) ->
+		super @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate
+	execute: ->
+		Milestone.extend RScheduleItem
+		Milestone.setScheduleUrl "/planner/Release/Milestone/Schedule"
+		console.log 'execute URescheduleMilestone'
+		@milestone.schedule(@milestone.id, @milestone.phaseId, @milestone.date.dateString, @milestone.time, (data) => @refreshData(data))
+
+class UModifyAssignment extends UPersistAndRefresh
+	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in
 	constructor: (@assignment, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @sourceView, @dehydrate) ->
 		console.log @sourceView
 	execute: ->
@@ -256,19 +284,6 @@ class UModifyAssignment
 		else if @sourceView is "resource"
 			# rel, proj, ms, del, act, per, ff
 			@assignment.resource.plan(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, @assignment.focusFactor, (data) => @refreshData(data))
-	refreshData: (json) ->
-		console.log json
-		console.log @dehydrate
-		refreshed = @dehydrate json
-		# replace old item in collection for new one
-		oldItem = r for r in @viewModelObservableCollection() when r.id is refreshed.id
-		#console.log oldItem
-		index = @viewModelObservableCollection().indexOf(oldItem)
-		@observableShowform null
-		# i = index of item to remove, 1 is amount to be removed, rel is item to be inserted there
-		@viewModelObservableCollection.splice index, 1, refreshed
-		@selectedObservable refreshed
-		@updateViewUsecase.execute()
 
 class UDeleteAssignment
 	constructor: (@assignment, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @sourceView, @dehydrate) ->
@@ -346,6 +361,7 @@ class UDisplayReleaseTimeline
 				descr += '</ul>' # /projects
 			descr += '</li>' # /deliverable
 			descr += '</ul>' # /deliverables
+			ms.release = { id: @observableRelease().id, title: @observableRelease().title }
 			obj = {group: @observableRelease().title, start: ms.date.date, content: ms.title + '<br />' + icon, info: ms.date.dateString + ' - ' + ms.time + '<br />' + descr, dataObject: ms}
 			@displayData.push obj
 		showData = @displayData.sort((a,b)-> a.start - b.end)
@@ -416,6 +432,7 @@ class UDisplayReleaseProgress
 		$('#graph1').html('')
 		$('#graph2').html('')
 		$('#graph3').html('')
+		$('#graph4').html('')
 		# create array with milestones: milestones['DG'], milestones['FDCG'], etc.They contain objects as {artfct, date, hrs} but possibly multiple with same values since multiple activities are configured
 		milestones = jsonData.reduce (acc, x) =>
 							id = x.Milestone
@@ -500,6 +517,7 @@ root.UDisplayReleaseProgress = UDisplayReleaseProgress
 root.UDisplayReleaseProgressOverview = UDisplayReleaseProgressOverview
 root.UDisplayPlanningForResource = UDisplayPlanningForResource
 root.UUpdateScreen = UUpdateScreen
+root.URescheduleMilestone = URescheduleMilestone
 
 
 

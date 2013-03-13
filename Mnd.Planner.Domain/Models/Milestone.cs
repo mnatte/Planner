@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Mnd.Planner.Domain.Roles;
 
 namespace Mnd.Planner.Domain
 {
-    public class Milestone
+    public class Milestone : RMilestoneSchedule
     {
         public int Id { get; set; }
         public string Title { get; set; }

@@ -8,6 +8,9 @@ using System.Net;
 using Mnd.Planner.Domain;
 using Mnd.Planner.Domain.Persistence;
 using Mnd.Planner.Domain.Repositories;
+using Mnd.Planner.Web.Controllers.InputModels;
+using Mnd.Planner.UseCases;
+using Mnd.Helpers;
 
 namespace Mnd.Planner.Web.Controllers
 {
@@ -95,6 +98,17 @@ namespace Mnd.Planner.Web.Controllers
         {
             var rep = new ReleaseRepository();
             var release = rep.UnAssignMilestone(obj);
+            return this.Json(release, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult ScheduleMilestone(ScheduleReleaseEventInputModel obj)
+        {
+            var uc = new PlanMilestone(new Milestone { Id = obj.EventId }, obj.Date.ToDateTimeFromDutchString(), obj.Time);
+            uc.Execute();
+
+            var rep = new ReleaseRepository();
+            var release = rep.GetReleaseSummary(obj.ReleaseId);
             return this.Json(release, JsonRequestBehavior.AllowGet);
         }
 

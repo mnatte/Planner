@@ -692,16 +692,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>resourceRoles.coffee</DependentUpon>
     </Content>
-    <Content Include="javascripts\xxx_timeline_instantion.js" />
     <Content Include="javascripts\updateReleaseStatusViewmodel.js">
       <DependentUpon>updateReleaseStatusViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-    </Content>
-    <Content Include="javascripts\xxx_updateReleaseStatus.js">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>xxx_updateReleaseStatus.coffee</DependentUpon>
     </Content>
     <Content Include="Scripts\highcharts.js" />
     <Content Include="Scripts\highcharts_exporting.js" />
@@ -715,6 +709,7 @@
     <Content Include="templates\absenceForm.tmpl.html" />
     <Content Include="templates\assignmentForm.tmpl.html" />
     <Content Include="templates\addReleaseAssignmentForm.tmpl.html" />
+    <Content Include="templates\scheduleMilestoneForm.tmpl.html" />
     <Content Include="templates\meetingForm.tmpl.html" />
     <Content Include="templates\releaseOverview.tmpl.html" />
     <Content Include="templates\phaseForm.tmpl.html" />
@@ -730,13 +725,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>planningOverviewViewmodel.coffee</DependentUpon>
     </Content>
-    <Content Include="xxx_planningOverview.htm" />
     <Content Include="javascripts\adminDeliverableViewmodel.js">
       <DependentUpon>adminDeliverableViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Content>
-    <Content Include="javascripts\xxx.ko.bindingHandlers.clickWithParameters.js" />
     <Content Include="javascripts\ko.bindingHandlers.fadeVisible.js" />
     <Content Include="javascripts\ko.bindingHandlers.editable.js" />
     <Content Include="javascripts\planResourcesViewmodel.js">
@@ -744,7 +737,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>planResourcesViewmodel.coffee</DependentUpon>
     </Content>
-    <Content Include="planResources.htm" />
+    <Content Include="xxx_planResources.htm" />
     <Content Include="images\bg_nav.PNG" />
     <Content Include="adminRelease.htm" />
     <Content Include="javascripts\adminProjectViewmodel.js">
@@ -762,8 +755,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>adminResourceViewmodel.coffee</DependentUpon>
     </Content>
-    <Content Include="javascripts\xxx.ko.bindingHandlers.multipleSelect.js" />
-    <Content Include="javascripts\xxx.ko.bindingHandlers.period2.js" />
     <Content Include="javascripts\phasesViewmodel.js">
       <DependentUpon>phasesViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -991,10 +982,6 @@
     <None Include="javascripts\simpleCrudViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>simpleCrudViewmodel.js</LastGenOutput>
-    </None>
-    <None Include="javascripts\xxx_updateReleaseStatus.coffee">
-      <Generator>CoffeeScriptGenerator</Generator>
-      <LastGenOutput>xxx_updateReleaseStatus.js</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

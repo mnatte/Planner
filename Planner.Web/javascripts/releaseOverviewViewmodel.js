@@ -11,6 +11,7 @@
         _this = this;
       this.allResources = allResources;
       this.allActivities = allActivities;
+      this.rescheduleSelectedMilestone = __bind(this.rescheduleSelectedMilestone, this);
       this.deleteSelectedAssignment = __bind(this.deleteSelectedAssignment, this);
       this.saveNewAssignment = __bind(this.saveNewAssignment, this);
       this.saveSelectedAssignment = __bind(this.saveSelectedAssignment, this);
@@ -130,6 +131,22 @@
         return Release.create(json);
       });
       return useCase.execute();
+    };
+
+    ReleaseOverviewViewmodel.prototype.rescheduleSelectedMilestone = function() {
+      var date, ms, uc;
+      console.log(this.selectedMilestone().dataObject.date.dateString);
+      console.log(this.selectedMilestone().dataObject.time);
+      console.log(this.selectedMilestone().dataObject.id);
+      console.log(this.selectedMilestone().dataObject.title);
+      console.log(this.selectedMilestone().dataObject.release.title);
+      console.log(this.selectedMilestone().dataObject.release.id);
+      date = DateFormatter.createFromString(this.selectedMilestone().dataObject.date.dateString);
+      ms = new Milestone(this.selectedMilestone().dataObject.id, date, this.selectedMilestone().dataObject.time, null, null, this.selectedMilestone().dataObject.release.id);
+      uc = new URescheduleMilestone(ms, this.allReleases, this.inspectRelease, this.updateScreenUseCase, this.selectedAssignment, function(json) {
+        return Release.create(json);
+      });
+      return uc.execute();
     };
 
     return ReleaseOverviewViewmodel;

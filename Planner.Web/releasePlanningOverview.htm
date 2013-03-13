@@ -94,6 +94,14 @@
             </section>
             <!--/ko-->
             </div>
+            <div id="Div2" class="four columns">
+            <!-- ko if: $root.selectedMilestone() -->
+            <section id="milestoneFormSection" data-bind="fadeVisible: true, fadeDuration: 500">
+                <!-- ko template: {name: 'scheduleMilestoneForm', data: $root.selectedMilestone().dataObject} -->
+                <!-- /ko -->
+            </section>
+            <!--/ko-->
+            </div>
             <!-- ko if: $root.newAssignment() -->
             <div  id="resource" class="eleven columns">
                <div id="resourceTimeline"></div>

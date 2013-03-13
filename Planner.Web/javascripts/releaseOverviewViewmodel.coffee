@@ -89,5 +89,17 @@ class ReleaseOverviewViewmodel
 		useCase = new UDeleteAssignment(@selectedAssignment(), @allReleases, @inspectRelease, @updateScreenUseCase, @selectedAssignment, "release", (json) -> Release.create json)
 		useCase.execute()
 
+	rescheduleSelectedMilestone: =>
+		console.log @selectedMilestone().dataObject.date.dateString
+		console.log @selectedMilestone().dataObject.time
+		console.log @selectedMilestone().dataObject.id
+		console.log @selectedMilestone().dataObject.title
+		console.log @selectedMilestone().dataObject.release.title
+		console.log @selectedMilestone().dataObject.release.id
+		date = DateFormatter.createFromString @selectedMilestone().dataObject.date.dateString
+		ms = new Milestone(@selectedMilestone().dataObject.id, date, @selectedMilestone().dataObject.time, null, null, @selectedMilestone().dataObject.release.id)
+		uc = new URescheduleMilestone(ms, @allReleases, @inspectRelease, @updateScreenUseCase, @selectedAssignment, (json) -> Release.create json)
+		uc.execute()
+
 # export to root object
 root.ReleaseOverviewViewmodel = ReleaseOverviewViewmodel

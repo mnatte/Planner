@@ -1,5 +1,7 @@
 (function() {
-  var UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, UUpdateScreen, root;
+  var UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UUpdateScreen, root,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   root = typeof global !== "undefined" && global !== null ? global : window;
 
@@ -457,7 +459,72 @@
 
   })();
 
-  UModifyAssignment = (function() {
+  UPersistAndRefresh = (function() {
+
+    function UPersistAndRefresh(viewModelObservableCollection, selectedObservable, updateViewUsecase, observableShowform, dehydrate) {
+      this.viewModelObservableCollection = viewModelObservableCollection;
+      this.selectedObservable = selectedObservable;
+      this.updateViewUsecase = updateViewUsecase;
+      this.observableShowform = observableShowform;
+      this.dehydrate = dehydrate;
+    }
+
+    UPersistAndRefresh.prototype.execute = function() {
+      throw new Error('Abstract method execute of UPersistAndRefresh UseCase');
+    };
+
+    UPersistAndRefresh.prototype.refreshData = function(json) {
+      var index, oldItem, r, refreshed, _i, _len, _ref;
+      console.log(json);
+      console.log(this.dehydrate);
+      refreshed = this.dehydrate(json);
+      _ref = this.viewModelObservableCollection();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        r = _ref[_i];
+        if (r.id === refreshed.id) oldItem = r;
+      }
+      index = this.viewModelObservableCollection().indexOf(oldItem);
+      this.observableShowform(null);
+      this.viewModelObservableCollection.splice(index, 1, refreshed);
+      this.selectedObservable(refreshed);
+      return this.updateViewUsecase.execute();
+    };
+
+    return UPersistAndRefresh;
+
+  })();
+
+  URescheduleMilestone = (function(_super) {
+
+    __extends(URescheduleMilestone, _super);
+
+    function URescheduleMilestone(milestone, viewModelObservableCollection, selectedObservable, updateViewUsecase, observableShowform, dehydrate) {
+      this.milestone = milestone;
+      this.viewModelObservableCollection = viewModelObservableCollection;
+      this.selectedObservable = selectedObservable;
+      this.updateViewUsecase = updateViewUsecase;
+      this.observableShowform = observableShowform;
+      this.dehydrate = dehydrate;
+      URescheduleMilestone.__super__.constructor.call(this, this.viewModelObservableCollection, this.selectedObservable, this.updateViewUsecase, this.observableShowform, this.dehydrate);
+    }
+
+    URescheduleMilestone.prototype.execute = function() {
+      var _this = this;
+      Milestone.extend(RScheduleItem);
+      Milestone.setScheduleUrl("/planner/Release/Milestone/Schedule");
+      console.log('execute URescheduleMilestone');
+      return this.milestone.schedule(this.milestone.id, this.milestone.phaseId, this.milestone.date.dateString, this.milestone.time, function(data) {
+        return _this.refreshData(data);
+      });
+    };
+
+    return URescheduleMilestone;
+
+  })(UPersistAndRefresh);
+
+  UModifyAssignment = (function(_super) {
+
+    __extends(UModifyAssignment, _super);
 
     function UModifyAssignment(assignment, viewModelObservableCollection, selectedObservable, updateViewUsecase, observableShowform, sourceView, dehydrate) {
       this.assignment = assignment;
@@ -489,26 +556,9 @@
       }
     };
 
-    UModifyAssignment.prototype.refreshData = function(json) {
-      var index, oldItem, r, refreshed, _i, _len, _ref;
-      console.log(json);
-      console.log(this.dehydrate);
-      refreshed = this.dehydrate(json);
-      _ref = this.viewModelObservableCollection();
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        r = _ref[_i];
-        if (r.id === refreshed.id) oldItem = r;
-      }
-      index = this.viewModelObservableCollection().indexOf(oldItem);
-      this.observableShowform(null);
-      this.viewModelObservableCollection.splice(index, 1, refreshed);
-      this.selectedObservable(refreshed);
-      return this.updateViewUsecase.execute();
-    };
-
     return UModifyAssignment;
 
-  })();
+  })(UPersistAndRefresh);
 
   UDeleteAssignment = (function() {
 
@@ -658,6 +708,10 @@
         }
         descr += '</li>';
         descr += '</ul>';
+        ms.release = {
+          id: this.observableRelease().id,
+          title: this.observableRelease().title
+        };
         obj = {
           group: this.observableRelease().title,
           start: ms.date.date,
@@ -804,6 +858,7 @@
       $('#graph1').html('');
       $('#graph2').html('');
       $('#graph3').html('');
+      $('#graph4').html('');
       milestones = jsonData.reduce(function(acc, x) {
         var artefacts, id;
         id = x.Milestone;
@@ -924,5 +979,7 @@
   root.UDisplayPlanningForResource = UDisplayPlanningForResource;
 
   root.UUpdateScreen = UUpdateScreen;
+
+  root.URescheduleMilestone = URescheduleMilestone;
 
 }).call(this);
