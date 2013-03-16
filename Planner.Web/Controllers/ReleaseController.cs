@@ -112,6 +112,17 @@ namespace Mnd.Planner.Web.Controllers
             return this.Json(release, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        public JsonResult SchedulePhase(ScheduleReleasePhaseInputModel obj)
+        {
+            var uc = new PlanPeriod(new Phase { Id = obj.EventId }, obj.StartDate.ToDateTimeFromDutchString(), obj.EndDate.ToDateTimeFromDutchString());
+            uc.Execute();
+
+            var rep = new ReleaseRepository();
+            var release = rep.GetReleaseSummary(obj.ReleaseId);
+            return this.Json(release, JsonRequestBehavior.AllowGet);
+        }
+
         [HttpGet]
         public JsonResult GetReleaseProgress(int id)
         {

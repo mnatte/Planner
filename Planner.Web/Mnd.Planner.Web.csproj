@@ -102,6 +102,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\DeliverableController.cs" />
     <Compile Include="Controllers\MeetingController.cs" />
+    <Compile Include="InputModels\ScheduleReleasePhaseInputModel.cs" />
     <Compile Include="InputModels\ScheduleReleaseEventInputModel.cs" />
     <Compile Include="Controllers\ResourceAssignmentController.cs" />
     <Compile Include="Controllers\ResourceController.cs" />
@@ -709,6 +710,7 @@
     <Content Include="templates\absenceForm.tmpl.html" />
     <Content Include="templates\assignmentForm.tmpl.html" />
     <Content Include="templates\addReleaseAssignmentForm.tmpl.html" />
+    <Content Include="templates\schedulePeriodForm.tmpl.html" />
     <Content Include="templates\scheduleMilestoneForm.tmpl.html" />
     <Content Include="templates\meetingForm.tmpl.html" />
     <Content Include="templates\releaseOverview.tmpl.html" />

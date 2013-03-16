@@ -1,5 +1,5 @@
 (function() {
-  var RCrud, RGroupBy, RMoveItem, RScheduleItem, RSimpleCrud, RTeamMember, root,
+  var RCrud, RGroupBy, RMoveItem, RScheduleItem, RSchedulePeriod, RSimpleCrud, RTeamMember, root,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     _this = this;
 
@@ -457,6 +457,36 @@
     }
   };
 
+  RSchedulePeriod = {
+    setScheduleUrl: function(url) {
+      return _this.scheduleUrl = url;
+    },
+    extended: function() {
+      return this.include({
+        schedule: function(periodId, relId, startDateString, endDateString, callback) {
+          return $.ajax(scheduleUrl, {
+            dataType: "json",
+            data: ko.toJSON({
+              startDate: startDateString,
+              endDate: endDateString,
+              releaseId: relId,
+              eventId: periodId
+            }),
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            success: function(data, status, XHR) {
+              console.log("" + data + " saved");
+              return callback(data);
+            },
+            error: function(XHR, status, errorThrown) {
+              return console.log("AJAX SAVE error: " + errorThrown);
+            }
+          });
+        }
+      });
+    }
+  };
+
   root.RMoveItem = RMoveItem;
 
   root.RGroupBy = RGroupBy;
@@ -468,5 +498,7 @@
   root.RSimpleCrud = RSimpleCrud;
 
   root.RScheduleItem = RScheduleItem;
+
+  root.RSchedulePeriod = RSchedulePeriod;
 
 }).call(this);

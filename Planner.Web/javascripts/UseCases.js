@@ -1,5 +1,5 @@
 (function() {
-  var UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UUpdateScreen, root,
+  var UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUpdateScreen, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -103,7 +103,7 @@
       this.viewModel = new AbsencesViewmodel(resources);
       this.viewModel.load(resources.sort());
       ko.applyBindings(this.viewModel);
-      timeline = new Mnd.Timeline(this.viewModel.showAbsences, this.viewModel.selectedTimelineItem);
+      timeline = new Mnd.Timeline(this.viewModel.showAbsences, this.viewModel.selectedTimelineItem, "100%", "1000px");
       return timeline.draw();
     };
 
@@ -522,6 +522,34 @@
 
   })(UPersistAndRefresh);
 
+  UReschedulePhase = (function(_super) {
+
+    __extends(UReschedulePhase, _super);
+
+    function UReschedulePhase(phase, viewModelObservableCollection, selectedObservable, updateViewUsecase, observableShowform, dehydrate) {
+      this.phase = phase;
+      this.viewModelObservableCollection = viewModelObservableCollection;
+      this.selectedObservable = selectedObservable;
+      this.updateViewUsecase = updateViewUsecase;
+      this.observableShowform = observableShowform;
+      this.dehydrate = dehydrate;
+      UReschedulePhase.__super__.constructor.call(this, this.viewModelObservableCollection, this.selectedObservable, this.updateViewUsecase, this.observableShowform, this.dehydrate);
+    }
+
+    UReschedulePhase.prototype.execute = function() {
+      var _this = this;
+      Phase.extend(RSchedulePeriod);
+      Phase.setScheduleUrl("/planner/Release/Phase/Schedule");
+      console.log('execute UReschedulePhase');
+      return this.phase.schedule(this.phase.id, this.phase.parentId, this.phase.startDate.dateString, this.phase.endDate.dateString, function(data) {
+        return _this.refreshData(data);
+      });
+    };
+
+    return UReschedulePhase;
+
+  })(UPersistAndRefresh);
+
   UModifyAssignment = (function(_super) {
 
     __extends(UModifyAssignment, _super);
@@ -534,7 +562,7 @@
       this.observableShowform = observableShowform;
       this.sourceView = sourceView;
       this.dehydrate = dehydrate;
-      console.log(this.sourceView);
+      UModifyAssignment.__super__.constructor.call(this, this.viewModelObservableCollection, this.selectedObservable, this.updateViewUsecase, this.observableShowform, this.dehydrate);
     }
 
     UModifyAssignment.prototype.execute = function() {
@@ -560,7 +588,9 @@
 
   })(UPersistAndRefresh);
 
-  UDeleteAssignment = (function() {
+  UDeleteAssignment = (function(_super) {
+
+    __extends(UDeleteAssignment, _super);
 
     function UDeleteAssignment(assignment, viewModelObservableCollection, selectedObservable, updateViewUsecase, observableShowform, sourceView, dehydrate) {
       this.assignment = assignment;
@@ -570,6 +600,7 @@
       this.observableShowform = observableShowform;
       this.sourceView = sourceView;
       this.dehydrate = dehydrate;
+      UDeleteAssignment.__super__.constructor.call(this, this.viewModelObservableCollection, this.selectedObservable, this.updateViewUsecase, this.observableShowform, this.dehydrate);
     }
 
     UDeleteAssignment.prototype.execute = function() {
@@ -589,26 +620,9 @@
       }
     };
 
-    UDeleteAssignment.prototype.refreshData = function(json) {
-      var index, oldItem, r, refreshed, _i, _len, _ref;
-      console.log(json);
-      console.log(this.dehydrate);
-      refreshed = this.dehydrate(json);
-      _ref = this.viewModelObservableCollection();
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        r = _ref[_i];
-        if (r.id === refreshed.id) oldItem = r;
-      }
-      index = this.viewModelObservableCollection().indexOf(oldItem);
-      this.observableShowform(null);
-      this.viewModelObservableCollection.splice(index, 1, refreshed);
-      this.selectedObservable(refreshed);
-      return this.updateViewUsecase.execute();
-    };
-
     return UDeleteAssignment;
 
-  })();
+  })(UPersistAndRefresh);
 
   UUpdateScreen = (function() {
 
@@ -662,7 +676,8 @@
           start: ph.startDate.date,
           end: ph.endDate.date,
           content: cont,
-          info: ph.toString()
+          info: ph.toString(),
+          dataObject: ph
         };
         this.displayData.push(obj);
       }
@@ -981,5 +996,7 @@
   root.UUpdateScreen = UUpdateScreen;
 
   root.URescheduleMilestone = URescheduleMilestone;
+
+  root.UReschedulePhase = UReschedulePhase;
 
 }).call(this);

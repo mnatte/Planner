@@ -11,13 +11,17 @@
         _this = this;
       this.allResources = allResources;
       this.allActivities = allActivities;
+      this.rescheduleSelectedPeriod = __bind(this.rescheduleSelectedPeriod, this);
       this.rescheduleSelectedMilestone = __bind(this.rescheduleSelectedMilestone, this);
       this.deleteSelectedAssignment = __bind(this.deleteSelectedAssignment, this);
       this.saveNewAssignment = __bind(this.saveNewAssignment, this);
       this.saveSelectedAssignment = __bind(this.saveSelectedAssignment, this);
       this.viewReleasePlanning = __bind(this.viewReleasePlanning, this);
       this.inspectRelease = ko.observable();
+      this.selectedTimelineItem = ko.observable();
+      this.selectedReleaseTimelineItem = ko.observable();
       this.selectedMilestone = ko.observable();
+      this.selectedPhase = ko.observable();
       this.selectedProject = ko.observable();
       this.newAssignment = ko.observable();
       this.canShowDetails = ko.observable(false);
@@ -30,6 +34,28 @@
         console.log(newValue);
         uc = new UDisplayPlanningForResource(newValue, _this.newAssignment().period);
         return uc.execute();
+      });
+      this.selectedReleaseTimelineItem.subscribe(function(newValue) {
+        console.log(newValue);
+        _this.selectedAssignment(null);
+        if (newValue) {
+          if (newValue.dataObject.deliverables) {
+            return _this.selectedMilestone(newValue);
+          } else {
+            return _this.selectedPhase(newValue);
+          }
+        }
+      });
+      this.selectedPhase.subscribe(function(newValue) {
+        if (newValue) {
+          console.log(newValue);
+          newValue.dataObject.release = {
+            id: _this.inspectRelease().id,
+            title: _this.inspectRelease().title
+          };
+          _this.newAssignment(null);
+          return _this.selectedMilestone(null);
+        }
       });
       this.selectedMilestone.subscribe(function(newValue) {
         var del, deliverables, ms, x, _i, _len, _ref;
@@ -61,9 +87,9 @@
             activity: _this.selectedActivity
           };
         }
-        return _this.newAssignment(x);
+        _this.newAssignment(x);
+        return _this.selectedPhase(null);
       });
-      this.selectedTimelineItem = ko.observable();
       this.selectedAssignment = ko.observable();
       this.selectedTimelineItem.subscribe(function(newValue) {
         var x;
@@ -78,13 +104,16 @@
       });
       updateScreenUseCases = [];
       updateScreenFunctions = [];
-      updateScreenUseCases.push(new UDisplayReleaseTimeline(this.inspectRelease, this.selectedMilestone));
+      updateScreenUseCases.push(new UDisplayReleaseTimeline(this.inspectRelease, this.selectedReleaseTimelineItem));
       updateScreenUseCases.push(new UDisplayReleasePlanningInTimeline(this.inspectRelease, this.selectedTimelineItem));
       updateScreenFunctions.push(function() {
         return _this.selectedTimelineItem(null);
       });
       updateScreenFunctions.push(function() {
         return _this.selectedMilestone(null);
+      });
+      updateScreenFunctions.push(function() {
+        return _this.selectedPhase(null);
       });
       this.updateScreenUseCase = new UUpdateScreen(updateScreenUseCases, updateScreenFunctions);
       Resource.extend(RTeamMember);
@@ -135,15 +164,20 @@
 
     ReleaseOverviewViewmodel.prototype.rescheduleSelectedMilestone = function() {
       var date, ms, uc;
-      console.log(this.selectedMilestone().dataObject.date.dateString);
-      console.log(this.selectedMilestone().dataObject.time);
-      console.log(this.selectedMilestone().dataObject.id);
-      console.log(this.selectedMilestone().dataObject.title);
-      console.log(this.selectedMilestone().dataObject.release.title);
-      console.log(this.selectedMilestone().dataObject.release.id);
       date = DateFormatter.createFromString(this.selectedMilestone().dataObject.date.dateString);
       ms = new Milestone(this.selectedMilestone().dataObject.id, date, this.selectedMilestone().dataObject.time, null, null, this.selectedMilestone().dataObject.release.id);
       uc = new URescheduleMilestone(ms, this.allReleases, this.inspectRelease, this.updateScreenUseCase, this.selectedAssignment, function(json) {
+        return Release.create(json);
+      });
+      return uc.execute();
+    };
+
+    ReleaseOverviewViewmodel.prototype.rescheduleSelectedPeriod = function() {
+      var endDate, phase, startDate, uc;
+      startDate = DateFormatter.createFromString(this.selectedPhase().dataObject.startDate.dateString);
+      endDate = DateFormatter.createFromString(this.selectedPhase().dataObject.endDate.dateString);
+      phase = new Phase(this.selectedPhase().dataObject.id, startDate, endDate, null, this.selectedPhase().dataObject.release.id);
+      uc = new UReschedulePhase(phase, this.allReleases, this.inspectRelease, this.updateScreenUseCase, this.selectedAssignment, function(json) {
         return Release.create(json);
       });
       return uc.execute();

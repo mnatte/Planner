@@ -100,6 +100,12 @@
                 <!-- ko template: {name: 'scheduleMilestoneForm', data: $root.selectedMilestone().dataObject} -->
                 <!-- /ko -->
             </section>
+            <!-- /ko -->
+            <!-- ko if: $root.selectedPhase() -->
+            <section id="phaseFormSection" data-bind="fadeVisible: true, fadeDuration: 500">
+                <!-- ko template: {name: 'schedulePeriodForm', data: $root.selectedPhase().dataObject} -->
+                <!-- /ko -->
+            </section>
             <!--/ko-->
             </div>
             <!-- ko if: $root.newAssignment() -->

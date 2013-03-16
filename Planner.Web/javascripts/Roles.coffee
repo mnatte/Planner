@@ -288,6 +288,27 @@ RScheduleItem =
 					error: (XHR, status, errorThrown) ->
 						console.log "AJAX SAVE error: #{errorThrown}"
 
+RSchedulePeriod = 
+	# static extensions
+	# @ here is static
+	setScheduleUrl: (url) =>
+		@scheduleUrl = url
+	extended: ->
+		# instance extensions
+		@include
+			schedule: (periodId, relId, startDateString, endDateString, callback) ->
+				# no @ here since scheduleUrl is static
+				$.ajax scheduleUrl,
+					dataType: "json"
+					data: ko.toJSON({ startDate: startDateString, endDate: endDateString, releaseId: relId, eventId: periodId })
+					type: "POST"
+					contentType: "application/json; charset=utf-8"
+					success: (data, status, XHR) ->
+						console.log "#{data} saved"
+						callback data
+					error: (XHR, status, errorThrown) ->
+						console.log "AJAX SAVE error: #{errorThrown}"
+
 # export to root object
 root.RMoveItem = RMoveItem
 root.RGroupBy = RGroupBy
@@ -295,3 +316,4 @@ root.RTeamMember = RTeamMember
 root.RCrud = RCrud
 root.RSimpleCrud = RSimpleCrud
 root.RScheduleItem = RScheduleItem
+root.RSchedulePeriod = RSchedulePeriod

@@ -83,7 +83,7 @@ class UDisplayAbsences
 		@viewModel = new AbsencesViewmodel(resources)
 		@viewModel.load resources.sort()
 		ko.applyBindings(@viewModel)
-		timeline = new Mnd.Timeline(@viewModel.showAbsences, @viewModel.selectedTimelineItem)
+		timeline = new Mnd.Timeline(@viewModel.showAbsences, @viewModel.selectedTimelineItem, "100%", "1000px",)
 		timeline.draw()
 
 class UDisplayAssignments
@@ -268,10 +268,20 @@ class URescheduleMilestone extends UPersistAndRefresh
 		console.log 'execute URescheduleMilestone'
 		@milestone.schedule(@milestone.id, @milestone.phaseId, @milestone.date.dateString, @milestone.time, (data) => @refreshData(data))
 
+class UReschedulePhase extends UPersistAndRefresh
+	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in
+	constructor: (@phase, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate) ->
+		super @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate
+	execute: ->
+		Phase.extend RSchedulePeriod
+		Phase.setScheduleUrl "/planner/Release/Phase/Schedule"
+		console.log 'execute UReschedulePhase'
+		@phase.schedule(@phase.id, @phase.parentId, @phase.startDate.dateString, @phase.endDate.dateString, (data) => @refreshData(data))
+
 class UModifyAssignment extends UPersistAndRefresh
 	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in
 	constructor: (@assignment, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @sourceView, @dehydrate) ->
-		console.log @sourceView
+		super @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate
 	execute: ->
 		console.log 'execute UModifyAssignment'
 		console.log @assignment
@@ -285,33 +295,19 @@ class UModifyAssignment extends UPersistAndRefresh
 			# rel, proj, ms, del, act, per, ff
 			@assignment.resource.plan(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, @assignment.focusFactor, (data) => @refreshData(data))
 
-class UDeleteAssignment
+class UDeleteAssignment extends UPersistAndRefresh
 	constructor: (@assignment, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @sourceView, @dehydrate) ->
+		super @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate
 	execute: ->
 		console.log 'execute UDeleteResourceAssignment'
 		json = ko.toJSON(@assignment)
 		console.log json
-		# since we POST a graph we cannot use HTTP DELETE. The RCrud method 'save' is abused here
 		if @sourceView is "release"
 			# rel, proj, ms, del, act, per, ff
 			@assignment.resource.unassignFromRelease(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, (data) => @refreshData(data))
 		else if @sourceView is "resource"
 			# rel, proj, ms, del, act, per, ff
 			@assignment.resource.unassign(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, (data) => @refreshData(data))
-	refreshData: (json) ->
-		console.log json
-		console.log @dehydrate
-		refreshed = @dehydrate json
-		# replace old item in collection for new one
-		oldItem = r for r in @viewModelObservableCollection() when r.id is refreshed.id
-		#console.log oldItem
-		index = @viewModelObservableCollection().indexOf(oldItem)
-		@observableShowform null
-		# i = index of item to remove, 1 is amount to be removed, rel is item to be inserted there
-		@viewModelObservableCollection.splice index, 1, refreshed
-		@selectedObservable refreshed
-		@updateViewUsecase.execute()
-
 
 class UUpdateScreen
 	constructor: (@usecases, @delegates) ->
@@ -333,7 +329,7 @@ class UDisplayReleaseTimeline
 		for ph in @observableRelease().phases
 			#cont = '<span style="background-color:pink" />' + ph.title + '</span>'
 			cont = ph.title
-			obj = {group: @observableRelease().title, start: ph.startDate.date, end: ph.endDate.date, content:  cont, info: ph.toString() }
+			obj = {group: @observableRelease().title, start: ph.startDate.date, end: ph.endDate.date, content:  cont, info: ph.toString(), dataObject: ph }
 			@displayData.push obj
 		for ms in @observableRelease().milestones
 			icon = '<span class="icon icon-milestone" />'
@@ -518,6 +514,8 @@ root.UDisplayReleaseProgressOverview = UDisplayReleaseProgressOverview
 root.UDisplayPlanningForResource = UDisplayPlanningForResource
 root.UUpdateScreen = UUpdateScreen
 root.URescheduleMilestone = URescheduleMilestone
+root.UReschedulePhase = UReschedulePhase
+
 
 
 

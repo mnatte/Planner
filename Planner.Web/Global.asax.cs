@@ -34,6 +34,11 @@ namespace Mnd.Planner.Web
                 new { controller = "Release", action = "ScheduleMilestone", param1 = UrlParameter.Optional } // Parameter defaults
             );
             routes.MapRoute(
+                "SchedulePhase", // Route name
+                "Release/Phase/Schedule", // URL with parameters
+                new { controller = "Release", action = "SchedulePhase", param1 = UrlParameter.Optional } // Parameter defaults
+            );
+            routes.MapRoute(
                 "RemoveAssignmentReturnRelease", // Route name
                 "Resource/Release/UnAssign", // URL with parameters
                 new { controller = "Resource", action = "UnAssignReturnRelease", param1 = UrlParameter.Optional } // Parameter defaults

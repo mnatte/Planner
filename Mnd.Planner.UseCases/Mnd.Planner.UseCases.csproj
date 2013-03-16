@@ -40,7 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PlanPeriod.cs" />
     <Compile Include="PlanMilestone.cs" />
+    <Compile Include="Roles\RPeriodSchedule.cs" />
     <Compile Include="Roles\RMilestoneSchedule.cs" />
     <Compile Include="UnAssignResource.cs" />
     <Compile Include="CreateAlertsForHighAttentionItems.cs" />

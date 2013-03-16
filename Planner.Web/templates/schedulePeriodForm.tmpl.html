@@ -1,0 +1,7 @@
+﻿<form>
+    <label data-bind="text: release.title + ' - ' + title" ></label>
+    <label>Start date (dd/mm/yyyy):</label><input type="text" data-bind="value: startDate.dateString" />
+    <label>End date (dd/mm/yyyy):</label><input type="text" data-bind="value: endDate.dateString" />
+    <!--<span class="icon32 icon-save interact alignRight" data-bind="click: $parent.saveSelectedMilestone.bind($data)"></span>-->
+    <button class="sexybutton" data-bind="click: $parent.rescheduleSelectedPeriod.bind($data)"><span><span><span class="save">Reschedule</span></span></span></button>
+</form>

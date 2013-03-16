@@ -8,7 +8,11 @@ class ReleaseOverviewViewmodel
 	constructor: (allReleases, @allResources, @allActivities) ->
 		# ctor is executed in context of INSTANCE. Therefore @ refers here to CURRENT INSTANCE and attaches selectedPhase to all instances (since object IS ctor)
 		@inspectRelease = ko.observable()
+		# used for update selected assignment
+		@selectedTimelineItem = ko.observable()
+		@selectedReleaseTimelineItem = ko.observable()
 		@selectedMilestone = ko.observable()
+		@selectedPhase = ko.observable()
 		@selectedProject = ko.observable()
 		@newAssignment = ko.observable()
 		@canShowDetails = ko.observable(false)
@@ -23,9 +27,24 @@ class ReleaseOverviewViewmodel
 			uc = new UDisplayPlanningForResource(newValue, @newAssignment().period)
 			uc.execute()
 			)
-		#@inspectRelease.subscribe((newValue) => 
-		#	console.log newValue
-		#	)
+
+		@selectedReleaseTimelineItem.subscribe((newValue) => 
+			console.log newValue
+			@selectedAssignment null
+			if newValue
+				if newValue.dataObject.deliverables
+					@selectedMilestone newValue
+				else
+					@selectedPhase newValue
+			)
+
+		@selectedPhase.subscribe((newValue) => 
+			if newValue
+				console.log newValue
+				newValue.dataObject.release = { id: @inspectRelease().id, title: @inspectRelease().title }
+				@newAssignment null
+				@selectedMilestone null
+			)
 		@selectedMilestone.subscribe((newValue) => 
 			console.log newValue
 			if newValue
@@ -36,9 +55,8 @@ class ReleaseOverviewViewmodel
 				ms.deliverables = deliverables
 				x = { id: 0, release: { id: @inspectRelease().id, title: @inspectRelease().title }, focusFactor: 0.8, period: new Period(new Date(), newValue.dataObject.date.date, "new assignment"), milestone: ms, resource: @selectedResource, deliverable: @selectedDeliverable, activity: @selectedActivity }
 			@newAssignment x
+			@selectedPhase null
 			)
-		# used for update selected assignment
-		@selectedTimelineItem = ko.observable()
 		@selectedAssignment = ko.observable()
 		@selectedTimelineItem.subscribe((newValue) => 
 			console.log newValue
@@ -53,11 +71,12 @@ class ReleaseOverviewViewmodel
 		updateScreenUseCases = []
 		updateScreenFunctions = []
 		# @selectedMilestone is the observable to trigger new assignment functionality
-		updateScreenUseCases.push(new UDisplayReleaseTimeline(@inspectRelease, @selectedMilestone))
+		updateScreenUseCases.push(new UDisplayReleaseTimeline(@inspectRelease, @selectedReleaseTimelineItem))
 		# @selectedTimelineItem is the observable to trigger selected assignment functionality
 		updateScreenUseCases.push(new UDisplayReleasePlanningInTimeline(@inspectRelease, @selectedTimelineItem))
 		updateScreenFunctions.push(=> @selectedTimelineItem null)
 		updateScreenFunctions.push(=> @selectedMilestone null)
+		updateScreenFunctions.push(=> @selectedPhase null)
 		@updateScreenUseCase = new UUpdateScreen updateScreenUseCases, updateScreenFunctions
 		Resource.extend RTeamMember
 		Assignment.extend RAssignmentSerialize
@@ -90,16 +109,18 @@ class ReleaseOverviewViewmodel
 		useCase.execute()
 
 	rescheduleSelectedMilestone: =>
-		console.log @selectedMilestone().dataObject.date.dateString
-		console.log @selectedMilestone().dataObject.time
-		console.log @selectedMilestone().dataObject.id
-		console.log @selectedMilestone().dataObject.title
-		console.log @selectedMilestone().dataObject.release.title
-		console.log @selectedMilestone().dataObject.release.id
 		date = DateFormatter.createFromString @selectedMilestone().dataObject.date.dateString
 		ms = new Milestone(@selectedMilestone().dataObject.id, date, @selectedMilestone().dataObject.time, null, null, @selectedMilestone().dataObject.release.id)
 		uc = new URescheduleMilestone(ms, @allReleases, @inspectRelease, @updateScreenUseCase, @selectedAssignment, (json) -> Release.create json)
 		uc.execute()
+
+	rescheduleSelectedPeriod: =>
+		startDate = DateFormatter.createFromString @selectedPhase().dataObject.startDate.dateString
+		endDate = DateFormatter.createFromString @selectedPhase().dataObject.endDate.dateString
+		phase = new Phase(@selectedPhase().dataObject.id, startDate, endDate, null, @selectedPhase().dataObject.release.id)
+		uc = new UReschedulePhase(phase, @allReleases, @inspectRelease, @updateScreenUseCase, @selectedAssignment, (json) -> Release.create json)
+		uc.execute()
+		#console.log phase
 
 # export to root object
 root.ReleaseOverviewViewmodel = ReleaseOverviewViewmodel
