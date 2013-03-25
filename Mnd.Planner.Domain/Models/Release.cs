@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Mnd.Planner.Domain.Roles;
 
 namespace Mnd.Planner.Domain
 {

@@ -6,7 +6,7 @@ using Mnd.Planner.Domain.Roles;
 
 namespace Mnd.Planner.Domain
 {
-    public class Milestone : RMilestoneSchedule
+    public class Milestone : RMilestoneSchedule, RMilestoneStatus, RMilestoneFlyWeight
     {
         public int Id { get; set; }
         public string Title { get; set; }
@@ -23,6 +23,6 @@ namespace Mnd.Planner.Domain
                 return _deliverables;
             }
         }
-        public Release Release { get; set; }
+        public RPhaseFlyWeight Release { get; set; }
     }
 }

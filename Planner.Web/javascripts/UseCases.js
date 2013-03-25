@@ -800,7 +800,7 @@
       showData = this.displayData.sort(function(a, b) {
         return a.start - b.end;
       });
-      timeline = new Mnd.Timeline(showData, this.observableTimelineItem, "100%", "500px", "resourcePlanning", "assignmentDetails");
+      timeline = new Mnd.Timeline(showData, this.observableTimelineItem, "100%", "800px", "resourcePlanning", "assignmentDetails");
       timeline.draw();
       return timeline.clearDetails();
     };

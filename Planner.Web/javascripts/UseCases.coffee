@@ -389,7 +389,7 @@ class UDisplayReleasePlanningInTimeline
 							obj = {group: resource, start: assignment.period.startDate.date, end: assignment.period.endDate.date, content: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.project.title, info: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.period.toString(), dataObject: dto}
 							@displayData.push obj
 		showData = @displayData.sort((a,b)-> a.start - b.end)
-		timeline = new Mnd.Timeline(showData, @observableTimelineItem, "100%", "500px", "resourcePlanning", "assignmentDetails")
+		timeline = new Mnd.Timeline(showData, @observableTimelineItem, "100%", "800px", "resourcePlanning", "assignmentDetails")
 		timeline.draw()
 		timeline.clearDetails()
 	createRowItem: (item, index) ->

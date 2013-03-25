@@ -72,8 +72,22 @@ namespace Mnd.Planner.Web.Controllers
         [HttpPost]
         public JsonResult SaveDeliverableStatus(DeliverableStatusInputModel obj)
         {
-            var rep = new ReleaseRepository();
-            rep.SaveDeliverableStatus(obj);
+            //var rep = new ReleaseRepository();
+            //rep.SaveDeliverableStatus(obj);
+            var del = new Deliverable { Id = obj.DeliverableId };
+            foreach(var proj in obj.Scope)
+            {
+                var project = new Project { Id = proj.Id };
+                foreach (var act in proj.Workload)
+                {
+                    project.Workload.Add(new ActivityStatus { Activity = act.Activity, HoursRemaining = act.HoursRemaining });
+                }
+                del.Scope.Add(project);
+            }
+            var ms = new Milestone { Id = obj.MilestoneId, Release = new Release { Id = obj.ReleaseId } };
+
+            var uc = new UpdateMilestoneDeliverableStatus(del, ms);
+            uc.Execute();
 
             var result = this.Json("Saved", JsonRequestBehavior.AllowGet);
             return result;

@@ -6,7 +6,7 @@ using Mnd.Planner.Domain.Roles;
 
 namespace Mnd.Planner.Domain
 {
-    public class Phase : RPeriodSchedule
+    public class Phase : RPeriodSchedule, RPhaseFlyWeight
     {
         public int Id { get; set; }
         public string Title { get; set; }
