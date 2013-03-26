@@ -18,6 +18,10 @@
         return loadAssignments(newValue.id);
       });
       Resource.extend(RTeamMember);
+      this.selectedTimelineItem = ko.observable();
+      this.selectedTimelineItem.subscribe(function(newValue) {
+        return console.log(newValue);
+      });
     }
 
     PhasesViewmodel.prototype.load = function(data) {
@@ -44,7 +48,8 @@
             start: ph.startDate.date,
             end: ph.endDate.date,
             content: ph.title,
-            info: ph.toString()
+            info: ph.toString(),
+            dataObject: ph
           };
           this.displayData.push(obj);
         }
@@ -95,7 +100,8 @@
             group: rel.title,
             start: ms.date.date,
             content: ms.title + '<br />' + icon,
-            info: ms.date.dateString + '<br />' + ms.description + '<br/>' + descr
+            info: ms.date.dateString + '<br />' + ms.description + '<br/>' + descr,
+            dataObject: ms
           };
           this.displayData.push(obj);
         }

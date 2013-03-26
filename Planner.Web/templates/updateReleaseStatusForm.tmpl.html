@@ -1,0 +1,14 @@
+﻿<form>
+    <ul data-bind="foreach: scope">
+        <li>
+            <div class="colheader">
+                <span class="icon24 icon-chart-small"></span>
+                <span data-bind="text: title"></span>
+            </div>
+            <!-- ko foreach: workload -->
+                <label data-bind="text:activity.title"></label><input type="text" data-bind="value: hoursRemaining, name: activity.title" />
+            <!--/ko-->
+        </li>
+    </ul>
+    <button class="sexybutton" data-bind="click: $root.saveSelectedDeliverable.bind($data)"><span><span><span class="save">Save</span></span></span></button>
+</form>

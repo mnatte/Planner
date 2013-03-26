@@ -19,3 +19,5 @@ C:\Projects\Planner\Planner.Mailservice\obj\x86\Debug\GenerateResource.read.1.tl
 C:\Projects\Planner\Planner.Mailservice\obj\x86\Debug\GenerateResource.write.1.tlog
 C:\Projects\Planner\Planner.Mailservice\obj\x86\Debug\Mnd.Planner.Mailservice.exe
 C:\Projects\Planner\Planner.Mailservice\obj\x86\Debug\Mnd.Planner.Mailservice.pdb
+C:\Projects\Planner\Planner.Mailservice\bin\Debug\CuttingEdge.Conditions.dll
+C:\Projects\Planner\Planner.Mailservice\bin\Debug\CuttingEdge.Conditions.xml

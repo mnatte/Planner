@@ -17,3 +17,5 @@ C:\Projects\Planner\Planner.Web\bin\Mnd.DataAccess.pdb
 C:\Projects\Planner\Planner.Web\obj\Debug\ResolveAssemblyReference.cache
 C:\Projects\Planner\Planner.Web\obj\Debug\Mnd.Planner.Web.dll
 C:\Projects\Planner\Planner.Web\obj\Debug\Mnd.Planner.Web.pdb
+C:\Projects\Planner\Planner.Web\bin\CuttingEdge.Conditions.dll
+C:\Projects\Planner\Planner.Web\bin\CuttingEdge.Conditions.xml

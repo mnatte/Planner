@@ -72,21 +72,8 @@
                         <span>Remaining Hours</span>
                     </div>
                     <!-- ko if: $root.selectedDeliverable() -->
-                    <form>
-                        <ul data-bind="foreach: $root.selectedDeliverable().scope">
-                            <li>
-                                <div class="colheader">
-                                    <span class="icon24 icon-chart-small"></span>
-                                    <span data-bind="text: title"></span>
-                                </div>
-                                <!-- ko foreach: workload -->
-                                    <label data-bind="text:activity.title"></label><input type="text" data-bind="value: hoursRemaining, name: activity.title" />
-                                <!--/ko-->
-                            </li>
-                        </ul>
-                    <!--<span class="icon32 icon-save interact" data-bind="click: $root.saveSelectedDeliverable.bind($data)"></span>-->
-                    <button class="sexybutton" data-bind="click: $root.saveSelectedDeliverable.bind($data)"><span><span><span class="save">Save</span></span></span></button>
-                    </form>
+                        <!-- ko template: {name: 'updateReleaseStatusForm', data: $root.selectedDeliverable()} -->
+                        <!-- /ko -->
                     <!--/ko-->
                 </div>
                 <div class="five columns omega">

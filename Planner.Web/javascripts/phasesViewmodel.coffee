@@ -14,6 +14,10 @@ class PhasesViewmodel
 			loadAssignments newValue.id
 			)
 		Resource.extend RTeamMember
+		@selectedTimelineItem = ko.observable()
+		@selectedTimelineItem.subscribe((newValue) => 
+			console.log newValue
+			)
 
 	load: (data) ->
 		# all properties besides ctor are ATTACHED to prototype. these are EXECUTED in context of INSTANCE.
@@ -25,7 +29,7 @@ class PhasesViewmodel
 		for rel in relevantReleases 
 			console.log rel.title + ': ' + rel.endDate.dateString
 			for ph in rel.phases
-				obj = {group: rel.title, start: ph.startDate.date, end: ph.endDate.date, content: ph.title, info: ph.toString()}
+				obj = {group: rel.title, start: ph.startDate.date, end: ph.endDate.date, content: ph.title, info: ph.toString(), dataObject: ph}
 				@displayData.push obj
 			for ms in rel.milestones
 				icon = '<span class="icon icon-milestone" />'
@@ -53,7 +57,7 @@ class PhasesViewmodel
 					descr += '</ul>' # /projects
 				descr += '</li>' # /deliverable
 				descr += '</ul>' # /deliverables
-				obj = {group: rel.title, start: ms.date.date, content: ms.title + '<br />' + icon, info: ms.date.dateString + '<br />' + ms.description + '<br/>' + descr}
+				obj = {group: rel.title, start: ms.date.date, content: ms.title + '<br />' + icon, info: ms.date.dateString + '<br />' + ms.description + '<br/>' + descr, dataObject: ms}
 				@displayData.push obj
 		@showPhases = @displayData.sort((a,b)-> a.start - b.end)
 

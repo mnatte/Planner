@@ -8,10 +8,6 @@ class UpdateReleaseStatusViewmodel
 	constructor: (@allReleases) ->
 		# Phase.extend(RCrud)
 		# Milestone.extend(RCrud)
-		Deliverable.extend(RCrud)
-		Deliverable.extend(RDeliverableSerialize)
-		Project.extend(RProjectSerialize)
-		ProjectActivityStatus.extend(RProjectActivityStatusSerialize)
 		@selectedRelease = ko.observable()
 		@selectedMilestone = ko.observable()
 		@selectedDeliverable = ko.observable()
@@ -52,13 +48,8 @@ class UpdateReleaseStatusViewmodel
 		#reload deliverable activity statuses per project
 
 	saveSelectedDeliverable: =>
-		console.log "saveSelectedDeliverable: selectedRelease: #{@selectedRelease()}"
-		console.log "saveSelectedDeliverable: selectedMilestone: #{@selectedMilestone()}"
-		status = @selectedDeliverable().toStatusJSON()
-		console.log ko.toJSON(status)
-		#console.log ko.toJSON(@selectedDeliverable().milestoneId)
-		#i = @allReleases().indexOf(@selectedRelease())
-		@selectedDeliverable().save("/planner/Release/SaveDeliverableStatus", ko.toJSON(status), (data) => @refreshRelease(0, data))
+		uc = new UUpdateDeliverableStatus(@selectedDeliverable())
+		uc.execute()
 	
 # export to root object
 root.UpdateReleaseStatusViewmodel = UpdateReleaseStatusViewmodel

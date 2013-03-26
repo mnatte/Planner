@@ -13,3 +13,5 @@ C:\Projects\Planner\Mnd.Planner.UseCases\bin\Debug\Mnd.DataAccess.pdb
 C:\Projects\Planner\Mnd.Planner.UseCases\obj\Debug\ResolveAssemblyReference.cache
 C:\Projects\Planner\Mnd.Planner.UseCases\obj\Debug\Mnd.Planner.UseCases.dll
 C:\Projects\Planner\Mnd.Planner.UseCases\obj\Debug\Mnd.Planner.UseCases.pdb
+C:\Projects\Planner\Mnd.Planner.UseCases\bin\Debug\CuttingEdge.Conditions.dll
+C:\Projects\Planner\Mnd.Planner.UseCases\bin\Debug\CuttingEdge.Conditions.xml

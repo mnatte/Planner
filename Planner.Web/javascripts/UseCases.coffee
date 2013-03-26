@@ -72,7 +72,7 @@ class UDisplayPhases
 		@viewModel = new PhasesViewmodel(releases)
 		@viewModel.load releases.sort((a,b)->a.startDate.date - b.startDate.date)
 		ko.applyBindings(@viewModel)
-		timeline = new Mnd.Timeline(@viewModel.showPhases)
+		timeline = new Mnd.Timeline(@viewModel.showPhases, @viewModel.selectedTimelineItem)
 		timeline.draw()
 
 class UDisplayAbsences
@@ -240,23 +240,26 @@ class URefreshViewAfterCheckPeriod
 class UPersistAndRefresh
 	# @selectedObservable is the observable to set to the refreshed item itself, used in callback to refresh the view on its properties
 	# @updateViewUsecase is the callback usecase, @observableShowform is the observable used for hiding the form after processing
-	# @dehydrate is the function used in the callback to instantiate the new item by the returned json data, @sourceView determines what item to return
+	# @dehydrate is the function used in the callback to instantiate the new item by the returned json data
 	constructor: (@viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate) ->
 	execute: ->
 		throw new Error('Abstract method execute of UPersistAndRefresh UseCase')
 	refreshData: (json) ->
 		console.log json
 		console.log @dehydrate
-		refreshed = @dehydrate json
-		# replace old item in collection for new one
-		oldItem = r for r in @viewModelObservableCollection() when r.id is refreshed.id
-		#console.log oldItem
-		index = @viewModelObservableCollection().indexOf(oldItem)
-		@observableShowform null
+		if @dehydrate and @viewModelObservableCollection
+			refreshed = @dehydrate json
+			# replace old item in collection for new one
+			oldItem = r for r in @viewModelObservableCollection() when r.id is refreshed.id
+			#console.log oldItem
+			index = @viewModelObservableCollection().indexOf(oldItem)
+			@viewModelObservableCollection.splice index, 1, refreshed
+			@selectedObservable refreshed
+		if @observableShowform
+			@observableShowform null
 		# i = index of item to remove, 1 is amount to be removed, rel is item to be inserted there
-		@viewModelObservableCollection.splice index, 1, refreshed
-		@selectedObservable refreshed
-		@updateViewUsecase.execute()
+		if @updateViewUsecase
+			@updateViewUsecase.execute()
 
 class URescheduleMilestone extends UPersistAndRefresh
 	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in
@@ -308,6 +311,18 @@ class UDeleteAssignment extends UPersistAndRefresh
 		else if @sourceView is "resource"
 			# rel, proj, ms, del, act, per, ff
 			@assignment.resource.unassign(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, (data) => @refreshData(data))
+
+class UUpdateDeliverableStatus extends UPersistAndRefresh
+	constructor: (@selectedDeliverable, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @sourceView, @dehydrate) ->
+		super @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate
+	execute: ->
+		Deliverable.extend(RCrud)
+		Deliverable.extend(RDeliverableSerialize)
+		Project.extend(RProjectSerialize)
+		ProjectActivityStatus.extend(RProjectActivityStatusSerialize)
+		status = @selectedDeliverable.toStatusJSON()
+		console.log ko.toJSON(status)
+		@selectedDeliverable.save("/planner/Release/SaveDeliverableStatus", ko.toJSON(status), (data) => @refreshData(data))
 
 class UUpdateScreen
 	constructor: (@usecases, @delegates) ->
@@ -515,6 +530,7 @@ root.UDisplayPlanningForResource = UDisplayPlanningForResource
 root.UUpdateScreen = UUpdateScreen
 root.URescheduleMilestone = URescheduleMilestone
 root.UReschedulePhase = UReschedulePhase
+root.UUpdateDeliverableStatus = UUpdateDeliverableStatus
 
 
 

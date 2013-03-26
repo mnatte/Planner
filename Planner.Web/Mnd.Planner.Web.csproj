@@ -710,6 +710,7 @@
     <Content Include="templates\absenceForm.tmpl.html" />
     <Content Include="templates\assignmentForm.tmpl.html" />
     <Content Include="templates\addReleaseAssignmentForm.tmpl.html" />
+    <Content Include="templates\updateReleaseStatusForm.tmpl.html" />
     <Content Include="templates\schedulePeriodForm.tmpl.html" />
     <Content Include="templates\scheduleMilestoneForm.tmpl.html" />
     <Content Include="templates\meetingForm.tmpl.html" />
