@@ -1,5 +1,5 @@
 (function() {
-  var RCrud, RGroupBy, RMoveItem, RScheduleItem, RSchedulePeriod, RSimpleCrud, RTeamMember, root,
+  var RCrud, RDeliverableStatus, RGroupBy, RMoveItem, RScheduleItem, RSchedulePeriod, RSimpleCrud, RTeamMember, root,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     _this = this;
 
@@ -487,6 +487,58 @@
     }
   };
 
+  RDeliverableStatus = {
+    extended: function() {
+      return this.include({
+        isUnderPlanned: function() {
+          var act, activities, proj, underplanned, _i, _j, _len, _len2, _ref;
+          underplanned = false;
+          _ref = this.scope;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            proj = _ref[_i];
+            activities = proj.workload.reduce(function(acc, x) {
+              acc.push({
+                activityTitle: x.activity.title,
+                hrs: x.hoursRemaining,
+                planned: x.assignedResources.reduce((function(acc, x) {
+                  return acc + x.resourceAvailableHours();
+                }), 0)
+              });
+              return acc;
+            }, []);
+            for (_j = 0, _len2 = activities.length; _j < _len2; _j++) {
+              act = activities[_j];
+              underplanned = act.hrs > act.planned;
+            }
+          }
+          return underplanned;
+        },
+        plannedHours: function() {
+          var activities, hours, proj, _i, _len, _ref;
+          hours = 0;
+          _ref = this.scope;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            proj = _ref[_i];
+            activities = proj.workload.reduce(function(acc, x) {
+              acc.push({
+                activityTitle: x.activity.title,
+                hrs: x.hoursRemaining,
+                planned: x.assignedResources.reduce((function(acc, x) {
+                  return acc + x.resourceAvailableHours();
+                }), 0)
+              });
+              return acc;
+            }, []);
+            hours += activities.reduce(function(acc, x) {
+              return acc + x.planned;
+            }, 0);
+          }
+          return hours;
+        }
+      });
+    }
+  };
+
   root.RMoveItem = RMoveItem;
 
   root.RGroupBy = RGroupBy;
@@ -500,5 +552,7 @@
   root.RScheduleItem = RScheduleItem;
 
   root.RSchedulePeriod = RSchedulePeriod;
+
+  root.RDeliverableStatus = RDeliverableStatus;
 
 }).call(this);

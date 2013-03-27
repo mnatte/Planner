@@ -14,10 +14,28 @@ class PhasesViewmodel
 			loadAssignments newValue.id
 			)
 		Resource.extend RTeamMember
+		@allReleases = ko.observableArray allReleases
+		@selectedMilestone = ko.observable()
+		@selectedDeliverable = ko.observable()
 		@selectedTimelineItem = ko.observable()
 		@selectedTimelineItem.subscribe((newValue) => 
 			console.log newValue
+			if newValue
+				@selectedMilestone newValue.dataObject
+				@selectedDeliverable null
 			)
+		@selectedDeliverable.subscribe((newValue) => 
+			console.log newValue
+			)
+		Deliverable.extend RDeliverableStatus
+
+		updateScreenFunctions = []
+		# @selectedTimelineItem is the observable to trigger selected assignment functionality
+		updateScreenFunctions.push(=> @selectedTimelineItem null)
+		updateScreenFunctions.push(=> @selectedMilestone null)
+		updateScreenFunctions.push(=> @selectedDeliverable null)
+		@updateScreenUseCase = new UUpdateScreen null, updateScreenFunctions
+
 
 	load: (data) ->
 		# all properties besides ctor are ATTACHED to prototype. these are EXECUTED in context of INSTANCE.
@@ -57,7 +75,8 @@ class PhasesViewmodel
 					descr += '</ul>' # /projects
 				descr += '</li>' # /deliverable
 				descr += '</ul>' # /deliverables
-				obj = {group: rel.title, start: ms.date.date, content: ms.title + '<br />' + icon, info: ms.date.dateString + '<br />' + ms.description + '<br/>' + descr, dataObject: ms}
+				#obj = {group: rel.title, start: ms.date.date, content: ms.title + '<br />' + icon, info: ms.date.dateString + '<br />' + ms.description + '<br/>' + descr, dataObject: ms}
+				obj = {group: rel.title, start: ms.date.date, content: ms.title + '<br />' + icon, info: ms.date.dateString + '<br />' + ms.description, dataObject: ms}
 				@displayData.push obj
 		@showPhases = @displayData.sort((a,b)-> a.start - b.end)
 
@@ -72,6 +91,10 @@ class PhasesViewmodel
 	closeDetails: =>
         @canShowDetails(false)
 
+	#checkDeliverable: (data) =>
+	#	console.log data
+	#	@selectedDeliverable data
+
 	selectPhase: (data) =>
 		# console.log "selectPhase - function"
 		# console.log @
@@ -79,6 +102,11 @@ class PhasesViewmodel
 		@selectedPhase(data)
 		@canShowDetails(true)
 		# console.log "selectPhase after selection: " + @selectedPhase()
+
+	saveSelectedDeliverable: =>
+		#useCase = new UModifyAssignment(x, @allReleases, @inspectRelease, @updateScreenUseCase, @newAssignment, "release", (json) -> Release.create json)
+		uc = new UUpdateDeliverableStatus(@selectedDeliverable(), @allReleases, null, @updateScreenUseCase)
+		uc.execute()
 
 # export to root object
 root.PhasesViewmodel = PhasesViewmodel

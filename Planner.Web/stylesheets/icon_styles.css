@@ -26,6 +26,7 @@ a.icon128, input.icon128, span.icon128*/
 .icon-warning { background:url('../images/png/32x32/warning.png'); }
 .icon-edit { background:url('../images/png/24x24/edit.png'); }
 .icon-users { background:url('../images/png/32x32/users.png'); }
+.icon-users-small { background:url('../images/png/24x24/users.png'); }
 .icon-delete { background:url('../images/png/24x24/trash.png'); }
 .icon-remove16 { background:url('../images/png/16x16/delete.png'); }
 .icon-save { background:url('../images/png/32x32/save.png'); }

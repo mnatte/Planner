@@ -53,6 +53,7 @@
     <script type="text/javascript" src="javascripts/phasesViewmodel.js"></script>
     <script type="text/javascript" src="javascripts/ajax.js"></script>
     <script type="text/javascript" src="javascripts/Roles.js"></script>
+    <script type="text/javascript" src="javascripts/persistence.js"></script>
     <script type="text/javascript" src="javascripts/UseCases.js"></script>
 </head>
 <body>
@@ -68,6 +69,30 @@
         <div id="phases" class="sixteen columns">
             <div id="mytimeline"></div>
             <div id="details"></div>
+        </div>
+        <div id="updateStatus" class="sixteen columns">
+            <!-- ko if: $root.selectedMilestone() -->
+                <div id="deliverables" class="four columns">
+                    <ul>
+                        <!-- ko foreach: $root.selectedMilestone().deliverables -->
+                        <li>
+                            <span class="selectable" data-bind="text: title, click: $root.selectedDeliverable.bind($data), style: { color: $root.selectedDeliverable() != undefined && $data.id == $root.selectedDeliverable().id ? 'red' : 'black' }"></span>
+                            <img src="images/png/16x16/warning.png" data-bind="visible: isUnderPlanned()">
+                        </li>
+                        <!-- /ko -->
+                    </ul>
+                </div>
+            <!--/ko-->
+            <!-- ko if: $root.selectedDeliverable() -->
+                <div id="form" class="five columns">
+                    <!-- ko template: {name: 'updateReleaseStatusForm', data: $root.selectedDeliverable()} -->
+                    <!-- /ko -->
+                </div>
+                <div class="colheader four columns" id="planned">
+                    <span class="icon24 icon-users-small"></span>
+                    <span data-bind="text: $root.selectedDeliverable().plannedHours() + ' hours planned'"></span>
+                </div>
+            <!--/ko-->
         </div>
 </div><!-- container -->
     <script type="text/javascript">

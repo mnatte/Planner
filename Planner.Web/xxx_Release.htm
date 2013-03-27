@@ -1,0 +1,345 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+	<title>Release</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="stylesheets/base.css">
+	<link rel="stylesheet" href="stylesheets/skeleton.css">
+	<link rel="stylesheet" href="stylesheets/layout.css">
+    <link rel="stylesheet" href="stylesheets/tables.css">
+
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
+    <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.dateFormat-1.0.js"></script>
+    <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
+    <script type="text/javascript" src="Scripts/knockout-array-filter.js"></script>
+        
+    <script type="text/javascript" src="javascripts/Mixin.js"></script>
+    <script type="text/javascript" src="javascripts/release.js"></script>
+    <script type="text/javascript" src="javascripts/releaseViewmodel.js"></script>
+    <script type="text/javascript" src="javascripts/ajax.js"></script>
+    <script type="text/javascript" src="javascripts/Roles.js"></script>
+    <script type="text/javascript" src="javascripts/UseCases.js"></script>
+
+    <script type="text/javascript" src="Scripts/highcharts.js"></script>
+</head>
+<body>
+<!-- Primary Page Layout
+	================================================== -->
+
+	<!-- Delete everything in this .container and get started on your own site! -->
+<div class="container">
+	<div class="band navigation">
+        <nav class="primary container">
+			    <ul>
+				    <li><a href="Release.htm">Release Status</a></li>
+				    <li><a href="Phases.htm">Phases Overview</a></li>
+				    <li><a href="#">Administration</a>
+						    <ul>
+							    <li><a href="adminRelease.htm"><span>- </span>Admin Release</a></li>
+							    <li><a href="adminProject.htm"><span>- </span>Admin Project</a></li>
+                                <li><a href="adminResource.htm"><span>- </span>Admin Resource</a></li>
+						    </ul>
+				    </li>
+				    <li><a href="planResources.htm"><span>- </span>Plan Resources</a></li>
+			    </ul>
+		    </nav>
+    </div>
+		<header class="sixteen columns">
+            <div id="releasetitle" class="eight columns alpha">
+                <h1 data-bind="text: release.title"></h1>
+            </div>
+            <div id="releaseperiod" class="eight columns omega">
+                <h2><data data-bind="text: release.startDate.dateString"></data> - <data data-bind="text: release.endDate.dateString"></data></h2>
+            </div>
+        </header>
+        <section id="charts" class="sixteen columns">
+            <div id="chart-hours" class="sixteen columns"></div>
+        
+            <div id="remaininghours" class="six columns omega">
+                <div id="pie-pbis" class="six columns omega"></div>
+                <!--<table id="datatable">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Hours Available</th>
+                            <th>Workload</th>
+                            <th>Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: hourBalance($root.selectedPhaseId())">
+                        <tr>
+                            <th data-bind="text: projectname"></th>
+                            <td data-bind="text: availableHours"></td>
+                            <td data-bind="text: workload"></td>
+                            <td data-bind="text: balance"></td>
+                        </tr>
+                    </tbody>
+                </table>-->
+            </div>
+            <div class="six columns omega">&nbsp;</div>
+            <div class="four columns omega">
+                <div data-bind="foreach: statuses">
+                    <div><input type="checkbox" data-bind="checked: $parent.disgardedStatuses, value: $data" /><data data-bind="text: $data"></data></div>
+                </div>
+            </div>
+        </section>
+        <!--<section id="overview" class="sixteen columns">
+            <div id="phases" class="eight columns alpha" data-bind="foreach: release.phases">
+                <div><input type="radio" name="selectedPhase" data-bind="value: id, checked: $root.selectedPhaseId" /><label data-bind="text: toString()" style="display:inline" /></div>
+            </div>-->
+            <!--<div>
+                <ul data-bind="foreach: $root.currentPhases">
+                    <li class="price"><h6><data data-bind="text: title"></data> <data data-bind="text: DateFormatter.formatJsDate($root.currentDate(), 'dd/MM/yyyy')"></data> - <data data-bind="text: endDate.dateString"></data>: <data data-bind="text: workingDaysFromNow"></data> days remaining</h6></li>
+                </ul>
+            </div>
+        </section>-->
+
+        <section class="sixteen columns">
+            <div id="tabSection" class="sixteen columns alpha">
+                <ul class="tabs" data-bind="foreach: projects">
+                <!-- Give href an ID value of corresponding "tabs-content" <li>'s -->
+                  <li data-bind="attr: {tag: projectname}"><a data-bind="attr: {href: link}"><data data-bind="text: projectname"></data></a></li>
+                </ul>
+                <!--<div class="row">-->
+                <!-- Standard <ul> with class of "tabs-content" -->
+                <ul id="tabsContent" class="tabs-content" data-bind="foreach: projects">
+                  <!-- Give ID that matches HREF of above anchors -->
+                  <li data-bind="attr: {id: projectname}">
+                    <table class="zebra-striped condensed">
+                    <!--TODO: Per Activity grouping, same as bug and change as container for tasks-->
+                        <thead>
+                            <tr>
+                                <th>Feature Id</th>
+                                <th>Feature Title</th>
+                                <th>Remaining Hours</th>
+                                <th>Contact Person</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <td colspan="11"><strong>Total Hours Remaining<strong></td>
+                                <td aria-live="polite"><strong><data data-bind="text: totalHours"></data></strong> </td>
+                            </tr>
+                        </tfoot>
+                        <!-- @businessId, @contactPerson, @estimatedHours, @hoursWorked, @priority, @project, @remainingHours, @title, @state-->
+                        <tbody data-bind="foreach: backlog" id="taskstablebody">
+                            <tr aria-live="polite">
+                                <td data-bind="text: businessId"></td>
+                                <td data-bind="text: title"></td>
+                                <td data-bind="text: remainingHours"></td>
+                                <td data-bind="text: contactPerson"></td>
+                                <td data-bind="text: state"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+            </ul>
+            </div>
+        </section>
+	</div> <!--container -->
+    <script type="text/javascript">
+        // see http://www.highcharts.com/ref/#plotOptions-pie-dataLabels--formatter
+        var pieChartOptions = {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            size: "40%",
+            dataLabels: {
+                enabled: true,
+                connectorPadding: 5,
+                style: {
+                    fontSize: 8
+                },
+                connectorWidth: 0.5,
+                formatter: function () {
+                    var label = this.point.name;
+                    switch (this.point.name) {
+                        case "Ready for System Test":
+                            label = "RST";
+                            break;
+                        case "Under System Test":
+                            label = "UST";
+                            break;
+                        case "Ready for Dev":
+                            label = "RD";
+                            break;
+                        case "Under Development":
+                            label = "UD";
+                            break;
+                    }
+                    return "<b>" + label + "</b>:" + this.y;
+                }
+            }
+        };
+
+        function showStatusChart(statusdata) {
+            var chartOptions = {};
+            chartOptions.chart = {
+                // set to div id
+                renderTo: "pie-pbis",
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            };
+            chartOptions.title = { text: "Status Features" };
+            chartOptions.tooltip = { formatter: function () { return this.point.name + ': ' + Math.round(this.percentage) + '%' } };
+            chartOptions.series = [{
+                type: "pie",
+                name: "amount",
+                data: statusdata
+            }];
+            chartOptions.plotOptions = {
+                pie: pieChartOptions
+            };
+            var chart2 = new Highcharts.Chart(chartOptions);
+        }
+
+        function setUpHoursChart(cats) {
+            /**
+            * Visualize an HTML table using Highcharts. The top (horizontal) header
+            * is used for series names, and the left (vertical) header is used
+            * for category names. This function is based on jQuery.
+            * @param {Object} table The reference to the HTML table to visualize
+            * @param {Object} options Highcharts options
+            */
+
+            Highcharts.visualize = function (table, options) {
+                // TODO: load graph options through viewmodel observables
+
+                // the categories
+                //options.xAxis.categories = [];
+                //options.xAxis.categories = ['TR', 'EU', 'RU'];
+                //console.log(this);
+                options.xAxis.categories = cats;
+                // the data series
+                //options.series = [];
+                options.series = [{
+                    name: 'Hrs Available',
+                    data: [50, 22, 39]
+                },
+                        {
+                            name: 'Hrs Remaining',
+                            data: [34, 30, 29]
+                        },
+                        {
+                            name: 'Balance',
+                            data: [16, -8, 10]
+                        }];
+
+                /*$('tbody th', table).each(function (i) {
+                options.xAxis.categories.push(this.innerHTML);
+                });*/
+
+
+                /*$('tr', table).each(function (i) {
+                var tr = this;
+                $('th, td', tr).each(function (j) {
+                if (j > 0) { // skip first column
+                if (i == 0) { // get the name and init the series
+                options.series[j - 1] = {
+                name: this.innerHTML,
+                data: []
+                };
+                } else { // add values
+                // console.log(this.innerHTML)
+                options.series[j - 1].data.push(parseFloat(this.innerHTML));
+                }
+                }
+                });
+                });*/
+            }
+
+            var table = document.getElementById('datatable'),
+                options = {
+                    chart: {
+                        renderTo: 'chart-hours',
+                        type: 'column'
+                    },
+                    title: {
+                        text: 'Workload overview'
+                    },
+                    xAxis: {
+                },
+                yAxis: {
+                    title: {
+                        text: 'Hours'
+                    }
+                },
+                tooltip: {
+                    formatter: function () {
+                        return '<b>' + this.series.name + '</b><br/>' +
+                                this.y + ' ' + this.x.toLowerCase();
+                    }
+                }
+            };
+
+            Highcharts.visualize(table, options);
+
+            return options;
+        }
+
+        function getParams() {
+            var vars = [], hash;
+            var q = document.URL.split('?')[1];
+            if (q != undefined) {
+                q = q.split('&');
+                for (var i = 0; i < q.length; i++) {
+                    hash = q[i].split('=');
+                    vars.push(hash[1]);
+                    vars[hash[0]] = hash[1];
+                }
+            }
+            return vars;
+        }
+
+
+        $(document).ready(function () {
+            var ajax = new Ajax();
+
+            var displayReleaseStatus = new UDisplayReleaseStatus();
+            var relId = getParams()['RelId'];
+            ajax.loadRelease(relId, displayReleaseStatus.execute);
+
+            // add toggle function for tabs
+            $("#tabSection > ul").on("click", "li > a", function (event) {
+                // set active tab and content to inactive
+                $(".active").removeClass("active");
+                // set clicked tab to active
+                $(this).addClass("active");
+
+                // set content for clicked tab to active
+                var tag = $(this).parent().attr('tag');
+                $("#tabsContent").find("#" + tag).addClass("active");
+            });
+        });
+    </script>
+
+</body>
+</html>

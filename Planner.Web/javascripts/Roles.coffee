@@ -309,6 +309,32 @@ RSchedulePeriod =
 					error: (XHR, status, errorThrown) ->
 						console.log "AJAX SAVE error: #{errorThrown}"
 
+RDeliverableStatus = 
+	extended: ->
+		@include
+			isUnderPlanned: ->
+				underplanned = false
+				for proj in @scope
+					activities = proj.workload.reduce (acc, x) ->
+								acc.push {activityTitle :x.activity.title, hrs: x.hoursRemaining, planned: x.assignedResources.reduce ((acc, x) -> acc + x.resourceAvailableHours()), 0 }
+								acc
+							, []
+					for act in activities
+						underplanned = act.hrs > act.planned
+				underplanned
+			plannedHours: ->
+				hours = 0
+				for proj in @scope
+					activities = proj.workload.reduce (acc, x) ->
+								acc.push {activityTitle :x.activity.title, hrs: x.hoursRemaining, planned: x.assignedResources.reduce ((acc, x) -> acc + x.resourceAvailableHours()), 0 }
+								acc
+							, []
+					hours += activities.reduce (acc, x) ->
+							acc + x.planned
+						, 0
+				hours
+				
+
 # export to root object
 root.RMoveItem = RMoveItem
 root.RGroupBy = RGroupBy
@@ -317,3 +343,4 @@ root.RCrud = RCrud
 root.RSimpleCrud = RSimpleCrud
 root.RScheduleItem = RScheduleItem
 root.RSchedulePeriod = RSchedulePeriod
+root.RDeliverableStatus = RDeliverableStatus

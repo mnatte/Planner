@@ -7,10 +7,12 @@
   PhasesViewmodel = (function() {
 
     function PhasesViewmodel(allReleases) {
+      this.saveSelectedDeliverable = __bind(this.saveSelectedDeliverable, this);
       this.selectPhase = __bind(this.selectPhase, this);
       this.closeDetails = __bind(this.closeDetails, this);
       this.setAssignments = __bind(this.setAssignments, this);
-      var _this = this;
+      var updateScreenFunctions,
+        _this = this;
       this.selectedPhase = ko.observable();
       this.canShowDetails = ko.observable(false);
       this.assignments = ko.observableArray();
@@ -18,10 +20,32 @@
         return loadAssignments(newValue.id);
       });
       Resource.extend(RTeamMember);
+      this.allReleases = ko.observableArray(allReleases);
+      this.selectedMilestone = ko.observable();
+      this.selectedDeliverable = ko.observable();
       this.selectedTimelineItem = ko.observable();
       this.selectedTimelineItem.subscribe(function(newValue) {
+        console.log(newValue);
+        if (newValue) {
+          _this.selectedMilestone(newValue.dataObject);
+          return _this.selectedDeliverable(null);
+        }
+      });
+      this.selectedDeliverable.subscribe(function(newValue) {
         return console.log(newValue);
       });
+      Deliverable.extend(RDeliverableStatus);
+      updateScreenFunctions = [];
+      updateScreenFunctions.push(function() {
+        return _this.selectedTimelineItem(null);
+      });
+      updateScreenFunctions.push(function() {
+        return _this.selectedMilestone(null);
+      });
+      updateScreenFunctions.push(function() {
+        return _this.selectedDeliverable(null);
+      });
+      this.updateScreenUseCase = new UUpdateScreen(null, updateScreenFunctions);
     }
 
     PhasesViewmodel.prototype.load = function(data) {
@@ -100,7 +124,7 @@
             group: rel.title,
             start: ms.date.date,
             content: ms.title + '<br />' + icon,
-            info: ms.date.dateString + '<br />' + ms.description + '<br/>' + descr,
+            info: ms.date.dateString + '<br />' + ms.description,
             dataObject: ms
           };
           this.displayData.push(obj);
@@ -129,6 +153,12 @@
     PhasesViewmodel.prototype.selectPhase = function(data) {
       this.selectedPhase(data);
       return this.canShowDetails(true);
+    };
+
+    PhasesViewmodel.prototype.saveSelectedDeliverable = function() {
+      var uc;
+      uc = new UUpdateDeliverableStatus(this.selectedDeliverable(), this.allReleases, null, this.updateScreenUseCase);
+      return uc.execute();
     };
 
     return PhasesViewmodel;
