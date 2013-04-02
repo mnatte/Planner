@@ -23,6 +23,7 @@ namespace Mnd.Planner.Domain
                 return _deliverables;
             }
         }
+
         public RPhaseFlyWeight Release { get; set; }
     }
 }

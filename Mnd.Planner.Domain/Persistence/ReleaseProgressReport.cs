@@ -14,8 +14,10 @@ namespace Mnd.Planner.Domain.Persistence
     {
         public string Release { get; set; }
         public string Milestone { get; set; }
+        public int MilestoneId { get; set; }
         public DateTime StatusDate { get; set; }
         public string Artefact { get; set; }
+        public int ArtefactId { get; set; }
         public int HoursRemaining { get; set; }
     }
 

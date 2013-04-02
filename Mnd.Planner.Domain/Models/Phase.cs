@@ -18,19 +18,5 @@ namespace Mnd.Planner.Domain
         {
             get { return new Period { EndDate = this.EndDate, StartDate = this.StartDate }; }
         }
-
-        //public int WorkingDays
-        //{
-        //    get
-        //    {
-        //        var workingDays = Enumerable.Range(0, Convert.ToInt32(this.EndDate.Subtract(this.StartDate).TotalDays))
-        //        .Select(
-        //            i => new[] { DayOfWeek.Saturday, DayOfWeek.Sunday }.Contains(this.StartDate.AddDays(i).DayOfWeek) ? 0 : 1
-        //            )
-        //        .Sum();
-
-        //        return workingDays;
-        //    }
-        //}
     }
 }

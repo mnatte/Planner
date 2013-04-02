@@ -787,7 +787,7 @@ namespace Mnd.Planner.Domain.Repositories
             }
         }
 
-        public List<ArtefactActivityProgressReport> GetArtefactsProgress(int id)
+        public List<ArtefactActivityProgressReport> GetArtefactsProgress(int releaseId)
         {
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
             var lst = new List<ArtefactActivityProgressReport>();
@@ -798,14 +798,14 @@ namespace Mnd.Planner.Domain.Repositories
                     conn.Open();
 
                     var cmd = new SqlCommand("sp_get_release_progress", conn);
-                    cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = id;
+                    cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = releaseId;
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            var status = new ArtefactActivityProgressReport { HoursRemaining = int.Parse(reader["HoursRemaining"].ToString()), StatusDate = DateTime.Parse(reader["StatusDate"].ToString()), Release = reader["Release"].ToString(), Artefact = reader["Artefact"].ToString(), Milestone = reader["Milestone"].ToString() };
+                            var status = new ArtefactActivityProgressReport { HoursRemaining = int.Parse(reader["HoursRemaining"].ToString()), StatusDate = DateTime.Parse(reader["StatusDate"].ToString()), Release = reader["Release"].ToString(), Artefact = reader["Artefact"].ToString(), Milestone = reader["Milestone"].ToString(), MilestoneId = int.Parse(reader["MilestoneId"].ToString()), ArtefactId = int.Parse(reader["ArtefactId"].ToString()) };
 
                             lst.Add(status);
                         }

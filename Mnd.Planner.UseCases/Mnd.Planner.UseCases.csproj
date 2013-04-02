@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExceptionMessages.cs" />
+    <Compile Include="Roles\RMilestoneStatus.cs" />
     <Compile Include="Roles\RDeliverableStatus.cs" />
     <Compile Include="UpdateMilestoneDeliverableStatus.cs" />
     <Compile Include="PlanPeriod.cs" />

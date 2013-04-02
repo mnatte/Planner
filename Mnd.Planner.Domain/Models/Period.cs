@@ -50,5 +50,28 @@ namespace Mnd.Planner.Domain
             else
                 return null;
         }
+
+        public int WorkingDays
+        {
+            get
+            {
+                var workingDays = Enumerable.Range(0, Convert.ToInt32(this.EndDate.Subtract(this.StartDate).TotalDays))
+                .Select(
+                    i => new[] { DayOfWeek.Saturday, DayOfWeek.Sunday }.Contains(this.StartDate.AddDays(i).DayOfWeek) ? 0 : 1
+                    )
+                .Sum();
+
+                return workingDays;
+            }
+        }
+
+        public int TotalDays
+        {
+            get
+            {
+                var workingDays = Enumerable.Range(0, Convert.ToInt32(this.EndDate.Subtract(this.StartDate).TotalDays)).Sum();
+                return workingDays;
+            }
+        }
     }
 }

@@ -36,15 +36,6 @@
       });
       Deliverable.extend(RDeliverableStatus);
       updateScreenFunctions = [];
-      updateScreenFunctions.push(function() {
-        return _this.selectedTimelineItem(null);
-      });
-      updateScreenFunctions.push(function() {
-        return _this.selectedMilestone(null);
-      });
-      updateScreenFunctions.push(function() {
-        return _this.selectedDeliverable(null);
-      });
       this.updateScreenUseCase = new UUpdateScreen(null, updateScreenFunctions);
     }
 

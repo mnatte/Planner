@@ -12,5 +12,6 @@ namespace Mnd.Planner.Domain.Roles
         RPhaseFlyWeight Release { get; }
         // Deliverable has Projects in its Scope property, containing on its turn ActivityStatuses
         IList<Deliverable> Deliverables { get; }
+        DateTime Date { get; }
     }
 }

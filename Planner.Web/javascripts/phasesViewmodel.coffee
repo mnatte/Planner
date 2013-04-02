@@ -31,9 +31,9 @@ class PhasesViewmodel
 
 		updateScreenFunctions = []
 		# @selectedTimelineItem is the observable to trigger selected assignment functionality
-		updateScreenFunctions.push(=> @selectedTimelineItem null)
-		updateScreenFunctions.push(=> @selectedMilestone null)
-		updateScreenFunctions.push(=> @selectedDeliverable null)
+		#updateScreenFunctions.push(=> @selectedTimelineItem null)
+		#updateScreenFunctions.push(=> @selectedMilestone null)
+		#updateScreenFunctions.push(=> @selectedDeliverable null)
 		@updateScreenUseCase = new UUpdateScreen null, updateScreenFunctions
 
 

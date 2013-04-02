@@ -833,7 +833,7 @@
     <Content Include="Scripts\knockout-array-filter.js" />
     <Content Include="Scripts\koExternalTemplateEngine_all.min.js" />
     <Content Include="Scripts\tabs.js" />
-    <Content Include="Release.htm" />
+    <Content Include="xxx_Release.htm" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
     <Content Include="Scripts\jquery.dateFormat-1.0.js" />
     <Content Include="Scripts\knockout-2.0.0.debug.js" />
