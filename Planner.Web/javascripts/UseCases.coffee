@@ -83,7 +83,7 @@ class UDisplayAbsences
 		@viewModel = new AbsencesViewmodel(resources)
 		@viewModel.load resources.sort()
 		ko.applyBindings(@viewModel)
-		timeline = new Mnd.Timeline(@viewModel.showAbsences, @viewModel.selectedTimelineItem, "100%", "1000px",)
+		timeline = new Mnd.Timeline(@viewModel.showAbsences, @viewModel.selectedTimelineItem, "100%", "1500px",)
 		timeline.draw()
 
 class UDisplayAssignments
@@ -435,6 +435,11 @@ class UDisplayReleaseProgressOverview
 		@viewModel = new ReleaseProgressViewmodel(releases)
 		ko.applyBindings(@viewModel)
 
+class UDisplayProcessPerformance
+	constructor: ->
+	execute: (data) ->
+		console.log data
+
 class UDisplayReleaseProgress
 	constructor: (@releaseTitle) ->
 		@dates = []
@@ -531,7 +536,7 @@ root.UUpdateScreen = UUpdateScreen
 root.URescheduleMilestone = URescheduleMilestone
 root.UReschedulePhase = UReschedulePhase
 root.UUpdateDeliverableStatus = UUpdateDeliverableStatus
-
+root.UDisplayProcessPerformance = UDisplayProcessPerformance
 
 
 

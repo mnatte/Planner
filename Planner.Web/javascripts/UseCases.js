@@ -1,5 +1,5 @@
 (function() {
-  var UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUpdateDeliverableStatus, UUpdateScreen, root,
+  var UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayProcessPerformance, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUpdateDeliverableStatus, UUpdateScreen, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -103,7 +103,7 @@
       this.viewModel = new AbsencesViewmodel(resources);
       this.viewModel.load(resources.sort());
       ko.applyBindings(this.viewModel);
-      timeline = new Mnd.Timeline(this.viewModel.showAbsences, this.viewModel.selectedTimelineItem, "100%", "1000px");
+      timeline = new Mnd.Timeline(this.viewModel.showAbsences, this.viewModel.selectedTimelineItem, "100%", "1500px");
       return timeline.draw();
     };
 
@@ -894,6 +894,18 @@
 
   })();
 
+  UDisplayProcessPerformance = (function() {
+
+    function UDisplayProcessPerformance() {}
+
+    UDisplayProcessPerformance.prototype.execute = function(data) {
+      return console.log(data);
+    };
+
+    return UDisplayProcessPerformance;
+
+  })();
+
   UDisplayReleaseProgress = (function() {
 
     function UDisplayReleaseProgress(releaseTitle) {
@@ -1035,5 +1047,7 @@
   root.UReschedulePhase = UReschedulePhase;
 
   root.UUpdateDeliverableStatus = UUpdateDeliverableStatus;
+
+  root.UDisplayProcessPerformance = UDisplayProcessPerformance;
 
 }).call(this);

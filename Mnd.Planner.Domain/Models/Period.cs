@@ -55,6 +55,8 @@ namespace Mnd.Planner.Domain
         {
             get
             {
+                if (this.StartDate > this.EndDate)
+                    throw new Exception("StartDate is smaller than EndDate");
                 var workingDays = Enumerable.Range(0, Convert.ToInt32(this.EndDate.Subtract(this.StartDate).TotalDays))
                 .Select(
                     i => new[] { DayOfWeek.Saturday, DayOfWeek.Sunday }.Contains(this.StartDate.AddDays(i).DayOfWeek) ? 0 : 1

@@ -173,6 +173,16 @@ class Ajax
 				callback data
 			error: (XHR, status, errorThrown) ->
 				console.log "AJAX Releases error: #{status}"
+	getProcessPerformance: (releaseId, callback) ->
+		url = "/planner/Release/Performance/" + releaseId
+		$.ajax url,
+			dataType: "json"
+			type: "GET"
+			success: (data, status, XHR) ->
+				console.log "Process performance data loaded"
+				callback data
+			error: (XHR, status, errorThrown) ->
+				console.log "AJAX Releases error: #{status}"
 
 # export to root object
 root.Ajax = Ajax

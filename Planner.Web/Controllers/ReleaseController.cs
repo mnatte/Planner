@@ -153,6 +153,16 @@ namespace Mnd.Planner.Web.Controllers
             return this.Json(result, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpGet]
+        public JsonResult GetProcessPerformance(int releaseId)
+        {
+            // todo: return performance data
+            var uc = new GetBurndownData(new Milestone { Id = 24, Release = new Release { Id = releaseId }, Date = DateTime.Now.AddDays(-2) }, DateTime.Now.AddDays(-50));
+            uc.Execute();
+            return this.Json(1, JsonRequestBehavior.AllowGet);
+        }
+        
+
         #region Unneeded
 
         //

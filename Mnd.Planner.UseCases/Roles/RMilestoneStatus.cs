@@ -84,10 +84,11 @@ namespace Mnd.Planner.UseCases.Roles
             var period = new Period { StartDate = startDate, EndDate = ms.Date };
             var workingDays = period.WorkingDays;
 
-            // get progress data for milestone
+            // TODO: determine daynumber based on date, not just incrementing daynumber by measure point (as done now)
             var count = 0;
 
-            var points = result.Where(x => ms.Id == x.MilestoneId).Select(aProgress => new XYPoint { Y = aProgress.HoursRemaining, X = count++ }).ToList();
+            // poc: check on deliverableId 28 (artefact code change)
+            var points = result.Where(x => ms.Id == x.MilestoneId && x.ArtefactId == 28).Select(aProgress => new XYPoint { Y = aProgress.HoursRemaining, X = count++ }).ToList();
             return points;
         }
     }

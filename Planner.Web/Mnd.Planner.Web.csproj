@@ -125,6 +125,7 @@
     <Content Include="absences.htm" />
     <Content Include="assignments.htm" />
     <Content Include="adminMeeting.htm" />
+    <Content Include="processPerformance.htm" />
     <Content Include="javascripts\adminMeetingViewmodel.js">
       <DependentUpon>adminMeetingViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>

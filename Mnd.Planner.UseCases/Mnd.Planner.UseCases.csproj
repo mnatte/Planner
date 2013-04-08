@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GetBurndownData.cs" />
     <Compile Include="ExceptionMessages.cs" />
     <Compile Include="Roles\RMilestoneStatus.cs" />
     <Compile Include="Roles\RDeliverableStatus.cs" />

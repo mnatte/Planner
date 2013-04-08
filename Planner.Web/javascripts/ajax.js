@@ -266,6 +266,22 @@
       });
     };
 
+    Ajax.prototype.getProcessPerformance = function(releaseId, callback) {
+      var url;
+      url = "/planner/Release/Performance/" + releaseId;
+      return $.ajax(url, {
+        dataType: "json",
+        type: "GET",
+        success: function(data, status, XHR) {
+          console.log("Process performance data loaded");
+          return callback(data);
+        },
+        error: function(XHR, status, errorThrown) {
+          return console.log("AJAX Releases error: " + status);
+        }
+      });
+    };
+
     return Ajax;
 
   })();
