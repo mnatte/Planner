@@ -453,7 +453,28 @@ class UDisplayReleaseProgressOverview
 class UDisplayProcessPerformance
 	constructor: ->
 	execute: (data) ->
+		@viewModel = new ProcessPerformanceViewmodel()
+		ko.applyBindings(@viewModel)
 		console.log data
+		$('#graph0').html('')
+		$('#graph1').html('')
+		$('#graph2').html('')
+		$('#graph3').html('')
+		$('#graph4').html('')
+		chart = new Mnd.NumericChart('graph0', 'Burndown Chart', 'Release 9.6 FDCG Code Change')
+		i = 0
+		for graph in data
+			console.log graph
+			#console.log graph.Name
+			vals = []
+			for point in graph.Values
+				#console.log point.X
+				#console.log point.Y
+				vals.push([point.X, point.Y])
+			chart.addLineName graph.Name
+			chart.addLineData(i, vals)
+			i++
+		chart.draw()
 
 class UDisplayReleaseProgress
 	constructor: (@releaseTitle) ->

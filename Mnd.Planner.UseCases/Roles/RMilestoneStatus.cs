@@ -9,6 +9,7 @@ using Mnd.Planner.Domain.Persistence;
 using Mnd.Planner.Domain.Repositories;
 using Mnd.Helpers;
 using System.Diagnostics;
+using Mnd.Domain;
 
 namespace Mnd.Planner.UseCases.Roles
 {
@@ -56,21 +57,36 @@ namespace Mnd.Planner.UseCases.Roles
 
             // determine amount days till milestone
             var period = new Period { StartDate = startDate, EndDate = ms.Date };
-            var workingDays = period.AmountWorkingDays;
+            //var workingDays = period.AmountWorkingDays;
 
             // get progress data for milestone
-            var count = 0;
-
-            var points = result.Where(x => ms.Id == x.MilestoneId).Select(aProgress => new XYPoint { Y = aProgress.HoursRemaining, X = count++ }).ToList();
+            // poc: check on deliverableId 28 (artefact code change)
+            var points = result.Where(x => ms.Id == x.MilestoneId && x.ArtefactId == 28 && period.ListWorkingDays[x.StatusDate] != null).Select(aProgress => new XYPoint { Y = aProgress.HoursRemaining, X = period.ListWorkingDays[aProgress.StatusDate].Number }).ToList();
             double a, b;
 
-            List<XYPoint> bestFit = MathHelpers.GenerateLinearBestFit(points, out a, out b);
+            List<XYPoint> bestFit = GraphHelpers.GenerateLinearBestFit(points, out a, out b);
             Debug.WriteLine("y = {0:#.####}x {1:+#.####;-#.####}", a, -b);
 
             for (int index = 0; index < points.Count; index++)
             {
                 Debug.WriteLine("X = {0}, Y = {1}, Fit = {2:#.###}", points[index].X, points[index].Y, bestFit[index].Y);
                 lst.Add(new XYPoint { X = points[index].X, Y = bestFit[index].Y });
+            }
+            return lst;
+        }
+
+        public static List<XYPoint> GetVelocityLine(this RMilestoneStatus ms, List<XYPoint> burnDownLine)
+        {
+            var lst = new List<XYPoint>();
+            double a, b;
+
+            List<XYPoint> bestFit = GraphHelpers.GenerateLinearBestFit(burnDownLine, out a, out b);
+            Debug.WriteLine("y = {0:#.####}x {1:+#.####;-#.####}", a, -b);
+
+            for (int index = 0; index < burnDownLine.Count; index++)
+            {
+                Debug.WriteLine("X = {0}, Y = {1}, Fit = {2:#.###}", burnDownLine[index].X, burnDownLine[index].Y, bestFit[index].Y);
+                lst.Add(new XYPoint { X = burnDownLine[index].X, Y = bestFit[index].Y });
             }
             return lst;
         }

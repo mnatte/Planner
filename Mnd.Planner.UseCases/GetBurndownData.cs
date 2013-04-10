@@ -10,7 +10,7 @@ using Mnd.Helpers;
 
 namespace Mnd.Planner.UseCases
 {
-    public class GetBurndownData : AbstractUseCase<List<XYPoint>>
+    public class GetBurndownData : AbstractUseCase<List<GraphData>>
     {
         RMilestoneStatus _milestone;
         DateTime _startDate;
@@ -21,9 +21,19 @@ namespace Mnd.Planner.UseCases
             _startDate = startDate;
         }
 
-        public override List<XYPoint> Execute()
+        /// <summary>
+        /// return a list of xy-point lists, meaning multiple graphs
+        /// </summary>
+        /// <returns></returns>
+        public override List<GraphData> Execute()
         {
-            return _milestone.GetBurndownLine(_startDate);
+            var lst = new List<GraphData>();
+            var burndown = new GraphData { Values = _milestone.GetBurndownLine(_startDate), Name = "BurnDown" };
+            var velocity = new GraphData { Values = _milestone.GetVelocityLine(burndown.Values), Name = "Velocity" };
+            lst.Add(burndown);
+            lst.Add(velocity);
+
+            return lst;
         }
     }
 }

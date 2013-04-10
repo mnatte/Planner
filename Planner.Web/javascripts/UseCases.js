@@ -941,7 +941,31 @@
     function UDisplayProcessPerformance() {}
 
     UDisplayProcessPerformance.prototype.execute = function(data) {
-      return console.log(data);
+      var chart, graph, i, point, vals, _i, _j, _len, _len2, _ref;
+      this.viewModel = new ProcessPerformanceViewmodel();
+      ko.applyBindings(this.viewModel);
+      console.log(data);
+      $('#graph0').html('');
+      $('#graph1').html('');
+      $('#graph2').html('');
+      $('#graph3').html('');
+      $('#graph4').html('');
+      chart = new Mnd.NumericChart('graph0', 'Burndown Chart', 'Release 9.6 FDCG Code Change');
+      i = 0;
+      for (_i = 0, _len = data.length; _i < _len; _i++) {
+        graph = data[_i];
+        console.log(graph);
+        vals = [];
+        _ref = graph.Values;
+        for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
+          point = _ref[_j];
+          vals.push([point.X, point.Y]);
+        }
+        chart.addLineName(graph.Name);
+        chart.addLineData(i, vals);
+        i++;
+      }
+      return chart.draw();
     };
 
     return UDisplayProcessPerformance;

@@ -160,7 +160,7 @@ namespace Mnd.Planner.Web.Controllers
         public JsonResult GetProcessPerformance(int releaseId)
         {
             // todo: return performance data
-            var uc = new GetBurndownData(new Milestone { Id = 24, Release = new Release { Id = releaseId }, Date = DateTime.Now.AddDays(-2) }, DateTime.Now.AddDays(-50));
+            var uc = new GetBurndownData(new Milestone { Id = 24, Release = new Release { Id = releaseId }, Date = DateTime.Parse("24 April 2013") }, DateTime.Now.AddDays(-40));
             var burndown = uc.Execute();
             return this.Json(burndown, JsonRequestBehavior.AllowGet);
         }

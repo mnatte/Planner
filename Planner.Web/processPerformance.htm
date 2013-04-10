@@ -10,7 +10,7 @@
 	<!-- Basic Page Needs
   ================================================== -->
 	<meta charset="utf-8">
-	<title>Release Progress</title>
+	<title>Process Performance</title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 	<!--[if lt IE 9]>
@@ -45,7 +45,7 @@
     <script type="text/javascript" src="Scripts/koExternalTemplateEngine_all.min.js"></script>
     <script type="text/javascript" src="Scripts/jquery.blockUI.js"></script>
     <script type="text/javascript" src="Scripts/datehelper.js"></script>
-    <script type="text/javascript" src="javascripts/releaseProgressViewmodel.js"></script>    
+    <script type="text/javascript" src="javascripts/processPerformanceViewmodel.js"></script>    
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
     <script type="text/javascript" src="javascripts/ajax.js"></script>
@@ -53,7 +53,7 @@
     <script type="text/javascript" src="javascripts/UseCases.js"></script>
     
     <script type="text/javascript" src="Scripts/highcharts.js"></script>
-    <script type="text/javascript" src="javascripts/TimeChart.js"></script>
+    <script type="text/javascript" src="javascripts/NumericChart.js"></script>
     <script src="Scripts/highcharts_highslide-full.min.js" type="text/javascript"></script>
     <script src="Scripts/highcharts_highslide.config.js" type="text/javascript"></script>
     <script src="Scripts/highcharts_exporting.js" type="text/javascript"></script>
@@ -69,14 +69,7 @@
         <!-- /ko -->
         <div id="Div1" style="height: 100px">&nbsp;</div>
         <div id="releases" class="three columns">
-            <ul>
-                <!-- ko foreach: $root.allReleases -->
-                <li>
-                    <span data-bind="text: title" class="two columns"></span>
-                    <button class="sexybutton sexyicononly one column" data-bind="click: $root.viewReleaseProgress.bind($data)"><span><span><span class="view"></span></span></span></button>
-                </li>
-                <!-- /ko -->
-            </ul>
+            
         </div>
         <!--releases overview-->
         <div id="graph0" class="sixteen columns"></div>
@@ -95,9 +88,6 @@
             var ajax = new Ajax();
             ajax.getProcessPerformance(106, uc.execute);
 
-//            var uc = new UDisplayReleaseProgress();
-//            var ajax = new Ajax();
-//            ajax.getReleaseProgress(160, function (data) { uc.execute(data) });
         });
     </script>
 
