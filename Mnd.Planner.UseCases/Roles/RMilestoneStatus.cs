@@ -84,7 +84,7 @@ namespace Mnd.Planner.UseCases.Roles
             var period = new Period { StartDate = startDate, EndDate = ms.Date };
 
             // poc: check on deliverableId 28 (artefact code change)
-            var points = result.Where(x => ms.Id == x.MilestoneId && x.ArtefactId == 28).Select(aProgress => new XYPoint { Y = aProgress.HoursRemaining, X = period.ListWorkingDays[aProgress.StatusDate].Number}).ToList();
+            var points = result.Where(x => ms.Id == x.MilestoneId && x.ArtefactId == 28 && period.ListWorkingDays[x.StatusDate] != null).Select(aProgress => new XYPoint { Y = aProgress.HoursRemaining, X = period.ListWorkingDays[aProgress.StatusDate].Number}).ToList();
             return points;
         }
     }

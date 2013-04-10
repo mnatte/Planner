@@ -9,4 +9,9 @@ namespace Mnd.Domain
     {
         public abstract void Execute();
     }
+
+    public abstract class AbstractUseCase<T>
+    {
+        public abstract T Execute();
+    }
 }

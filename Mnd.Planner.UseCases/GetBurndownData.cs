@@ -6,10 +6,11 @@ using Mnd.Domain;
 using Mnd.Planner.Domain.Roles;
 using Mnd.Planner.UseCases.Roles;
 using Mnd.Planner.Domain;
+using Mnd.Helpers;
 
 namespace Mnd.Planner.UseCases
 {
-    public class GetBurndownData : AbstractUseCase
+    public class GetBurndownData : AbstractUseCase<List<XYPoint>>
     {
         RMilestoneStatus _milestone;
         DateTime _startDate;
@@ -20,9 +21,9 @@ namespace Mnd.Planner.UseCases
             _startDate = startDate;
         }
 
-        public override void Execute()
+        public override List<XYPoint> Execute()
         {
-            _milestone.GetBurndownLine(_startDate);
+            return _milestone.GetBurndownLine(_startDate);
         }
     }
 }

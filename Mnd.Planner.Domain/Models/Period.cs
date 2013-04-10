@@ -17,7 +17,7 @@ namespace Mnd.Planner.Domain
         {
             get
             {
-                return this.Where(x => x.Date == index).SingleOrDefault();
+                return this.Where(x => x.Date.ToShortDateString() == index.ToShortDateString()).SingleOrDefault();
             }
         }
     }
@@ -88,18 +88,24 @@ namespace Mnd.Planner.Domain
         {
             get
             {
+                var dayNum = 0;
+
+                var workingDays = Enumerable.Range(0, Convert.ToInt32(this.EndDate.Subtract(this.StartDate).TotalDays))
+                    .Select(
+                        i => {
+                                if (!(new[] { DayOfWeek.Saturday, DayOfWeek.Sunday }.Contains(this.StartDate.AddDays(i).DayOfWeek)))
+                                {
+                                    dayNum++;
+                                    return new Day { Date = this.StartDate.AddDays(i), Number = dayNum };
+                                }
+                                else
+                                {
+                                    return null;
+                                }
+                            })
+                    .Where(x => x != null);
                 var lst = new DayList();
-                var dayNum = 1;
-
-                for (var i = this.StartDate; i < this.EndDate; i.AddDays(1))
-                {
-                    if (i.DayOfWeek != DayOfWeek.Saturday && i.DayOfWeek != DayOfWeek.Sunday)
-                    {
-                        lst.Add(new Day { Date = i, Number = dayNum });
-                        dayNum++;
-                    }
-                }
-
+                lst.AddRange(workingDays.ToList());
                 return lst;
             }
         }
@@ -108,15 +114,16 @@ namespace Mnd.Planner.Domain
         {
             get
             {
+                var dayNum = 0;
+
+                var allDays = Enumerable.Range(0, Convert.ToInt32(this.EndDate.Subtract(this.StartDate).TotalDays))
+                    .Select(i =>
+                        {
+                            dayNum++;
+                            return new Day { Date = this.StartDate.AddDays(i), Number = dayNum };
+                        });
                 var lst = new DayList();
-                var dayNum = 1;
-
-                for (var i = this.StartDate; i < this.EndDate; i.AddDays(1))
-                {
-                    lst.Add(new Day { Date = i, Number = dayNum });
-                    dayNum++;
-                }
-
+                lst.AddRange(allDays.ToList());
                 return lst;
             }
         }

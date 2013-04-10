@@ -161,8 +161,8 @@ namespace Mnd.Planner.Web.Controllers
         {
             // todo: return performance data
             var uc = new GetBurndownData(new Milestone { Id = 24, Release = new Release { Id = releaseId }, Date = DateTime.Now.AddDays(-2) }, DateTime.Now.AddDays(-50));
-            uc.Execute();
-            return this.Json(1, JsonRequestBehavior.AllowGet);
+            var burndown = uc.Execute();
+            return this.Json(burndown, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
