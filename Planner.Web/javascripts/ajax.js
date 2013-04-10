@@ -282,6 +282,22 @@
       });
     };
 
+    Ajax.prototype.createCuesForGates = function(amountDays, callback) {
+      var url;
+      url = "/planner/Release/Process/" + amountDays;
+      return $.ajax(url, {
+        dataType: "json",
+        type: "GET",
+        success: function(data, status, XHR) {
+          console.log("createCuesForGates succesfully called");
+          return callback(data);
+        },
+        error: function(XHR, status, errorThrown) {
+          return console.log("AJAX error: " + status);
+        }
+      });
+    };
+
     return Ajax;
 
   })();

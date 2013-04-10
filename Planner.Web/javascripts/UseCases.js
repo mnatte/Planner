@@ -1,5 +1,5 @@
 (function() {
-  var UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayProcessPerformance, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUpdateDeliverableStatus, UUpdateScreen, root,
+  var UAjax, UCreateVisualCuesForGates, UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayProcessPerformance, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUpdateDeliverableStatus, UUpdateScreen, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -92,6 +92,48 @@
     return UDisplayPhases;
 
   })();
+
+  UAjax = (function() {
+
+    function UAjax(callBack) {
+      this.callBack = callBack;
+    }
+
+    UAjax.prototype.execute = function() {
+      throw new Error('Abstract method execute of UAjax UseCase');
+    };
+
+    UAjax.prototype.refreshData = function(json) {
+      console.log(json);
+      return this.callBack(json);
+    };
+
+    return UAjax;
+
+  })();
+
+  UCreateVisualCuesForGates = (function(_super) {
+
+    __extends(UCreateVisualCuesForGates, _super);
+
+    function UCreateVisualCuesForGates(amountDays, callBack) {
+      this.amountDays = amountDays;
+      this.callBack = callBack;
+      UCreateVisualCuesForGates.__super__.constructor.call(this, this.callBack);
+    }
+
+    UCreateVisualCuesForGates.prototype.execute = function() {
+      var ajx,
+        _this = this;
+      ajx = new Ajax();
+      return ajx.createCuesForGates(this.amountDays, function(json) {
+        return _this.refreshData(json);
+      });
+    };
+
+    return UCreateVisualCuesForGates;
+
+  })(UAjax);
 
   UDisplayAbsences = (function() {
 
@@ -1049,5 +1091,7 @@
   root.UUpdateDeliverableStatus = UUpdateDeliverableStatus;
 
   root.UDisplayProcessPerformance = UDisplayProcessPerformance;
+
+  root.UCreateVisualCuesForGates = UCreateVisualCuesForGates;
 
 }).call(this);

@@ -9,6 +9,7 @@
     function PhasesViewmodel(allReleases) {
       this.saveSelectedDeliverable = __bind(this.saveSelectedDeliverable, this);
       this.selectPhase = __bind(this.selectPhase, this);
+      this.createVisualCuesForGates = __bind(this.createVisualCuesForGates, this);
       this.closeDetails = __bind(this.closeDetails, this);
       this.setAssignments = __bind(this.setAssignments, this);
       var updateScreenFunctions,
@@ -139,6 +140,15 @@
 
     PhasesViewmodel.prototype.closeDetails = function() {
       return this.canShowDetails(false);
+    };
+
+    PhasesViewmodel.prototype.createVisualCuesForGates = function(data) {
+      var uc,
+        _this = this;
+      uc = new UCreateVisualCuesForGates(30, function(data) {
+        return console.log('callback succesful: ' + data);
+      });
+      return uc.execute();
     };
 
     PhasesViewmodel.prototype.selectPhase = function(data) {

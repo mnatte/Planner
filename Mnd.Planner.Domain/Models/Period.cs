@@ -5,6 +5,23 @@ using System.Text;
 
 namespace Mnd.Planner.Domain
 {
+    public class Day
+    {
+        public DateTime Date { get; set; }
+        public int Number { get; set; }
+    }
+
+    public class DayList : List<Day>
+    {
+        public Day this[DateTime index]
+        {
+            get
+            {
+                return this.Where(x => x.Date == index).SingleOrDefault();
+            }
+        }
+    }
+
     public class Period
     {
         public Period(DateTime startDate, DateTime endDate, string title)
@@ -51,7 +68,7 @@ namespace Mnd.Planner.Domain
                 return null;
         }
 
-        public int WorkingDays
+        public int AmountWorkingDays
         {
             get
             {
@@ -64,6 +81,43 @@ namespace Mnd.Planner.Domain
                 .Sum();
 
                 return workingDays;
+            }
+        }
+
+        public DayList ListWorkingDays
+        {
+            get
+            {
+                var lst = new DayList();
+                var dayNum = 1;
+
+                for (var i = this.StartDate; i < this.EndDate; i.AddDays(1))
+                {
+                    if (i.DayOfWeek != DayOfWeek.Saturday && i.DayOfWeek != DayOfWeek.Sunday)
+                    {
+                        lst.Add(new Day { Date = i, Number = dayNum });
+                        dayNum++;
+                    }
+                }
+
+                return lst;
+            }
+        }
+
+        public DayList ListAllDays
+        {
+            get
+            {
+                var lst = new DayList();
+                var dayNum = 1;
+
+                for (var i = this.StartDate; i < this.EndDate; i.AddDays(1))
+                {
+                    lst.Add(new Day { Date = i, Number = dayNum });
+                    dayNum++;
+                }
+
+                return lst;
             }
         }
 

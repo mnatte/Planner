@@ -11,6 +11,7 @@ using Mnd.Planner.Domain.Repositories;
 using Mnd.Planner.Web.Controllers.InputModels;
 using Mnd.Planner.UseCases;
 using Mnd.Helpers;
+using Mnd.Domain;
 
 namespace Mnd.Planner.Web.Controllers
 {
@@ -153,6 +154,8 @@ namespace Mnd.Planner.Web.Controllers
             return this.Json(result, JsonRequestBehavior.AllowGet);
         }
 
+        // TODO: move to Process Controller
+
         [HttpGet]
         public JsonResult GetProcessPerformance(int releaseId)
         {
@@ -160,6 +163,14 @@ namespace Mnd.Planner.Web.Controllers
             var uc = new GetBurndownData(new Milestone { Id = 24, Release = new Release { Id = releaseId }, Date = DateTime.Now.AddDays(-2) }, DateTime.Now.AddDays(-50));
             uc.Execute();
             return this.Json(1, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult CreateVisualCuesForGates(int amountDays)
+        {
+            var uc = new CreateVisualCuesForGates(amountDays, new AwesomeNoteWriter());
+            uc.Execute();
+            return this.Json("Visual cues created in AwesomeNote", JsonRequestBehavior.AllowGet);
         }
         
 

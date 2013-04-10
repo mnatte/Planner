@@ -28,7 +28,7 @@ namespace Mnd.Planner.UseCases.Roles
 
             // determine amount days till milestone
             var period = new Period { StartDate = startDate, EndDate = ms.Date };
-            var workingDays = period.WorkingDays;
+            var workingDays = period.AmountWorkingDays;
 
             // get progress data for milestone
             var count = 0;
@@ -56,7 +56,7 @@ namespace Mnd.Planner.UseCases.Roles
 
             // determine amount days till milestone
             var period = new Period { StartDate = startDate, EndDate = ms.Date };
-            var workingDays = period.WorkingDays;
+            var workingDays = period.AmountWorkingDays;
 
             // get progress data for milestone
             var count = 0;
@@ -82,13 +82,9 @@ namespace Mnd.Planner.UseCases.Roles
 
             // determine amount days till milestone
             var period = new Period { StartDate = startDate, EndDate = ms.Date };
-            var workingDays = period.WorkingDays;
-
-            // TODO: determine daynumber based on date, not just incrementing daynumber by measure point (as done now)
-            var count = 0;
 
             // poc: check on deliverableId 28 (artefact code change)
-            var points = result.Where(x => ms.Id == x.MilestoneId && x.ArtefactId == 28).Select(aProgress => new XYPoint { Y = aProgress.HoursRemaining, X = count++ }).ToList();
+            var points = result.Where(x => ms.Id == x.MilestoneId && x.ArtefactId == 28).Select(aProgress => new XYPoint { Y = aProgress.HoursRemaining, X = period.ListWorkingDays[aProgress.StatusDate].Number}).ToList();
             return points;
         }
     }

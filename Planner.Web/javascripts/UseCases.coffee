@@ -75,6 +75,21 @@ class UDisplayPhases
 		timeline = new Mnd.Timeline(@viewModel.showPhases, @viewModel.selectedTimelineItem)
 		timeline.draw()
 
+class UAjax
+	constructor: (@callBack) ->
+	execute: ->
+		throw new Error('Abstract method execute of UAjax UseCase')
+	refreshData: (json) ->
+		console.log json
+		@callBack json
+
+class UCreateVisualCuesForGates extends UAjax
+	constructor: (@amountDays, @callBack) ->
+		super @callBack
+	execute: ->
+		ajx = new Ajax()
+		ajx.createCuesForGates @amountDays, (json) => @refreshData(json)
+
 class UDisplayAbsences
 	constructor: ->
 	execute: (data) ->
@@ -537,7 +552,7 @@ root.URescheduleMilestone = URescheduleMilestone
 root.UReschedulePhase = UReschedulePhase
 root.UUpdateDeliverableStatus = UUpdateDeliverableStatus
 root.UDisplayProcessPerformance = UDisplayProcessPerformance
-
+root.UCreateVisualCuesForGates = UCreateVisualCuesForGates
 
 
 

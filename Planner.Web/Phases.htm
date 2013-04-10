@@ -23,12 +23,13 @@
 
 	<!-- CSS
   ================================================== -->
-	<link rel="stylesheet" href="stylesheets/base.css">
+	<link rel="stylesheet" href="stylesheets/base_no_buttons.css">
 	<link rel="stylesheet" href="stylesheets/skeleton.css">
 	<link rel="stylesheet" href="stylesheets/layout.css">
     <link rel="stylesheet" href="stylesheets/tables.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/timeline.css" />
     <link rel="stylesheet" href="stylesheets/icon_styles.css">
+    <link rel="stylesheet" href="stylesheets/sexybuttons.css">
 
 	<!-- Favicons
 	================================================== -->
@@ -65,6 +66,9 @@
         <!-- ko template: {name: 'navigation'} -->
         <!-- /ko -->
         <div id="space" style="height: 100px">&nbsp;</div>
+        <div id="cueButton" class="sixteen columns">
+            <button class="sexybutton" data-bind="click: $root.createVisualCuesForGates.bind($data)"><span><span><span class="mobile_phone">Cues For Gates</span></span></span></button>
+        </div>
         <!--releases overview-->
         <div id="phases" class="sixteen columns">
             <div id="mytimeline"></div>

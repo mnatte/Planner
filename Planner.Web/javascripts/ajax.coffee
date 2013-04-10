@@ -183,6 +183,16 @@ class Ajax
 				callback data
 			error: (XHR, status, errorThrown) ->
 				console.log "AJAX Releases error: #{status}"
+	createCuesForGates: (amountDays, callback) ->
+		url = "/planner/Release/Process/" + amountDays
+		$.ajax url,
+			dataType: "json"
+			type: "GET"
+			success: (data, status, XHR) ->
+				console.log "createCuesForGates succesfully called"
+				callback data
+			error: (XHR, status, errorThrown) ->
+				console.log "AJAX error: #{status}"
 
 # export to root object
 root.Ajax = Ajax

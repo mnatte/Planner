@@ -91,9 +91,9 @@ class PhasesViewmodel
 	closeDetails: =>
         @canShowDetails(false)
 
-	#checkDeliverable: (data) =>
-	#	console.log data
-	#	@selectedDeliverable data
+	createVisualCuesForGates: (data) =>
+		uc = new UCreateVisualCuesForGates 30, (data) => console.log 'callback succesful: ' + data
+		uc.execute()
 
 	selectPhase: (data) =>
 		# console.log "selectPhase - function"
