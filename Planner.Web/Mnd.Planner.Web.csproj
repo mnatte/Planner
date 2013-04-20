@@ -125,6 +125,11 @@
     <Content Include="absences.htm" />
     <Content Include="assignments.htm" />
     <Content Include="adminMeeting.htm" />
+    <Content Include="javascripts\processPerformanceViewmodel.js">
+      <DependentUpon>processPerformanceViewmodel.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
     <Content Include="javascripts\NumericChart.js">
       <DependentUpon>NumericChart.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -939,6 +944,10 @@
     <None Include="javascripts\adminMeetingViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>adminMeetingViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\processPerformanceViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>processPerformanceViewmodel.js</LastGenOutput>
     </None>
     <None Include="javascripts\NumericChart.coffee">
       <Generator>CoffeeScriptGenerator</Generator>

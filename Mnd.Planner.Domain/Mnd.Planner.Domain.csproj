@@ -43,6 +43,7 @@
     <Compile Include="Models\Absence.cs" />
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\ActivityStatus.cs" />
+    <Compile Include="Models\BurndownData.cs" />
     <Compile Include="Models\Deliverable.cs" />
     <Compile Include="Models\Feature.cs" />
     <Compile Include="Models\Meeting.cs" />

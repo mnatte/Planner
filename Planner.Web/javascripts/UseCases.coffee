@@ -456,14 +456,15 @@ class UDisplayProcessPerformance
 		@viewModel = new ProcessPerformanceViewmodel()
 		ko.applyBindings(@viewModel)
 		console.log data
+		@viewModel.velocity data.Velocity
 		$('#graph0').html('')
 		$('#graph1').html('')
 		$('#graph2').html('')
 		$('#graph3').html('')
 		$('#graph4').html('')
-		chart = new Mnd.NumericChart('graph0', 'Burndown Chart', 'Release 9.6 FDCG Code Change')
+		chart = new Mnd.NumericChart('graph0', 'Burndown Chart', 'Release 9.6 ULG Code Change')
 		i = 0
-		for graph in data
+		for graph in data.Graphs
 			console.log graph
 			#console.log graph.Name
 			vals = []

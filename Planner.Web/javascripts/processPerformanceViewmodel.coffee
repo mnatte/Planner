@@ -6,7 +6,8 @@ root = global ? window
 
 class ProcessPerformanceViewmodel
 	constructor: ->
-		# ctor is executed in context of INSTANCE. Therfore @ refers here to CURRENT INSTANCE and attaches selectedPhase to all instances (since object IS ctor)
+		@selectedMilestone = ko.observable()
+		@velocity = ko.observable()
 
 	#viewReleaseProgress: (selectedRelease) =>
 	#	console.log selectedRelease

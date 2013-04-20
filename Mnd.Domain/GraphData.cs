@@ -7,7 +7,7 @@ namespace Mnd.Domain
 {
     public class XYPoint
     {
-        public int X;
+        public double X;
         public double Y;
     }
 

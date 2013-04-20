@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Mnd.Helpers;
 
 namespace Mnd.Planner.Domain
 {
@@ -13,11 +14,24 @@ namespace Mnd.Planner.Domain
 
     public class DayList : List<Day>
     {
-        public Day this[DateTime index]
+        ///// <summary>
+        ///// OBSOLETE?
+        ///// </summary>
+        ///// <param name="index"></param>
+        ///// <returns></returns>
+        //public Day this[DateTime index]
+        //{
+        //    get
+        //    {
+        //        return this.Where(x => x.Date.ToShortDateString() == index.ToShortDateString()).SingleOrDefault();
+        //    }
+        //}
+
+        public Day this[string index]
         {
             get
             {
-                return this.Where(x => x.Date.ToShortDateString() == index.ToShortDateString()).SingleOrDefault();
+                return this.Where(x => x.Date.ToDutchString() == index).SingleOrDefault();
             }
         }
     }

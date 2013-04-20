@@ -941,24 +941,26 @@
     function UDisplayProcessPerformance() {}
 
     UDisplayProcessPerformance.prototype.execute = function(data) {
-      var chart, graph, i, point, vals, _i, _j, _len, _len2, _ref;
+      var chart, graph, i, point, vals, _i, _j, _len, _len2, _ref, _ref2;
       this.viewModel = new ProcessPerformanceViewmodel();
       ko.applyBindings(this.viewModel);
       console.log(data);
+      this.viewModel.velocity(data.Velocity);
       $('#graph0').html('');
       $('#graph1').html('');
       $('#graph2').html('');
       $('#graph3').html('');
       $('#graph4').html('');
-      chart = new Mnd.NumericChart('graph0', 'Burndown Chart', 'Release 9.6 FDCG Code Change');
+      chart = new Mnd.NumericChart('graph0', 'Burndown Chart', 'Release 9.6 ULG Code Change');
       i = 0;
-      for (_i = 0, _len = data.length; _i < _len; _i++) {
-        graph = data[_i];
+      _ref = data.Graphs;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        graph = _ref[_i];
         console.log(graph);
         vals = [];
-        _ref = graph.Values;
-        for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
-          point = _ref[_j];
+        _ref2 = graph.Values;
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          point = _ref2[_j];
           vals.push([point.X, point.Y]);
         }
         chart.addLineName(graph.Name);

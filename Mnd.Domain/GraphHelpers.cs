@@ -28,6 +28,11 @@ namespace Mnd.Domain
             return points.Select(point => new XYPoint() { X = point.X, Y = Math.Round(a1 * point.X - b1, 2) }).ToList();
         }
 
+        public static XYPoint CalculateBestFitValue(double Xvalue, double slope, double intercept)
+        {
+            return new XYPoint() { X = Xvalue, Y = Math.Round(slope * Xvalue - intercept, 2) };
+        }
+
         public static List<XYPoint> GenerateNegativeLinearBestFit(List<XYPoint> points, out double a, out double b)
         {
             int numPoints = points.Count;

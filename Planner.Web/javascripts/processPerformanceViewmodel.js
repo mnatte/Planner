@@ -5,7 +5,10 @@
 
   ProcessPerformanceViewmodel = (function() {
 
-    function ProcessPerformanceViewmodel() {}
+    function ProcessPerformanceViewmodel() {
+      this.selectedMilestone = ko.observable();
+      this.velocity = ko.observable();
+    }
 
     return ProcessPerformanceViewmodel;
 
