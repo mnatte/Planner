@@ -39,6 +39,8 @@ namespace Mnd.Planner.UseCases
 
                 var item = new CueItem(ms.Release.Title + " - " + ms.Title, ms.Date, ms.Time, builder.ToString());
                 _creator.CreateVisualCue(item);
+                // add notification to history table
+                repository.AddNotificationToHistory(ms.Id, ms.Release.Id, "AwesomeNote");
             }
         }
     }

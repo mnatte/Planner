@@ -187,6 +187,24 @@ namespace Mnd.Planner.Domain.Repositories
             return lst;
         }
 
+        public void AddNotificationToHistory(int milestoneId, int releaseId, string notificationType)
+        {
+            var conn = new SqlConnection(this.ConnectionString);
+
+            var cmd = new SqlCommand("sp_add_notification_to_history", conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.Add("@EventId", System.Data.SqlDbType.Int).Value = milestoneId;
+            cmd.Parameters.Add("@PhaseId", System.Data.SqlDbType.Int).Value = releaseId;
+            cmd.Parameters.Add("@EventType", System.Data.SqlDbType.VarChar).Value = "Milestone";
+            cmd.Parameters.Add("@NotificationType", System.Data.SqlDbType.VarChar).Value = notificationType;
+
+            using (conn)
+            {
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
         public List<ActivityStatus> GetActivityStatusForMilestones(Milestone milestone)
         {
             var conn = new SqlConnection(this.ConnectionString);
