@@ -455,7 +455,7 @@ class UDisplayProcessPerformance
 	execute: (data) ->
 		@viewModel = new ProcessPerformanceViewmodel()
 		ko.applyBindings(@viewModel)
-		console.log data
+		#console.log data
 		@viewModel.velocity data.Velocity
 		$('#graph0').html('')
 		$('#graph1').html('')
@@ -465,7 +465,7 @@ class UDisplayProcessPerformance
 		chart = new Mnd.NumericChart('graph0', 'Burndown Chart', 'Release 9.6 ULG Code Change')
 		i = 0
 		for graph in data.Graphs
-			console.log graph
+			#console.log graph
 			#console.log graph.Name
 			vals = []
 			for point in graph.Values
@@ -512,8 +512,8 @@ class UDisplayReleaseProgress
 		#console.log milestones
 		amt = 0
 		for k,v of milestones
-			console.log k
-			console.log v
+			#console.log k
+			#console.log v
 			states = []
 			# deduplicate and add up remaining hours per day since multiple activities for the same artefact should be one datapoint with date and hrs remaining
 			for key,value of v # use different kind of loop (object loop) since the artefacts are not elements in the array but properties (see comment above)
@@ -527,15 +527,15 @@ class UDisplayReleaseProgress
 
 				states.push({ artefact: key, statuses: totalsPerDay })
 			div = 'graph' + amt
-			console.log div
+			#console.log div
 			chart = new Mnd.TimeChart(div, @releaseTitle, k)
 			i = 0
 			for s in states
-				console.log s
+				#console.log s
 				artefactStatuses = []
 				for k2,v2 of s.statuses
-					console.log k2
-					console.log v2
+					#console.log k2
+					#console.log v2
 					date = new DatePlus(DateFormatter.createFromString(k2))
 					artefactStatuses.push([date.timeStamp(), v2])
 				chart.addLineName s.artefact

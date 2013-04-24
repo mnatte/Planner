@@ -9,14 +9,16 @@
     function ReleaseProgressViewmodel(allReleases) {
       this.allReleases = allReleases;
       this.viewReleaseProgress = __bind(this.viewReleaseProgress, this);
+      this.selectedRelease = ko.observable();
     }
 
-    ReleaseProgressViewmodel.prototype.viewReleaseProgress = function(selectedRelease) {
+    ReleaseProgressViewmodel.prototype.viewReleaseProgress = function(release) {
       var ajax, uc;
-      console.log(selectedRelease);
-      uc = new UDisplayReleaseProgress(selectedRelease.title);
+      console.log(release);
+      this.selectedRelease(release);
+      uc = new UDisplayReleaseProgress(this.selectedRelease().title);
       ajax = new Ajax();
-      return ajax.getReleaseProgress(selectedRelease.id, function(data) {
+      return ajax.getReleaseProgress(this.selectedRelease().id, function(data) {
         return uc.execute(data);
       });
     };

@@ -140,7 +140,7 @@ class Ajax
 					error: (XHR, status, errorThrown) ->
 						console.log "AJAX MAIL error: #{errorThrown}"
 	getReleaseProgress: (releaseId, callback) ->
-		url = "/planner/Release/GetReleaseProgress/" + releaseId
+		url = "/planner/Release/Progress/Milestone/106/24" #+ releaseId
 		$.ajax url,
 			dataType: "json"
 			type: "GET"

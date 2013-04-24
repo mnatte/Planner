@@ -944,7 +944,6 @@
       var chart, graph, i, point, vals, _i, _j, _len, _len2, _ref, _ref2;
       this.viewModel = new ProcessPerformanceViewmodel();
       ko.applyBindings(this.viewModel);
-      console.log(data);
       this.viewModel.velocity(data.Velocity);
       $('#graph0').html('');
       $('#graph1').html('');
@@ -956,7 +955,6 @@
       _ref = data.Graphs;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         graph = _ref[_i];
-        console.log(graph);
         vals = [];
         _ref2 = graph.Values;
         for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
@@ -1013,8 +1011,6 @@
       _results = [];
       for (k in milestones) {
         v = milestones[k];
-        console.log(k);
-        console.log(v);
         states = [];
         for (key in v) {
           value = v[key];
@@ -1031,18 +1027,14 @@
           });
         }
         div = 'graph' + amt;
-        console.log(div);
         chart = new Mnd.TimeChart(div, this.releaseTitle, k);
         i = 0;
         for (_i = 0, _len = states.length; _i < _len; _i++) {
           s = states[_i];
-          console.log(s);
           artefactStatuses = [];
           _ref = s.statuses;
           for (k2 in _ref) {
             v2 = _ref[k2];
-            console.log(k2);
-            console.log(v2);
             date = new DatePlus(DateFormatter.createFromString(k2));
             artefactStatuses.push([date.timeStamp(), v2]);
           }

@@ -74,6 +74,16 @@
                 <li>
                     <span data-bind="text: title" class="two columns"></span>
                     <button class="sexybutton sexyicononly one column" data-bind="click: $root.viewReleaseProgress.bind($data)"><span><span><span class="view"></span></span></span></button>
+                    <!-- ko if: $root.selectedRelease() -->
+                        <ul>
+                            <!-- ko foreach: $root.selectedRelease().milestones -->
+                            <li>
+                                <span data-bind="text: title" class="two columns"></span>
+                                <button class="sexybutton sexyicononly one column" data-bind="click: $root.viewReleaseProgress.bind($data)"><span><span><span class="view"></span></span></span></button>
+                            </li>
+                            <!-- /ko -->
+                        </ul>
+                    <!-- /ko -->
                 </li>
                 <!-- /ko -->
             </ul>

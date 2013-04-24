@@ -216,7 +216,7 @@
 
     Ajax.prototype.getReleaseProgress = function(releaseId, callback) {
       var url;
-      url = "/planner/Release/GetReleaseProgress/" + releaseId;
+      url = "/planner/Release/Progress/Milestone/106/24";
       return $.ajax(url, {
         dataType: "json",
         type: "GET",

@@ -8,8 +8,18 @@ namespace Mnd.Planner.Domain
 {
     public class Release : Phase
     {
+        public Release()
+        { }
+
+        public Release(List<Milestone> milestones)
+        {
+            _milestones = milestones;
+        }
+
+
+
         private List<Phase> _phases;
-        public IList<Phase> Phases
+        public List<Phase> Phases
         {
             get
             {
@@ -23,7 +33,7 @@ namespace Mnd.Planner.Domain
         /// Enable coupling of Projects to Releases to resources 
         /// </summary>
         private List<Project> _projects;
-        public IList<Project> Projects
+        public List<Project> Projects
         {
             get
             {
@@ -34,7 +44,7 @@ namespace Mnd.Planner.Domain
         }
 
         private List<Milestone> _milestones;
-        public IList<Milestone> Milestones
+        public List<Milestone> Milestones
         {
             get
             {

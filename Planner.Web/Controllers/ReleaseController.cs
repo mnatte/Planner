@@ -139,10 +139,10 @@ namespace Mnd.Planner.Web.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetReleaseProgress(int id)
+        public JsonResult GetReleaseProgress(int phaseid, int milestoneId)
         {
             var rep = new ReleaseRepository();
-            var result = rep.GetArtefactsProgress(id);
+            var result = rep.GetArtefactsProgress(phaseid, milestoneId);
             return this.Json(result, JsonRequestBehavior.AllowGet);
         }
 

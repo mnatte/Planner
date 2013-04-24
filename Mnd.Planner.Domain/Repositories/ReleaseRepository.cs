@@ -819,10 +819,43 @@ namespace Mnd.Planner.Domain.Repositories
             }
         }
 
+        public List<ArtefactActivityProgressReport> GetArtefactsProgress(int phaseId, int milestoneId)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            var lst = new List<ArtefactActivityProgressReport>();
+            try
+            {
+                using (conn)
+                {
+                    conn.Open();
+
+                    var cmd = new SqlCommand("sp_get_milestone_progress", conn);
+                    cmd.Parameters.Add("@PhaseId", System.Data.SqlDbType.Int).Value = phaseId;
+                    cmd.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = milestoneId;
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var status = new ArtefactActivityProgressReport { HoursRemaining = int.Parse(reader["HoursRemaining"].ToString()), StatusDate = DateTime.Parse(reader["StatusDate"].ToString()), Release = reader["Release"].ToString(), Artefact = reader["Artefact"].ToString(), Milestone = reader["Milestone"].ToString(), MilestoneId = int.Parse(reader["MilestoneId"].ToString()), ArtefactId = int.Parse(reader["ArtefactId"].ToString()) };
+
+                            lst.Add(status);
+                        }
+                    }
+                }
+                return lst;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public List<Release> GetReleaseSnapshotsWithProgressData()
         {
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
-            var lst = new List<Release>();
+            var allMilestones = new List<Milestone>();
             try
             {
                 using (conn)
@@ -836,13 +869,24 @@ namespace Mnd.Planner.Domain.Repositories
                     {
                         while (reader.Read())
                         {
-                            var status = new Release { Id = int.Parse(reader["Id"].ToString()), Title = reader["Title"].ToString() };
+                            // get records with PhaseId, PhaseTitle, MilestoneId, MilestoneTitle
+                            var status = new Milestone { Id = int.Parse(reader["MilestoneId"].ToString()), Title = reader["MilestoneTitle"].ToString(), Release = new Release { Id = int.Parse(reader["PhaseId"].ToString()), Title = reader["PhaseTitle"].ToString() } };
 
-                            lst.Add(status);
+                            allMilestones.Add(status);
                         }
                     }
                 }
-                return lst;
+                // create hierarchical structure
+                var phases = allMilestones
+                    .GroupBy(m => new { m.Release.Id, m.Release.Title }, // group by two columns, making an ANONYMOUS object
+                                m => new Milestone { Id = m.Id, Title = m.Title }, // every grouped record contains an IEnumerable<Milestone>
+                                (key, values) => new Release(values.ToList()) { Id = key.Id, Title = key.Title }); // key is the grouping columns, values is the IEnumerable<Milestone> from 2nd param function
+                                                                                                                   // create a new Release object
+                //var phases = allMilestones
+                //    .GroupBy(m => new { m.Release.Id, m.Release.Title }) // group by two columns, making a Release object
+                //    .Select(m => new Release(m.ToList()) { Id = m.Key.Id, Title = m.Key.Title });
+                
+                return phases.ToList();
             }
             catch (Exception ex)
             {
