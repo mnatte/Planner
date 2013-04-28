@@ -214,9 +214,9 @@
       });
     };
 
-    Ajax.prototype.getReleaseProgress = function(releaseId, callback) {
+    Ajax.prototype.getReleaseProgress = function(phaseId, milestoneId, callback) {
       var url;
-      url = "/planner/Release/Progress/Milestone/106/24";
+      url = "/planner/Release/Progress/Milestone/" + phaseId + "/" + milestoneId;
       return $.ajax(url, {
         dataType: "json",
         type: "GET",

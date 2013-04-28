@@ -450,19 +450,16 @@ class UDisplayReleaseProgressOverview
 		@viewModel = new ReleaseProgressViewmodel(releases)
 		ko.applyBindings(@viewModel)
 
-class UDisplayProcessPerformance
-	constructor: ->
+class UDisplayBurndown
+	constructor: (@title, @divName) ->
 	execute: (data) ->
-		@viewModel = new ProcessPerformanceViewmodel()
-		ko.applyBindings(@viewModel)
-		#console.log data
-		@viewModel.velocity data.Velocity
-		$('#graph0').html('')
-		$('#graph1').html('')
-		$('#graph2').html('')
-		$('#graph3').html('')
-		$('#graph4').html('')
-		chart = new Mnd.NumericChart('graph0', 'Burndown Chart', 'Release 9.6 ULG Code Change')
+		#@viewModel = new ProcessPerformanceViewmodel()
+		#ko.applyBindings(@viewModel)
+		console.log @title
+		#@viewModel.velocity data.Velocity
+		$(@divName).html('')
+		header = @title + ' - Velocity: ' + data.Velocity
+		chart = new Mnd.NumericChart('graph0', 'Burndown Chart', header)
 		i = 0
 		for graph in data.Graphs
 			#console.log graph
@@ -478,14 +475,10 @@ class UDisplayProcessPerformance
 		chart.draw()
 
 class UDisplayReleaseProgress
-	constructor: (@releaseTitle) ->
+	constructor: (@releaseTitle, @divName) ->
 		@dates = []
 	execute: (jsonData, options) ->
-		$('#graph0').html('')
-		$('#graph1').html('')
-		$('#graph2').html('')
-		$('#graph3').html('')
-		$('#graph4').html('')
+		$(@divName).html('')
 		# create array with milestones: milestones['DG'], milestones['FDCG'], etc.They contain objects as {artfct, date, hrs} but possibly multiple with same values since multiple activities are configured
 		milestones = jsonData.reduce (acc, x) =>
 							id = x.Milestone
@@ -510,7 +503,7 @@ class UDisplayReleaseProgress
 
 		# create graph per milestone
 		#console.log milestones
-		amt = 0
+		amt = 1
 		for k,v of milestones
 			#console.log k
 			#console.log v
@@ -528,7 +521,7 @@ class UDisplayReleaseProgress
 				states.push({ artefact: key, statuses: totalsPerDay })
 			div = 'graph' + amt
 			#console.log div
-			chart = new Mnd.TimeChart(div, @releaseTitle, k)
+			chart = new Mnd.TimeChart(@divName, @releaseTitle, k)
 			i = 0
 			for s in states
 				#console.log s
@@ -573,7 +566,7 @@ root.UUpdateScreen = UUpdateScreen
 root.URescheduleMilestone = URescheduleMilestone
 root.UReschedulePhase = UReschedulePhase
 root.UUpdateDeliverableStatus = UUpdateDeliverableStatus
-root.UDisplayProcessPerformance = UDisplayProcessPerformance
+root.UDisplayBurndown = UDisplayBurndown
 root.UCreateVisualCuesForGates = UCreateVisualCuesForGates
 
 

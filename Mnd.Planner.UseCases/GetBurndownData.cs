@@ -8,6 +8,7 @@ using Mnd.Planner.UseCases.Roles;
 using Mnd.Planner.Domain;
 using Mnd.Helpers;
 using Mnd.Planner.Domain.Models;
+using CuttingEdge.Conditions;
 
 namespace Mnd.Planner.UseCases
 {
@@ -28,6 +29,9 @@ namespace Mnd.Planner.UseCases
         /// <returns></returns>
         public override BurndownData Execute()
         {
+            // pre-conditions
+            Condition.WithExceptionOnFailure<ConditionNotMetException>().Requires(_startDate < _milestone.Date, "_startDate").IsTrue(Because.MustBeBeforeEndDate);
+
             var lst = new List<GraphData>();
             var burndown = new GraphData { Values = _milestone.GetBurndownLine(_startDate), Name = "BurnDown" };
             //var velocity = new GraphData { Values = _milestone.GetVelocityLine(burndown.Values), Name = "Velocity" };

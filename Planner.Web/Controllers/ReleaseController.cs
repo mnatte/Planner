@@ -138,14 +138,33 @@ namespace Mnd.Planner.Web.Controllers
             return this.Json(release, JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Retrieve progress data for Milestone
+        /// </summary>
+        /// <param name="phaseid"></param>
+        /// <param name="milestoneId"></param>
+        /// <returns></returns>
         [HttpGet]
         public JsonResult GetReleaseProgress(int phaseid, int milestoneId)
         {
+            // get complete progress data per artefact
             var rep = new ReleaseRepository();
-            var result = rep.GetArtefactsProgress(phaseid, milestoneId);
-            return this.Json(result, JsonRequestBehavior.AllowGet);
+            var progress = rep.GetArtefactsProgress(phaseid, milestoneId);
+
+            // get burndown for total
+            var msRep = new MilestoneRepository();
+            var ms = msRep.GetItemById(milestoneId);
+            // TODO: determine startdate by using the Phase startdate to which the Milestone is connected
+            var uc = new GetBurndownData(new Milestone { Id = milestoneId, Date = ms.Date, Release = new Release { Id = phaseid } }, DateTime.Now.AddDays(-40));
+            var burndown = uc.Execute();
+
+            return this.Json(new { Progress = progress, Burndown = burndown }, JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Retrieve release snapshots for navigation / selection purposes. No progress data included
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public JsonResult GetReleaseSnapshotsWithProgressStatus()
         {

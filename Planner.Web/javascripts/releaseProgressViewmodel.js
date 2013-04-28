@@ -9,17 +9,28 @@
     function ReleaseProgressViewmodel(allReleases) {
       this.allReleases = allReleases;
       this.viewReleaseProgress = __bind(this.viewReleaseProgress, this);
-      this.selectedRelease = ko.observable();
+      this.selectPhase = __bind(this.selectPhase, this);
+      this.selectedPhase = ko.observable();
+      this.selectedMilestone = ko.observable();
     }
 
-    ReleaseProgressViewmodel.prototype.viewReleaseProgress = function(release) {
-      var ajax, uc;
-      console.log(release);
-      this.selectedRelease(release);
-      uc = new UDisplayReleaseProgress(this.selectedRelease().title);
+    ReleaseProgressViewmodel.prototype.selectPhase = function(data) {
+      console.log("selectPhase - function");
+      this.selectedPhase(data);
+      console.log(this.selectedPhase.milestones);
+      return this.selectedMilestone(null);
+    };
+
+    ReleaseProgressViewmodel.prototype.viewReleaseProgress = function(milestone) {
+      var ajax, uc, uc2;
+      console.log(milestone);
+      this.selectedMilestone(milestone);
+      uc = new UDisplayReleaseProgress(this.selectedMilestone().phaseTitle, 'graph1');
+      uc2 = new UDisplayBurndown(this.selectedMilestone().phaseTitle + ' - ' + this.selectedMilestone().title, 'graph0');
       ajax = new Ajax();
-      return ajax.getReleaseProgress(this.selectedRelease().id, function(data) {
-        return uc.execute(data);
+      return ajax.getReleaseProgress(this.selectedMilestone().phaseId, this.selectedMilestone().id, function(data) {
+        uc.execute(data.Progress);
+        return uc2.execute(data.Burndown);
       });
     };
 

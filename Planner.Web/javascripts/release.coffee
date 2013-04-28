@@ -167,14 +167,14 @@ class Period extends Mixin
 		new Period(DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.Id)
 
 class Milestone extends Mixin
-	constructor: (@id, date, @time, @title, @description, @phaseId) ->
+	constructor: (@id, date, @time, @title, @description, @phaseId, @phaseTitle) ->
 		@date = new DatePlus(date)
 		@deliverables = []
 	addDeliverable: (deliverable) ->
 		@deliverables.push(deliverable)
-	@create: (jsonData, phaseId) ->
+	@create: (jsonData, phaseId, phaseTitle) ->
 		#console.log 'create Milestone'
-		ms = new Milestone(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.Date), jsonData.Time, jsonData.Title, jsonData.Description, phaseId)
+		ms = new Milestone(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.Date), jsonData.Time, jsonData.Title, jsonData.Description, phaseId, phaseTitle)
 		for deliverable in jsonData.Deliverables
 			ms.addDeliverable Deliverable.create(deliverable, ms)
 		ms
@@ -256,7 +256,7 @@ class Release extends Phase
 				release.addProject Project.create(project)
 		if jsonData.Milestones != null and jsonData.Milestones  != undefined
 			for milestone in jsonData.Milestones
-				release.addMilestone Milestone.create(milestone, jsonData.Id)
+				release.addMilestone Milestone.create(milestone, jsonData.Id, jsonData.Title)
 		if jsonData.Meetings != null and jsonData.Meetings  != undefined
 			for meeting in jsonData.Meetings
 				release.addMeeting Meeting.create(meeting, jsonData.Id)

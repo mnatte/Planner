@@ -197,12 +197,13 @@
 
     __extends(Milestone, _super);
 
-    function Milestone(id, date, time, title, description, phaseId) {
+    function Milestone(id, date, time, title, description, phaseId, phaseTitle) {
       this.id = id;
       this.time = time;
       this.title = title;
       this.description = description;
       this.phaseId = phaseId;
+      this.phaseTitle = phaseTitle;
       this.date = new DatePlus(date);
       this.deliverables = [];
     }
@@ -211,9 +212,9 @@
       return this.deliverables.push(deliverable);
     };
 
-    Milestone.create = function(jsonData, phaseId) {
+    Milestone.create = function(jsonData, phaseId, phaseTitle) {
       var deliverable, ms, _i, _len, _ref;
-      ms = new Milestone(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.Date), jsonData.Time, jsonData.Title, jsonData.Description, phaseId);
+      ms = new Milestone(jsonData.Id, DateFormatter.createJsDateFromJson(jsonData.Date), jsonData.Time, jsonData.Title, jsonData.Description, phaseId, phaseTitle);
       _ref = jsonData.Deliverables;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         deliverable = _ref[_i];
@@ -349,7 +350,7 @@
         _ref3 = jsonData.Milestones;
         for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
           milestone = _ref3[_k];
-          release.addMilestone(Milestone.create(milestone, jsonData.Id));
+          release.addMilestone(Milestone.create(milestone, jsonData.Id, jsonData.Title));
         }
       }
       if (jsonData.Meetings !== null && jsonData.Meetings !== void 0) {

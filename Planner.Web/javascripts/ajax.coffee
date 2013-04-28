@@ -139,8 +139,8 @@ class Ajax
 						callback data
 					error: (XHR, status, errorThrown) ->
 						console.log "AJAX MAIL error: #{errorThrown}"
-	getReleaseProgress: (releaseId, callback) ->
-		url = "/planner/Release/Progress/Milestone/106/24" #+ releaseId
+	getReleaseProgress: (phaseId, milestoneId, callback) ->
+		url = "/planner/Release/Progress/Milestone/" + phaseId + "/" + milestoneId
 		$.ajax url,
 			dataType: "json"
 			type: "GET"

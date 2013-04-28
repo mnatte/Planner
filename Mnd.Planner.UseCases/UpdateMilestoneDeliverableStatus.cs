@@ -24,9 +24,9 @@ namespace Mnd.Planner.UseCases
         public override void Execute()
         {
             // pre-conditions
-            Condition.WithExceptionOnFailure<ProcessException>().Requires(_deliverable.Id > 0, "_deliverable").IsTrue(Because.MustHaveValidId);
-            Condition.WithExceptionOnFailure<ProcessException>().Requires(_milestone.Id > 0, "_milestone").IsTrue(Because.MustHaveValidId);
-            Condition.WithExceptionOnFailure<ProcessException>().Requires(_milestone.Release, "_milestone.Release")
+            Condition.WithExceptionOnFailure<ConditionNotMetException>().Requires(_deliverable.Id > 0, "_deliverable").IsTrue(Because.MustHaveValidId);
+            Condition.WithExceptionOnFailure<ConditionNotMetException>().Requires(_milestone.Id > 0, "_milestone").IsTrue(Because.MustHaveValidId);
+            Condition.WithExceptionOnFailure<ConditionNotMetException>().Requires(_milestone.Release, "_milestone.Release")
                 .IsNotNull(Because.MayNotBeNull)
                 .Evaluate(_milestone.Release.Id > 0, Because.MustHaveValidId);
 

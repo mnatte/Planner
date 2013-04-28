@@ -1,5 +1,5 @@
 (function() {
-  var UAjax, UCreateVisualCuesForGates, UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayProcessPerformance, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUpdateDeliverableStatus, UUpdateScreen, root,
+  var UAjax, UCreateVisualCuesForGates, UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayBurndown, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUpdateDeliverableStatus, UUpdateScreen, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -936,21 +936,19 @@
 
   })();
 
-  UDisplayProcessPerformance = (function() {
+  UDisplayBurndown = (function() {
 
-    function UDisplayProcessPerformance() {}
+    function UDisplayBurndown(title, divName) {
+      this.title = title;
+      this.divName = divName;
+    }
 
-    UDisplayProcessPerformance.prototype.execute = function(data) {
-      var chart, graph, i, point, vals, _i, _j, _len, _len2, _ref, _ref2;
-      this.viewModel = new ProcessPerformanceViewmodel();
-      ko.applyBindings(this.viewModel);
-      this.viewModel.velocity(data.Velocity);
-      $('#graph0').html('');
-      $('#graph1').html('');
-      $('#graph2').html('');
-      $('#graph3').html('');
-      $('#graph4').html('');
-      chart = new Mnd.NumericChart('graph0', 'Burndown Chart', 'Release 9.6 ULG Code Change');
+    UDisplayBurndown.prototype.execute = function(data) {
+      var chart, graph, header, i, point, vals, _i, _j, _len, _len2, _ref, _ref2;
+      console.log(this.title);
+      $(this.divName).html('');
+      header = this.title + ' - Velocity: ' + data.Velocity;
+      chart = new Mnd.NumericChart('graph0', 'Burndown Chart', header);
       i = 0;
       _ref = data.Graphs;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -968,25 +966,22 @@
       return chart.draw();
     };
 
-    return UDisplayProcessPerformance;
+    return UDisplayBurndown;
 
   })();
 
   UDisplayReleaseProgress = (function() {
 
-    function UDisplayReleaseProgress(releaseTitle) {
+    function UDisplayReleaseProgress(releaseTitle, divName) {
       this.releaseTitle = releaseTitle;
+      this.divName = divName;
       this.dates = [];
     }
 
     UDisplayReleaseProgress.prototype.execute = function(jsonData, options) {
       var amt, artefactStatuses, chart, date, div, i, k, k2, key, milestones, s, states, totalsPerDay, v, v2, value, _i, _len, _ref, _results,
         _this = this;
-      $('#graph0').html('');
-      $('#graph1').html('');
-      $('#graph2').html('');
-      $('#graph3').html('');
-      $('#graph4').html('');
+      $(this.divName).html('');
       milestones = jsonData.reduce(function(acc, x) {
         var artefacts, id;
         id = x.Milestone;
@@ -1007,7 +1002,7 @@
         }
         return acc;
       }, []);
-      amt = 0;
+      amt = 1;
       _results = [];
       for (k in milestones) {
         v = milestones[k];
@@ -1027,7 +1022,7 @@
           });
         }
         div = 'graph' + amt;
-        chart = new Mnd.TimeChart(div, this.releaseTitle, k);
+        chart = new Mnd.TimeChart(this.divName, this.releaseTitle, k);
         i = 0;
         for (_i = 0, _len = states.length; _i < _len; _i++) {
           s = states[_i];
@@ -1108,7 +1103,7 @@
 
   root.UUpdateDeliverableStatus = UUpdateDeliverableStatus;
 
-  root.UDisplayProcessPerformance = UDisplayProcessPerformance;
+  root.UDisplayBurndown = UDisplayBurndown;
 
   root.UCreateVisualCuesForGates = UCreateVisualCuesForGates;
 

@@ -46,6 +46,7 @@
     <Compile Include="AbstractUseCase.cs" />
     <Compile Include="AwesomeNoteItem.cs" />
     <Compile Include="AwesomeNoteWriter.cs" />
+    <Compile Include="ConditionNotMetException.cs" />
     <Compile Include="GraphData.cs" />
     <Compile Include="GraphHelpers.cs" />
     <Compile Include="ProcessException.cs" />
