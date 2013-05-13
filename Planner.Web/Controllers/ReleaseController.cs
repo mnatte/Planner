@@ -154,11 +154,33 @@ namespace Mnd.Planner.Web.Controllers
             // get burndown for total
             var msRep = new MilestoneRepository();
             var ms = msRep.GetItemById(milestoneId);
-            // TODO: determine startdate by using the Phase startdate to which the Milestone is connected
-            var uc = new GetBurndownData(new Milestone { Id = milestoneId, Date = ms.Date, Release = new Release { Id = phaseid } }, DateTime.Now.AddDays(-40));
-            var burndown = uc.Execute();
 
-            return this.Json(new { Progress = progress, Burndown = burndown }, JsonRequestBehavior.AllowGet);
+            try
+            {
+                // TODO: determine startdate by using the Phase startdate to which the Milestone is connected
+                var uc = new GetBurndownData(new Milestone { Id = milestoneId, Date = ms.Date, Release = new Release { Id = phaseid } }, DateTime.Now.AddDays(-40));
+                var burndown = uc.Execute();
+
+                return this.Json(new { Progress = progress, Burndown = burndown }, JsonRequestBehavior.AllowGet);
+            }
+            catch (ConditionNotMetException ex)
+            {
+                HttpContext.Response.StatusDescription = string.Format("A condition has not been met: {0}", ex.Message);
+                HttpContext.Response.StatusCode = 400;
+                return this.Json(string.Format("A condition has not been met: {0}", ex.Message), JsonRequestBehavior.AllowGet);
+            }
+            catch (ProcessException ex)
+            {
+                HttpContext.Response.StatusDescription = string.Format("A use case processing exception has occurred: {0}", ex.Message);
+                HttpContext.Response.StatusCode = 400;
+                return this.Json(string.Format("A use case processing exception has occurred: {0}", ex.Message), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                HttpContext.Response.StatusDescription = string.Format("An exception has occurred: {0}", ex.Message);
+                HttpContext.Response.StatusCode = 500;
+                return this.Json(string.Format("An exception has occurred: {0}", ex.Message), JsonRequestBehavior.AllowGet);
+            }
         }
 
         /// <summary>

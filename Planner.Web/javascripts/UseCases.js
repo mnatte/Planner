@@ -1,5 +1,5 @@
 (function() {
-  var UAjax, UCreateVisualCuesForGates, UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayBurndown, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUpdateDeliverableStatus, UUpdateScreen, root,
+  var UAjax, UCreateVisualCuesForAbsences, UCreateVisualCuesForGates, UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayBurndown, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUpdateDeliverableStatus, UUpdateScreen, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -135,6 +135,29 @@
 
   })(UAjax);
 
+  UCreateVisualCuesForAbsences = (function(_super) {
+
+    __extends(UCreateVisualCuesForAbsences, _super);
+
+    function UCreateVisualCuesForAbsences(amountDays, callBack) {
+      this.amountDays = amountDays;
+      this.callBack = callBack;
+      UCreateVisualCuesForAbsences.__super__.constructor.call(this, this.callBack);
+    }
+
+    UCreateVisualCuesForAbsences.prototype.execute = function() {
+      var ajx,
+        _this = this;
+      ajx = new Ajax();
+      return ajx.createCuesForAbsences(this.amountDays, function(json) {
+        return _this.refreshData(json);
+      });
+    };
+
+    return UCreateVisualCuesForAbsences;
+
+  })(UAjax);
+
   UDisplayAbsences = (function() {
 
     function UDisplayAbsences() {}
@@ -145,7 +168,7 @@
       this.viewModel = new AbsencesViewmodel(resources);
       this.viewModel.load(resources.sort());
       ko.applyBindings(this.viewModel);
-      timeline = new Mnd.Timeline(this.viewModel.showAbsences, this.viewModel.selectedTimelineItem, "100%", "1500px");
+      timeline = new Mnd.Timeline(this.viewModel.showAbsences, this.viewModel.selectedTimelineItem, "100%", "1000px");
       return timeline.draw();
     };
 
@@ -948,7 +971,7 @@
       console.log(this.title);
       $(this.divName).html('');
       header = this.title + ' - Velocity: ' + data.Velocity;
-      chart = new Mnd.NumericChart('graph0', 'Burndown Chart', header);
+      chart = new Mnd.NumericChart(this.divName, 'Burndown Chart', header);
       i = 0;
       _ref = data.Graphs;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -1106,5 +1129,7 @@
   root.UDisplayBurndown = UDisplayBurndown;
 
   root.UCreateVisualCuesForGates = UCreateVisualCuesForGates;
+
+  root.UCreateVisualCuesForAbsences = UCreateVisualCuesForAbsences;
 
 }).call(this);

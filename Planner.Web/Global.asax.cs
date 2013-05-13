@@ -49,9 +49,14 @@ namespace Mnd.Planner.Web
                new { controller = "Release", action = "GetProcessPerformance", param1 = UrlParameter.Optional } // Parameter defaults
            );
             routes.MapRoute(
-               "VisualCues", // Route name
+               "VisualCuesGates", // Route name
                "Release/Process/{amountDays}", // URL with parameters
                new { controller = "Release", action = "CreateVisualCuesForGates", param1 = UrlParameter.Optional } // Parameter defaults
+           );
+            routes.MapRoute(
+               "VisualCuesAbsences", // Route name
+               "Resource/Absences/ComingDays/{amountDays}", // URL with parameters
+               new { controller = "Resource", action = "CreateVisualCuesForAbsences", param1 = UrlParameter.Optional } // Parameter defaults
            );
             routes.MapRoute(
                 "RemoveAssignmentReturnRelease", // Route name

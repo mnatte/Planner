@@ -135,7 +135,7 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Content>
-    <Content Include="processPerformance.htm" />
+    <Content Include="xxx_processPerformance.htm" />
     <Content Include="javascripts\adminMeetingViewmodel.js">
       <DependentUpon>adminMeetingViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>

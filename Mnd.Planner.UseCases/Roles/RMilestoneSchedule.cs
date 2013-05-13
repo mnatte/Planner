@@ -39,32 +39,32 @@ namespace Mnd.Planner.UseCases.Roles
             }
         }
 
-        /// <summary>
-        /// Plan the event in a release
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        public static void RemoveFromPlanning(this RMeetingSchedule evt, Release release)
-        {
-            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
-            try
-            {
-                using (conn)
-                {
-                    conn.Open();
+        ///// <summary>
+        ///// Plan the event in a release
+        ///// </summary>
+        ///// <param name="str"></param>
+        ///// <returns></returns>
+        //public static void RemoveFromPlanning(this RMeetingSchedule evt, Release release)
+        //{
+        //    var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+        //    try
+        //    {
+        //        using (conn)
+        //        {
+        //            conn.Open();
 
-                    var cmd = new SqlCommand("sp_delete_meeting_planning", conn);
-                    cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = evt.Id;
-                    cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.DateTime).Value = release.Id;
-                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+        //            var cmd = new SqlCommand("sp_delete_meeting_planning", conn);
+        //            cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = evt.Id;
+        //            cmd.Parameters.Add("@ReleaseId", System.Data.SqlDbType.DateTime).Value = release.Id;
+        //            cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
+        //            cmd.ExecuteNonQuery();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw;
+        //    }
+        //}
     }
 }

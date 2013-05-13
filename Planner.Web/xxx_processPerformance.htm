@@ -10,7 +10,7 @@
 	<!-- Basic Page Needs
   ================================================== -->
 	<meta charset="utf-8">
-	<title>Absences</title>
+	<title>Process Performance</title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 	<!--[if lt IE 9]>
@@ -45,16 +45,19 @@
     <script type="text/javascript" src="Scripts/koExternalTemplateEngine_all.min.js"></script>
     <script type="text/javascript" src="Scripts/jquery.blockUI.js"></script>
     <script type="text/javascript" src="Scripts/datehelper.js"></script>
-    <script type="text/javascript" src="Scripts/timeline-min.js"></script>
-    <script type="text/javascript" src="javascripts/Timeline.js"></script>
-        
+    <script type="text/javascript" src="javascripts/processPerformanceViewmodel.js"></script>    
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
-    <script type="text/javascript" src="javascripts/persistence.js"></script>
-    <script type="text/javascript" src="javascripts/absencesViewmodel.js"></script>
     <script type="text/javascript" src="javascripts/ajax.js"></script>
     <script type="text/javascript" src="javascripts/Roles.js"></script>
     <script type="text/javascript" src="javascripts/UseCases.js"></script>
+    
+    <script type="text/javascript" src="Scripts/highcharts.js"></script>
+    <script type="text/javascript" src="javascripts/NumericChart.js"></script>
+    <script src="Scripts/highcharts_highslide-full.min.js" type="text/javascript"></script>
+    <script src="Scripts/highcharts_highslide.config.js" type="text/javascript"></script>
+    <script src="Scripts/highcharts_exporting.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="stylesheets/highcharts_highslide.css">
 </head>
 <body>
 <!-- Primary Page Layout
@@ -64,24 +67,16 @@
     <!--navigation-->
         <!-- ko template: {name: 'navigation'} -->
         <!-- /ko -->
-        <div id="space" style="height: 100px">&nbsp;</div>
-        <div id="cueButton" class="sixteen columns">
-            <button class="sexybutton" data-bind="click: $root.createVisualCuesForAbsences.bind($data)"><span><span><span class="mobile_phone">Cues For Absences</span></span></span></button>
+        <div id="Div1" style="height: 100px">&nbsp;</div>
+        <div id="releases" class="three columns">
+            <div id="velocity" class="sixteen columns" data-bind="text: 'Team Velocity: ' + $root.velocity() + ' hours/day'"></div>
         </div>
         <!--releases overview-->
-        <div id="phases" class="twelve columns">
-            <div id="mytimeline"></div>
-            <div id="details"></div>
-        </div>
-        <div id="newButton" class="four columns">
-            <button class="sexybutton" data-bind="click: $root.newAbsence.bind($data)"><span><span><span class="add">New</span></span></span></button>
-            <!-- ko if: $root.selectedAbsence() -->
-            <section id="absenceFormSection" class="fourteen columns" data-bind="fadeVisible: true, fadeDuration: 500">
-                <!-- ko template: {name: 'absenceForm', data: $root.selectedAbsence()} -->
-                <!-- /ko -->
-            </section>
-            <!--/ko-->
-        </div>
+        <div id="graph0" class="sixteen columns"></div>
+        <div id="graph1" class="sixteen columns"></div>
+        <div id="graph2" class="sixteen columns"></div>
+        <div id="graph3" class="sixteen columns"></div>
+        <div id="graph4" class="sixteen columns"></div>
 </div><!-- container -->
     <script type="text/javascript">
 
@@ -89,9 +84,10 @@
             infuser.defaults.templateSuffix = ".tmpl.html";
             infuser.defaults.templateUrl = "/planner/templates";
 
-            var uc = new UDisplayAbsences();
+            var uc = new UDisplayProcessPerformance();
             var ajax = new Ajax();
-            ajax.getResources(uc.execute);
+            ajax.getProcessPerformance(106, uc.execute);
+
         });
     </script>
 

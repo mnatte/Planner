@@ -226,7 +226,7 @@
         },
         error: function(XHR, status, errorThrown) {
           console.log("AJAX status: " + status);
-          console.log("AJAX XHR: " + XHR);
+          console.log(XHR);
           return console.log("AJAX errorThrown: " + errorThrown);
         }
       });
@@ -290,6 +290,22 @@
         type: "GET",
         success: function(data, status, XHR) {
           console.log("createCuesForGates succesfully called");
+          return callback(data);
+        },
+        error: function(XHR, status, errorThrown) {
+          return console.log("AJAX error: " + status);
+        }
+      });
+    };
+
+    Ajax.prototype.createCuesForAbsences = function(amountDays, callback) {
+      var url;
+      url = "/planner/Resource/Absences/ComingDays/" + amountDays;
+      return $.ajax(url, {
+        dataType: "json",
+        type: "GET",
+        success: function(data, status, XHR) {
+          console.log("createCuesForAbsences succesfully called");
           return callback(data);
         },
         error: function(XHR, status, errorThrown) {

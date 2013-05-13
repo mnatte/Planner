@@ -90,6 +90,13 @@ class UCreateVisualCuesForGates extends UAjax
 		ajx = new Ajax()
 		ajx.createCuesForGates @amountDays, (json) => @refreshData(json)
 
+class UCreateVisualCuesForAbsences extends UAjax
+	constructor: (@amountDays, @callBack) ->
+		super @callBack
+	execute: ->
+		ajx = new Ajax()
+		ajx.createCuesForAbsences @amountDays, (json) => @refreshData(json)
+
 class UDisplayAbsences
 	constructor: ->
 	execute: (data) ->
@@ -98,7 +105,7 @@ class UDisplayAbsences
 		@viewModel = new AbsencesViewmodel(resources)
 		@viewModel.load resources.sort()
 		ko.applyBindings(@viewModel)
-		timeline = new Mnd.Timeline(@viewModel.showAbsences, @viewModel.selectedTimelineItem, "100%", "1500px",)
+		timeline = new Mnd.Timeline(@viewModel.showAbsences, @viewModel.selectedTimelineItem, "100%", "1000px",)
 		timeline.draw()
 
 class UDisplayAssignments
@@ -459,7 +466,7 @@ class UDisplayBurndown
 		#@viewModel.velocity data.Velocity
 		$(@divName).html('')
 		header = @title + ' - Velocity: ' + data.Velocity
-		chart = new Mnd.NumericChart('graph0', 'Burndown Chart', header)
+		chart = new Mnd.NumericChart(@divName, 'Burndown Chart', header)
 		i = 0
 		for graph in data.Graphs
 			#console.log graph
@@ -568,6 +575,8 @@ root.UReschedulePhase = UReschedulePhase
 root.UUpdateDeliverableStatus = UUpdateDeliverableStatus
 root.UDisplayBurndown = UDisplayBurndown
 root.UCreateVisualCuesForGates = UCreateVisualCuesForGates
+root.UCreateVisualCuesForAbsences = UCreateVisualCuesForAbsences
+
 
 
 

@@ -14,6 +14,7 @@ using Mnd.Planner.Domain.Persistence;
 using Mnd.Planner.Domain.Repositories;
 using Mnd.Mvc.Rest;
 using Mnd.Planner.UseCases;
+using Mnd.Domain;
 
 namespace Mnd.Planner.Web.Controllers
 {
@@ -103,6 +104,14 @@ namespace Mnd.Planner.Web.Controllers
             var rep = new ResourceRepository();
             var release = rep.GetItemById(model.ResourceId);
             return this.Json(release, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult CreateVisualCuesForAbsences(int amountDays)
+        {
+            var uc = new CreateVisualCuesForAbsences(amountDays, new AwesomeNoteWriter());
+            uc.Execute();
+            return this.Json("Visual cues created in AwesomeNote", JsonRequestBehavior.AllowGet);
         }
     }
 }

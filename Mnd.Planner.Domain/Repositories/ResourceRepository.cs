@@ -108,6 +108,55 @@ namespace Mnd.Planner.Domain.Repositories
             return lst;
         }
 
+        public List<Absence> GetAbsencesForComingDays(int amountDays)
+        {
+            var conn = new SqlConnection(this.ConnectionString);
+
+            var cmd = new SqlCommand("sp_get_absences_for_next_days", conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.Add("@AmountDays", System.Data.SqlDbType.Int).Value = amountDays;
+            var lst = new List<Absence>();
+
+            using (conn)
+            {
+                conn.Open();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var absence = new Absence
+                        {
+                            Id = int.Parse(reader["AbsenceId"].ToString()),
+                            Title = reader["Title"].ToString(),
+                            StartDate = DateTime.Parse(reader["StartDate"].ToString()),
+                            EndDate = DateTime.Parse(reader["EndDate"].ToString()),
+                            Person = new Resource { Id = int.Parse(reader["PersonId"].ToString()), FirstName = reader["FirstName"].ToString(), MiddleName = reader["MiddleName"].ToString(), LastName = reader["LastName"].ToString() }
+                        };
+                        lst.Add(absence);
+                    }
+                }
+            }
+            return lst;
+        }
+
+        public void AddNotificationToHistory(int absenceId, string notificationType)
+        {
+            var conn = new SqlConnection(this.ConnectionString);
+
+            var cmd = new SqlCommand("sp_add_notification_to_history", conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.Add("@EventId", System.Data.SqlDbType.Int).Value = absenceId;
+            cmd.Parameters.Add("@PhaseId", System.Data.SqlDbType.Int).Value = 0;
+            cmd.Parameters.Add("@EventType", System.Data.SqlDbType.VarChar).Value = "Absence";
+            cmd.Parameters.Add("@NotificationType", System.Data.SqlDbType.VarChar).Value = notificationType;
+
+            using (conn)
+            {
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
         public Absence SaveAbsence(AbsenceInputModel obj)
         {
             var conn = new SqlConnection(this.ConnectionString);

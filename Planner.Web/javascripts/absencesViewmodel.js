@@ -9,6 +9,7 @@
     function AbsencesViewmodel(allResources) {
       var _this = this;
       this.allResources = allResources;
+      this.createVisualCuesForAbsences = __bind(this.createVisualCuesForAbsences, this);
       this.newAbsence = __bind(this.newAbsence, this);
       this.deleteSelectedAbsence = __bind(this.deleteSelectedAbsence, this);
       this.saveSelectedAbsence = __bind(this.saveSelectedAbsence, this);
@@ -156,6 +157,15 @@
       newAbsence.id = 0;
       this.selectedAbsence(newAbsence);
       return console.log(this.selectedAbsence());
+    };
+
+    AbsencesViewmodel.prototype.createVisualCuesForAbsences = function(data) {
+      var uc,
+        _this = this;
+      uc = new UCreateVisualCuesForAbsences(30, function(data) {
+        return console.log('callback succesful: ' + data);
+      });
+      return uc.execute();
     };
 
     return AbsencesViewmodel;

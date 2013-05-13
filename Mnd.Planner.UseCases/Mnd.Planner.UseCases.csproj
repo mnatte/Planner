@@ -56,7 +56,7 @@
     <Compile Include="CreateAlertsForHighAttentionItems.cs" />
     <Compile Include="CreateRemindersForTasks.cs" />
     <Compile Include="CreateVisualCuesForGates.cs" />
-    <Compile Include="EmailComingAbsences.cs" />
+    <Compile Include="CreateVisualCuesForAbsences.cs" />
     <Compile Include="EmailMilestoneStatuses.cs" />
     <Compile Include="EmailResourcePlanning.cs" />
     <Compile Include="PlanMeeting.cs" />

@@ -109,5 +109,9 @@ class AbsencesViewmodel
 		@selectedAbsence newAbsence
 		console.log @selectedAbsence()
 
+	createVisualCuesForAbsences: (data) =>
+		uc = new UCreateVisualCuesForAbsences 30, (data) => console.log 'callback succesful: ' + data
+		uc.execute()
+
 # export to root object
 root.AbsencesViewmodel = AbsencesViewmodel

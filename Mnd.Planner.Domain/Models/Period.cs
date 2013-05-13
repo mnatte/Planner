@@ -146,9 +146,14 @@ namespace Mnd.Planner.Domain
         {
             get
             {
-                var workingDays = Enumerable.Range(0, Convert.ToInt32(this.EndDate.Subtract(this.StartDate).TotalDays)).Sum();
+                var workingDays = Enumerable.Range(0, Convert.ToInt32(this.EndDate.Subtract(this.StartDate).TotalDays)).Select(i => 1).Sum();
                 return workingDays;
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} - {1}, {2}. TotalDays: {3}, WorkingDays: {4}", this.StartDate.ToDutchString(), this.EndDate.ToDutchString(), this.Title, this.TotalDays, this.AmountWorkingDays);
         }
     }
 }
