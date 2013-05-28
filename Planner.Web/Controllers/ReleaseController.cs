@@ -12,16 +12,32 @@ using Mnd.Planner.Web.Controllers.InputModels;
 using Mnd.Planner.UseCases;
 using Mnd.Helpers;
 using Mnd.Domain;
+using Microsoft.Web.Mvc;
+using System.Web.Script.Serialization;
 
 namespace Mnd.Planner.Web.Controllers
 {
     public class ReleaseController : Controller
     {
-        public JsonResult GetReleaseSummaries()
+        public ContentResult GetReleaseSummaries()
         {
             var rep = new ReleaseRepository();
             var releases = rep.GetReleaseSummaries();
-            return this.Json(releases, JsonRequestBehavior.AllowGet);
+
+            var serializer = new JavaScriptSerializer();
+
+            // For simplicity just use Int32's max value.
+            // You could always read the value from the config section mentioned above.
+            serializer.MaxJsonLength = Int32.MaxValue;
+
+            var result = new ContentResult
+            {
+                Content = serializer.Serialize(releases),
+                ContentType = "application/json",
+            };
+            return result;
+            
+            //return this.Json(releases, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult GetReleaseSummaryById(int id)

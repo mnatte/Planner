@@ -102,6 +102,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\DeliverableController.cs" />
     <Compile Include="Controllers\MeetingController.cs" />
+    <Compile Include="CustomJsonValueProviderFactory.cs" />
     <Compile Include="InputModels\ScheduleReleasePhaseInputModel.cs" />
     <Compile Include="InputModels\ScheduleReleaseEventInputModel.cs" />
     <Compile Include="Controllers\ResourceAssignmentController.cs" />
@@ -125,6 +126,7 @@
     <Content Include="absences.htm" />
     <Content Include="assignments.htm" />
     <Content Include="adminMeeting.htm" />
+    <Content Include="branches.htm" />
     <Content Include="javascripts\processPerformanceViewmodel.js">
       <DependentUpon>processPerformanceViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -135,6 +137,8 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Content>
+    <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="stylesheets\canvas.css" />
     <Content Include="xxx_processPerformance.htm" />
     <Content Include="javascripts\adminMeetingViewmodel.js">
       <DependentUpon>adminMeetingViewmodel.coffee</DependentUpon>

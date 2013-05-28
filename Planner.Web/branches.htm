@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+	<title>Branches</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="stylesheets/base_no_buttons.css">
+	<link rel="stylesheet" href="stylesheets/skeleton.css">
+	<link rel="stylesheet" href="stylesheets/layout.css">
+    <link rel="stylesheet" href="stylesheets/tables.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/timeline.css" />
+    <link rel="stylesheet" href="stylesheets/icon_styles.css">
+    <link rel="stylesheet" href="stylesheets/sexybuttons.css">
+    <link rel="stylesheet" href="stylesheets/canvas.css">
+
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
+    <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.dateFormat-1.0.js"></script>
+    <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
+    <script type="text/javascript" src="Scripts/knockout-array-filter.js"></script>
+    <script type="text/javascript" src="Scripts/koExternalTemplateEngine_all.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.blockUI.js"></script>
+    <script type="text/javascript" src="Scripts/datehelper.js"></script>
+    <script type="text/javascript" src="Scripts/modernizr-2.6.2.js"></script>
+    <script type="text/javascript" src="javascripts/releaseProgressViewmodel.js"></script>    
+    <script type="text/javascript" src="javascripts/Mixin.js"></script>
+    <script type="text/javascript" src="javascripts/release.js"></script>
+    <script type="text/javascript" src="javascripts/ajax.js"></script>
+    <script type="text/javascript" src="javascripts/Roles.js"></script>
+    <script type="text/javascript" src="javascripts/UseCases.js"></script>
+</head>
+<body>
+<!-- Primary Page Layout
+	================================================== -->
+
+    <div class="container">
+    <!--navigation-->
+        <!-- ko template: {name: 'navigation'} -->
+        <!-- /ko -->
+        <div id="Div1" style="height: 100px">&nbsp;</div>
+        <canvas id="main"></canvas>
+       
+    </div><!-- container -->
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            infuser.defaults.templateSuffix = ".tmpl.html";
+            infuser.defaults.templateUrl = "/planner/templates";
+
+            if (!Modernizr.canvas) {
+                alert("This browser does not support the HTML5 <canvas> tag");
+                return;
+            }
+
+            var $canvas = $("#main");
+            var context = $canvas[0].getContext("2d");
+            var w, h;
+            var maxVelocity = 10;
+            var points = [];
+            var radians = 5;
+            var segments = 3;
+            var pointsCount = 15;
+
+            var $image = $("<img src='images/png/32x32/chess.png'>").hide().appendTo("body");
+
+            function resize() {
+                w = $canvas.width();
+                h = $canvas.height();
+                $canvas.attr("width", w);
+                $canvas.attr("height", h);
+                //resize function placeholder
+            }
+            $(window).resize(resize);
+            resize();
+
+            for (var i = 0; i < pointsCount; i++) {
+                points.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    vx: (Math.random() * maxVelocity * 2) - maxVelocity,
+                    vy: (Math.random() * maxVelocity * 2) - maxVelocity
+                });
+            }
+
+            function frame() {
+                context.fillStyle = "rgba(255, 255, 255, 0.8)";
+                context.fillRect(0, 0, w, h);
+
+                context.strokeStyle = "#0f0";
+                context.beginPath();
+                context.moveTo(points[0].x, points[0].y);
+                for (i = 1; i < segments; i++) {
+                    context.lineTo(points[i].x, points[i].y);
+                }
+                context.stroke();
+
+                context.save();
+                context.translate(points[3].x, points[3].y);
+                context.rotate(radians);
+                context.drawImage($image[0], -($image.width()) / 2, -($image.height()) / 2);
+                context.restore();
+                // placeholder body function
+            }
+            frame();
+        });
+    </script>
+
+</body>
+</html>
