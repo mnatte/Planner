@@ -1,5 +1,5 @@
 (function() {
-  var UAjax, UCreateVisualCuesForAbsences, UCreateVisualCuesForGates, UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayBurndown, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUpdateDeliverableStatus, UUpdateScreen, root,
+  var UAjax, UCreateVisualCuesForAbsences, UCreateVisualCuesForGates, UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayBurndown, UDisplayEnvironments, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUpdateDeliverableStatus, UUpdateScreen, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -90,6 +90,42 @@
     };
 
     return UDisplayPhases;
+
+  })();
+
+  UDisplayEnvironments = (function() {
+
+    function UDisplayEnvironments() {}
+
+    UDisplayEnvironments.prototype.execute = function(envsJson, versionsJson) {
+      var env, environments, obj, pl, timeline, versions, _i, _j, _len, _len2, _ref;
+      environments = Environment.createCollection(envsJson);
+      versions = Version.createCollection(versionsJson);
+      console.log(environments);
+      this.displayData = [];
+      for (_i = 0, _len = environments.length; _i < _len; _i++) {
+        env = environments[_i];
+        _ref = env.planning;
+        for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
+          pl = _ref[_j];
+          obj = {
+            group: env.name,
+            start: pl.phase.startDate.date,
+            end: pl.phase.endDate.date,
+            content: pl.version.number,
+            info: pl.phase.toString(),
+            dataObject: pl
+          };
+          this.displayData.push(obj);
+        }
+      }
+      this.viewModel = new EnvironmentsPlanningViewmodel(environments, versions);
+      ko.applyBindings(this.viewModel);
+      timeline = new Mnd.Timeline(this.displayData, this.viewModel.selectedTimelineItem);
+      return timeline.draw();
+    };
+
+    return UDisplayEnvironments;
 
   })();
 
@@ -1075,6 +1111,8 @@
   root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFromNow;
 
   root.UDisplayPhases = UDisplayPhases;
+
+  root.UDisplayEnvironments = UDisplayEnvironments;
 
   root.UDisplayAbsences = UDisplayAbsences;
 

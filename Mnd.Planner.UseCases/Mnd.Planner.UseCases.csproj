@@ -43,8 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GetEnvironmentsPlanning.cs" />
     <Compile Include="GetBurndownData.cs" />
     <Compile Include="ExceptionMessages.cs" />
+    <Compile Include="Roles\RAssignedResource.cs" />
     <Compile Include="Roles\RMilestoneStatus.cs" />
     <Compile Include="Roles\RDeliverableStatus.cs" />
     <Compile Include="UpdateMilestoneDeliverableStatus.cs" />

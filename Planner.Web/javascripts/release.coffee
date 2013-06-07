@@ -129,10 +129,12 @@ class Period extends Mixin
 	remainingWorkingHours: ->
 		@remainingWorkingDays() * 8
 	comingUpThisWeek: ->
+		@comingUpInDays 7
+	comingUpInDays: (amtDays) ->
 		today = new Date()
-		nextWeek = today.setDate(today.getDate()+7)
-		# console.log nextWeek
-		nextWeek > @startDate.date
+		next = today.setDate(today.getDate()+amtDays)
+		console.log new Date(next)
+		@containsDate new Date(next)
 	overlaps: (other) ->
 		#console.log "this: #{@}"
 		#console.log "other: #{other}"
@@ -184,6 +186,35 @@ class Milestone extends Mixin
 			@ms = Milestone.create(ms)
 			milestones.push @ms
 		milestones
+
+class Environment extends Mixin
+	constructor: (@id, @name, @description, @location, @shortName) ->
+		@planning = []
+	@create: (jsonData) ->
+		env = new Environment(jsonData.Id, jsonData.Name, jsonData.Description, jsonData.Location, jsonData.ShortName)
+		for a in jsonData.Planning
+			phase = Phase.create a.Phase
+			version = Version.create a.Version
+			env.planning.push { phase: phase, version: version }
+		env
+	@createCollection: (jsonData) ->
+		arr = []
+		for e in jsonData
+			@env = Environment.create(e)
+			arr.push @env
+		arr
+
+class Version extends Mixin
+	constructor: (@id, @number, @description, @name) ->
+	@create: (jsonData) ->
+		v = new Version(jsonData.Id, jsonData.Number, jsonData.Description, jsonData.Name)
+		v
+	@createCollection: (jsonData) ->
+		arr = []
+		for e in jsonData
+			@v = Version.create(e)
+			arr.push @v
+		arr
 
 class Phase extends Period
 	# attach seperate startDate, endDate and title properties to each instance
@@ -461,4 +492,6 @@ root.Activity = Activity
 root.Assignment = Assignment
 root.ProjectActivityStatus = ProjectActivityStatus
 root.ReleaseAssignments = ReleaseAssignments
+root.Environment = Environment
+root.Version = Version
 

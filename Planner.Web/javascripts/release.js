@@ -1,5 +1,5 @@
 (function() {
-  var Activity, Assignment, Deliverable, Feature, Meeting, Milestone, Period, Phase, Project, ProjectActivityStatus, Release, ReleaseAssignments, Resource, Week, root,
+  var Activity, Assignment, Deliverable, Environment, Feature, Meeting, Milestone, Period, Phase, Project, ProjectActivityStatus, Release, ReleaseAssignments, Resource, Version, Week, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -142,10 +142,15 @@
     };
 
     Period.prototype.comingUpThisWeek = function() {
-      var nextWeek, today;
+      return this.comingUpInDays(7);
+    };
+
+    Period.prototype.comingUpInDays = function(amtDays) {
+      var next, today;
       today = new Date();
-      nextWeek = today.setDate(today.getDate() + 7);
-      return nextWeek > this.startDate.date;
+      next = today.setDate(today.getDate() + amtDays);
+      console.log(new Date(next));
+      return this.containsDate(new Date(next));
     };
 
     Period.prototype.overlaps = function(other) {
@@ -235,6 +240,82 @@
     };
 
     return Milestone;
+
+  })(Mixin);
+
+  Environment = (function(_super) {
+
+    __extends(Environment, _super);
+
+    function Environment(id, name, description, location, shortName) {
+      this.id = id;
+      this.name = name;
+      this.description = description;
+      this.location = location;
+      this.shortName = shortName;
+      this.planning = [];
+    }
+
+    Environment.create = function(jsonData) {
+      var a, env, phase, version, _i, _len, _ref;
+      env = new Environment(jsonData.Id, jsonData.Name, jsonData.Description, jsonData.Location, jsonData.ShortName);
+      _ref = jsonData.Planning;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        a = _ref[_i];
+        phase = Phase.create(a.Phase);
+        version = Version.create(a.Version);
+        env.planning.push({
+          phase: phase,
+          version: version
+        });
+      }
+      return env;
+    };
+
+    Environment.createCollection = function(jsonData) {
+      var arr, e, _i, _len;
+      arr = [];
+      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
+        e = jsonData[_i];
+        this.env = Environment.create(e);
+        arr.push(this.env);
+      }
+      return arr;
+    };
+
+    return Environment;
+
+  })(Mixin);
+
+  Version = (function(_super) {
+
+    __extends(Version, _super);
+
+    function Version(id, number, description, name) {
+      this.id = id;
+      this.number = number;
+      this.description = description;
+      this.name = name;
+    }
+
+    Version.create = function(jsonData) {
+      var v;
+      v = new Version(jsonData.Id, jsonData.Number, jsonData.Description, jsonData.Name);
+      return v;
+    };
+
+    Version.createCollection = function(jsonData) {
+      var arr, e, _i, _len;
+      arr = [];
+      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
+        e = jsonData[_i];
+        this.v = Version.create(e);
+        arr.push(this.v);
+      }
+      return arr;
+    };
+
+    return Version;
 
   })(Mixin);
 
@@ -784,5 +865,9 @@
   root.ProjectActivityStatus = ProjectActivityStatus;
 
   root.ReleaseAssignments = ReleaseAssignments;
+
+  root.Environment = Environment;
+
+  root.Version = Version;
 
 }).call(this);

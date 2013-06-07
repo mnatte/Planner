@@ -74,11 +74,6 @@ namespace Mnd.Planner.Web
                 new { controller = "Resource", action = "MailPlanning", param1 = UrlParameter.Optional } // Parameter defaults
             );
             routes.MapRoute(
-                "Default", // Route name
-                "{controller}/{action}/{id}", // URL with parameters
-                new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults
-            );
-            routes.MapRoute(
                 "ResourceAssignments", // Route name
                 "ResourceAssignment/Assignments/{phaseId}/{projectId}", // URL with parameters
                 new { controller = "ResourceAssignment", action = "GetAssignmentsByPhaseIdAndProjectId", param1 = UrlParameter.Optional, param2 = UrlParameter.Optional } // Parameter defaults
@@ -92,6 +87,21 @@ namespace Mnd.Planner.Web
                 "ResourceAssignmentsForRelease", // Route name
                 "ResourceAssignment/Assignments/Release/{phaseId}", // URL with parameters
                 new { controller = "ResourceAssignment", action = "GetAssignmentsByPhaseId", param1 = UrlParameter.Optional } // Parameter defaults
+            );
+            routes.MapRoute(
+                "EnvironmentsPlanning", // Route name
+                "Environment/Planning", // URL with parameters
+                new { controller = "Environment", action = "GetEnvironmentsWithPlanning", param1 = UrlParameter.Optional } // Parameter defaults
+            );
+             routes.MapRoute(
+                "Versions", // Route name
+                "Environment/Versions", // URL with parameters
+                new { controller = "Environment", action = "GetAllVersions", param1 = UrlParameter.Optional } // Parameter defaults
+            );
+            routes.MapRoute(
+                "Default", // Route name
+                "{controller}/{action}/{id}", // URL with parameters
+                new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults
             );
         }
 

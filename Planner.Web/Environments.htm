@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+	<title>Environments Planning</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="stylesheets/base_no_buttons.css">
+	<link rel="stylesheet" href="stylesheets/skeleton.css">
+	<link rel="stylesheet" href="stylesheets/layout.css">
+    <link rel="stylesheet" href="stylesheets/tables.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/timeline.css" />
+    <link rel="stylesheet" href="stylesheets/icon_styles.css">
+    <link rel="stylesheet" href="stylesheets/sexybuttons.css">
+
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
+    <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.dateFormat-1.0.js"></script>
+    <script type="text/javascript" src="Scripts/knockout-2.0.0.js"></script>
+    <script type="text/javascript" src="Scripts/knockout-array-filter.js"></script>
+    <script type="text/javascript" src="Scripts/koExternalTemplateEngine_all.min.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.blockUI.js"></script>
+
+    <script type="text/javascript" src="Scripts/datehelper.js"></script>
+    <script type="text/javascript" src="Scripts/timeline-min.js"></script>
+    <script type="text/javascript" src="javascripts/Timeline.js"></script>
+        
+    <script type="text/javascript" src="javascripts/Mixin.js"></script>
+    <script type="text/javascript" src="javascripts/release.js"></script>
+    <script type="text/javascript" src="javascripts/environmentsPlanningViewmodel.js"></script>
+    <script type="text/javascript" src="javascripts/ajax.js"></script>
+    <script type="text/javascript" src="javascripts/Roles.js"></script>
+    <script type="text/javascript" src="javascripts/persistence.js"></script>
+    <script type="text/javascript" src="javascripts/UseCases.js"></script>
+</head>
+<body>
+<!-- Primary Page Layout
+	================================================== -->
+
+	<div class="container">
+    <!--navigation-->
+        <!-- ko template: {name: 'navigation'} -->
+        <!-- /ko -->
+        <div id="space" style="height: 100px">&nbsp;</div>
+        <div id="cueButton" class="sixteen columns">
+            <button class="sexybutton" data-bind="click: $root.createVisualCuesForGates.bind($data)"><span><span><span class="mobile_phone">Cues For Gates</span></span></span></button>
+        </div>
+        <!--releases overview-->
+        <div id="phases" class="twelve columns">
+            <div id="mytimeline"></div>
+            <div id="details"></div>
+        </div>
+        <div id="newButton" class="four columns">
+            <button class="sexybutton" data-bind="click: $root.newAssignment.bind($data)"><span><span><span class="add">New</span></span></span></button>
+            <!-- ko if: $root.selectedAssignment() -->
+            <section id="environmentPlanningFormSection" class="four columns" data-bind="fadeVisible: true, fadeDuration: 200">
+                <!-- ko template: {name: 'environmentPlanningForm', data: $root.selectedAssignment()} -->
+                <!-- /ko -->
+            </section>
+            <!--/ko-->
+        </div>
+        <div id="updateStatus" class="sixteen columns">
+          
+        </div>
+</div><!-- container -->
+    <script type="text/javascript">
+        function loadVersions(environments) {
+            //var uc = new ULoadAdminReleases();
+            var ajx = new Ajax();
+            var uc = new UDisplayEnvironments();
+            ajx.getVersions(function (data) { uc.execute(environments, data) });
+        }
+
+        $(document).ready(function () {
+            infuser.defaults.templateSuffix = ".tmpl.html";
+            infuser.defaults.templateUrl = "/planner/templates";
+
+            var ajx = new Ajax();
+            ajx.getEnvironmentsPlanning(loadVersions);
+        });
+    </script>
+
+</body>
+</html>

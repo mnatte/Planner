@@ -75,6 +75,35 @@ class UDisplayPhases
 		timeline = new Mnd.Timeline(@viewModel.showPhases, @viewModel.selectedTimelineItem)
 		timeline.draw()
 
+class UDisplayEnvironments
+	constructor: ->
+	execute: (envsJson, versionsJson) ->
+		environments = Environment.createCollection(envsJson)
+		versions = Version.createCollection(versionsJson)
+		console.log environments
+		# TODO: prepare graph data
+		@displayData = []
+		#console.log relevantReleases
+		for env in environments 
+			for pl in env.planning
+				obj = {group: env.name, start: pl.phase.startDate.date, end: pl.phase.endDate.date, content: pl.version.number, info: pl.phase.toString(), dataObject: pl}
+				@displayData.push obj
+			#for ms in env.planning.milestones
+			#	icon = '<span class="icon icon-milestone" />'
+			#	descr = '<ul>' # deployments
+			#	descr += '<li>' # deployment
+			#	descr += '</li>' # /deployment
+			#	descr += '</ul>' # /deployments
+			#	obj = {group: rel.title, start: ms.date.date, content: ms.title + '<br />' + icon, info: ms.date.dateString + '<br />' + ms.description, dataObject: ms}
+			#	@displayData.push obj
+
+		#console.log @displayData
+		@viewModel = new EnvironmentsPlanningViewmodel(environments, versions)
+		ko.applyBindings(@viewModel)
+		timeline = new Mnd.Timeline(@displayData, @viewModel.selectedTimelineItem)
+		timeline.draw()
+		
+
 class UAjax
 	constructor: (@callBack) ->
 	execute: ->
@@ -548,6 +577,7 @@ class UDisplayReleaseProgress
 root.UDisplayReleaseStatus = UDisplayReleaseStatus
 root.UGetAvailableHoursForTeamMemberFromNow = UGetAvailableHoursForTeamMemberFromNow
 root.UDisplayPhases = UDisplayPhases
+root.UDisplayEnvironments = UDisplayEnvironments
 root.UDisplayAbsences = UDisplayAbsences
 root.UDisplayPlanningOverview = UDisplayPlanningOverview
 root.UDisplayResourcesAvailability = UDisplayResourcesAvailability

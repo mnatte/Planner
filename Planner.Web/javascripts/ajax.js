@@ -314,6 +314,38 @@
       });
     };
 
+    Ajax.prototype.getEnvironmentsPlanning = function(callback) {
+      var url;
+      url = "/planner/Environment/Planning";
+      return $.ajax(url, {
+        dataType: "json",
+        type: "GET",
+        success: function(data, status, XHR) {
+          console.log("environments planning succesfully called");
+          return callback(data);
+        },
+        error: function(XHR, status, errorThrown) {
+          return console.log("AJAX error: " + status);
+        }
+      });
+    };
+
+    Ajax.prototype.getVersions = function(callback) {
+      var url;
+      url = "/planner/Environment/Versions";
+      return $.ajax(url, {
+        dataType: "json",
+        type: "GET",
+        success: function(data, status, XHR) {
+          console.log("versions succesfully called");
+          return callback(data);
+        },
+        error: function(XHR, status, errorThrown) {
+          return console.log("AJAX error: " + status);
+        }
+      });
+    };
+
     return Ajax;
 
   })();

@@ -9,6 +9,9 @@ using Mnd.Planner.Domain;
 
 namespace Mnd.Planner.UseCases
 {
+    /// <summary>
+    /// Set start and end date for a period
+    /// </summary>
     public class PlanPeriod : AbstractUseCase
     {
         RPeriodSchedule _period;

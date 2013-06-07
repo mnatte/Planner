@@ -267,6 +267,7 @@ RSimpleCrud =
 					error: (XHR, status, errorThrown) ->
 						console.log "AJAX error: #{status}"
 
+
 RScheduleItem = 
 	# static extensions
 	# @ here is static
@@ -344,3 +345,4 @@ root.RSimpleCrud = RSimpleCrud
 root.RScheduleItem = RScheduleItem
 root.RSchedulePeriod = RSchedulePeriod
 root.RDeliverableStatus = RDeliverableStatus
+

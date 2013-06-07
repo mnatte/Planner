@@ -43,12 +43,18 @@
     <Compile Include="Models\Absence.cs" />
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\ActivityStatus.cs" />
+    <Compile Include="Models\Branch.cs" />
     <Compile Include="Models\BurndownData.cs" />
     <Compile Include="Models\Deliverable.cs" />
+    <Compile Include="Models\Environment.cs" />
+    <Compile Include="Models\EnvironmentAssignment.cs" />
     <Compile Include="Models\Feature.cs" />
     <Compile Include="Models\Meeting.cs" />
+    <Compile Include="Models\Merge.cs" />
     <Compile Include="Models\Milestone.cs" />
+    <Compile Include="Models\SoftwareVersion.cs" />
     <Compile Include="Persistence\ActivityInputModel.cs" />
+    <Compile Include="Persistence\EnvironmentInputModel.cs" />
     <Compile Include="Persistence\MeetingInputModel.cs" />
     <Compile Include="Persistence\DeliverableActivityStatusInputModel.cs" />
     <Compile Include="Persistence\DeliverableInputModel.cs" />
@@ -68,6 +74,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Release.cs" />
     <Compile Include="Repositories\ActivityRepository.cs" />
+    <Compile Include="Repositories\SoftwareVersionRepository.cs" />
+    <Compile Include="Repositories\EnvironmentRepository.cs" />
     <Compile Include="Repositories\MeetingRepository.cs" />
     <Compile Include="Repositories\DeliverableRepository.cs" />
     <Compile Include="Repositories\MilestoneRepository.cs" />
@@ -79,6 +87,7 @@
     <Compile Include="Models\Role.cs" />
     <Compile Include="Models\Team.cs" />
     <Compile Include="Models\TeamMember.cs" />
+    <Compile Include="Roles\RAssignedResource.cs" />
     <Compile Include="Roles\RMilestoneFlyWeight.cs" />
     <Compile Include="Roles\RPhaseFlyWeight.cs" />
     <Compile Include="Roles\RProjectStatus.cs" />
