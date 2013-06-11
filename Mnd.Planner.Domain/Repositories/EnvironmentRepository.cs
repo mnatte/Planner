@@ -19,7 +19,7 @@ namespace Mnd.Planner.Domain.Repositories
 
         protected override string UpsertStoredProcedureName
         {
-            get { throw new NotImplementedException(); }
+            get { return "sp_upsert_environment"; }
         }
 
         protected override Models.Environment CreateItemByDbRow(SqlDataReader reader)
@@ -30,7 +30,12 @@ namespace Mnd.Planner.Domain.Repositories
 
         protected override void AddUpsertCommandParameters(EnvironmentInputModel model, SqlCommand cmd)
         {
-            throw new NotImplementedException();
+            cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = model.Id;
+            cmd.Parameters.Add("@Name", System.Data.SqlDbType.VarChar).Value = model.Name ?? "";
+            cmd.Parameters.Add("@Description", System.Data.SqlDbType.VarChar).Value = model.Description ?? "";
+            cmd.Parameters.Add("@Location", System.Data.SqlDbType.VarChar).Value = model.Location ?? "";
+            cmd.Parameters.Add("@ShortName", System.Data.SqlDbType.VarChar).Value = model.ShortName ?? "";
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
         }
 
         public List<EnvironmentAssignment> GetAssignments(int environmentId)

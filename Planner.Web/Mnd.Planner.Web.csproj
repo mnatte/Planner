@@ -128,7 +128,13 @@
     <Content Include="assignments.htm" />
     <Content Include="adminMeeting.htm" />
     <Content Include="branches.htm" />
+    <Content Include="adminEnvironment.htm" />
     <Content Include="Environments.htm" />
+    <Content Include="javascripts\adminEnvironmentViewmodel.js">
+      <DependentUpon>adminEnvironmentViewmodel.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
     <Content Include="javascripts\environmentsPlanningViewmodel.js">
       <DependentUpon>environmentsPlanningViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -956,6 +962,10 @@
     <None Include="javascripts\adminMeetingViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>adminMeetingViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\adminEnvironmentViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>adminEnvironmentViewmodel.js</LastGenOutput>
     </None>
     <None Include="javascripts\environmentsPlanningViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>

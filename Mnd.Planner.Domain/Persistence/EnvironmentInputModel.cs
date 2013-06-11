@@ -8,16 +8,10 @@ namespace Mnd.Planner.Domain.Persistence
 {
     public class EnvironmentInputModel : IBasicCrudUsable
     {
-        public int Id
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Location { get; set; }
+        public string ShortName { get; set; }
     }
 }

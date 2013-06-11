@@ -98,6 +98,11 @@ namespace Mnd.Planner.Web
                 "Environment/Versions", // URL with parameters
                 new { controller = "Environment", action = "GetAllVersions", param1 = UrlParameter.Optional } // Parameter defaults
             );
+             routes.MapRoute(
+                 "Environments", // Route name
+                 "Environment/All", // URL with parameters
+                 new { controller = "Environment", action = "GetItems", param1 = UrlParameter.Optional } // Parameter defaults
+             );
             routes.MapRoute(
                 "Default", // Route name
                 "{controller}/{action}/{id}", // URL with parameters

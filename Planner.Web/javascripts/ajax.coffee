@@ -223,5 +223,15 @@ class Ajax
 				callback data
 			error: (XHR, status, errorThrown) ->
 				console.log "AJAX error: #{status}"
+	getEnvironments: (callback) ->
+		url = "/planner/Environment/All"
+		$.ajax url,
+			dataType: "json"
+			type: "GET"
+			success: (data, status, XHR) ->
+				console.log "environments succesfully loaded"
+				callback data
+			error: (XHR, status, errorThrown) ->
+				console.log "AJAX error: #{status}"
 # export to root object
 root.Ajax = Ajax

@@ -346,6 +346,22 @@
       });
     };
 
+    Ajax.prototype.getEnvironments = function(callback) {
+      var url;
+      url = "/planner/Environment/All";
+      return $.ajax(url, {
+        dataType: "json",
+        type: "GET",
+        success: function(data, status, XHR) {
+          console.log("environments succesfully loaded");
+          return callback(data);
+        },
+        error: function(XHR, status, errorThrown) {
+          return console.log("AJAX error: " + status);
+        }
+      });
+    };
+
     return Ajax;
 
   })();

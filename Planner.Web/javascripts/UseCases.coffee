@@ -179,6 +179,14 @@ class ULoadAdminProjects
 		@viewModel.selectItem @viewModel.allItems()[0]
 		ko.applyBindings(@viewModel)
 
+class ULoadAdminEnvironments
+	constructor: ->
+	execute: (data) ->
+		items = Environment.createCollection data
+		@viewModel = new AdminEnvironmentViewmodel(items)
+		@viewModel.selectItem @viewModel.allItems()[0]
+		ko.applyBindings(@viewModel)
+
 class ULoadAdminMeetings
 	constructor: ->
 	execute: (data) ->
@@ -606,6 +614,7 @@ root.UUpdateDeliverableStatus = UUpdateDeliverableStatus
 root.UDisplayBurndown = UDisplayBurndown
 root.UCreateVisualCuesForGates = UCreateVisualCuesForGates
 root.UCreateVisualCuesForAbsences = UCreateVisualCuesForAbsences
+root.ULoadAdminEnvironments = ULoadAdminEnvironments
 
 
 
