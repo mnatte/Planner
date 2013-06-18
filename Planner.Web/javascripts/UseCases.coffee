@@ -80,12 +80,11 @@ class UDisplayEnvironments
 	execute: (envsJson, versionsJson) ->
 		environments = Environment.createCollection(envsJson)
 		versions = Version.createCollection(versionsJson)
-		console.log environments
-		# TODO: prepare graph data
+		#console.log environments
 		@displayData = []
-		#console.log relevantReleases
 		for env in environments 
 			for pl in env.planning
+				pl.environmentId = env.id
 				obj = {group: env.name, start: pl.phase.startDate.date, end: pl.phase.endDate.date, content: pl.version.number, info: pl.phase.toString(), dataObject: pl}
 				@displayData.push obj
 			#for ms in env.planning.milestones
@@ -319,6 +318,29 @@ class UPersistAndRefresh
 		# i = index of item to remove, 1 is amount to be removed, rel is item to be inserted there
 		if @updateViewUsecase
 			@updateViewUsecase.execute()
+
+class UPlanEnvironment extends UPersistAndRefresh
+	constructor: (@environment, @version, @period, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate) ->
+		super @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate
+	execute: ->
+		console.log @period
+		Environment.extend RPlanEnvironment
+		Environment.setPlanUrl "/planner/Environment/Plan"
+		#version, startDateString, endDateString, purpose, callback
+		@environment.plan(@version, @period, (data) => @refreshData(data))
+
+class UUnAssignEnvironment extends UPersistAndRefresh
+	constructor: (@environment, @version, @period, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate) ->
+		super @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate
+	execute: ->
+		console.log @period
+		Environment.extend RPlanEnvironment
+		Environment.setUnAssignUrl "/planner/Environment/Plan/UnAssign"
+		#version, startDateString, endDateString, purpose, callback
+		@environment.unplan(@version, @period, (data) => @refreshData(data))
+
+
+		
 
 class URescheduleMilestone extends UPersistAndRefresh
 	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in
@@ -615,6 +637,8 @@ root.UDisplayBurndown = UDisplayBurndown
 root.UCreateVisualCuesForGates = UCreateVisualCuesForGates
 root.UCreateVisualCuesForAbsences = UCreateVisualCuesForAbsences
 root.ULoadAdminEnvironments = ULoadAdminEnvironments
+root.UPlanEnvironment = UPlanEnvironment
+root.UUnAssignEnvironment = UUnAssignEnvironment
 
 
 

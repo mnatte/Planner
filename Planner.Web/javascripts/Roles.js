@@ -1,5 +1,5 @@
 (function() {
-  var RCrud, RDeliverableStatus, RGroupBy, RMoveItem, RScheduleItem, RSchedulePeriod, RSimpleCrud, RTeamMember, root,
+  var RCrud, RDeliverableStatus, RGroupBy, RMoveItem, RPlanEnvironment, RScheduleItem, RSchedulePeriod, RSimpleCrud, RTeamMember, root,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     _this = this;
 
@@ -487,6 +487,61 @@
     }
   };
 
+  RPlanEnvironment = {
+    setPlanUrl: function(url) {
+      return _this.planUrl = url;
+    },
+    setUnAssignUrl: function(url) {
+      return _this.unAssignUrl = url;
+    },
+    extended: function() {
+      return this.include({
+        plan: function(version, period, callback) {
+          console.log(period.title);
+          return $.ajax(planUrl, {
+            dataType: "json",
+            data: ko.toJSON({
+              purpose: period.title,
+              startDate: period.startDate.dateString,
+              endDate: period.endDate.dateString,
+              version: version,
+              environment: this
+            }),
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            success: function(data, status, XHR) {
+              console.log("" + data + " saved");
+              return callback(data);
+            },
+            error: function(XHR, status, errorThrown) {
+              return console.log("AJAX SAVE error: " + errorThrown);
+            }
+          });
+        },
+        unplan: function(version, period, callback) {
+          console.log(period);
+          return $.ajax(unAssignUrl, {
+            dataType: "json",
+            data: ko.toJSON({
+              phaseId: period.id,
+              version: version,
+              environment: this
+            }),
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            success: function(data, status, XHR) {
+              console.log("" + data + " saved");
+              return callback(data);
+            },
+            error: function(XHR, status, errorThrown) {
+              return console.log("AJAX SAVE error: " + errorThrown);
+            }
+          });
+        }
+      });
+    }
+  };
+
   RDeliverableStatus = {
     extended: function() {
       return this.include({
@@ -554,5 +609,7 @@
   root.RSchedulePeriod = RSchedulePeriod;
 
   root.RDeliverableStatus = RDeliverableStatus;
+
+  root.RPlanEnvironment = RPlanEnvironment;
 
 }).call(this);

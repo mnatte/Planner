@@ -103,6 +103,16 @@ namespace Mnd.Planner.Web
                  "Environment/All", // URL with parameters
                  new { controller = "Environment", action = "GetItems", param1 = UrlParameter.Optional } // Parameter defaults
              );
+             routes.MapRoute(
+                 "PlanEnvironment", // Route name
+                 "Environment/Plan", // URL with parameters
+                 new { controller = "Environment", action = "AddAssignment", param1 = UrlParameter.Optional } // Parameter defaults
+             );
+             routes.MapRoute(
+                  "UnAssignEnvironment", // Route name
+                  "Environment/Plan/UnAssign", // URL with parameters
+                  new { controller = "Environment", action = "RemoveAssignment", param1 = UrlParameter.Optional } // Parameter defaults
+              );
             routes.MapRoute(
                 "Default", // Route name
                 "{controller}/{action}/{id}", // URL with parameters

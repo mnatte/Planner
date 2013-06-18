@@ -7,17 +7,17 @@ root = global ? window
 class EnvironmentsPlanningViewmodel
 	constructor: (environments, versions) ->
 		# ctor is executed in context of INSTANCE. Therfore @ refers here to CURRENT INSTANCE and attaches selectedPhase to all instances (since object IS ctor)
-		@selectedPhase = ko.observable()
+		#@selectedPhase = ko.observable()
 		@selectedAssignment = ko.observable()
 		@selectedEnvironment = ko.observable()
 		@selectedVersion = ko.observable()
 		@selectedTimelineItem = ko.observable()
-		@selectedMilestone = ko.observable()
+		#@selectedMilestone = ko.observable()
 
 		@assignments = ko.observableArray()
-		@selectedPhase.subscribe((newValue) => 
-			loadAssignments newValue.id
-			)
+		#@selectedPhase.subscribe((newValue) => 
+			#loadAssignments newValue.id
+			#)
 
 		@environments = ko.observableArray environments
 		@versions = ko.observableArray versions
@@ -26,13 +26,30 @@ class EnvironmentsPlanningViewmodel
 			console.log "selected timeline item"
 			#@selectedAssignment
 			console.log newValue.dataObject
-			console.log @selectedAssignment()
+			#console.log @selectedAssignment()
 			@selectedAssignment newValue.dataObject
+
+			# make sure our selected values correspond to items in the option collections (@environments and @versions)
+			version = i for i in @versions() when i.id is newValue.dataObject.version.id
+			environment = i for i in @environments() when i.id is newValue.dataObject.environmentId
+			@selectedVersion version
+			@selectedEnvironment environment
+
 			#@selectedEnvironment newValue.dataObject.environment 
 			#if newValue
 				#@selectedMilestone newValue.dataObject
 			)
 		@selectedAssignment.subscribe((newValue) => 
+			console.log "selected assignment"
+			console.log newValue
+			#@selectedVersion newValue.version
+			)
+		@selectedVersion.subscribe((newValue) => 
+			console.log "selected version changed"
+			console.log newValue
+			)
+		@selectedEnvironment.subscribe((newValue) => 
+			console.log "selected environment"
 			console.log newValue
 			)
 		#Deliverable.extend RDeliverableStatus
@@ -52,21 +69,26 @@ class EnvironmentsPlanningViewmodel
 		console.log @selectedAssignment()
 
 	setAssignments: (jsonData) =>
+		console.log "setAssignments"
 		@assignments.removeAll()
 		@assignments AssignedResource.createCollection(jsonData)
 
 	loadAssignments: (releaseId) ->
+		#console.log "loadAssignments"
         ajax = new Ajax()
         ajax.getAssignedResourcesForRelease(releaseId, @setAssignments)
 		
 	closeDetails: =>
+		#console.log "closeDetails"
         @canShowDetails(false)
 
 	createVisualCuesForGates: (data) =>
+		console.log "createVisualCuesForGates"
 		uc = new UCreateVisualCuesForGates 30, (data) => console.log 'callback succesful: ' + data
 		uc.execute()
 
 	selectPhase: (data) =>
+		console.log "selectPhase"
 		# console.log "selectPhase - function"
 		# console.log @
 		# console.log data
@@ -75,25 +97,21 @@ class EnvironmentsPlanningViewmodel
 		# console.log "selectPhase after selection: " + @selectedPhase()
 
 	saveSelectedAssignment: =>
-		#useCase = new UModifyAssignment(x, @allReleases, @inspectRelease, @updateScreenUseCase, @newAssignment, "release", (json) -> Release.create json)
+		console.log "saveSelectedAssignment"
+		#@environment, @version, @period, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate
+		
+		useCase = new UPlanEnvironment(@selectedEnvironment(), @selectedVersion(), @selectedAssignment().phase, @environments(), @selectedAssignment(), @updateScreenUseCase, 'undefined', (json) -> Release.create json)
 		#uc = new UUpdateDeliverableStatus(@selectedDeliverable(), @allReleases, null, @updateScreenUseCase)
-		#uc.execute()
+		useCase.execute()
+		console.log @selectedAssignment()
+		console.log @selectedEnvironment()
+		console.log @selectedVersion()
 
 	deleteSelectedAssignment: =>
-		#console.log @selectedAbsence()
-		#abs = (a for a in @showAbsences when a.dataObject.id is @selectedAbsence().id)[0]
-		# use index for removing from @allReleases
-		#i = @showAbsences.indexOf(abs)
-		#console.log 'index: ' + i
-		#@selectedAbsence().delete("/planner/Resource/DeleteAbsence/" + @selectedAbsence().id, (callbackdata) =>
-			# check for server error is done in Roles.coffee RCrud delete method
-			#console.log callbackdata
-			#@showAbsences.splice i, 1
-			#next = @showAbsences[i]
-			#console.log next
-			#@selectedTimelineItem next
-			#$.unblockUI()
-		#)
+		console.log "deleteSelectedAssignment"
+		useCase = new UUnAssignEnvironment(@selectedEnvironment(), @selectedVersion(), @selectedAssignment().phase, @environments(), @selectedAssignment(), @updateScreenUseCase)
+		#uc = new UUpdateDeliverableStatus(@selectedDeliverable(), @allReleases, null, @updateScreenUseCase)
+		useCase.execute()
 
 # export to root object
 root.EnvironmentsPlanningViewmodel = EnvironmentsPlanningViewmodel

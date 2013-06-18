@@ -54,13 +54,50 @@ namespace Mnd.Planner.Domain.Repositories
                 {
                     while (reader.Read())
                     {
-                        var ass = new EnvironmentAssignment { Environment = new Models.Environment { Location = reader["Location"].ToString(), Name = reader["EnvironmentName"].ToString() }, Version = new SoftwareVersion { Number = reader["VersionNumber"].ToString(), Description = reader["Description"].ToString() }, Phase = new Phase { Title = reader["PhaseTitle"].ToString(), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()) } };
+                        var ass = new EnvironmentAssignment { Environment = new Models.Environment { Id = int.Parse(reader["EnvironmentId"].ToString()), Location = reader["Location"].ToString(), Name = reader["EnvironmentName"].ToString() }, Version = new SoftwareVersion { Id = int.Parse(reader["VersionId"].ToString()), Number = reader["VersionNumber"].ToString(), Description = reader["Description"].ToString() }, Phase = new Phase { Id = int.Parse(reader["PhaseId"].ToString()), Title = reader["PhaseTitle"].ToString(), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()) } };
                         lst.Add(ass);
                     }
                 }
             }
             return lst;
 
+        }
+
+        public void SaveAssignment(int environmentId, int phaseId, int softwareVersionId, string purpose)
+        {
+            var lst = new List<EnvironmentAssignment>();
+
+            var conn = new SqlConnection(this.ConnectionString);
+            var cmd = new SqlCommand("sp_assign_environment", conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+            cmd.Parameters.Add("@EnvironmentId", System.Data.SqlDbType.Int).Value = environmentId;
+            cmd.Parameters.Add("@PhaseId", System.Data.SqlDbType.Int).Value = phaseId;
+            cmd.Parameters.Add("@SoftwareVersionId", System.Data.SqlDbType.Int).Value = softwareVersionId;
+            cmd.Parameters.Add("@Purpose", System.Data.SqlDbType.VarChar).Value = purpose;
+
+            using (conn)
+            {
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public void DeleteAssignment(int environmentId, int phaseId, int softwareVersionId)
+        {
+            var conn = new SqlConnection(this.ConnectionString);
+            var cmd = new SqlCommand("sp_delete_environment_assignment", conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+            cmd.Parameters.Add("@EnvironmentId", System.Data.SqlDbType.Int).Value = environmentId;
+            cmd.Parameters.Add("@PhaseId", System.Data.SqlDbType.Int).Value = phaseId;
+            cmd.Parameters.Add("@SoftwareVersionId", System.Data.SqlDbType.Int).Value = softwareVersionId;
+
+            using (conn)
+            {
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
         }
     }
 }

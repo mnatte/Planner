@@ -146,7 +146,7 @@ namespace Mnd.Planner.Web.Controllers
         [HttpPost]
         public JsonResult SchedulePhase(ScheduleReleasePhaseInputModel obj)
         {
-            var uc = new PlanPeriod(new Phase { Id = obj.EventId }, obj.StartDate.ToDateTimeFromDutchString(), obj.EndDate.ToDateTimeFromDutchString());
+            var uc = new ReschedulePeriod(new Phase { Id = obj.EventId }, obj.StartDate.ToDateTimeFromDutchString(), obj.EndDate.ToDateTimeFromDutchString());
             uc.Execute();
 
             var rep = new ReleaseRepository();

@@ -8,6 +8,8 @@ using Mnd.Planner.Domain.Models;
 using Mnd.Planner.Domain.Persistence;
 using Mnd.Planner.Domain.Repositories;
 using Mnd.Planner.UseCases;
+using Mnd.Planner.Domain;
+using Mnd.Helpers;
 
 namespace Mnd.Planner.Web.Controllers
 {
@@ -43,5 +45,20 @@ namespace Mnd.Planner.Web.Controllers
             return this.Json(items, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult AddAssignment(EnvironmentAssignmentInputModel ass)
+        {
+            var uc = new PlanEnvironment(new Period { Title = ass.Purpose, EndDate = ass.EndDate.ToDateTimeFromDutchString(), StartDate = ass.StartDate.ToDateTimeFromDutchString() }, ass.Version, ass.Environment);
+            uc.Execute();
+
+            return this.Json("item planned sucessfully", JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult RemoveAssignment(EnvironmentAssignmentInputModel ass)
+        {
+            var uc = new UnAssignEnvironment(new Phase { Id = ass.PhaseId }, ass.Version, ass.Environment);
+            uc.Execute();
+
+            return this.Json("item unassigned sucessfully", JsonRequestBehavior.AllowGet);
+        }
     }
 }

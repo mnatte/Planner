@@ -310,6 +310,43 @@ RSchedulePeriod =
 					error: (XHR, status, errorThrown) ->
 						console.log "AJAX SAVE error: #{errorThrown}"
 
+RPlanEnvironment = 
+	# static extensions
+	# @ here is static
+	setPlanUrl: (url) =>
+		@planUrl = url
+	setUnAssignUrl: (url) =>
+		@unAssignUrl = url
+	extended: ->
+		# instance extensions
+		@include
+			plan: (version, period, callback) ->
+				# no @ here since setUrl is static
+				console.log period.title
+				$.ajax planUrl,
+					dataType: "json"
+					data: ko.toJSON({ purpose: period.title, startDate: period.startDate.dateString, endDate: period.endDate.dateString, version: version, environment: @ })
+					type: "POST"
+					contentType: "application/json; charset=utf-8"
+					success: (data, status, XHR) ->
+						console.log "#{data} saved"
+						callback data
+					error: (XHR, status, errorThrown) ->
+						console.log "AJAX SAVE error: #{errorThrown}"
+			unplan: (version, period, callback) ->
+				# no @ here since setUrl is static
+				console.log period
+				$.ajax unAssignUrl,
+					dataType: "json"
+					data: ko.toJSON({ phaseId: period.id, version: version, environment: @ })
+					type: "POST"
+					contentType: "application/json; charset=utf-8"
+					success: (data, status, XHR) ->
+						console.log "#{data} saved"
+						callback data
+					error: (XHR, status, errorThrown) ->
+						console.log "AJAX SAVE error: #{errorThrown}"
+
 RDeliverableStatus = 
 	extended: ->
 		@include
@@ -345,4 +382,5 @@ root.RSimpleCrud = RSimpleCrud
 root.RScheduleItem = RScheduleItem
 root.RSchedulePeriod = RSchedulePeriod
 root.RDeliverableStatus = RDeliverableStatus
+root.RPlanEnvironment = RPlanEnvironment
 

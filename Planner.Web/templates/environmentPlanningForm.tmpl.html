@@ -1,8 +1,9 @@
 ﻿<form>
-    <label>Environment:</label><select data-bind="options: $root.environments(), optionsText: function(item) { return item.name + ' ' + item.location }, value: $root.selectedEnvironment, optionsCaption: 'Choose...', enable:$root.selectedAssignment() && $root.selectedAssignment().id === 0"></select>
-    <label>Version:</label><select data-bind="options: $root.versions(), optionsText: function(item) { return item.number }, value: $root.selectedVersion, optionsCaption: 'Choose...'"></select>
+    <label>Environment:</label><select data-bind="options: $root.environments, optionsText: function(item) { return item.name + ' ' + item.location }, value: $root.selectedEnvironment, optionsCaption: 'Choose...', enable:$root.selectedAssignment() && $root.selectedAssignment().id === 0"></select>
+    <label>Version:</label><select data-bind="options: $root.versions, optionsText: function(item) { return item.number }, value: $root.selectedVersion, optionsCaption: 'Choose...'"></select>
     <label>Start date (dd-mm-yyyy):</label><input type="text" data-bind="value: phase.startDate.dateString" />
     <label>End date (dd-mm-yyyy):</label><input type="text" data-bind="value: phase.endDate.dateString" />
+    <label>Purpose:</label><input type="text" data-bind="value: phase.title" />
     <button class="sexybutton" data-bind="click: $parent.saveSelectedAssignment.bind($data), enable:$root.selectedEnvironment()"><span><span><span class="save">Save</span></span></span></button>
     <button class="sexybutton" data-bind="click: $parent.deleteSelectedAssignment.bind($data), enable:$root.selectedAssignment()"><span><span><span class="delete">Delete</span></span></span></button>
 </form>

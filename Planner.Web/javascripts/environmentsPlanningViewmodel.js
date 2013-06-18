@@ -16,25 +16,41 @@
       this.newAssignment = __bind(this.newAssignment, this);
       var updateScreenFunctions,
         _this = this;
-      this.selectedPhase = ko.observable();
       this.selectedAssignment = ko.observable();
       this.selectedEnvironment = ko.observable();
       this.selectedVersion = ko.observable();
       this.selectedTimelineItem = ko.observable();
-      this.selectedMilestone = ko.observable();
       this.assignments = ko.observableArray();
-      this.selectedPhase.subscribe(function(newValue) {
-        return loadAssignments(newValue.id);
-      });
       this.environments = ko.observableArray(environments);
       this.versions = ko.observableArray(versions);
       this.selectedTimelineItem.subscribe(function(newValue) {
+        var environment, i, version, _i, _j, _len, _len2, _ref, _ref2;
         console.log("selected timeline item");
         console.log(newValue.dataObject);
-        console.log(_this.selectedAssignment());
-        return _this.selectedAssignment(newValue.dataObject);
+        _this.selectedAssignment(newValue.dataObject);
+        _ref = _this.versions();
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          i = _ref[_i];
+          if (i.id === newValue.dataObject.version.id) version = i;
+        }
+        _ref2 = _this.environments();
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          i = _ref2[_j];
+          if (i.id === newValue.dataObject.environmentId) environment = i;
+        }
+        _this.selectedVersion(version);
+        return _this.selectedEnvironment(environment);
       });
       this.selectedAssignment.subscribe(function(newValue) {
+        console.log("selected assignment");
+        return console.log(newValue);
+      });
+      this.selectedVersion.subscribe(function(newValue) {
+        console.log("selected version changed");
+        return console.log(newValue);
+      });
+      this.selectedEnvironment.subscribe(function(newValue) {
+        console.log("selected environment");
         return console.log(newValue);
       });
       updateScreenFunctions = [];
@@ -53,6 +69,7 @@
     };
 
     EnvironmentsPlanningViewmodel.prototype.setAssignments = function(jsonData) {
+      console.log("setAssignments");
       this.assignments.removeAll();
       return this.assignments(AssignedResource.createCollection(jsonData));
     };
@@ -70,6 +87,7 @@
     EnvironmentsPlanningViewmodel.prototype.createVisualCuesForGates = function(data) {
       var uc,
         _this = this;
+      console.log("createVisualCuesForGates");
       uc = new UCreateVisualCuesForGates(30, function(data) {
         return console.log('callback succesful: ' + data);
       });
@@ -77,13 +95,29 @@
     };
 
     EnvironmentsPlanningViewmodel.prototype.selectPhase = function(data) {
+      console.log("selectPhase");
       this.selectedPhase(data);
       return this.canShowDetails(true);
     };
 
-    EnvironmentsPlanningViewmodel.prototype.saveSelectedAssignment = function() {};
+    EnvironmentsPlanningViewmodel.prototype.saveSelectedAssignment = function() {
+      var useCase;
+      console.log("saveSelectedAssignment");
+      useCase = new UPlanEnvironment(this.selectedEnvironment(), this.selectedVersion(), this.selectedAssignment().phase, this.environments(), this.selectedAssignment(), this.updateScreenUseCase, 'undefined', function(json) {
+        return Release.create(json);
+      });
+      useCase.execute();
+      console.log(this.selectedAssignment());
+      console.log(this.selectedEnvironment());
+      return console.log(this.selectedVersion());
+    };
 
-    EnvironmentsPlanningViewmodel.prototype.deleteSelectedAssignment = function() {};
+    EnvironmentsPlanningViewmodel.prototype.deleteSelectedAssignment = function() {
+      var useCase;
+      console.log("deleteSelectedAssignment");
+      useCase = new UUnAssignEnvironment(this.selectedEnvironment(), this.selectedVersion(), this.selectedAssignment().phase, this.environments(), this.selectedAssignment(), this.updateScreenUseCase);
+      return useCase.execute();
+    };
 
     return EnvironmentsPlanningViewmodel;
 

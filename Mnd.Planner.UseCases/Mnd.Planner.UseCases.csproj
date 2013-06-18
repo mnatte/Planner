@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UnAssignEnvironment.cs" />
+    <Compile Include="PlanEnvironment.cs" />
     <Compile Include="GetEnvironmentsPlanning.cs" />
     <Compile Include="GetBurndownData.cs" />
     <Compile Include="ExceptionMessages.cs" />
@@ -50,7 +52,7 @@
     <Compile Include="Roles\RMilestoneStatus.cs" />
     <Compile Include="Roles\RDeliverableStatus.cs" />
     <Compile Include="UpdateMilestoneDeliverableStatus.cs" />
-    <Compile Include="PlanPeriod.cs" />
+    <Compile Include="ReschedulePeriod.cs" />
     <Compile Include="PlanMilestone.cs" />
     <Compile Include="Roles\RPeriodSchedule.cs" />
     <Compile Include="Roles\RMilestoneSchedule.cs" />
