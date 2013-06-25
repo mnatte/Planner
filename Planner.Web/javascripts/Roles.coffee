@@ -325,7 +325,7 @@ RPlanEnvironment =
 				console.log period.title
 				$.ajax planUrl,
 					dataType: "json"
-					data: ko.toJSON({ purpose: period.title, startDate: period.startDate.dateString, endDate: period.endDate.dateString, version: version, environment: @ })
+					data: ko.toJSON({ purpose: period.title, startDate: period.startDate.dateString, endDate: period.endDate.dateString, phaseId: period.id, version: version, environment: @ })
 					type: "POST"
 					contentType: "application/json; charset=utf-8"
 					success: (data, status, XHR) ->

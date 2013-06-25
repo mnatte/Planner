@@ -80,9 +80,19 @@ class UDisplayEnvironments
 	execute: (envsJson, versionsJson) ->
 		environments = Environment.createCollection(envsJson)
 		versions = Version.createCollection(versionsJson)
-		#console.log environments
+		@viewModel = new EnvironmentsPlanningViewmodel(environments, versions)
+		ko.applyBindings(@viewModel)
+
+		uc = new UDisplayEnvironmentsGraph(environments, @viewModel.selectedTimelineItem)
+		uc.execute()
+		#timeline = new Mnd.Timeline(@displayData, @viewModel.selectedTimelineItem)
+		#timeline.draw()
+
+class UDisplayEnvironmentsGraph
+	constructor: (@environments, @selectedTimelineItem) ->
+	execute: ->
 		@displayData = []
-		for env in environments 
+		for env in @environments 
 			for pl in env.planning
 				pl.environmentId = env.id
 				obj = {group: env.name, start: pl.phase.startDate.date, end: pl.phase.endDate.date, content: pl.version.number, info: pl.phase.toString(), dataObject: pl}
@@ -95,11 +105,7 @@ class UDisplayEnvironments
 			#	descr += '</ul>' # /deployments
 			#	obj = {group: rel.title, start: ms.date.date, content: ms.title + '<br />' + icon, info: ms.date.dateString + '<br />' + ms.description, dataObject: ms}
 			#	@displayData.push obj
-
-		#console.log @displayData
-		@viewModel = new EnvironmentsPlanningViewmodel(environments, versions)
-		ko.applyBindings(@viewModel)
-		timeline = new Mnd.Timeline(@displayData, @viewModel.selectedTimelineItem)
+		timeline = new Mnd.Timeline(@displayData, @selectedTimelineItem)
 		timeline.draw()
 		
 
@@ -312,6 +318,7 @@ class UPersistAndRefresh
 			#console.log oldItem
 			index = @viewModelObservableCollection().indexOf(oldItem)
 			@viewModelObservableCollection.splice index, 1, refreshed
+		if @selectedObservable
 			@selectedObservable refreshed
 		if @observableShowform
 			@observableShowform null
@@ -408,6 +415,8 @@ class UUpdateDeliverableStatus extends UPersistAndRefresh
 class UUpdateScreen
 	constructor: (@usecases, @delegates) ->
 	execute: ->
+		console.log @usecases
+		console.log @delegates
 		if @usecases
 			for uc in @usecases
 				uc.execute()
@@ -639,6 +648,7 @@ root.UCreateVisualCuesForAbsences = UCreateVisualCuesForAbsences
 root.ULoadAdminEnvironments = ULoadAdminEnvironments
 root.UPlanEnvironment = UPlanEnvironment
 root.UUnAssignEnvironment = UUnAssignEnvironment
+root.UDisplayEnvironmentsGraph = UDisplayEnvironmentsGraph
 
 
 

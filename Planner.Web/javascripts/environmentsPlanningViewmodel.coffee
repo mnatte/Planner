@@ -55,11 +55,12 @@ class EnvironmentsPlanningViewmodel
 		#Deliverable.extend RDeliverableStatus
 
 		updateScreenFunctions = []
-		# @selectedTimelineItem is the observable to trigger selected assignment functionality
-		#updateScreenFunctions.push(=> @selectedTimelineItem null)
-		#updateScreenFunctions.push(=> @selectedMilestone null)
-		#updateScreenFunctions.push(=> @selectedDeliverable null)
-		@updateScreenUseCase = new UUpdateScreen null, updateScreenFunctions
+		updateScreenUseCases = []
+		updateScreenUseCases.push(new UDisplayEnvironmentsGraph(@environments(), @selectedTimelineItem))
+		updateScreenFunctions.push(=> @selectedAssignment null)
+		updateScreenFunctions.push(=> @selectedVersion null)
+		updateScreenFunctions.push(=> @selectedEnvironment null)
+		@updateScreenUseCase = new UUpdateScreen updateScreenUseCases, updateScreenFunctions
 
 	newAssignment: =>
 		#@selectedAssignment
@@ -96,12 +97,15 @@ class EnvironmentsPlanningViewmodel
 		@canShowDetails(true)
 		# console.log "selectPhase after selection: " + @selectedPhase()
 
+	dehydrateEnvironment: (json) =>
+		env = Environment.create json
+
+
 	saveSelectedAssignment: =>
 		console.log "saveSelectedAssignment"
 		#@environment, @version, @period, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate
 		
-		useCase = new UPlanEnvironment(@selectedEnvironment(), @selectedVersion(), @selectedAssignment().phase, @environments(), @selectedAssignment(), @updateScreenUseCase, 'undefined', (json) -> Release.create json)
-		#uc = new UUpdateDeliverableStatus(@selectedDeliverable(), @allReleases, null, @updateScreenUseCase)
+		useCase = new UPlanEnvironment(@selectedEnvironment(), @selectedVersion(), @selectedAssignment().phase, @environments, null, @updateScreenUseCase, null, @dehydrateEnvironment)
 		useCase.execute()
 		console.log @selectedAssignment()
 		console.log @selectedEnvironment()
@@ -109,7 +113,8 @@ class EnvironmentsPlanningViewmodel
 
 	deleteSelectedAssignment: =>
 		console.log "deleteSelectedAssignment"
-		useCase = new UUnAssignEnvironment(@selectedEnvironment(), @selectedVersion(), @selectedAssignment().phase, @environments(), @selectedAssignment(), @updateScreenUseCase)
+		#(@environment, @version, @period, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate)
+		useCase = new UUnAssignEnvironment(@selectedEnvironment(), @selectedVersion(), @selectedAssignment().phase, @environments, null, @updateScreenUseCase, null, @dehydrateEnvironment)
 		#uc = new UUpdateDeliverableStatus(@selectedDeliverable(), @allReleases, null, @updateScreenUseCase)
 		useCase.execute()
 

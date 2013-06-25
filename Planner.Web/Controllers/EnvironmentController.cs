@@ -47,18 +47,18 @@ namespace Mnd.Planner.Web.Controllers
 
         public JsonResult AddAssignment(EnvironmentAssignmentInputModel ass)
         {
-            var uc = new PlanEnvironment(new Period { Title = ass.Purpose, EndDate = ass.EndDate.ToDateTimeFromDutchString(), StartDate = ass.StartDate.ToDateTimeFromDutchString() }, ass.Version, ass.Environment);
-            uc.Execute();
+            var uc = new PlanEnvironment(new Phase { Id = ass.PhaseId, Title = ass.Purpose, EndDate = ass.EndDate.ToDateTimeFromDutchString(), StartDate = ass.StartDate.ToDateTimeFromDutchString() }, ass.Version, ass.Environment);
+            var env = uc.Execute();
 
-            return this.Json("item planned sucessfully", JsonRequestBehavior.AllowGet);
+            return this.Json(env, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult RemoveAssignment(EnvironmentAssignmentInputModel ass)
         {
             var uc = new UnAssignEnvironment(new Phase { Id = ass.PhaseId }, ass.Version, ass.Environment);
-            uc.Execute();
+            var env = uc.Execute();
 
-            return this.Json("item unassigned sucessfully", JsonRequestBehavior.AllowGet);
+            return this.Json(env, JsonRequestBehavior.AllowGet);
         }
     }
 }

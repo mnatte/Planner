@@ -14,7 +14,7 @@ namespace Mnd.Planner.UseCases
     /// <summary>
     /// Set start and end date for a period
     /// </summary>
-    public class UnAssignEnvironment : AbstractUseCase
+    public class UnAssignEnvironment : AbstractUseCase<Mnd.Planner.Domain.Models.Environment>
     {
         Phase _period;
         //Release _release;
@@ -28,10 +28,15 @@ namespace Mnd.Planner.UseCases
             _environment = environment;
         }
 
-        public override void Execute()
+        public override Mnd.Planner.Domain.Models.Environment Execute()
         {
             var rep = new EnvironmentRepository();
             rep.DeleteAssignment(_environment.Id, _period.Id, _version.Id);
+
+            // return environment with planning
+            var env = rep.GetItemById(_environment.Id);
+            env.LoadPlanning();
+            return env;
         }
     }
 }

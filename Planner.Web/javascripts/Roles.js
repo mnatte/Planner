@@ -504,6 +504,7 @@
               purpose: period.title,
               startDate: period.startDate.dateString,
               endDate: period.endDate.dateString,
+              phaseId: period.id,
               version: version,
               environment: this
             }),

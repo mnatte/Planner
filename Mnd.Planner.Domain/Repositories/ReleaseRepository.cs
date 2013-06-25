@@ -27,7 +27,7 @@ namespace Mnd.Planner.Domain.Repositories
                 using (var reader = cmd.ExecuteReader())
                 {
                     if (reader.Read())
-                        release = new Release { Id = int.Parse(reader["Id"].ToString()), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString() };
+                        release = new Release { Id = int.Parse(reader["Id"].ToString()), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString(), Description = reader["Description"].ToString() };
                 }
 
                 // Child phases
@@ -36,7 +36,7 @@ namespace Mnd.Planner.Domain.Repositories
                 {
                     while (reader.Read())
                     {
-                        release.Phases.Add(new Phase { Id = int.Parse(reader["Id"].ToString()), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString() });
+                        release.Phases.Add(new Phase { Id = int.Parse(reader["Id"].ToString()), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString(), Description = reader["Description"].ToString() });
                     }
                 }
 
@@ -753,6 +753,80 @@ namespace Mnd.Planner.Domain.Repositories
                 //var milestone = msrep.GetItemById(milestoneId);
                 //return milestone;
 
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Update phase info
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public Phase UpdatePhase(Phase evt)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            try
+            {
+                using (conn)
+                {
+                    conn.Open();
+
+                    var cmd = new SqlCommand("sp_update_phase", conn);
+                    cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = evt.Id;
+                    cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = evt.StartDate;
+                    cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = evt.EndDate;
+                    cmd.Parameters.Add("@Title", System.Data.SqlDbType.VarChar).Value = evt.Title;
+                    cmd.Parameters.Add("@Description", System.Data.SqlDbType.VarChar).Value = evt.Description ?? "";
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    cmd.ExecuteNonQuery();
+
+                    var rep = new ReleaseRepository();
+                    var phase = rep.GetRelease(evt.Id);
+
+                    return phase;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Save new Period
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public Phase AddPeriod(Phase phase)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            var newId = 0;
+            try
+            {
+                using (conn)
+                {
+                    conn.Open();
+
+                    var cmd = new SqlCommand("sp_insert_period", conn);
+                    cmd.Parameters.Add("@Title", System.Data.SqlDbType.VarChar).Value = phase.Title;
+                    cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = phase.StartDate;
+                    cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = phase.EndDate;
+                    cmd.Parameters.Add("@Description", System.Data.SqlDbType.VarChar).Value = "";
+
+                    var returnParameter = new SqlParameter("@NewId", SqlDbType.Int);
+                    returnParameter.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(returnParameter);
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    cmd.ExecuteNonQuery();
+
+                    newId = (int)returnParameter.Value;
+                }
+                return new Phase { Title = phase.Title, EndDate = phase.EndDate, StartDate = phase.StartDate, Id = newId };
             }
             catch (Exception ex)
             {

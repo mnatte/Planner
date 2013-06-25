@@ -9,12 +9,13 @@
     function EnvironmentsPlanningViewmodel(environments, versions) {
       this.deleteSelectedAssignment = __bind(this.deleteSelectedAssignment, this);
       this.saveSelectedAssignment = __bind(this.saveSelectedAssignment, this);
+      this.dehydrateEnvironment = __bind(this.dehydrateEnvironment, this);
       this.selectPhase = __bind(this.selectPhase, this);
       this.createVisualCuesForGates = __bind(this.createVisualCuesForGates, this);
       this.closeDetails = __bind(this.closeDetails, this);
       this.setAssignments = __bind(this.setAssignments, this);
       this.newAssignment = __bind(this.newAssignment, this);
-      var updateScreenFunctions,
+      var updateScreenFunctions, updateScreenUseCases,
         _this = this;
       this.selectedAssignment = ko.observable();
       this.selectedEnvironment = ko.observable();
@@ -54,7 +55,18 @@
         return console.log(newValue);
       });
       updateScreenFunctions = [];
-      this.updateScreenUseCase = new UUpdateScreen(null, updateScreenFunctions);
+      updateScreenUseCases = [];
+      updateScreenUseCases.push(new UDisplayEnvironmentsGraph(this.environments(), this.selectedTimelineItem));
+      updateScreenFunctions.push(function() {
+        return _this.selectedAssignment(null);
+      });
+      updateScreenFunctions.push(function() {
+        return _this.selectedVersion(null);
+      });
+      updateScreenFunctions.push(function() {
+        return _this.selectedEnvironment(null);
+      });
+      this.updateScreenUseCase = new UUpdateScreen(updateScreenUseCases, updateScreenFunctions);
     }
 
     EnvironmentsPlanningViewmodel.prototype.newAssignment = function() {
@@ -100,12 +112,15 @@
       return this.canShowDetails(true);
     };
 
+    EnvironmentsPlanningViewmodel.prototype.dehydrateEnvironment = function(json) {
+      var env;
+      return env = Environment.create(json);
+    };
+
     EnvironmentsPlanningViewmodel.prototype.saveSelectedAssignment = function() {
       var useCase;
       console.log("saveSelectedAssignment");
-      useCase = new UPlanEnvironment(this.selectedEnvironment(), this.selectedVersion(), this.selectedAssignment().phase, this.environments(), this.selectedAssignment(), this.updateScreenUseCase, 'undefined', function(json) {
-        return Release.create(json);
-      });
+      useCase = new UPlanEnvironment(this.selectedEnvironment(), this.selectedVersion(), this.selectedAssignment().phase, this.environments, null, this.updateScreenUseCase, null, this.dehydrateEnvironment);
       useCase.execute();
       console.log(this.selectedAssignment());
       console.log(this.selectedEnvironment());
@@ -115,7 +130,7 @@
     EnvironmentsPlanningViewmodel.prototype.deleteSelectedAssignment = function() {
       var useCase;
       console.log("deleteSelectedAssignment");
-      useCase = new UUnAssignEnvironment(this.selectedEnvironment(), this.selectedVersion(), this.selectedAssignment().phase, this.environments(), this.selectedAssignment(), this.updateScreenUseCase);
+      useCase = new UUnAssignEnvironment(this.selectedEnvironment(), this.selectedVersion(), this.selectedAssignment().phase, this.environments, null, this.updateScreenUseCase, null, this.dehydrateEnvironment);
       return useCase.execute();
     };
 

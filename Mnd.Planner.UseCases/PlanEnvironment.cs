@@ -14,26 +14,45 @@ namespace Mnd.Planner.UseCases
     /// <summary>
     /// Set start and end date for a period
     /// </summary>
-    public class PlanEnvironment : AbstractUseCase
+    public class PlanEnvironment : AbstractUseCase<Mnd.Planner.Domain.Models.Environment>
     {
-        Period _period;
+        Phase _period;
         //Release _release;
         SoftwareVersion _version;
         Mnd.Planner.Domain.Models.Environment _environment;
 
-        public PlanEnvironment(Period period, SoftwareVersion version, Mnd.Planner.Domain.Models.Environment environment)
+        public PlanEnvironment(Phase period, SoftwareVersion version, Mnd.Planner.Domain.Models.Environment environment)
         {
             _period = period;
             _version = version;
             _environment = environment;
         }
 
-        public override void Execute()
+        public override Mnd.Planner.Domain.Models.Environment Execute()
         {
-            var period = _period.Save();
-
+            Phase phase = null;
             var rep = new EnvironmentRepository();
-            rep.SaveAssignment(_environment.Id, period.Id, _version.Id, period.Title);
+            var relRep = new ReleaseRepository();
+
+            if (_period.Id > 0)
+            {
+                // existing phase needs update
+                phase = relRep.UpdatePhase(_period);
+            }
+            else
+            {
+                // new phase must be inserted
+                phase = relRep.AddPeriod(_period);
+
+                // add assignment
+                rep.SaveAssignment(_environment.Id, phase.Id, _version.Id, phase.Title);
+            }
+           
+
+            // return environment with planning
+            var env = rep.GetItemById(_environment.Id);
+            env.LoadPlanning();
+            return env;
         }
     }
 }

@@ -1,5 +1,5 @@
 (function() {
-  var UAjax, UCreateVisualCuesForAbsences, UCreateVisualCuesForGates, UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayBurndown, UDisplayEnvironments, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminEnvironments, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, UPlanEnvironment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUnAssignEnvironment, UUpdateDeliverableStatus, UUpdateScreen, root,
+  var UAjax, UCreateVisualCuesForAbsences, UCreateVisualCuesForGates, UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayBurndown, UDisplayEnvironments, UDisplayEnvironmentsGraph, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminEnvironments, ULoadAdminMeetings, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, UPlanEnvironment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUnAssignEnvironment, UUpdateDeliverableStatus, UUpdateScreen, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -98,15 +98,35 @@
     function UDisplayEnvironments() {}
 
     UDisplayEnvironments.prototype.execute = function(envsJson, versionsJson) {
-      var env, environments, obj, pl, timeline, versions, _i, _j, _len, _len2, _ref;
+      var environments, uc, versions;
       environments = Environment.createCollection(envsJson);
       versions = Version.createCollection(versionsJson);
+      this.viewModel = new EnvironmentsPlanningViewmodel(environments, versions);
+      ko.applyBindings(this.viewModel);
+      uc = new UDisplayEnvironmentsGraph(environments, this.viewModel.selectedTimelineItem);
+      return uc.execute();
+    };
+
+    return UDisplayEnvironments;
+
+  })();
+
+  UDisplayEnvironmentsGraph = (function() {
+
+    function UDisplayEnvironmentsGraph(environments, selectedTimelineItem) {
+      this.environments = environments;
+      this.selectedTimelineItem = selectedTimelineItem;
+    }
+
+    UDisplayEnvironmentsGraph.prototype.execute = function() {
+      var env, obj, pl, timeline, _i, _j, _len, _len2, _ref, _ref2;
       this.displayData = [];
-      for (_i = 0, _len = environments.length; _i < _len; _i++) {
-        env = environments[_i];
-        _ref = env.planning;
-        for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
-          pl = _ref[_j];
+      _ref = this.environments;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        env = _ref[_i];
+        _ref2 = env.planning;
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          pl = _ref2[_j];
           pl.environmentId = env.id;
           obj = {
             group: env.name,
@@ -119,13 +139,11 @@
           this.displayData.push(obj);
         }
       }
-      this.viewModel = new EnvironmentsPlanningViewmodel(environments, versions);
-      ko.applyBindings(this.viewModel);
-      timeline = new Mnd.Timeline(this.displayData, this.viewModel.selectedTimelineItem);
+      timeline = new Mnd.Timeline(this.displayData, this.selectedTimelineItem);
       return timeline.draw();
     };
 
-    return UDisplayEnvironments;
+    return UDisplayEnvironmentsGraph;
 
   })();
 
@@ -603,8 +621,8 @@
         }
         index = this.viewModelObservableCollection().indexOf(oldItem);
         this.viewModelObservableCollection.splice(index, 1, refreshed);
-        this.selectedObservable(refreshed);
       }
+      if (this.selectedObservable) this.selectedObservable(refreshed);
       if (this.observableShowform) this.observableShowform(null);
       if (this.updateViewUsecase) return this.updateViewUsecase.execute();
     };
@@ -845,6 +863,8 @@
 
     UUpdateScreen.prototype.execute = function() {
       var del, uc, _i, _j, _len, _len2, _ref, _ref2, _results;
+      console.log(this.usecases);
+      console.log(this.delegates);
       if (this.usecases) {
         _ref = this.usecases;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -1251,5 +1271,7 @@
   root.UPlanEnvironment = UPlanEnvironment;
 
   root.UUnAssignEnvironment = UUnAssignEnvironment;
+
+  root.UDisplayEnvironmentsGraph = UDisplayEnvironmentsGraph;
 
 }).call(this);
