@@ -132,9 +132,12 @@ class Period extends Mixin
 		@comingUpInDays 7
 	comingUpInDays: (amtDays) ->
 		today = new Date()
+		console.log today
 		next = today.setDate(today.getDate()+amtDays)
 		console.log new Date(next)
-		@containsDate new Date(next)
+		period = new Period(new Date(), new Date(next), 'compare comingUpInDays')
+		console.log period
+		@overlaps period
 	overlaps: (other) ->
 		#console.log "this: #{@}"
 		#console.log "other: #{other}"

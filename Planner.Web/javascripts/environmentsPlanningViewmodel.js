@@ -10,9 +10,7 @@
       this.deleteSelectedAssignment = __bind(this.deleteSelectedAssignment, this);
       this.saveSelectedAssignment = __bind(this.saveSelectedAssignment, this);
       this.dehydrateEnvironment = __bind(this.dehydrateEnvironment, this);
-      this.selectPhase = __bind(this.selectPhase, this);
-      this.createVisualCuesForGates = __bind(this.createVisualCuesForGates, this);
-      this.closeDetails = __bind(this.closeDetails, this);
+      this.createVisualCuesForDates = __bind(this.createVisualCuesForDates, this);
       this.setAssignments = __bind(this.setAssignments, this);
       this.newAssignment = __bind(this.newAssignment, this);
       var updateScreenFunctions, updateScreenUseCases,
@@ -92,25 +90,7 @@
       return ajax.getAssignedResourcesForRelease(releaseId, this.setAssignments);
     };
 
-    EnvironmentsPlanningViewmodel.prototype.closeDetails = function() {
-      return this.canShowDetails(false);
-    };
-
-    EnvironmentsPlanningViewmodel.prototype.createVisualCuesForGates = function(data) {
-      var uc,
-        _this = this;
-      console.log("createVisualCuesForGates");
-      uc = new UCreateVisualCuesForGates(30, function(data) {
-        return console.log('callback succesful: ' + data);
-      });
-      return uc.execute();
-    };
-
-    EnvironmentsPlanningViewmodel.prototype.selectPhase = function(data) {
-      console.log("selectPhase");
-      this.selectedPhase(data);
-      return this.canShowDetails(true);
-    };
+    EnvironmentsPlanningViewmodel.prototype.createVisualCuesForDates = function(data) {};
 
     EnvironmentsPlanningViewmodel.prototype.dehydrateEnvironment = function(json) {
       var env;

@@ -147,7 +147,8 @@ namespace Mnd.Planner.Domain.Repositories
                 conn.Open();
 
                 // Release
-                var cmd = new SqlCommand("Select * from Phases where ISNULL(ParentId, 0) = 0", conn);
+                // TODO: add different 'Type' value to child phases, these are also labelled 'Release', hence where clause on ParentId
+                var cmd = new SqlCommand("Select * from Phases where Type = 'Release' AND ISNULL(ParentId, 0) = 0", conn);
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())

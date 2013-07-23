@@ -146,11 +146,14 @@
     };
 
     Period.prototype.comingUpInDays = function(amtDays) {
-      var next, today;
+      var next, period, today;
       today = new Date();
+      console.log(today);
       next = today.setDate(today.getDate() + amtDays);
       console.log(new Date(next));
-      return this.containsDate(new Date(next));
+      period = new Period(new Date(), new Date(next), 'compare comingUpInDays');
+      console.log(period);
+      return this.overlaps(period);
     };
 
     Period.prototype.overlaps = function(other) {
