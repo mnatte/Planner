@@ -113,6 +113,21 @@ namespace Mnd.Planner.Web
                   "Environment/Plan/UnAssign", // URL with parameters
                   new { controller = "Environment", action = "RemoveAssignment", param1 = UrlParameter.Optional } // Parameter defaults
               );
+             routes.MapRoute(
+                   "GetProcesses", // Route name
+                   "Process", // URL with parameters
+                   new { controller = "Process", action = "GetItems", param1 = UrlParameter.Optional } // Parameter defaults
+               );
+             routes.MapRoute(
+                    "SaveProcess", // Route name
+                    "Process/Save", // URL with parameters
+                    new { controller = "Process", action = "Save", param1 = UrlParameter.Optional } // Parameter defaults
+                );
+             routes.MapRoute(
+                    "DeleteProcess", // Route name
+                    "Process/Delete/{id}", // URL with parameters
+                    new { controller = "Process", action = "Delete", param1 = UrlParameter.Optional } // Parameter defaults
+                );
             routes.MapRoute(
                 "Default", // Route name
                 "{controller}/{action}/{id}", // URL with parameters

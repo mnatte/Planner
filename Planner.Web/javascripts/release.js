@@ -1,5 +1,5 @@
 (function() {
-  var Activity, Assignment, Deliverable, Environment, Feature, Meeting, Milestone, Period, Phase, Project, ProjectActivityStatus, Release, ReleaseAssignments, Resource, Version, Week, root,
+  var Activity, Assignment, Deliverable, Environment, Feature, Meeting, Milestone, Period, Phase, Process, Project, ProjectActivityStatus, Release, ReleaseAssignments, Resource, Version, Week, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -319,6 +319,44 @@
     };
 
     return Version;
+
+  })(Mixin);
+
+  Process = (function(_super) {
+
+    __extends(Process, _super);
+
+    function Process(id, title, description, shortName) {
+      this.id = id;
+      this.title = title;
+      this.description = description;
+      this.shortName = shortName;
+    }
+
+    Process.create = function(jsonData) {
+      var item;
+      item = new Process(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.ShortName);
+      return item;
+    };
+
+    Process.createEmpty = function() {
+      var item;
+      item = new Process(0, "", "", "");
+      return item;
+    };
+
+    Process.createCollection = function(jsonData) {
+      var arr, i, _i, _len;
+      arr = [];
+      for (_i = 0, _len = jsonData.length; _i < _len; _i++) {
+        i = jsonData[_i];
+        this.item = Process.create(i);
+        arr.push(this.item);
+      }
+      return arr;
+    };
+
+    return Process;
 
   })(Mixin);
 
@@ -872,5 +910,7 @@
   root.Environment = Environment;
 
   root.Version = Version;
+
+  root.Process = Process;
 
 }).call(this);

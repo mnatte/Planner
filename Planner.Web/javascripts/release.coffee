@@ -219,6 +219,21 @@ class Version extends Mixin
 			arr.push @v
 		arr
 
+class Process extends Mixin
+	constructor: (@id, @title, @description, @shortName) ->
+	@create: (jsonData) ->
+		item = new Process(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.ShortName)
+		item
+	@createEmpty: ->
+		item = new Process(0, "", "", "")
+		item
+	@createCollection: (jsonData) ->
+		arr = []
+		for i in jsonData
+			@item = Process.create(i)
+			arr.push @item
+		arr
+
 class Phase extends Period
 	# attach seperate startDate, endDate and title properties to each instance
 	constructor: (@id, @startDate, @endDate, @title, @parentId) ->
@@ -497,4 +512,5 @@ root.ProjectActivityStatus = ProjectActivityStatus
 root.ReleaseAssignments = ReleaseAssignments
 root.Environment = Environment
 root.Version = Version
+root.Process = Process
 

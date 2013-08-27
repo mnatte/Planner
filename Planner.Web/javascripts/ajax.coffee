@@ -223,6 +223,16 @@ class Ajax
 				callback data
 			error: (XHR, status, errorThrown) ->
 				console.log "AJAX error: #{status}"
+	getProcesses: (callback) ->
+		url = "/planner/Process"
+		$.ajax url,
+			dataType: "json"
+			type: "GET"
+			success: (data, status, XHR) ->
+				console.log "processes data succesfully called"
+				callback data
+			error: (XHR, status, errorThrown) ->
+				console.log "AJAX error: #{status}"
 	getEnvironments: (callback) ->
 		url = "/planner/Environment/All"
 		$.ajax url,

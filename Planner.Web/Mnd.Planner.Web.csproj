@@ -100,6 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ProcessController.cs" />
     <Compile Include="Controllers\DeliverableController.cs" />
     <Compile Include="Controllers\EnvironmentController.cs" />
     <Compile Include="Controllers\MeetingController.cs" />
@@ -129,11 +130,17 @@
     <Content Include="adminMeeting.htm" />
     <Content Include="branches.htm" />
     <Content Include="adminEnvironment.htm" />
+    <Content Include="adminProcess.htm" />
     <Content Include="Environments.htm" />
     <Content Include="javascripts\adminEnvironmentViewmodel.js">
       <DependentUpon>adminEnvironmentViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
+    </Content>
+    <Content Include="javascripts\adminProcessViewmodel.js">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>adminProcessViewmodel.coffee</DependentUpon>
     </Content>
     <Content Include="javascripts\environmentsPlanningViewmodel.js">
       <DependentUpon>environmentsPlanningViewmodel.coffee</DependentUpon>
@@ -934,6 +941,10 @@
     <None Include="javascripts\adminActivityViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>adminActivityViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\adminProcessViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>adminProcessViewmodel.js</LastGenOutput>
     </None>
     <None Include="javascripts\adminProjectViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>

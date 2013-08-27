@@ -239,6 +239,14 @@ class ULoadAdminActivities
 		@viewModel.selectItem @viewModel.allItems()[0]
 		ko.applyBindings(@viewModel)
 
+class ULoadAdminProcesses
+	constructor: ->
+	execute: (data) ->
+		items = Process.createCollection data
+		@viewModel = new AdminProcessViewmodel(items)
+		@viewModel.selectItem @viewModel.allItems()[0]
+		ko.applyBindings(@viewModel)
+
 class ULoadPlanResources
 	constructor: ->
 	execute: (releases, resources, activities) ->
@@ -626,6 +634,7 @@ root.ULoadAdminMeetings = ULoadAdminMeetings
 root.ULoadAdminResources = ULoadAdminResources
 root.ULoadAdminDeliverables = ULoadAdminDeliverables
 root.ULoadAdminActivities = ULoadAdminActivities
+root.ULoadAdminProcesses = ULoadAdminProcesses
 root.ULoadPlanResources = ULoadPlanResources
 root.ULoadUpdateReleaseStatus = ULoadUpdateReleaseStatus
 root.UModifyAssignment = UModifyAssignment
