@@ -74,7 +74,7 @@ class AssignmentsViewmodel
 			for assignment in (ass for ass in resource.assignments when ass.period.overlaps(@checkPeriod())) #resource.assignments
 				dto = assignment
 				dto.person = resource
-				obj = {group: resource.fullName() + '[' + i + ']', start: assignment.period.startDate.date, end: assignment.period.endDate.date, content: assignment.period.title, info: assignment.period.toString(), dataObject: dto}
+				obj = {group: resource.fullName() + '[' + i + ']', start: assignment.period.startDate.date, end: assignment.period.endDate.date, content: assignment.period.title, info: assignment.period.toString() + '(' + assignment.remainingAssignedHours() + ' hrs remaining)', dataObject: dto}
 				@displayData.push obj
 				i++
 		@showAssignments = @displayData.sort((a,b)-> a.start - b.end)

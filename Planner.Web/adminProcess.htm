@@ -71,6 +71,7 @@
                     </div>
                     <form data-bind="with: selectedItem()">
                         <label>Process title:</label><input type="text" data-bind="value: title, valueUpdate: 'afterkeydown'" />
+                        <label>Type:</label><input type="text" data-bind="value: type" />
                         <label>Short Name:</label><input type="text" data-bind="value: shortName" />
                         <label>Description:</label><input type="text" data-bind="value: description" />
                         <button class="sexybutton" data-bind="click: $parent.saveSelected.bind($data)"><span><span><span class="save">Save</span></span></span></button> 

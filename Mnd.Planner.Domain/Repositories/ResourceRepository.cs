@@ -185,7 +185,7 @@ namespace Mnd.Planner.Domain.Repositories
             return abs;
         }
 
-        public void SaveAssignment(int releaseId, int projectId, int personId, int milestoneId, int deliverableId, int activityId, DateTime startDate, DateTime endDate, double focusFactor)
+        public void SaveReleaseAssignment(int releaseId, int projectId, int personId, int milestoneId, int deliverableId, int activityId, DateTime startDate, DateTime endDate, double focusFactor)
         {
             var conn = new SqlConnection(this.ConnectionString);
 
@@ -208,29 +208,32 @@ namespace Mnd.Planner.Domain.Repositories
                 conn.Open();
                 cmd.ExecuteNonQuery();
             }
-
         }
 
-        public int DeleteAbsence(int id)
+        public void SaveContinuingProcessAssignment(int processId, int personId, int deliverableId, int activityId, DateTime startDate, DateTime endDate, int hoursPerWeek)
         {
             var conn = new SqlConnection(this.ConnectionString);
-            var amt = 0;
 
-            var cmd = new SqlCommand("sp_delete_absence", conn);
+            var cmd = new SqlCommand("sp_insert_resource_assignment", conn);
             cmd.CommandType = System.Data.CommandType.StoredProcedure;
             // TODO: add params
-            cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = id;
-            var abs = new Absence();
+            cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = 0; // not needed
+            cmd.Parameters.Add("@ProcessId", System.Data.SqlDbType.Int).Value = processId;
+            cmd.Parameters.Add("@PersonId", System.Data.SqlDbType.Int).Value = personId;
+            cmd.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = deliverableId;
+            cmd.Parameters.Add("@ActivityId", System.Data.SqlDbType.Int).Value = activityId;
+            cmd.Parameters.Add("@HoursPerWeek", System.Data.SqlDbType.Decimal).Value = hoursPerWeek;
+            cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = startDate;
+            cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = endDate;
 
             using (conn)
             {
                 conn.Open();
-                amt = cmd.ExecuteNonQuery();
+                cmd.ExecuteNonQuery();
             }
-            return amt;
         }
 
-        public Resource DeleteAssignment(int releaseId, int projectId, int personId, int milestoneId, int deliverableId, int activityId, DateTime startDate, DateTime endDate)
+        public Resource DeleteReleaseAssignment(int releaseId, int projectId, int personId, int milestoneId, int deliverableId, int activityId, DateTime startDate, DateTime endDate)
         {
             var conn = new SqlConnection(this.ConnectionString);
             Resource resource;
@@ -264,6 +267,25 @@ namespace Mnd.Planner.Domain.Repositories
                 throw;
             }
             return resource;
+        }
+
+        public int DeleteAbsence(int id)
+        {
+            var conn = new SqlConnection(this.ConnectionString);
+            var amt = 0;
+
+            var cmd = new SqlCommand("sp_delete_absence", conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            // TODO: add params
+            cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = id;
+            var abs = new Absence();
+
+            using (conn)
+            {
+                conn.Open();
+                amt = cmd.ExecuteNonQuery();
+            }
+            return amt;
         }
     }
 }

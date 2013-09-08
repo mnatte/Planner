@@ -110,7 +110,7 @@
             start: assignment.period.startDate.date,
             end: assignment.period.endDate.date,
             content: assignment.period.title,
-            info: assignment.period.toString(),
+            info: assignment.period.toString() + '(' + assignment.remainingAssignedHours() + ' hrs remaining)',
             dataObject: dto
           };
           this.displayData.push(obj);

@@ -220,12 +220,12 @@ class Version extends Mixin
 		arr
 
 class Process extends Mixin
-	constructor: (@id, @title, @description, @shortName) ->
+	constructor: (@id, @title, @description, @shortName, @type) ->
 	@create: (jsonData) ->
-		item = new Process(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.ShortName)
+		item = new Process(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.ShortName, jsonData.Type)
 		item
 	@createEmpty: ->
-		item = new Process(0, "", "", "")
+		item = new Process(0, "", "", "", "")
 		item
 	@createCollection: (jsonData) ->
 		arr = []
@@ -462,6 +462,12 @@ class Resource extends Mixin
 class Assignment extends Mixin
 	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate, @activity, @milestone, @deliverable) ->
 		@period = new Period(startDate, endDate, @deliverable.title + ' ' + @activity.title + ' ' + @release.title + ' (' + @focusFactor + ') ' + @project.title)
+	assignedHours: ->
+		assHours = Math.round(@focusFactor * @period.workingHours())
+		assHours
+	remainingAssignedHours: ->
+		assHours = Math.round(@focusFactor * @period.remainingWorkingHours())
+		assHours
 	@create: (jsonData, resource, project, release) ->
 		#console.log "create Assignment:" + ko.toJSON(jsonData)
 		# use when given else create from json data

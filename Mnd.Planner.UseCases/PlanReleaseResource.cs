@@ -9,7 +9,7 @@ using Mnd.Planner.Domain;
 
 namespace Mnd.Planner.UseCases
 {
-    public class UnAssignResource: AbstractUseCase
+    public class PlanReleaseResource: AbstractUseCase
     {
         RHumanResource _resource;
         Release _release;
@@ -18,21 +18,23 @@ namespace Mnd.Planner.UseCases
         Deliverable _deliverable;
         Activity _activity;
         Period _period;
+        double _focusFactor;
 
-        public UnAssignResource(RHumanResource resource, Release release, Project project, Milestone milestone, Deliverable deliverable, Activity activity, Period period)
+        public PlanReleaseResource(RHumanResource resource, Release release, Project project, Milestone milestone, Deliverable deliverable, Activity activity, Period period, double focusFactor)
         {
             _resource = resource;
             _release = release;
             _milestone = milestone;
             _deliverable = deliverable;
             _activity = activity;
+            _focusFactor = focusFactor;
             _period = period;
             _project = project;
         }
 
         public override void Execute()
         {
-            _resource.UnAssignFromRelease(_release, _project, _milestone, _deliverable, _activity, _period);
+            _resource.PlanForRelease(_release, _project, _milestone, _deliverable, _activity, _period, _focusFactor);
         }
     }
 }

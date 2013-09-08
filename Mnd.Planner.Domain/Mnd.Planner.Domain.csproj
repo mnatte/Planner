@@ -55,6 +55,7 @@
     <Compile Include="Models\Milestone.cs" />
     <Compile Include="Models\SoftwareVersion.cs" />
     <Compile Include="Persistence\ActivityInputModel.cs" />
+    <Compile Include="Persistence\ContinuingProcessAssignmentsInputModel.cs" />
     <Compile Include="Persistence\ProcessInputModel.cs" />
     <Compile Include="Persistence\EnvironmentAssignmentInputModel.cs" />
     <Compile Include="Persistence\EnvironmentInputModel.cs" />

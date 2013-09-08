@@ -15,6 +15,7 @@ using Mnd.Planner.Domain.Repositories;
 using Mnd.Mvc.Rest;
 using Mnd.Planner.UseCases;
 using Mnd.Domain;
+using Mnd.Planner.Domain.Models;
 
 namespace Mnd.Planner.Web.Controllers
 {
@@ -56,10 +57,10 @@ namespace Mnd.Planner.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult PlanReturnRelease(ResourceAssignmentInputModel model)
+        public JsonResult PlanAndReturnRelease(ResourceAssignmentInputModel model)
         {
             var period = new Period { StartDate = model.StartDate.ToDateTimeFromDutchString(), EndDate = model.EndDate.ToDateTimeFromDutchString() };
-            var uc = new PlanResource(new Resource { Id = model.ResourceId }, new Release { Id = model.PhaseId }, new Project { Id = model.ProjectId }, new Milestone { Id = model.MilestoneId }, new Deliverable { Id = model.DeliverableId }, new Activity { Id = model.ActivityId }, period, model.FocusFactor);
+            var uc = new PlanReleaseResource(new Resource { Id = model.ResourceId }, new Release { Id = model.PhaseId }, new Project { Id = model.ProjectId }, new Milestone { Id = model.MilestoneId }, new Deliverable { Id = model.DeliverableId }, new Activity { Id = model.ActivityId }, period, model.FocusFactor);
             uc.Execute();
 
             // return release summary for release planning overview page
@@ -69,7 +70,21 @@ namespace Mnd.Planner.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult UnAssignReturnRelease(ResourceAssignmentInputModel model)
+        public JsonResult PlanContinuingProcessAssignmentAndReturnResource(ContinuingProcessAssignmentInputModel model)
+        {
+            var period = new Period { StartDate = model.StartDate.ToDateTimeFromDutchString(), EndDate = model.EndDate.ToDateTimeFromDutchString() };
+            var uc = new PlanContinuingProcessResource(new Resource { Id = model.PersonId }, new Process { Id = model.ProcessId }, new Deliverable { Id = model.DeliverableId }, new Activity { Id = model.ActivityId }, period, model.HoursPerWeek);
+            uc.Execute();
+
+            // return release summary for release planning overview page
+            var rep = new ResourceRepository();
+            var resource = rep.GetItemById(model.ProcessId);
+            return this.Json(resource, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [HttpPost]
+        public JsonResult UnAssignAndReturnRelease(ResourceAssignmentInputModel model)
         {
             var period = new Period { StartDate = model.StartDate.ToDateTimeFromDutchString(), EndDate = model.EndDate.ToDateTimeFromDutchString() };
             var uc = new UnAssignResource(new Resource { Id = model.ResourceId }, new Release { Id = model.PhaseId }, new Project { Id = model.ProjectId }, new Milestone { Id = model.MilestoneId }, new Deliverable { Id = model.DeliverableId }, new Activity { Id = model.ActivityId }, period);
@@ -84,7 +99,7 @@ namespace Mnd.Planner.Web.Controllers
         public JsonResult Plan(ResourceAssignmentInputModel model)
         {
             var period = new Period { StartDate = model.StartDate.ToDateTimeFromDutchString(), EndDate = model.EndDate.ToDateTimeFromDutchString() };
-            var uc = new PlanResource(new Resource { Id = model.ResourceId }, new Release { Id = model.PhaseId }, new Project { Id = model.ProjectId }, new Milestone { Id = model.MilestoneId }, new Deliverable { Id = model.DeliverableId }, new Activity { Id = model.ActivityId }, period, model.FocusFactor);
+            var uc = new PlanReleaseResource(new Resource { Id = model.ResourceId }, new Release { Id = model.PhaseId }, new Project { Id = model.ProjectId }, new Milestone { Id = model.MilestoneId }, new Deliverable { Id = model.DeliverableId }, new Activity { Id = model.ActivityId }, period, model.FocusFactor);
             uc.Execute();
 
             // return resource for resource planning overview page

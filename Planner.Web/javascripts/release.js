@@ -326,22 +326,23 @@
 
     __extends(Process, _super);
 
-    function Process(id, title, description, shortName) {
+    function Process(id, title, description, shortName, type) {
       this.id = id;
       this.title = title;
       this.description = description;
       this.shortName = shortName;
+      this.type = type;
     }
 
     Process.create = function(jsonData) {
       var item;
-      item = new Process(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.ShortName);
+      item = new Process(jsonData.Id, jsonData.Title, jsonData.Description, jsonData.ShortName, jsonData.Type);
       return item;
     };
 
     Process.createEmpty = function() {
       var item;
-      item = new Process(0, "", "", "");
+      item = new Process(0, "", "", "", "");
       return item;
     };
 
@@ -824,6 +825,18 @@
       this.deliverable = deliverable;
       this.period = new Period(startDate, endDate, this.deliverable.title + ' ' + this.activity.title + ' ' + this.release.title + ' (' + this.focusFactor + ') ' + this.project.title);
     }
+
+    Assignment.prototype.assignedHours = function() {
+      var assHours;
+      assHours = Math.round(this.focusFactor * this.period.workingHours());
+      return assHours;
+    };
+
+    Assignment.prototype.remainingAssignedHours = function() {
+      var assHours;
+      assHours = Math.round(this.focusFactor * this.period.remainingWorkingHours());
+      return assHours;
+    };
 
     Assignment.create = function(jsonData, resource, project, release) {
       var activity, ass, deliverable, milestone;
