@@ -269,6 +269,7 @@ class UDisplayReleaseOverview
 		allResources = Resource.createCollection(resources)
 		allActivities = Activity.createCollection(activities)
 		console.log releases
+		#console.log allResources
 		@viewModel = new ReleaseOverviewViewmodel(releases, allResources, allActivities)
 		ko.applyBindings(@viewModel)
 
@@ -481,14 +482,18 @@ class UDisplayReleaseTimeline
 
 class UDisplayReleasePlanningInTimeline
 	# depends on timeline.js
-	constructor: (@observableRelease, @observableTimelineItem) ->
+	constructor: (@observableRelease, @observableTimelineItem, @resources) ->
 	execute: ->
 		@trackAssignments = []
 		@displayData = []
+		#@plannedResources = []
+		@absencesDone = []
 		releaseTitle = @observableRelease().title
 		console.log 'execute use case UDisplayReleasePlanningInTimeline'
 		console.log @observableRelease()
+		#console.log @resources
 		uniqueAsses = []
+		# assignments
 		for ms in @observableRelease().milestones
 			for del in ms.deliverables
 				console.log del
@@ -498,9 +503,20 @@ class UDisplayReleasePlanningInTimeline
 							console.log assignment
 							dto = assignment # trick for adding info: dto.person = resource
 							resource = @createRowItem(assignment.resource.fullName(), 0)
-
-							obj = {group: resource, start: assignment.period.startDate.date, end: assignment.period.endDate.date, content: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.project.title, info: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.period.toString(), dataObject: dto}
+							obj = {group: resource, start: assignment.period.startDate.date, end: assignment.period.endDate.date, content: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.project.title, info: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.period.toString()  + '(' + assignment.remainingAssignedHours() + ' hrs remaining)', dataObject: dto}
 							@displayData.push obj
+							# TODO: use for totals
+							# @addToPlannedResources assignment.resource
+							# absences
+							if not @resourceAbsencesDone(assignment.resource)
+								for absence in (abs for abs in assignment.resource.periodsAway when abs.overlaps(@observableRelease())) # resource.periodsAway
+									console.log absence
+									dto = absence
+									dto.person = assignment.resource
+									res = @createRowItem(assignment.resource.fullName(), 0)
+									obj = {group: res, start: absence.startDate.date, end: absence.endDate.date, content: absence.title, info: absence.toString(), dataObject: dto}
+									@displayData.push obj
+		console.log @plannedResources
 		showData = @displayData.sort((a,b)-> a.start - b.end)
 		timeline = new Mnd.Timeline(showData, @observableTimelineItem, "100%", "800px", "resourcePlanning", "assignmentDetails")
 		timeline.draw()
@@ -513,6 +529,17 @@ class UDisplayReleasePlanningInTimeline
 		else
 			index++
 			@createRowItem item, index
+	# addToPlannedResources: (resource) ->
+		#identifier = resource
+		#if @plannedResources.indexOf(identifier) is -1
+		#	@plannedResources.push resource
+	resourceAbsencesDone: (resource) ->
+		identifier = resource.id
+		if @absencesDone.indexOf(identifier) is -1
+			@absencesDone.push resource.id
+			false
+		else
+			true
 
 class UDisplayReleasePhases
 	constructor: (@release, @viewModelObservableGraph) ->

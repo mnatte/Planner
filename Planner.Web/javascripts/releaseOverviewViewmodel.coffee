@@ -73,7 +73,7 @@ class ReleaseOverviewViewmodel
 		# @selectedMilestone is the observable to trigger new assignment functionality
 		updateScreenUseCases.push(new UDisplayReleaseTimeline(@inspectRelease, @selectedReleaseTimelineItem))
 		# @selectedTimelineItem is the observable to trigger selected assignment functionality
-		updateScreenUseCases.push(new UDisplayReleasePlanningInTimeline(@inspectRelease, @selectedTimelineItem))
+		updateScreenUseCases.push(new UDisplayReleasePlanningInTimeline(@inspectRelease, @selectedTimelineItem, @allResources))
 		updateScreenFunctions.push(=> @selectedTimelineItem null)
 		updateScreenFunctions.push(=> @selectedMilestone null)
 		updateScreenFunctions.push(=> @selectedPhase null)

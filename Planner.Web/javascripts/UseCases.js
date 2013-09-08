@@ -999,15 +999,17 @@
 
   UDisplayReleasePlanningInTimeline = (function() {
 
-    function UDisplayReleasePlanningInTimeline(observableRelease, observableTimelineItem) {
+    function UDisplayReleasePlanningInTimeline(observableRelease, observableTimelineItem, resources) {
       this.observableRelease = observableRelease;
       this.observableTimelineItem = observableTimelineItem;
+      this.resources = resources;
     }
 
     UDisplayReleasePlanningInTimeline.prototype.execute = function() {
-      var activity, assignment, del, dto, ms, obj, proj, releaseTitle, resource, showData, timeline, uniqueAsses, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref, _ref2, _ref3, _ref4, _ref5;
+      var abs, absence, activity, assignment, del, dto, ms, obj, proj, releaseTitle, res, resource, showData, timeline, uniqueAsses, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _len6, _m, _n, _ref, _ref2, _ref3, _ref4, _ref5, _ref6;
       this.trackAssignments = [];
       this.displayData = [];
+      this.absencesDone = [];
       releaseTitle = this.observableRelease().title;
       console.log('execute use case UDisplayReleasePlanningInTimeline');
       console.log(this.observableRelease());
@@ -1036,15 +1038,46 @@
                   start: assignment.period.startDate.date,
                   end: assignment.period.endDate.date,
                   content: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.project.title,
-                  info: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.period.toString(),
+                  info: assignment.activity.title + ' [' + assignment.focusFactor + ']' + ' ' + assignment.deliverable.title + ' ' + assignment.period.toString() + '(' + assignment.remainingAssignedHours() + ' hrs remaining)',
                   dataObject: dto
                 };
                 this.displayData.push(obj);
+                if (!this.resourceAbsencesDone(assignment.resource)) {
+                  _ref6 = (function() {
+                    var _len6, _o, _ref6, _results;
+                    _ref6 = assignment.resource.periodsAway;
+                    _results = [];
+                    for (_o = 0, _len6 = _ref6.length; _o < _len6; _o++) {
+                      abs = _ref6[_o];
+                      if (abs.overlaps(this.observableRelease())) {
+                        _results.push(abs);
+                      }
+                    }
+                    return _results;
+                  }).call(this);
+                  for (_n = 0, _len6 = _ref6.length; _n < _len6; _n++) {
+                    absence = _ref6[_n];
+                    console.log(absence);
+                    dto = absence;
+                    dto.person = assignment.resource;
+                    res = this.createRowItem(assignment.resource.fullName(), 0);
+                    obj = {
+                      group: res,
+                      start: absence.startDate.date,
+                      end: absence.endDate.date,
+                      content: absence.title,
+                      info: absence.toString(),
+                      dataObject: dto
+                    };
+                    this.displayData.push(obj);
+                  }
+                }
               }
             }
           }
         }
       }
+      console.log(this.plannedResources);
       showData = this.displayData.sort(function(a, b) {
         return a.start - b.end;
       });
@@ -1062,6 +1095,17 @@
       } else {
         index++;
         return this.createRowItem(item, index);
+      }
+    };
+
+    UDisplayReleasePlanningInTimeline.prototype.resourceAbsencesDone = function(resource) {
+      var identifier;
+      identifier = resource.id;
+      if (this.absencesDone.indexOf(identifier) === -1) {
+        this.absencesDone.push(resource.id);
+        return false;
+      } else {
+        return true;
       }
     };
 

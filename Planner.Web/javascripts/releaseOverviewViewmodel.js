@@ -105,7 +105,7 @@
       updateScreenUseCases = [];
       updateScreenFunctions = [];
       updateScreenUseCases.push(new UDisplayReleaseTimeline(this.inspectRelease, this.selectedReleaseTimelineItem));
-      updateScreenUseCases.push(new UDisplayReleasePlanningInTimeline(this.inspectRelease, this.selectedTimelineItem));
+      updateScreenUseCases.push(new UDisplayReleasePlanningInTimeline(this.inspectRelease, this.selectedTimelineItem, this.allResources));
       updateScreenFunctions.push(function() {
         return _this.selectedTimelineItem(null);
       });
