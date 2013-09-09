@@ -838,6 +838,13 @@
       return assHours;
     };
 
+    Assignment.prototype.resourceAvailableHours = function() {
+      var available, hoursPresent;
+      hoursPresent = this.resource.hoursAvailable(this.period);
+      available = Math.round(hoursPresent * this.focusFactor);
+      return available;
+    };
+
     Assignment.create = function(jsonData, resource, project, release) {
       var activity, ass, deliverable, milestone;
       if (typeof resource === "undefined" || resource === null) {
@@ -865,13 +872,6 @@
         assignments.push(this.assignment);
       }
       return assignments;
-    };
-
-    Assignment.prototype.resourceAvailableHours = function() {
-      var available, hoursPresent;
-      hoursPresent = this.resource.hoursAvailable(this.period);
-      available = Math.round(hoursPresent * this.focusFactor);
-      return available;
     };
 
     return Assignment;

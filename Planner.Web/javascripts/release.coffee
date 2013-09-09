@@ -468,6 +468,10 @@ class Assignment extends Mixin
 	remainingAssignedHours: ->
 		assHours = Math.round(@focusFactor * @period.remainingWorkingHours())
 		assHours
+	resourceAvailableHours: ->
+		hoursPresent = @resource.hoursAvailable @period
+		available = Math.round(hoursPresent * @focusFactor)
+		available
 	@create: (jsonData, resource, project, release) ->
 		#console.log "create Assignment:" + ko.toJSON(jsonData)
 		# use when given else create from json data
@@ -492,10 +496,6 @@ class Assignment extends Mixin
 			@assignment = Assignment.create(assignment, resource, project, release)
 			assignments.push @assignment
 		assignments
-	resourceAvailableHours: ->
-		hoursPresent = @resource.hoursAvailable @period
-		available = Math.round(hoursPresent * @focusFactor)
-		available
 
 # datastructure for submitting all assignments with release
 class ReleaseAssignments extends Mixin

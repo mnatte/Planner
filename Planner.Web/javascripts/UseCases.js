@@ -1,5 +1,5 @@
 (function() {
-  var UAjax, UCreateVisualCuesForAbsences, UCreateVisualCuesForGates, UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayBurndown, UDisplayEnvironments, UDisplayEnvironmentsGraph, UDisplayPhases, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminEnvironments, ULoadAdminMeetings, ULoadAdminProcesses, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, UPlanEnvironment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUnAssignEnvironment, UUpdateDeliverableStatus, UUpdateScreen, root,
+  var UAjax, UCreateVisualCuesForAbsences, UCreateVisualCuesForGates, UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayBurndown, UDisplayEnvironments, UDisplayEnvironmentsGraph, UDisplayPhases, UDisplayPlannedHoursPerActivityArtefactProject, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminEnvironments, ULoadAdminMeetings, ULoadAdminProcesses, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, UPlanEnvironment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUnAssignEnvironment, UUpdateDeliverableStatus, UUpdateScreen, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -962,7 +962,7 @@
               } else {
                 style = 'style="color: green"';
               }
-              descr += '<li ' + style + '>' + act.activityTitle + ': ' + act.hrs + ' hours remaining, ' + act.planned + ' hours planned</li>';
+              descr += '<li ' + style + '>' + act.activityTitle + ': ' + act.hrs + ' hours remaining, ' + act.planned + ' hours planned (incl. absences)</li>';
             }
             descr += '</ul>';
             descr += '</li>';
@@ -1110,6 +1110,62 @@
     };
 
     return UDisplayReleasePlanningInTimeline;
+
+  })();
+
+  UDisplayPlannedHoursPerActivityArtefactProject = (function() {
+
+    function UDisplayPlannedHoursPerActivityArtefactProject(observableRelease) {
+      this.observableRelease = observableRelease;
+    }
+
+    UDisplayPlannedHoursPerActivityArtefactProject.prototype.execute = function() {
+      var act, activities, del, descr, ms, proj, style, _i, _j, _k, _l, _len, _len2, _len3, _len4, _ref, _ref2, _ref3, _results;
+      _ref = this.observableRelease().milestones;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        ms = _ref[_i];
+        descr = '<ul>';
+        _ref2 = ms.deliverables;
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          del = _ref2[_j];
+          descr += '<li>' + del.title + '<ul>';
+          _ref3 = del.scope;
+          for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+            proj = _ref3[_k];
+            descr += '<li>' + proj.title;
+            descr += '<ul>';
+            activities = proj.workload.reduce(function(acc, x) {
+              acc.push({
+                activityTitle: x.activity.title,
+                hrs: x.hoursRemaining,
+                planned: x.assignedResources.reduce((function(acc, x) {
+                  return acc + x.resourceAvailableHours();
+                }), 0)
+              });
+              return acc;
+            }, []);
+            for (_l = 0, _len4 = activities.length; _l < _len4; _l++) {
+              act = activities[_l];
+              if (act.hrs > act.planned) {
+                style = 'style="color: red"';
+              } else {
+                style = 'style="color: green"';
+              }
+              descr += '<li ' + style + '>' + act.activityTitle + ': ' + act.hrs + ' hours remaining, ' + act.planned + ' hours planned (incl. absences)</li>';
+            }
+            descr += '</ul>';
+            descr += '</li>';
+          }
+          descr += '</ul>';
+        }
+        descr += '</li>';
+        _results.push(descr += '</ul>');
+      }
+      return _results;
+    };
+
+    return UDisplayPlannedHoursPerActivityArtefactProject;
 
   })();
 
@@ -1335,5 +1391,7 @@
   root.UUnAssignEnvironment = UUnAssignEnvironment;
 
   root.UDisplayEnvironmentsGraph = UDisplayEnvironmentsGraph;
+
+  root.UDisplayPlannedHoursPerActivityArtefactProject = UDisplayPlannedHoursPerActivityArtefactProject;
 
 }).call(this);

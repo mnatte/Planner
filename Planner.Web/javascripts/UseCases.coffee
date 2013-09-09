@@ -465,7 +465,7 @@ class UDisplayReleaseTimeline
 							style = 'style="color: red"'
 						else
 							style = 'style="color: green"'
-						descr += '<li ' + style + '>' + act.activityTitle + ': ' + act.hrs + ' hours remaining, ' + act.planned + ' hours planned</li>'
+						descr += '<li ' + style + '>' + act.activityTitle + ': ' + act.hrs + ' hours remaining, ' + act.planned + ' hours planned (incl. absences)</li>'
 					descr += '</ul>' # /activities
 					descr += '</li>' # /project
 				descr += '</ul>' # /projects
@@ -540,6 +540,35 @@ class UDisplayReleasePlanningInTimeline
 			false
 		else
 			true
+
+class UDisplayPlannedHoursPerActivityArtefactProject
+	# depends on timeline.js
+	constructor: (@observableRelease) ->
+	execute: ->
+		for ms in @observableRelease().milestones
+			descr = '<ul>'
+			for del in ms.deliverables
+				#console.log del.title
+				descr += '<li>' + del.title + '<ul>'
+				for proj in del.scope
+					descr += '<li>' + proj.title
+					descr += '<ul>'
+					activities = proj.workload.reduce (acc, x) ->
+								acc.push {activityTitle :x.activity.title, hrs: x.hoursRemaining, planned: x.assignedResources.reduce ((acc, x) -> acc + x.resourceAvailableHours()), 0 }
+								acc
+							, []
+					for act in activities
+						if act.hrs > act.planned
+							style = 'style="color: red"'
+						else
+							style = 'style="color: green"'
+						descr += '<li ' + style + '>' + act.activityTitle + ': ' + act.hrs + ' hours remaining, ' + act.planned + ' hours planned (incl. absences)</li>'
+					descr += '</ul>' # /activities
+					descr += '</li>' # /project
+				descr += '</ul>' # /projects
+			descr += '</li>' # /deliverable
+			descr += '</ul>' # /deliverables
+			# todo: print 'descr' variable 
 
 class UDisplayReleasePhases
 	constructor: (@release, @viewModelObservableGraph) ->
@@ -685,6 +714,7 @@ root.ULoadAdminEnvironments = ULoadAdminEnvironments
 root.UPlanEnvironment = UPlanEnvironment
 root.UUnAssignEnvironment = UUnAssignEnvironment
 root.UDisplayEnvironmentsGraph = UDisplayEnvironmentsGraph
+root.UDisplayPlannedHoursPerActivityArtefactProject = UDisplayPlannedHoursPerActivityArtefactProject
 
 
 
