@@ -6,10 +6,12 @@
 
 a.icon24, input.icon24, span.icon24,*/
 .icon { width: 32px; height: 32px; background: transparent url(../Sprites/silk-sprite.png?634021826077603114) no-repeat; text-indent: 99999px; overflow: hidden; }
+.icon16 { width: 16px; height: 16px; background: transparent url(../Sprites/silk-sprite.png?634021826077603114) no-repeat; text-indent: 99999px; overflow: hidden; }
 .icon24 { width: 24px; height: 24px; background: transparent url(../Sprites/silk-sprite.png?634021826077603114) no-repeat; text-indent: 99999px; overflow: hidden; }
 .icon32 { width: 32px; height: 32px; background: transparent url(../Sprites/silk-sprite.png?634021826077603114) no-repeat; text-indent: 99999px; overflow: hidden; }
 
 a.icon, input.icon, span.icon,
+a.icon16, input.icon16, span.icon16,
 a.icon24, input.icon24, span.icon24,
 a.icon32, input.icon32, span.icon32
 /*, 
@@ -24,6 +26,7 @@ a.icon128, input.icon128, span.icon128*/
 .icon-phase { background:url('../images/png/32x32/calendar_blank.png'); }
 .icon-milestone { background:url('../images/png/32x32/flag.png'); }
 .icon-warning { background:url('../images/png/32x32/warning.png'); }
+.icon-warning16 { background:url('../images/png/16x16/warning.png'); }
 .icon-edit { background:url('../images/png/24x24/edit.png'); }
 .icon-users { background:url('../images/png/32x32/users.png'); }
 .icon-users-small { background:url('../images/png/24x24/users.png'); }

@@ -178,6 +178,7 @@
         },
         getOverplannedPeriods: function(period) {
           var ass, assignedPeriods, overplannedPeriods;
+          console.log(this.fullName());
           overplannedPeriods = [];
           assignedPeriods = ((function() {
             var _i, _len, _ref, _results;
@@ -190,22 +191,31 @@
             return _results;
           }).call(this)).reduce(function(acc, x) {
             var newFocusFactor, overlap;
+            console.log('nieuwe assignment: ' + x.period);
             if (x.focusFactor > 0.8) {
+              console.log('focusFactor > 0.8');
               overplannedPeriods.push(x);
             } else if (x.period.overlaps(acc.period)) {
               newFocusFactor = acc.focusFactor + x.focusFactor;
+              console.log('period overlaps; newFocusFactor: ' + newFocusFactor);
               if (newFocusFactor > 0.8) {
+                console.log('newFocusFactor > 0.8 ');
                 overplannedPeriods.push(x);
               } else {
                 overlap = {
                   period: acc.period.overlappingPeriod(x.period),
                   focusFactor: newFocusFactor
                 };
+                console.log('new acc: ' + overlap.period);
                 acc = overlap;
               }
             } else {
-
+              acc = {
+                period: x.period,
+                focusFactor: x.focusFactor
+              };
             }
+            console.log('accumulator period value: ' + acc.period);
             return acc;
           }, {
             period: period,

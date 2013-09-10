@@ -9,7 +9,7 @@
     function AssignmentsViewmodel(allResources) {
       this.afterMail = __bind(this.afterMail, this);
       this.updatePeriod = __bind(this.updatePeriod, this);
-      var weekLater,
+      var threeMonthsLater, weekLater,
         _this = this;
       Period.extend(RCrud);
       Period.extend(RPeriodSerialize);
@@ -44,7 +44,8 @@
         return _this.showResources(include);
       });
       weekLater = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 7);
-      this.checkPeriod = ko.observable(new Period(new Date(), weekLater));
+      threeMonthsLater = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 90);
+      this.checkPeriod = ko.observable(new Period(new Date(), threeMonthsLater));
       this.checkPeriod.subscribe(function(newValue) {
         var timeline;
         _this.load(_this.showResources().sort());

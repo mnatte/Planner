@@ -102,30 +102,31 @@ RTeamMember =
 				maxHours = Math.round(@hoursAvailable(period) * 0.8)
 				maxHours < @hoursPlannedIn(period)
 			getOverplannedPeriods: (period) ->
-				#console.log @fullName()
+				console.log @fullName()
 				overplannedPeriods = []
 				assignedPeriods = (ass for ass in @assignments when ass.period.overlaps(period)).reduce (acc, x) ->
-					#console.log 'nieuwe assignment: ' + x.period
+					console.log 'nieuwe assignment: ' + x.period
 					# immediately put assignment as overplanned, no merging with accumulated period needed
 					if x.focusFactor > 0.8
-						#console.log 'focusFactor > 0.8'
+						console.log 'focusFactor > 0.8'
 						overplannedPeriods.push x
 						# just return current accumulation
 					else if x.period.overlaps(acc.period)
 						newFocusFactor = acc.focusFactor + x.focusFactor
-						#console.log 'period overlaps; newFocusFactor: ' + newFocusFactor
+						console.log 'period overlaps; newFocusFactor: ' + newFocusFactor
 						if newFocusFactor > 0.8
-							#console.log 'newFocusFactor > 0.8 '
+							console.log 'newFocusFactor > 0.8 '
 							overplannedPeriods.push x
 							# just return current accumulation
 						else
 							overlap = { period: acc.period.overlappingPeriod(x.period), focusFactor: newFocusFactor }
-							#console.log 'new acc: ' + overlap.period
+							console.log 'new acc: ' + overlap.period
 							# set acc to overlap period with accumulated focusFactor
 							acc = overlap
 					else
 						#console.log 'period NOT overlaps'
-					#console.log 'accumulator period value: ' + acc.period
+						acc = { period: x.period, focusFactor: x.focusFactor }
+					console.log 'accumulator period value: ' + acc.period
 					acc
 				, {period: period, focusFactor: 0}
 				#console.log overplannedPeriods

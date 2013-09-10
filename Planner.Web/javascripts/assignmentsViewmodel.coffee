@@ -40,7 +40,8 @@ class AssignmentsViewmodel
 			@showResources(include)
 			)
 		weekLater = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 7 ) # 7 = amt days
-		@checkPeriod = ko.observable(new Period(new Date(), weekLater))
+		threeMonthsLater = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 90 ) # 90 = amt days
+		@checkPeriod = ko.observable(new Period(new Date(), threeMonthsLater))
 		@checkPeriod.subscribe((newValue) =>
 			#console.log 'dateview changed: ' + newValue
 			@load(@showResources().sort())

@@ -83,6 +83,7 @@
                 <!--'value' sets the value to the array and matches on it. by default it is the toString() method of the object that is used-->
                 <div>
                     <input type="checkbox" data-bind="checked: $root.includeResources, value: $data.id" /><data data-bind="text: fullName()"></data>
+                    <span class="icon16 icon-warning16" data-bind="visible: hasOverplannedPeriods($root.checkPeriod())"></span>
                 </div>
             </div>
            
