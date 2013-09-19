@@ -92,6 +92,7 @@
     <Compile Include="Models\Role.cs" />
     <Compile Include="Models\Team.cs" />
     <Compile Include="Models\TeamMember.cs" />
+    <Compile Include="Roles\RReleasePlanning.cs" />
     <Compile Include="Roles\RAssignedResource.cs" />
     <Compile Include="Roles\RMilestoneFlyWeight.cs" />
     <Compile Include="Roles\RPhaseFlyWeight.cs" />

@@ -1017,6 +1017,7 @@
       _ref = this.observableRelease().milestones;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         ms = _ref[_i];
+        console.log(ms);
         _ref2 = ms.deliverables;
         for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
           del = _ref2[_j];

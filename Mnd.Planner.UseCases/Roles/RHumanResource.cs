@@ -17,12 +17,16 @@ namespace Mnd.Planner.UseCases.Roles
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-        public static void PlanForRelease(this RHumanResource person, Release release, Project project, Milestone milestone, Deliverable deliverable, Activity activity, Period assignedPeriod, double focusFactor)
+        public static void PlanForRelease(this RHumanResource person, RReleasePlanning release, Project project, Milestone milestone, Deliverable deliverable, Activity activity, Period assignedPeriod, double focusFactor)
         {
             var rep = new ResourceRepository();
             try
             {
                 rep.SaveReleaseAssignment(release.Id, project.Id, person.Id, milestone.Id, deliverable.Id, activity.Id, assignedPeriod.StartDate, assignedPeriod.EndDate, focusFactor);
+                // make sure we have status records for all release, project, milestone and deliverable combinations
+                if (release.Milestones.Count == 0)
+                    release.LoadPhasesAndMilestonesAndProjects();
+                release.GenerateMilestoneStatusRecords();
             }
             catch (Exception ex)
             {
@@ -31,6 +35,7 @@ namespace Mnd.Planner.UseCases.Roles
         }
 
         /// <summary>
+        /// TODO: not used yet; first create continuing process logic
         /// Plan the resource for a continuing process
         /// </summary>
         /// <param name="str"></param>

@@ -7,6 +7,7 @@ using Mnd.Helpers;
 using Mnd.Planner.Domain.Persistence;
 using Mnd.Planner.Domain;
 using Mnd.DataAccess;
+using Mnd.Planner.Domain.Roles;
 
 namespace Mnd.Planner.Domain.Repositories
 {
@@ -108,30 +109,49 @@ namespace Mnd.Planner.Domain.Repositories
                         release = new Release { Id = int.Parse(reader["Id"].ToString()), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString() };
 
                         // Child phases
-                        var cmd2 = new SqlCommand(string.Format("Select * from Phases where ParentId = {0}", release.Id), conn);
-                        using (var reader2 = cmd2.ExecuteReader())
-                        {
-                            while (reader2.Read())
-                            {
-                                release.Phases.Add(new Phase { Id = int.Parse(reader2["Id"].ToString()), EndDate = DateTime.Parse(reader2["EndDate"].ToString()), StartDate = DateTime.Parse(reader2["StartDate"].ToString()), Title = reader2["Title"].ToString() });
-                            }
-                        }
+                        this.AddChildPhases(release, conn);
 
-                        var projs = new SqlCommand(string.Format("Select rp.ProjectId, p.Title, p.ShortName from ReleaseProjects rp inner join Projects p on rp.ProjectId = p.Id where PhaseId = {0}", release.Id), conn);
-                        using (var reader3 = projs.ExecuteReader())
-                        {
-                            while (reader3.Read())
-                            {
-                                var p = new Project { Id = int.Parse(reader3["ProjectId"].ToString()), Title = reader3["Title"].ToString(), ShortName = reader3["ShortName"].ToString() };
-                                release.Projects.Add(p);
-                            }
-                        }
+                        // Projects
+                        this.AddProjects(release, conn);
 
                         // Milestones
-                        var milestones = GetMilestonesForRelease(release, conn);
-                        foreach (var ms in milestones)
-                            release.Milestones.Add(ms);
+                        this.AddMilestones(release, conn);
                     }
+                }
+            }
+            return release;
+        }
+
+        public Release AddMilestones(Release release, SqlConnection conn)
+        {
+            var milestones = GetMilestonesForRelease(release, conn);
+            foreach (var ms in milestones)
+                release.Milestones.Add(ms);
+            return release;
+        }
+
+        public Release AddChildPhases(Release release, SqlConnection conn)
+        {
+            var cmd2 = new SqlCommand(string.Format("Select * from Phases where ParentId = {0}", release.Id), conn);
+            using (var reader2 = cmd2.ExecuteReader())
+            {
+                while (reader2.Read())
+                {
+                    release.Phases.Add(new Phase { Id = int.Parse(reader2["Id"].ToString()), EndDate = DateTime.Parse(reader2["EndDate"].ToString()), StartDate = DateTime.Parse(reader2["StartDate"].ToString()), Title = reader2["Title"].ToString() });
+                }
+            }
+            return release;
+        }
+
+        public Release AddProjects(Release release, SqlConnection conn)
+        {
+            var projs = new SqlCommand(string.Format("Select rp.ProjectId, p.Title, p.ShortName from ReleaseProjects rp inner join Projects p on rp.ProjectId = p.Id where PhaseId = {0}", release.Id), conn);
+            using (var reader3 = projs.ExecuteReader())
+            {
+                while (reader3.Read())
+                {
+                    var p = new Project { Id = int.Parse(reader3["ProjectId"].ToString()), Title = reader3["Title"].ToString(), ShortName = reader3["ShortName"].ToString() };
+                    release.Projects.Add(p);
                 }
             }
             return release;
@@ -153,33 +173,34 @@ namespace Mnd.Planner.Domain.Repositories
                 {
                     while (reader.Read())
                     {
-                        var rel = new Release { Id = int.Parse(reader["Id"].ToString()), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString() };
+                        var rel = this.GetReleaseSummary(int.Parse(reader["Id"].ToString()));
+                    //    var rel = new Release { Id = int.Parse(reader["Id"].ToString()), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()), Title = reader["Title"].ToString() };
 
-                        // Child phases
-                        var cmd2 = new SqlCommand(string.Format("Select * from Phases where ParentId = {0}", rel.Id), conn);
-                        using (var reader2 = cmd2.ExecuteReader())
-                        {
-                            while (reader2.Read())
-                            {
-                                rel.Phases.Add(new Phase { Id = int.Parse(reader2["Id"].ToString()), EndDate = DateTime.Parse(reader2["EndDate"].ToString()), StartDate = DateTime.Parse(reader2["StartDate"].ToString()), Title = reader2["Title"].ToString() });
-                            }
-                        }
+                    //    // Child phases
+                    //    var cmd2 = new SqlCommand(string.Format("Select * from Phases where ParentId = {0}", rel.Id), conn);
+                    //    using (var reader2 = cmd2.ExecuteReader())
+                    //    {
+                    //        while (reader2.Read())
+                    //        {
+                    //            rel.Phases.Add(new Phase { Id = int.Parse(reader2["Id"].ToString()), EndDate = DateTime.Parse(reader2["EndDate"].ToString()), StartDate = DateTime.Parse(reader2["StartDate"].ToString()), Title = reader2["Title"].ToString() });
+                    //        }
+                    //    }
 
-                        // Projects
-                        var projs = new SqlCommand(string.Format("Select rp.ProjectId, p.Title, p.ShortName from ReleaseProjects rp inner join Projects p on rp.ProjectId = p.Id where PhaseId = {0}", rel.Id), conn);
-                        using (var reader3 = projs.ExecuteReader())
-                        {
-                            while (reader3.Read())
-                            {
-                                var p = new Project { Id = int.Parse(reader3["ProjectId"].ToString()), Title = reader3["Title"].ToString(), ShortName = reader3["ShortName"].ToString() };
-                                rel.Projects.Add(p);
-                            }
-                        }
+                    //    // Projects
+                    //    var projs = new SqlCommand(string.Format("Select rp.ProjectId, p.Title, p.ShortName from ReleaseProjects rp inner join Projects p on rp.ProjectId = p.Id where PhaseId = {0}", rel.Id), conn);
+                    //    using (var reader3 = projs.ExecuteReader())
+                    //    {
+                    //        while (reader3.Read())
+                    //        {
+                    //            var p = new Project { Id = int.Parse(reader3["ProjectId"].ToString()), Title = reader3["Title"].ToString(), ShortName = reader3["ShortName"].ToString() };
+                    //            rel.Projects.Add(p);
+                    //        }
+                    //    }
 
-                        // Milestones
-                        var milestones = GetMilestonesForRelease(rel, conn);
-                        foreach (var ms in milestones)
-                            rel.Milestones.Add(ms);
+                    //    // Milestones
+                    //    var milestones = GetMilestonesForRelease(rel, conn);
+                    //    foreach (var ms in milestones)
+                    //        rel.Milestones.Add(ms);
 
                         releases.Add(rel);
                     }
@@ -280,24 +301,6 @@ namespace Mnd.Planner.Domain.Repositories
             }
         }
 
-        public bool StatusRecordsExist(int releaseId, int milestoneId, int deliverableId, int projectId)
-        {
-            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
-            using (conn)
-            {
-                conn.Open();
-                var cmdCountStatusRecords = new SqlCommand("sp_count_milestonestatus_records", conn);
-                cmdCountStatusRecords.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = releaseId;
-                cmdCountStatusRecords.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = projectId;
-                cmdCountStatusRecords.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = milestoneId;
-                cmdCountStatusRecords.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = deliverableId;
-                cmdCountStatusRecords.CommandType = System.Data.CommandType.StoredProcedure;
-                            
-                var recs = int.Parse(cmdCountStatusRecords.ExecuteScalar().ToString());
-                return recs > 0;
-            }
-        }
-
         public bool Delete(int id)
         {
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
@@ -392,36 +395,6 @@ namespace Mnd.Planner.Domain.Repositories
             }
         }
 
-        public void GenerateStatusRecords(Release rel)
-        {
-            // create status records when not existing based on release configuration
-            foreach (var ms in rel.Milestones)
-            {
-                foreach (var deliverable in ms.Deliverables)
-                {
-                    foreach (var proj in rel.Projects)
-                    {
-                        if (!this.StatusRecordsExist(rel.Id, ms.Id, deliverable.Id, proj.Id))
-                        {
-                            var input = new StatusInputModel
-                            {
-                                ProjectId = proj.Id,
-                                DeliverableId = deliverable.Id,
-                                MilestoneId =  ms.Id,
-                                ReleaseId = rel.Id,
-                                ActivityStatuses = new List<DeliverableActivityStatusInputModel>()
-                            };
-                            foreach (var act in deliverable.ConfiguredActivities)
-                            {
-                                input.ActivityStatuses.Add(new DeliverableActivityStatusInputModel { ActivityId = act.Id, HoursRemaining = 0 });
-                            }
-                            this.CreateDeliverableStatusRecords(input);
-                        }
-                    }
-                }
-            }
-        }
-
         public Release UnAssignMilestone(MilestoneInputModel obj)
         {
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
@@ -480,6 +453,12 @@ namespace Mnd.Planner.Domain.Repositories
         }
 
         // Is Milestone an entity of the Release aggregate root?
+        /// <summary>
+        /// Gets all Milestones for a release, including Deliverables and DeliverableStatuses
+        /// </summary>
+        /// <param name="release"></param>
+        /// <param name="conn"></param>
+        /// <returns></returns>
         protected List<Milestone> GetMilestonesForRelease(Release release, SqlConnection conn)
         {
             var repository = new MilestoneRepository();
@@ -503,6 +482,75 @@ namespace Mnd.Planner.Domain.Repositories
             }
         }
 
+        public bool StatusRecordsExist(int releaseId, int milestoneId, int deliverableId, int projectId, int activityId)
+        {
+            var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");
+            using (conn)
+            {
+                conn.Open();
+                var cmdCountStatusRecords = new SqlCommand("sp_count_milestonestatus_records", conn);
+                cmdCountStatusRecords.Parameters.Add("@ReleaseId", System.Data.SqlDbType.Int).Value = releaseId;
+                cmdCountStatusRecords.Parameters.Add("@ProjectId", System.Data.SqlDbType.Int).Value = projectId;
+                cmdCountStatusRecords.Parameters.Add("@MilestoneId", System.Data.SqlDbType.Int).Value = milestoneId;
+                cmdCountStatusRecords.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = deliverableId;
+                cmdCountStatusRecords.Parameters.Add("@ActivityId", System.Data.SqlDbType.Int).Value = activityId;
+                cmdCountStatusRecords.CommandType = System.Data.CommandType.StoredProcedure;
+
+                var recs = int.Parse(cmdCountStatusRecords.ExecuteScalar().ToString());
+                return recs > 0;
+            }
+        }
+
+        public void GenerateStatusRecords(RReleasePlanning rel)
+        {
+            // create status records when not existing based on release configuration
+            foreach (var ms in rel.Milestones)
+            {
+                foreach (var deliverable in ms.Deliverables)
+                {
+                    foreach (var proj in rel.Projects)
+                    {
+                        foreach (var act in deliverable.ConfiguredActivities)
+                        {
+                            if (!this.StatusRecordsExist(rel.Id, ms.Id, deliverable.Id, proj.Id, act.Id))
+                            {
+                                this.AddDeliverableStatusRecords(rel.Id, ms.Id, deliverable, proj.Id);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Adds missing status records per milestone, project, deliverable and activity
+        /// </summary>
+        /// <param name="releaseId"></param>
+        /// <param name="milestoneId"></param>
+        /// <param name="deliverable"></param>
+        /// <param name="projectId"></param>
+        private void AddDeliverableStatusRecords(int releaseId, int milestoneId, Deliverable deliverable, int projectId)
+        {
+            var input = new StatusInputModel
+            {
+                ProjectId = projectId,
+                DeliverableId = deliverable.Id,
+                MilestoneId = milestoneId,
+                ReleaseId = releaseId,
+                ActivityStatuses = new List<DeliverableActivityStatusInputModel>()
+            };
+            foreach (var act in deliverable.ConfiguredActivities)
+            {
+                input.ActivityStatuses.Add(new DeliverableActivityStatusInputModel { ActivityId = act.Id, HoursRemaining = 0 });
+            }
+            this.CreateDeliverableStatusRecords(input);
+        }
+
+        /// <summary>
+        /// MilestoneStatus and RemainingWorkHistory tables are updated by first deleting records with releaseId, MilestoneId, DelId, ProjId and ActId and then adding them again
+        /// with updated numbers
+        /// </summary>
+        /// <param name="obj"></param>
         public void CreateDeliverableStatusRecords(StatusInputModel obj)
         {
             var conn = new SqlConnection("Data Source=localhost\\SQLENTERPRISE;Initial Catalog=Planner;Integrated Security=SSPI;MultipleActiveResultSets=true");

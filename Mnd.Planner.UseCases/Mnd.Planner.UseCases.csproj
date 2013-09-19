@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PlanContinuingProcessResource.cs" />
+    <Compile Include="Roles\RReleasePlanning.cs" />
     <Compile Include="UnAssignEnvironment.cs" />
     <Compile Include="PlanEnvironment.cs" />
     <Compile Include="GetEnvironmentsPlanning.cs" />

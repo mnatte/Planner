@@ -6,7 +6,7 @@ using Mnd.Planner.Domain.Roles;
 
 namespace Mnd.Planner.Domain
 {
-    public class Release : Phase
+    public class Release : Phase, RReleasePlanning
     {
         public Release()
         { }

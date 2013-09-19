@@ -495,6 +495,7 @@ class UDisplayReleasePlanningInTimeline
 		uniqueAsses = []
 		# assignments
 		for ms in @observableRelease().milestones
+			console.log ms
 			for del in ms.deliverables
 				console.log del
 				for proj in del.scope
