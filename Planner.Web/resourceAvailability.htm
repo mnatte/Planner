@@ -105,8 +105,9 @@
             <!-- ko with: $root.inspectResource() -->
             <span id="name" data-bind="text: fullName() + ' - ' + hoursAbsent($root.checkPeriod()) + ' hours absent' + ' - ' + hoursPlannedIn($root.checkPeriod()) + ' hours planned in'"></span>
             <div id="mytimeline" data-bind="assignmentsTimeline: $data, observableModel: $root.selectedTimelineItem"></div>
+            <h4 data-bind="text: 'planning ' + fullName() + ' for ' + $root.checkPeriod().startDate.dateString + ' - ' + $root.checkPeriod().endDate.dateString"></h4>
             <div id="hoursOverview" data-bind="foreach: getPlannedHoursPerAssignmentIncludingAbsences($root.checkPeriod())">
-                <h6 data-bind="text: $data.assignment"></h4>
+                <h6 data-bind="text: $data.assignment"></h6>
                 <div id="time" data-bind="text: $data.days + ' days (' + $data.hours + ' hours)'"></div>
                 <div>&nbsp;</div>
             </div>
