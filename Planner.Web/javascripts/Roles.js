@@ -64,6 +64,68 @@
       return this.include({
         focusFactor: 0.8,
         roles: [],
+        getPlanning: function(period) {
+          var abs, absences, ass, assignments;
+          absences = (function() {
+            var _i, _len, _ref, _results;
+            _ref = this.periodsAway;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              abs = _ref[_i];
+              if (abs.overlaps(period)) _results.push(abs);
+            }
+            return _results;
+          }).call(this);
+          assignments = (function() {
+            var _i, _len, _ref, _results;
+            _ref = this.assignments;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              ass = _ref[_i];
+              if (ass.period.overlaps(period)) _results.push(ass);
+            }
+            return _results;
+          }).call(this);
+          return {
+            absences: absences,
+            assignments: assignments
+          };
+        },
+        getPlannedHoursPerAssignmentIncludingAbsences: function(period) {
+          var assignment, overview, planning;
+          planning = this.getPlanning(period);
+          overview = [];
+          if ((planning.assignments != null) && typeof planning.assignments !== 'undefined' && planning.assignments.length > 0) {
+            overview = ((function() {
+              var _i, _len, _ref, _results;
+              _ref = planning.assignments;
+              _results = [];
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                assignment = _ref[_i];
+                _results.push(assignment);
+              }
+              return _results;
+            })()).reduce(function(acc, x) {
+              var dys, hrs;
+              console.log(assignment);
+              dys = x.period.overlappingPeriod(period).workingDays();
+              hrs = Math.round(dys * 8 * x.focusFactor);
+              acc.push({
+                days: dys,
+                hours: hrs,
+                assignment: x.activity.title + ' ' + x.deliverable.title + ' ' + x.focusFactor * 100 + '%'
+              });
+              return acc;
+            }, []);
+          }
+          overview.push({
+            days: this.daysAbsent(period),
+            hours: this.hoursAbsent(period),
+            assignment: 'Absent'
+          });
+          console.log(overview);
+          return overview;
+        },
         hoursPlannedIn: function(period) {
           var ass, assignment, hrsPlannedIn, overlappingAssignments;
           hrsPlannedIn = 0;
@@ -134,6 +196,36 @@
             }, 0);
           }
           return Math.round(absent * 8);
+        },
+        daysAbsent: function(period) {
+          var absence, absent, overlappingAbsences;
+          absent = 0;
+          overlappingAbsences = (function() {
+            var _i, _len, _ref, _results;
+            _ref = this.periodsAway;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              absence = _ref[_i];
+              if (absence.overlaps(period)) _results.push(absence);
+            }
+            return _results;
+          }).call(this);
+          if ((overlappingAbsences != null) && typeof overlappingAbsences !== 'undefined' && overlappingAbsences.length > 0) {
+            absent = ((function() {
+              var _i, _len, _results;
+              _results = [];
+              for (_i = 0, _len = overlappingAbsences.length; _i < _len; _i++) {
+                absence = overlappingAbsences[_i];
+                _results.push(absence.overlappingPeriod(period));
+              }
+              return _results;
+            })()).reduce(function(acc, x) {
+              var result;
+              result = x.remainingWorkingDays();
+              return acc + result;
+            }, 0);
+          }
+          return Math.round(absent);
         },
         hoursAvailable: function(period) {
           var absence, absent, amtDays, available, overlappingAbsences;

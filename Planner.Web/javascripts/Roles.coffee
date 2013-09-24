@@ -48,6 +48,25 @@ RTeamMember =
 			# default value, just setting focusFactor in target object without specifying it here is enough to set it, but then it can be undefined.
 			focusFactor: 0.8
 			roles: []
+			getPlanning: (period) ->
+				absences = (abs for abs in @periodsAway when abs.overlaps(period))
+				assignments = (ass for ass in @assignments when ass.period.overlaps(period))
+				{absences: absences, assignments: assignments}
+			getPlannedHoursPerAssignmentIncludingAbsences: (period) ->
+				planning = @getPlanning period
+				overview = []
+				if(planning.assignments? and typeof(planning.assignments) isnt 'undefined' and planning.assignments.length > 0)
+					overview = (assignment for assignment in planning.assignments).reduce (acc, x) ->
+							#per = x.period.overlappingPeriod(period)
+							console.log assignment
+							dys = x.period.overlappingPeriod(period).workingDays()
+							hrs = Math.round(dys * 8 * x.focusFactor)
+							acc.push {days: dys, hours: hrs, assignment: x.activity.title + ' ' + x.deliverable.title + ' ' + x.focusFactor * 100 + '%'}
+							acc
+						, []
+				overview.push {days: @daysAbsent(period), hours: @hoursAbsent(period), assignment: 'Absent'}
+				console.log overview
+				overview
 			hoursPlannedIn: (period) ->
 				# console.log period.toString()
 				hrsPlannedIn = 0
@@ -81,6 +100,16 @@ RTeamMember =
 							acc + result
 						, 0
 				Math.round(absent * 8)
+			daysAbsent: (period) ->
+				absent = 0
+				# ESSENTIAL: add parentheses around for...when, otherwise no array is returned
+				overlappingAbsences = (absence for absence in @periodsAway when absence.overlaps(period))
+				if(overlappingAbsences? and typeof(overlappingAbsences) isnt 'undefined' and overlappingAbsences.length > 0)
+					absent = (absence.overlappingPeriod(period) for absence in overlappingAbsences).reduce (acc, x) ->
+							result = x.remainingWorkingDays()
+							acc + result
+						, 0
+				Math.round(absent)
 			hoursAvailable: (period) ->
 				absent = 0
 				# ESSENTIAL: add parentheses around for...when, otherwise no array is returned
