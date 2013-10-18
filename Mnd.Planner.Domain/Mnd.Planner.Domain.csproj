@@ -53,7 +53,10 @@
     <Compile Include="Models\Meeting.cs" />
     <Compile Include="Models\Merge.cs" />
     <Compile Include="Models\Milestone.cs" />
+    <Compile Include="Models\Product.cs" />
     <Compile Include="Models\SoftwareVersion.cs" />
+    <Compile Include="Models\TimeCurrencyEnum.cs" />
+    <Compile Include="Models\ValueStream.cs" />
     <Compile Include="Persistence\ActivityInputModel.cs" />
     <Compile Include="Persistence\ContinuingProcessAssignmentsInputModel.cs" />
     <Compile Include="Persistence\ProcessInputModel.cs" />
@@ -92,6 +95,9 @@
     <Compile Include="Models\Role.cs" />
     <Compile Include="Models\Team.cs" />
     <Compile Include="Models\TeamMember.cs" />
+    <Compile Include="Roles\RParallelContainerProcess.cs" />
+    <Compile Include="Roles\RParallelIdenticalProcess.cs" />
+    <Compile Include="Roles\RBatchProcess.cs" />
     <Compile Include="Roles\RReleasePlanning.cs" />
     <Compile Include="Roles\RAssignedResource.cs" />
     <Compile Include="Roles\RMilestoneFlyWeight.cs" />
@@ -103,6 +109,7 @@
     <Compile Include="Roles\RMilestoneSchedule.cs" />
     <Compile Include="Roles\RMeetingSchedule.cs" />
     <Compile Include="Roles\RHumanResource.cs" />
+    <Compile Include="Roles\RSharedProcess.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mnd.Domain\Mnd.Domain.csproj">

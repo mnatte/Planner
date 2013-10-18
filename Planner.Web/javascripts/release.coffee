@@ -168,6 +168,9 @@ class Period extends Mixin
 			wks.push new Week(yrstring + wk.toString())
 		#console.log wks
 		wks
+	remainingPeriod: ->
+		periodFromNow = new Period( new Date(), @endDate.date)
+		@overlappingPeriod periodFromNow
 	@create: (jsonData) ->
 		new Period(DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.Id)
 

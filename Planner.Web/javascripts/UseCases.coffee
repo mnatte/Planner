@@ -456,7 +456,7 @@ class UDisplayReleaseTimeline
 					descr += '<li>' + proj.title
 					descr += '<ul>'
 					activities = proj.workload.reduce (acc, x) ->
-								acc.push {activityTitle :x.activity.title, hrs: x.hoursRemaining, planned: x.assignedResources.reduce ((acc, x) -> acc + x.resourceAvailableHours()), 0 }
+								acc.push {activityTitle: x.activity.title, hrs: x.hoursRemaining, planned: x.assignedResources.reduce ((acc, x) -> acc + x.resourceAvailableHours()), 0 }
 								acc
 							, []
 					for act in activities
@@ -465,7 +465,7 @@ class UDisplayReleaseTimeline
 							style = 'style="color: red"'
 						else
 							style = 'style="color: green"'
-						descr += '<li ' + style + '>' + act.activityTitle + ': ' + act.hrs + ' hours remaining, ' + act.planned + ' hours planned (incl. absences)</li>'
+						descr += '<li ' + style + '>' + act.activityTitle + ': ' + act.hrs + ' hours remaining, ' + act.planned + ' remaining resource hours planned (incl. absences)</li>'
 					descr += '</ul>' # /activities
 					descr += '</li>' # /project
 				descr += '</ul>' # /projects

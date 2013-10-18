@@ -17,21 +17,21 @@ namespace Mnd.Planner.UseCases
         Deliverable _deliverable;
         Activity _activity;
         Period _period;
-        int _hoursPerWeek;
+        double _dedication;
 
-        public PlanContinuingProcessResource(RHumanResource resource, Process process, Deliverable deliverable, Activity activity, Period period, int hoursPerWeek)
+        public PlanContinuingProcessResource(RHumanResource resource, Process process, Deliverable deliverable, Activity activity, Period period, double dedication)
         {
             _resource = resource;
             _process = process;
             _deliverable = deliverable;
             _activity = activity;
-            _hoursPerWeek = hoursPerWeek;
+            _dedication = dedication;
             _period = period;
         }
 
         public override void Execute()
         {
-            _resource.PlanForContinuingProcess(_process, _deliverable, _activity, _period, _hoursPerWeek);
+            _resource.PlanForContinuingProcess(_process, _deliverable, _activity, _period, _dedication);
         }
     }
 }

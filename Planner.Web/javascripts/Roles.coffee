@@ -68,6 +68,7 @@ RTeamMember =
 				console.log overview
 				overview
 			hoursPlannedIn: (period) ->
+				# this is based on the remaining working days of the period, therefore it discards the past dates within the period giving an accurate view.
 				# console.log period.toString()
 				hrsPlannedIn = 0
 				# ESSENTIAL: add parentheses around for...when, otherwise no array is returned
@@ -91,6 +92,7 @@ RTeamMember =
 				#console.log hrsAvailable
 				if hrsAvailable < 0 then 0 else hrsAvailable
 			hoursAbsent: (period) ->
+				# this is based on the remaining working days of the period, therefore it discards the past dates within the period giving an accurate view.
 				absent = 0
 				# ESSENTIAL: add parentheses around for...when, otherwise no array is returned
 				overlappingAbsences = (absence for absence in @periodsAway when absence.overlaps(period))
@@ -101,6 +103,7 @@ RTeamMember =
 						, 0
 				Math.round(absent * 8)
 			daysAbsent: (period) ->
+				# this is based on the remaining working days of the period, therefore it discards the past dates within the period giving an accurate view.
 				absent = 0
 				# ESSENTIAL: add parentheses around for...when, otherwise no array is returned
 				overlappingAbsences = (absence for absence in @periodsAway when absence.overlaps(period))
@@ -111,6 +114,7 @@ RTeamMember =
 						, 0
 				Math.round(absent)
 			hoursAvailable: (period) ->
+				# this is based on the remaining working days of the period, therefore it discards the past dates within the period giving an accurate view.
 				absent = 0
 				# ESSENTIAL: add parentheses around for...when, otherwise no array is returned
 				overlappingAbsences = (absence for absence in @periodsAway when absence.overlaps(period))

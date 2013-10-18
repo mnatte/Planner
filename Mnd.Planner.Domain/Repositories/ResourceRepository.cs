@@ -210,11 +210,11 @@ namespace Mnd.Planner.Domain.Repositories
             }
         }
 
-        public void SaveContinuingProcessAssignment(int processId, int personId, int deliverableId, int activityId, DateTime startDate, DateTime endDate, int hoursPerWeek)
+        public void SaveContinuingProcessAssignment(int processId, int personId, int deliverableId, int activityId, DateTime startDate, DateTime endDate, double dedication)
         {
             var conn = new SqlConnection(this.ConnectionString);
 
-            var cmd = new SqlCommand("sp_insert_resource_assignment", conn);
+            var cmd = new SqlCommand("sp_insert_process_resource_assignment", conn);
             cmd.CommandType = System.Data.CommandType.StoredProcedure;
             // TODO: add params
             cmd.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = 0; // not needed
@@ -222,7 +222,7 @@ namespace Mnd.Planner.Domain.Repositories
             cmd.Parameters.Add("@PersonId", System.Data.SqlDbType.Int).Value = personId;
             cmd.Parameters.Add("@DeliverableId", System.Data.SqlDbType.Int).Value = deliverableId;
             cmd.Parameters.Add("@ActivityId", System.Data.SqlDbType.Int).Value = activityId;
-            cmd.Parameters.Add("@HoursPerWeek", System.Data.SqlDbType.Decimal).Value = hoursPerWeek;
+            cmd.Parameters.Add("@Dedication", System.Data.SqlDbType.Decimal).Value = dedication;
             cmd.Parameters.Add("@StartDate", System.Data.SqlDbType.DateTime).Value = startDate;
             cmd.Parameters.Add("@EndDate", System.Data.SqlDbType.DateTime).Value = endDate;
 

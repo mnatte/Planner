@@ -193,6 +193,12 @@
       return wks;
     };
 
+    Period.prototype.remainingPeriod = function() {
+      var periodFromNow;
+      periodFromNow = new Period(new Date(), this.endDate.date);
+      return this.overlappingPeriod(periodFromNow);
+    };
+
     Period.create = function(jsonData) {
       return new Period(DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.Id);
     };

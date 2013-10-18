@@ -40,12 +40,12 @@ namespace Mnd.Planner.UseCases.Roles
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-        public static void PlanForContinuingProcess(this RHumanResource person, Process process, Deliverable deliverable, Activity activity, Period assignedPeriod, int hoursPerWeek)
+        public static void PlanForContinuingProcess(this RHumanResource person, Process process, Deliverable deliverable, Activity activity, Period assignedPeriod, double dedication)
         {
             var rep = new ResourceRepository();
             try
             {
-                rep.SaveContinuingProcessAssignment(process.Id, person.Id, deliverable.Id, activity.Id, assignedPeriod.StartDate, assignedPeriod.EndDate, hoursPerWeek);
+                rep.SaveContinuingProcessAssignment(process.Id, person.Id, deliverable.Id, activity.Id, assignedPeriod.StartDate, assignedPeriod.EndDate, dedication);
             }
             catch (Exception ex)
             {

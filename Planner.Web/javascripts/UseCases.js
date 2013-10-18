@@ -962,7 +962,7 @@
               } else {
                 style = 'style="color: green"';
               }
-              descr += '<li ' + style + '>' + act.activityTitle + ': ' + act.hrs + ' hours remaining, ' + act.planned + ' hours planned (incl. absences)</li>';
+              descr += '<li ' + style + '>' + act.activityTitle + ': ' + act.hrs + ' hours remaining, ' + act.planned + ' remaining resource hours planned (incl. absences)</li>';
             }
             descr += '</ul>';
             descr += '</li>';

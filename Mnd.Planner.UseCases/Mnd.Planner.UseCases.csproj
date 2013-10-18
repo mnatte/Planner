@@ -44,7 +44,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PlanContinuingProcessResource.cs" />
+    <Compile Include="Roles\RParallelContainerProcess.cs" />
+    <Compile Include="Roles\RParallelIdenticalProcess.cs" />
+    <Compile Include="Roles\RBatchProcess.cs" />
     <Compile Include="Roles\RReleasePlanning.cs" />
+    <Compile Include="Roles\RSharedProcess.cs" />
     <Compile Include="UnAssignEnvironment.cs" />
     <Compile Include="PlanEnvironment.cs" />
     <Compile Include="GetEnvironmentsPlanning.cs" />
