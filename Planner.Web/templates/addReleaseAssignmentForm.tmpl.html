@@ -1,8 +1,8 @@
 ﻿<form>
     <!--data context is $root.newAssignment-->
     <label data-bind="text: release.title + ' - ' + milestone.title" ></label>
-    <label>Resource:</label>
-    <select data-bind="options: $root.allResources, optionsText: function(item) { return item.fullName() }, value: $root.selectedResource, optionsCaption: 'Choose...'" style="display:inline" ></select>
+    <label>Resources:</label>
+    <select multiple data-bind="options: $root.allResources, optionsText: function(item) { return item.fullName() }, selectedOptions: $root.resourcesToAssign, optionsCaption: 'Choose...'" style="display:inline" ></select>
     <!-- ko if: $root.selectedResource() -->
     <label>Project:</label>
     <select data-bind="options: $root.inspectRelease().projects, optionsText: function(item) { return item.title }, value: $root.selectedProject, optionsCaption: 'Choose...'" style="display:inline" ></select>

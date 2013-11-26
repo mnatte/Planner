@@ -295,6 +295,29 @@ class UDisplayPlanningForResource
 		timeline = new Mnd.Timeline(showAssignments, null, "100%", "200px", "resourceTimeline", "resourceDetails")
 		timeline.draw()
 
+class UDisplayPlanningForMultipleResources
+	constructor: (@resources, @period) ->
+	execute: ->
+		displayData = []
+		for resource in @resources
+			console.log resource.fullName()
+			i = 0
+			for absence in (abs for abs in resource.periodsAway when abs.overlaps(@period)) # resource.periodsAway
+				dto = absence
+				dto.person = resource
+				obj = {group: resource.fullName() + '[' + i + ']', start: absence.startDate.date, end: absence.endDate.date, content: absence.title, info: absence.toString(), dataObject: dto}
+				displayData.push obj
+				i++
+			for assignment in (ass for ass in resource.assignments when ass.period.overlaps(@period)) #resource.assignments
+				dto = assignment
+				dto.person = resource
+				obj = {group: resource.fullName() + '[' + i + ']', start: assignment.period.startDate.date, end: assignment.period.endDate.date, content: assignment.period.title, info: assignment.period.toString(), dataObject: dto}
+				displayData.push obj
+				i++
+		showAssignments = displayData.sort((a,b)-> a.start - b.end)
+		timeline = new Mnd.Timeline(showAssignments, null, "100%", "200px", "resourceTimeline", "resourceDetails")
+		timeline.draw()
+
 class URefreshView
 	constructor: (@selectedObservable, @checkPeriod) ->
 	execute: ->
@@ -704,6 +727,7 @@ root.UDisplayReleasePlanningInTimeline = UDisplayReleasePlanningInTimeline
 root.UDisplayReleaseProgress = UDisplayReleaseProgress
 root.UDisplayReleaseProgressOverview = UDisplayReleaseProgressOverview
 root.UDisplayPlanningForResource = UDisplayPlanningForResource
+root.UDisplayPlanningForMultipleResources = UDisplayPlanningForMultipleResources
 root.UUpdateScreen = UUpdateScreen
 root.URescheduleMilestone = URescheduleMilestone
 root.UReschedulePhase = UReschedulePhase

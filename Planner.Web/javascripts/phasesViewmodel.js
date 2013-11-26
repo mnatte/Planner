@@ -49,7 +49,7 @@
         _results = [];
         for (_i = 0, _len = data.length; _i < _len; _i++) {
           a = data[_i];
-          if (a.isCurrent() || a.comingUpInDays(60)) _results.push(a);
+          if (a.isCurrent() || a.comingUpInDays(400)) _results.push(a);
         }
         return _results;
       })();

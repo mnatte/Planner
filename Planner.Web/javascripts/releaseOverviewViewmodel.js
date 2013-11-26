@@ -35,6 +35,28 @@
         uc = new UDisplayPlanningForResource(newValue, _this.newAssignment().period);
         return uc.execute();
       });
+      this.resourcesToAssign = ko.observableArray();
+      this.resourcesToAssign.subscribe(function(newValue) {
+        var include;
+        console.log(newValue);
+        include = newValue.reduce(function(acc, x) {
+          var r, resource, _i, _len, _ref;
+          _ref = _this.allResources;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            r = _ref[_i];
+            if (+r.id === +x) resource = r;
+          }
+          acc.push(resource);
+          return acc;
+        }, []);
+        return _this.resourcesInTimeline(include);
+      });
+      this.resourcesInTimeline = ko.observableArray();
+      this.resourcesInTimeline.subscribe(function(newValue) {
+        var uc;
+        uc = new UDisplayPlanningForMultipleResources(_this.resourcesToAssign(), _this.newAssignment().period);
+        return uc.execute();
+      });
       this.selectedReleaseTimelineItem.subscribe(function(newValue) {
         console.log(newValue);
         _this.selectedAssignment(null);

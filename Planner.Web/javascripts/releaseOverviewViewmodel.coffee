@@ -28,6 +28,22 @@ class ReleaseOverviewViewmodel
 			uc.execute()
 			)
 
+		@resourcesToAssign = ko.observableArray()
+		@resourcesToAssign.subscribe((newValue) => 
+			console.log newValue
+			include = newValue.reduce (acc, x) =>
+							resource = r for r in @allResources when +r.id is +x
+							acc.push resource
+						 acc
+					, []
+			@resourcesInTimeline(include)
+			)
+		@resourcesInTimeline = ko.observableArray()
+		@resourcesInTimeline.subscribe((newValue) =>
+			uc = new UDisplayPlanningForMultipleResources(@resourcesToAssign(), @newAssignment().period)
+			uc.execute()
+			)
+
 		@selectedReleaseTimelineItem.subscribe((newValue) => 
 			console.log newValue
 			@selectedAssignment null

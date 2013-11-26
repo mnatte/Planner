@@ -1,5 +1,5 @@
 (function() {
-  var UAjax, UCreateVisualCuesForAbsences, UCreateVisualCuesForGates, UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayBurndown, UDisplayEnvironments, UDisplayEnvironmentsGraph, UDisplayPhases, UDisplayPlannedHoursPerActivityArtefactProject, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminEnvironments, ULoadAdminMeetings, ULoadAdminProcesses, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, UPlanEnvironment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUnAssignEnvironment, UUpdateDeliverableStatus, UUpdateScreen, root,
+  var UAjax, UCreateVisualCuesForAbsences, UCreateVisualCuesForGates, UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayBurndown, UDisplayEnvironments, UDisplayEnvironmentsGraph, UDisplayPhases, UDisplayPlannedHoursPerActivityArtefactProject, UDisplayPlanningForMultipleResources, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminEnvironments, ULoadAdminMeetings, ULoadAdminProcesses, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, UPlanEnvironment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUnAssignEnvironment, UUpdateDeliverableStatus, UUpdateScreen, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -553,6 +553,83 @@
     };
 
     return UDisplayPlanningForResource;
+
+  })();
+
+  UDisplayPlanningForMultipleResources = (function() {
+
+    function UDisplayPlanningForMultipleResources(resources, period) {
+      this.resources = resources;
+      this.period = period;
+    }
+
+    UDisplayPlanningForMultipleResources.prototype.execute = function() {
+      var abs, absence, ass, assignment, displayData, dto, i, obj, resource, showAssignments, timeline, _i, _j, _k, _len, _len2, _len3, _ref, _ref2, _ref3;
+      displayData = [];
+      _ref = this.resources;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        resource = _ref[_i];
+        console.log(resource.fullName());
+        i = 0;
+        _ref2 = (function() {
+          var _k, _len2, _ref2, _results;
+          _ref2 = resource.periodsAway;
+          _results = [];
+          for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+            abs = _ref2[_k];
+            if (abs.overlaps(this.period)) _results.push(abs);
+          }
+          return _results;
+        }).call(this);
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          absence = _ref2[_j];
+          dto = absence;
+          dto.person = resource;
+          obj = {
+            group: resource.fullName() + '[' + i + ']',
+            start: absence.startDate.date,
+            end: absence.endDate.date,
+            content: absence.title,
+            info: absence.toString(),
+            dataObject: dto
+          };
+          displayData.push(obj);
+          i++;
+        }
+        _ref3 = (function() {
+          var _l, _len3, _ref3, _results;
+          _ref3 = resource.assignments;
+          _results = [];
+          for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
+            ass = _ref3[_l];
+            if (ass.period.overlaps(this.period)) _results.push(ass);
+          }
+          return _results;
+        }).call(this);
+        for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+          assignment = _ref3[_k];
+          dto = assignment;
+          dto.person = resource;
+          obj = {
+            group: resource.fullName() + '[' + i + ']',
+            start: assignment.period.startDate.date,
+            end: assignment.period.endDate.date,
+            content: assignment.period.title,
+            info: assignment.period.toString(),
+            dataObject: dto
+          };
+          displayData.push(obj);
+          i++;
+        }
+      }
+      showAssignments = displayData.sort(function(a, b) {
+        return a.start - b.end;
+      });
+      timeline = new Mnd.Timeline(showAssignments, null, "100%", "200px", "resourceTimeline", "resourceDetails");
+      return timeline.draw();
+    };
+
+    return UDisplayPlanningForMultipleResources;
 
   })();
 
@@ -1370,6 +1447,8 @@
   root.UDisplayReleaseProgressOverview = UDisplayReleaseProgressOverview;
 
   root.UDisplayPlanningForResource = UDisplayPlanningForResource;
+
+  root.UDisplayPlanningForMultipleResources = UDisplayPlanningForMultipleResources;
 
   root.UUpdateScreen = UUpdateScreen;
 

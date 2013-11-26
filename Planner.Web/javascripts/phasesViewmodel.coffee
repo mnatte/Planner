@@ -42,7 +42,7 @@ class PhasesViewmodel
 		# therefore @ refers to INSTANCE here 
 		@releases = []
 		@displayData = []
-		relevantReleases = (a for a in data when a.isCurrent() or a.comingUpInDays(60))
+		relevantReleases = (a for a in data when a.isCurrent() or a.comingUpInDays(400))
 		#console.log relevantReleases
 		for rel in relevantReleases 
 			console.log rel.title + ': ' + rel.endDate.dateString
