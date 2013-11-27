@@ -1,5 +1,5 @@
 (function() {
-  var UAjax, UCreateVisualCuesForAbsences, UCreateVisualCuesForGates, UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayBurndown, UDisplayEnvironments, UDisplayEnvironmentsGraph, UDisplayPhases, UDisplayPlannedHoursPerActivityArtefactProject, UDisplayPlanningForMultipleResources, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminEnvironments, ULoadAdminMeetings, ULoadAdminProcesses, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, UPlanEnvironment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUnAssignEnvironment, UUpdateDeliverableStatus, UUpdateScreen, root,
+  var UAddAssignments, UAjax, UCreateVisualCuesForAbsences, UCreateVisualCuesForGates, UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayBurndown, UDisplayEnvironments, UDisplayEnvironmentsGraph, UDisplayPhases, UDisplayPlannedHoursPerActivityArtefactProject, UDisplayPlanningForMultipleResources, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminEnvironments, ULoadAdminMeetings, ULoadAdminProcesses, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, UPlanEnvironment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUnAssignEnvironment, UUpdateDeliverableStatus, UUpdateScreen, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -474,7 +474,6 @@
       releases = Release.createCollection(rels);
       allResources = Resource.createCollection(resources);
       allActivities = Activity.createCollection(activities);
-      console.log(releases);
       this.viewModel = new ReleaseOverviewViewmodel(releases, allResources, allActivities);
       return ko.applyBindings(this.viewModel);
     };
@@ -875,6 +874,66 @@
     };
 
     return UModifyAssignment;
+
+  })(UPersistAndRefresh);
+
+  UAddAssignments = (function(_super) {
+
+    __extends(UAddAssignments, _super);
+
+    function UAddAssignments(assignments, viewModelObservableCollection, selectedObservable, updateViewUsecase, observableShowform, sourceView, dehydrate) {
+      this.assignments = assignments;
+      this.viewModelObservableCollection = viewModelObservableCollection;
+      this.selectedObservable = selectedObservable;
+      this.updateViewUsecase = updateViewUsecase;
+      this.observableShowform = observableShowform;
+      this.sourceView = sourceView;
+      this.dehydrate = dehydrate;
+      UAddAssignments.__super__.constructor.call(this, this.viewModelObservableCollection, this.selectedObservable, this.updateViewUsecase, this.observableShowform, this.dehydrate);
+    }
+
+    UAddAssignments.prototype.execute = function() {
+      var dataObject, resourceIds,
+        _this = this;
+      console.log('execute UAddAssignments');
+      resourceIds = this.assignments.resources.reduce(function(acc, x) {
+        acc.push(x.id);
+        return acc;
+      }, []);
+      dataObject = {
+        phaseId: this.assignments.release.id,
+        projectId: this.assignments.project.id,
+        milestoneId: this.assignments.milestone.id,
+        deliverableId: this.assignments.deliverable.id,
+        activityId: this.assignments.activity.id,
+        startDate: this.assignments.period.startDate.dateString,
+        endDate: this.assignments.period.endDate.dateString,
+        focusFactor: this.assignments.focusFactor,
+        resourceIds: resourceIds
+      };
+      console.log(dataObject);
+      return this.process(dataObject, function(data) {
+        return _this.refreshData(data);
+      });
+    };
+
+    UAddAssignments.prototype.process = function(dataObject, callback) {
+      return $.ajax("/planner/Resource/Release/PlanMultiple", {
+        dataType: "json",
+        data: ko.toJSON(dataObject),
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        success: function(data, status, XHR) {
+          console.log("planned resources processsed");
+          return callback(data);
+        },
+        error: function(XHR, status, errorThrown) {
+          return console.log("AJAX SAVE error: " + errorThrown);
+        }
+      });
+    };
+
+    return UAddAssignments;
 
   })(UPersistAndRefresh);
 
@@ -1431,6 +1490,8 @@
   root.UModifyAssignment = UModifyAssignment;
 
   root.UDeleteAssignment = UDeleteAssignment;
+
+  root.UAddAssignments = UAddAssignments;
 
   root.URefreshView = URefreshView;
 

@@ -44,7 +44,7 @@
           _ref = _this.allResources;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             r = _ref[_i];
-            if (+r.id === +x) resource = r;
+            if (+r.id === +x.id) resource = r;
           }
           acc.push(resource);
           return acc;
@@ -54,7 +54,8 @@
       this.resourcesInTimeline = ko.observableArray();
       this.resourcesInTimeline.subscribe(function(newValue) {
         var uc;
-        uc = new UDisplayPlanningForMultipleResources(_this.resourcesToAssign(), _this.newAssignment().period);
+        console.log(newValue);
+        uc = new UDisplayPlanningForMultipleResources(newValue, _this.newAssignment().period);
         return uc.execute();
       });
       this.selectedReleaseTimelineItem.subscribe(function(newValue) {
@@ -104,7 +105,7 @@
             focusFactor: 0.8,
             period: new Period(new Date(), newValue.dataObject.date.date, "new assignment"),
             milestone: ms,
-            resource: _this.selectedResource,
+            resources: _this.resourcesInTimeline,
             deliverable: _this.selectedDeliverable,
             activity: _this.selectedActivity
           };
@@ -158,19 +159,19 @@
     };
 
     ReleaseOverviewViewmodel.prototype.saveNewAssignment = function() {
-      var ms, res, useCase, x;
-      res = new Resource(this.selectedResource().id, this.selectedResource().firstName, this.selectedResource().middleName, this.selectedResource().lastName);
+      var ass, ms, useCase;
       ms = {
         id: this.newAssignment().milestone.id,
         title: this.newAssignment().milestone.title
       };
-      x = this.newAssignment();
-      x.resource = res;
-      x.milestone = ms;
-      x.project = this.selectedProject();
-      x.activity = this.selectedActivity();
-      x.deliverable = this.selectedDeliverable();
-      useCase = new UModifyAssignment(x, this.allReleases, this.inspectRelease, this.updateScreenUseCase, this.newAssignment, "release", function(json) {
+      ass = this.newAssignment();
+      ass.resources = this.resourcesInTimeline();
+      ass.milestone = ms;
+      ass.project = this.selectedProject();
+      ass.activity = this.selectedActivity();
+      ass.deliverable = this.selectedDeliverable();
+      console.log(ass);
+      useCase = new UAddAssignments(ass, this.allReleases, this.inspectRelease, this.updateScreenUseCase, this.newAssignment, "release", function(json) {
         return Release.create(json);
       });
       return useCase.execute();

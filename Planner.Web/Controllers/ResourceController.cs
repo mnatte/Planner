@@ -16,6 +16,7 @@ using Mnd.Mvc.Rest;
 using Mnd.Planner.UseCases;
 using Mnd.Domain;
 using Mnd.Planner.Domain.Models;
+using Mnd.Planner.Domain.Roles;
 
 namespace Mnd.Planner.Web.Controllers
 {
@@ -61,6 +62,22 @@ namespace Mnd.Planner.Web.Controllers
         {
             var period = new Period { StartDate = model.StartDate.ToDateTimeFromDutchString(), EndDate = model.EndDate.ToDateTimeFromDutchString() };
             var uc = new PlanReleaseResource(new Resource { Id = model.ResourceId }, new Release { Id = model.PhaseId }, new Project { Id = model.ProjectId }, new Milestone { Id = model.MilestoneId }, new Deliverable { Id = model.DeliverableId }, new Activity { Id = model.ActivityId }, period, model.FocusFactor);
+            uc.Execute();
+
+            // return release summary for release planning overview page
+            var rep = new ReleaseRepository();
+            var release = rep.GetReleaseSummary(model.PhaseId);
+            return this.Json(release, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult PlanMultipleAndReturnRelease(MultipleResourceAssignmentInputModel model)
+        {
+            var period = new Period { StartDate = model.StartDate.ToDateTimeFromDutchString(), EndDate = model.EndDate.ToDateTimeFromDutchString() };
+            var resources = new List<RHumanResource>();
+            foreach (var resId in model.ResourceIds)
+                resources.Add(new Resource { Id = resId});
+            var uc = new PlanMultipleReleaseResources(resources, new Release { Id = model.PhaseId }, new Project { Id = model.ProjectId }, new Milestone { Id = model.MilestoneId }, new Deliverable { Id = model.DeliverableId }, new Activity { Id = model.ActivityId }, period, model.FocusFactor);
             uc.Execute();
 
             // return release summary for release planning overview page

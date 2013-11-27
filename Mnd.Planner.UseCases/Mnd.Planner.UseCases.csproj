@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PlanMultipleReleaseResources.cs" />
     <Compile Include="PlanContinuingProcessResource.cs" />
     <Compile Include="Roles\RParallelContainerProcess.cs" />
     <Compile Include="Roles\RParallelIdenticalProcess.cs" />

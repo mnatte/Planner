@@ -3,7 +3,7 @@
     <label data-bind="text: release.title + ' - ' + milestone.title" ></label>
     <label>Resources:</label>
     <select multiple data-bind="options: $root.allResources, optionsText: function(item) { return item.fullName() }, selectedOptions: $root.resourcesToAssign, optionsCaption: 'Choose...'" style="display:inline" ></select>
-    <!-- ko if: $root.selectedResource() -->
+    <!-- ko if: $root.resourcesToAssign() -->
     <label>Project:</label>
     <select data-bind="options: $root.inspectRelease().projects, optionsText: function(item) { return item.title }, value: $root.selectedProject, optionsCaption: 'Choose...'" style="display:inline" ></select>
     <!--/ko-->

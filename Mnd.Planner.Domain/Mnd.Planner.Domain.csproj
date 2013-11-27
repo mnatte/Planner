@@ -59,6 +59,7 @@
     <Compile Include="Models\ValueStream.cs" />
     <Compile Include="Persistence\ActivityInputModel.cs" />
     <Compile Include="Persistence\ContinuingProcessAssignmentsInputModel.cs" />
+    <Compile Include="Persistence\MultipleResourceAssignmentInputModel.cs" />
     <Compile Include="Persistence\ProcessInputModel.cs" />
     <Compile Include="Persistence\EnvironmentAssignmentInputModel.cs" />
     <Compile Include="Persistence\EnvironmentInputModel.cs" />

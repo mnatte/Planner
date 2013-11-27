@@ -7,6 +7,7 @@ root = global ? window
 class ReleaseOverviewViewmodel
 	constructor: (allReleases, @allResources, @allActivities) ->
 		# ctor is executed in context of INSTANCE. Therefore @ refers here to CURRENT INSTANCE and attaches selectedPhase to all instances (since object IS ctor)
+		#console.log @allResources
 		@inspectRelease = ko.observable()
 		# used for update selected assignment
 		@selectedTimelineItem = ko.observable()
@@ -32,7 +33,7 @@ class ReleaseOverviewViewmodel
 		@resourcesToAssign.subscribe((newValue) => 
 			console.log newValue
 			include = newValue.reduce (acc, x) =>
-							resource = r for r in @allResources when +r.id is +x
+							resource = r for r in @allResources when +r.id is +x.id
 							acc.push resource
 						 acc
 					, []
@@ -40,7 +41,8 @@ class ReleaseOverviewViewmodel
 			)
 		@resourcesInTimeline = ko.observableArray()
 		@resourcesInTimeline.subscribe((newValue) =>
-			uc = new UDisplayPlanningForMultipleResources(@resourcesToAssign(), @newAssignment().period)
+			console.log newValue
+			uc = new UDisplayPlanningForMultipleResources(newValue, @newAssignment().period)
 			uc.execute()
 			)
 
@@ -69,7 +71,8 @@ class ReleaseOverviewViewmodel
 				for del in newValue.dataObject.deliverables
 					deliverables.push({id: del.id, title: del.title, activities: del.activities})
 				ms.deliverables = deliverables
-				x = { id: 0, release: { id: @inspectRelease().id, title: @inspectRelease().title }, focusFactor: 0.8, period: new Period(new Date(), newValue.dataObject.date.date, "new assignment"), milestone: ms, resource: @selectedResource, deliverable: @selectedDeliverable, activity: @selectedActivity }
+				# new assignment contains multiple (the selected) resources
+				x = { id: 0, release: { id: @inspectRelease().id, title: @inspectRelease().title }, focusFactor: 0.8, period: new Period(new Date(), newValue.dataObject.date.date, "new assignment"), milestone: ms, resources: @resourcesInTimeline, deliverable: @selectedDeliverable, activity: @selectedActivity }
 			@newAssignment x
 			@selectedPhase null
 			)
@@ -109,16 +112,17 @@ class ReleaseOverviewViewmodel
 		useCase.execute()
 
 	saveNewAssignment: =>
-		res = new Resource(@selectedResource().id, @selectedResource().firstName, @selectedResource().middleName, @selectedResource().lastName)
+		#res = new Resource(@selectedResource().id, @selectedResource().firstName, @selectedResource().middleName, @selectedResource().lastName)
 		ms = { id: @newAssignment().milestone.id, title: @newAssignment().milestone.title }
-		x = @newAssignment()
-		x.resource = res
-		x.milestone = ms
-		x.project = @selectedProject()
-		x.activity = @selectedActivity()
-		x.deliverable = @selectedDeliverable()
+		ass = @newAssignment()
+		ass.resources = @resourcesInTimeline()
+		ass.milestone = ms
+		ass.project = @selectedProject()
+		ass.activity = @selectedActivity()
+		ass.deliverable = @selectedDeliverable()
+		console.log ass
 
-		useCase = new UModifyAssignment(x, @allReleases, @inspectRelease, @updateScreenUseCase, @newAssignment, "release", (json) -> Release.create json)
+		useCase = new UAddAssignments(ass, @allReleases, @inspectRelease, @updateScreenUseCase, @newAssignment, "release", (json) -> Release.create json)
 		useCase.execute()
 
 	deleteSelectedAssignment: => #(@assignment, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase

@@ -69,6 +69,11 @@ namespace Mnd.Planner.Web
                 new { controller = "Resource", action = "PlanAndReturnRelease", param1 = UrlParameter.Optional } // Parameter defaults
             );
             routes.MapRoute(
+               "PlanMultipleResourcesReturnRelease", // Route name
+               "Resource/Release/PlanMultiple", // URL with parameters
+               new { controller = "Resource", action = "PlanMultipleAndReturnRelease", param1 = UrlParameter.Optional } // Parameter defaults
+           );
+            routes.MapRoute(
                "PlanContinuingProcessAssignment", // Route name
                "Resource/Process/Plan", // URL with parameters
                new { controller = "Resource", action = "PlanContinuingProcessAssignmentAndReturnResource", param1 = UrlParameter.Optional } // Parameter defaults

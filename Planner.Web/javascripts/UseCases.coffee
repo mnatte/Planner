@@ -268,7 +268,7 @@ class UDisplayReleaseOverview
 		releases = Release.createCollection(rels)
 		allResources = Resource.createCollection(resources)
 		allActivities = Activity.createCollection(activities)
-		console.log releases
+		#console.log releases
 		#console.log allResources
 		@viewModel = new ReleaseOverviewViewmodel(releases, allResources, allActivities)
 		ko.applyBindings(@viewModel)
@@ -417,6 +417,36 @@ class UModifyAssignment extends UPersistAndRefresh
 		else if @sourceView is "resource"
 			# rel, proj, ms, del, act, per, ff
 			@assignment.resource.plan(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, @assignment.focusFactor, (data) => @refreshData(data))
+
+class UAddAssignments extends UPersistAndRefresh
+	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in
+	constructor: (@assignments, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @sourceView, @dehydrate) ->
+		super @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate
+	execute: ->
+		console.log 'execute UAddAssignments'
+		#console.log @assignments
+		#json = ko.toJSON(@assignments)
+		#console.log json
+		#console.log @sourceView
+		resourceIds = @assignments.resources.reduce (acc, x) =>
+							acc.push x.id
+						 acc
+					, []
+		dataObject = { phaseId: @assignments.release.id, projectId: @assignments.project.id, milestoneId: @assignments.milestone.id, deliverableId: @assignments.deliverable.id, activityId: @assignments.activity.id, startDate: @assignments.period.startDate.dateString, endDate: @assignments.period.endDate.dateString, focusFactor: @assignments.focusFactor, resourceIds: resourceIds }
+		console.log dataObject
+		@process(dataObject, (data) => @refreshData(data))
+	process: (dataObject, callback) ->
+		# submit data
+		$.ajax "/planner/Resource/Release/PlanMultiple",
+			dataType: "json"
+			data: ko.toJSON(dataObject)
+			type: "POST"
+			contentType: "application/json; charset=utf-8"
+			success: (data, status, XHR) ->
+				console.log "planned resources processsed"
+				callback data
+			error: (XHR, status, errorThrown) ->
+				console.log "AJAX SAVE error: #{errorThrown}"
 
 class UDeleteAssignment extends UPersistAndRefresh
 	constructor: (@assignment, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @sourceView, @dehydrate) ->
@@ -717,8 +747,11 @@ root.ULoadAdminActivities = ULoadAdminActivities
 root.ULoadAdminProcesses = ULoadAdminProcesses
 root.ULoadPlanResources = ULoadPlanResources
 root.ULoadUpdateReleaseStatus = ULoadUpdateReleaseStatus
+
 root.UModifyAssignment = UModifyAssignment
 root.UDeleteAssignment = UDeleteAssignment
+root.UAddAssignments = UAddAssignments
+
 root.URefreshView = URefreshView
 root.UDisplayAssignments = UDisplayAssignments
 root.UDisplayReleaseOverview = UDisplayReleaseOverview
