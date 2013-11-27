@@ -14,6 +14,7 @@
       this.setAssignments = __bind(this.setAssignments, this);
       var updateScreenFunctions,
         _this = this;
+      this.calculateResourcesViewModel = ko.observable();
       this.selectedPhase = ko.observable();
       this.canShowDetails = ko.observable(false);
       this.assignments = ko.observableArray();
@@ -29,11 +30,16 @@
         console.log(newValue);
         if (newValue) {
           _this.selectedMilestone(newValue.dataObject);
-          return _this.selectedDeliverable(null);
+          _this.selectedDeliverable(null);
+          return null;
         }
       });
       this.selectedDeliverable.subscribe(function(newValue) {
-        return console.log(newValue);
+        console.log(newValue);
+        if (newValue) {
+          _this.calculateResourcesViewModel(new CalculateNeededResourcesViewmodel(newValue, new Period(new Date(), newValue.milestone.date.date), 0.8));
+          return null;
+        }
       });
       Deliverable.extend(RDeliverableStatus);
       updateScreenFunctions = [];

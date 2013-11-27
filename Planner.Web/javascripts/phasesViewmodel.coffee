@@ -7,6 +7,7 @@ root = global ? window
 class PhasesViewmodel
 	constructor: (allReleases) ->
 		# ctor is executed in context of INSTANCE. Therfore @ refers here to CURRENT INSTANCE and attaches selectedPhase to all instances (since object IS ctor)
+		@calculateResourcesViewModel = ko.observable()
 		@selectedPhase = ko.observable()
 		@canShowDetails = ko.observable(false)
 		@assignments = ko.observableArray()
@@ -17,16 +18,24 @@ class PhasesViewmodel
 		@allReleases = ko.observableArray allReleases
 		@selectedMilestone = ko.observable()
 		@selectedDeliverable = ko.observable()
+		#@selectedDeliverableResourcesNeeded = ko.observable()
 		@selectedTimelineItem = ko.observable()
 		@selectedTimelineItem.subscribe((newValue) => 
 			console.log newValue
 			if newValue
 				@selectedMilestone newValue.dataObject
 				@selectedDeliverable null
+				null
 			)
 		@selectedDeliverable.subscribe((newValue) => 
 			console.log newValue
+			if newValue
+				#uc = new UCalculateNeededResources(newValue, new Period(new Date(), newValue.milestone.date.date), 0.8)
+				#uc.execute()
+				@calculateResourcesViewModel(new CalculateNeededResourcesViewmodel(newValue, new Period(new Date(), newValue.milestone.date.date), 0.8))
+				null
 			)
+
 		Deliverable.extend RDeliverableStatus
 
 		updateScreenFunctions = []

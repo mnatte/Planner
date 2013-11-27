@@ -52,6 +52,7 @@
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
     <script type="text/javascript" src="javascripts/phasesViewmodel.js"></script>
+    <script type="text/javascript" src="javascripts/calculateNeededResourcesViewmodel.js"></script>
     <script type="text/javascript" src="javascripts/ajax.js"></script>
     <script type="text/javascript" src="javascripts/Roles.js"></script>
     <script type="text/javascript" src="javascripts/persistence.js"></script>
@@ -95,6 +96,10 @@
                 <div class="colheader four columns" id="planned">
                     <span class="icon24 icon-users-small"></span>
                     <span data-bind="text: $root.selectedDeliverable().plannedHours() + ' hours planned'"></span>
+                </div>
+                <div class="colheader four columns" id="Div1">
+                    <!-- ko template: {name: 'calculateNeededResourcesForm', data: $root.calculateResourcesViewModel()} -->
+                    <!-- /ko -->
                 </div>
             <!--/ko-->
         </div>

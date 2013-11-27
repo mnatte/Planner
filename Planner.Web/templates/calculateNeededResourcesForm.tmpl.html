@@ -1,0 +1,27 @@
+﻿<form>
+    <!--data context is an instance of CalculateNeededResourcesViewmodel-->
+
+    <!-- ko with: period -->
+    <label>Period:</label>
+    <label>Start date (dd-mm-yyyy):</label><input type="text" data-bind="value: startDate.dateString, event: { blur: $parent.datesChanged.bind($data) }" />
+    <label>End date (dd-mm-yyyy):</label><input type="text" data-bind="value: endDate.dateString, event: { blur: $parent.datesChanged.bind($data) }" />
+    <!--/ko-->
+    <label>Focus factor:</label><input type="text" data-bind="value: focusFactor" />
+    <!-- ko with: deliverable -->
+    <ul data-bind="foreach: scope">
+        <li>
+            <div class="colheader">
+                <span class="icon24 icon-chart-small"></span>
+                <span data-bind="text: title"></span>
+            </div>
+            <!-- ko foreach: workload -->
+                <label data-bind="text:activity.title"></label><input type="text" data-bind="value: hoursRemaining, name: activity.title, enable: false" />
+            <!--/ko-->
+        </li>
+    </ul>
+    <!--/ko-->
+    <div class="colheader four columns" id="Div1">
+        <span class="icon24 icon-users-small"></span>
+        <span data-bind="text: resourcesNeeded() + ' FTE needed'"></span>
+    </div>
+</form>

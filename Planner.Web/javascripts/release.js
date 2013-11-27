@@ -203,6 +203,10 @@
       return new Period(DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.Id);
     };
 
+    Period.createFromNow = function(endDate) {
+      return new Period(new Date(), endDate);
+    };
+
     return Period;
 
   })(Mixin);

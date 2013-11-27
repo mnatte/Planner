@@ -26,6 +26,12 @@ class UDisplayReleaseStatus
 		@viewModel.selectedPhaseId @viewModel.release.phases[0].id
 		# show charts
 		showStatusChart(@viewModel.statusData())
+
+class UCalculateNeededResources
+	constructor: (@deliverable, @period, @focusFactor, @viewModel) ->
+	execute: (data) ->
+		@viewModel = new CalculateNeededResourcesViewmodel(@deliverable, @period, @focusFactor)
+		ko.applyBindings(@viewModel)
 		
 class UGetAvailableHoursForTeamMemberFromNow
 	constructor: (@teamMember, @phase) ->
@@ -72,7 +78,7 @@ class UDisplayPhases
 		@viewModel = new PhasesViewmodel(releases)
 		@viewModel.load releases.sort((a,b)->a.startDate.date - b.startDate.date)
 		ko.applyBindings(@viewModel)
-		timeline = new Mnd.Timeline(@viewModel.showPhases, @viewModel.selectedTimelineItem)
+		timeline = new Mnd.Timeline(@viewModel.showPhases, @viewModel.selectedTimelineItem, "100%", "1200px")
 		timeline.draw()
 
 class UDisplayEnvironments
@@ -773,6 +779,8 @@ root.UPlanEnvironment = UPlanEnvironment
 root.UUnAssignEnvironment = UUnAssignEnvironment
 root.UDisplayEnvironmentsGraph = UDisplayEnvironmentsGraph
 root.UDisplayPlannedHoursPerActivityArtefactProject = UDisplayPlannedHoursPerActivityArtefactProject
+
+root.UCalculateNeededResources = UCalculateNeededResources
 
 
 

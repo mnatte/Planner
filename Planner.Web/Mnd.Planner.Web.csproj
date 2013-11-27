@@ -142,6 +142,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>adminProcessViewmodel.coffee</DependentUpon>
     </Content>
+    <Content Include="javascripts\calculateNeededResourcesViewmodel.js">
+      <DependentUpon>calculateNeededResourcesViewmodel.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
     <Content Include="javascripts\environmentsPlanningViewmodel.js">
       <DependentUpon>environmentsPlanningViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -159,6 +164,7 @@
     </Content>
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="stylesheets\canvas.css" />
+    <Content Include="templates\calculateNeededResourcesForm.tmpl.html" />
     <Content Include="templates\environmentPlanningForm.tmpl.html" />
     <Content Include="xxx_processPerformance.htm" />
     <Content Include="javascripts\adminMeetingViewmodel.js">
@@ -977,6 +983,10 @@
     <None Include="javascripts\adminEnvironmentViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>adminEnvironmentViewmodel.js</LastGenOutput>
+    </None>
+    <None Include="javascripts\calculateNeededResourcesViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>calculateNeededResourcesViewmodel.js</LastGenOutput>
     </None>
     <None Include="javascripts\environmentsPlanningViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>

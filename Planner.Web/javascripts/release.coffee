@@ -173,6 +173,8 @@ class Period extends Mixin
 		@overlappingPeriod periodFromNow
 	@create: (jsonData) ->
 		new Period(DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.Id)
+	@createFromNow: (endDate) ->
+		new Period(new Date(), endDate)
 
 class Milestone extends Mixin
 	constructor: (@id, date, @time, @title, @description, @phaseId, @phaseTitle) ->

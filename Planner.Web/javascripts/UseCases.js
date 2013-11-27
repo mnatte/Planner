@@ -1,5 +1,5 @@
 (function() {
-  var UAddAssignments, UAjax, UCreateVisualCuesForAbsences, UCreateVisualCuesForGates, UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayBurndown, UDisplayEnvironments, UDisplayEnvironmentsGraph, UDisplayPhases, UDisplayPlannedHoursPerActivityArtefactProject, UDisplayPlanningForMultipleResources, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminEnvironments, ULoadAdminMeetings, ULoadAdminProcesses, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, UPlanEnvironment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUnAssignEnvironment, UUpdateDeliverableStatus, UUpdateScreen, root,
+  var UAddAssignments, UAjax, UCalculateNeededResources, UCreateVisualCuesForAbsences, UCreateVisualCuesForGates, UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayBurndown, UDisplayEnvironments, UDisplayEnvironmentsGraph, UDisplayPhases, UDisplayPlannedHoursPerActivityArtefactProject, UDisplayPlanningForMultipleResources, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminEnvironments, ULoadAdminMeetings, ULoadAdminProcesses, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAssignment, UPersistAndRefresh, UPlanEnvironment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUnAssignEnvironment, UUpdateDeliverableStatus, UUpdateScreen, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -30,6 +30,24 @@
     };
 
     return UDisplayReleaseStatus;
+
+  })();
+
+  UCalculateNeededResources = (function() {
+
+    function UCalculateNeededResources(deliverable, period, focusFactor, viewModel) {
+      this.deliverable = deliverable;
+      this.period = period;
+      this.focusFactor = focusFactor;
+      this.viewModel = viewModel;
+    }
+
+    UCalculateNeededResources.prototype.execute = function(data) {
+      this.viewModel = new CalculateNeededResourcesViewmodel(this.deliverable, this.period, this.focusFactor);
+      return ko.applyBindings(this.viewModel);
+    };
+
+    return UCalculateNeededResources;
 
   })();
 
@@ -85,7 +103,7 @@
         return a.startDate.date - b.startDate.date;
       }));
       ko.applyBindings(this.viewModel);
-      timeline = new Mnd.Timeline(this.viewModel.showPhases, this.viewModel.selectedTimelineItem);
+      timeline = new Mnd.Timeline(this.viewModel.showPhases, this.viewModel.selectedTimelineItem, "100%", "1200px");
       return timeline.draw();
     };
 
@@ -1534,5 +1552,7 @@
   root.UDisplayEnvironmentsGraph = UDisplayEnvironmentsGraph;
 
   root.UDisplayPlannedHoursPerActivityArtefactProject = UDisplayPlannedHoursPerActivityArtefactProject;
+
+  root.UCalculateNeededResources = UCalculateNeededResources;
 
 }).call(this);
