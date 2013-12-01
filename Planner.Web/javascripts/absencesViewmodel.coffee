@@ -17,6 +17,8 @@ class AbsencesViewmodel
 		@selectedAbsence = ko.observable()
 		@selectedResource = ko.observable()
 		#@absences = ko.observableArray()
+		@currentModal = ko.observable(null)
+
 		@selectedTimelineItem.subscribe((newValue) => 
 			console.log newValue
 			@selectedAbsence newValue.dataObject
@@ -24,6 +26,11 @@ class AbsencesViewmodel
 			)
 		@selectedResource.subscribe((newValue) =>
 			console.log 'selectedResource changed: ' + newValue.fullName()
+			)
+
+		@selectedAbsence.subscribe((newValue) =>
+			console.log newValue
+			@currentModal({ name: 'absenceForm', data: newValue})
 			)
 
 	load: (data) ->

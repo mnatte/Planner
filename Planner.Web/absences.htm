@@ -30,6 +30,7 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/timeline.css" />
     <link rel="stylesheet" href="stylesheets/icon_styles.css">
     <link rel="stylesheet" href="stylesheets/sexybuttons.css">
+    <link rel="stylesheet" href="stylesheets/jquery.modal.css">
 
 	<!-- Favicons
 	================================================== -->
@@ -47,6 +48,8 @@
     <script type="text/javascript" src="Scripts/datehelper.js"></script>
     <script type="text/javascript" src="Scripts/timeline-min.js"></script>
     <script type="text/javascript" src="javascripts/Timeline.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.modal.min.js"></script>
+    <script type="text/javascript" src="javascripts/ko.bindingHandlers.modal.js"></script>
         
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
@@ -75,13 +78,8 @@
         </div>
         <div id="newButton" class="four columns">
             <button class="sexybutton" data-bind="click: $root.newAbsence.bind($data)"><span><span><span class="add">New</span></span></span></button>
-            <!-- ko if: $root.selectedAbsence() -->
-            <section id="absenceFormSection" class="fourteen columns" data-bind="fadeVisible: true, fadeDuration: 500">
-                <!-- ko template: {name: 'absenceForm', data: $root.selectedAbsence()} -->
-                <!-- /ko -->
-            </section>
-            <!--/ko-->
         </div>
+        <div class="ten columns modal hide fade" data-bind="modal: currentModal"></div>
 </div><!-- container -->
     <script type="text/javascript">
 

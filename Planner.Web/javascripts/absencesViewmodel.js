@@ -22,6 +22,7 @@
       this.selectedTimelineItem = ko.observable();
       this.selectedAbsence = ko.observable();
       this.selectedResource = ko.observable();
+      this.currentModal = ko.observable(null);
       this.selectedTimelineItem.subscribe(function(newValue) {
         console.log(newValue);
         _this.selectedAbsence(newValue.dataObject);
@@ -29,6 +30,13 @@
       });
       this.selectedResource.subscribe(function(newValue) {
         return console.log('selectedResource changed: ' + newValue.fullName());
+      });
+      this.selectedAbsence.subscribe(function(newValue) {
+        console.log(newValue);
+        return _this.currentModal({
+          name: 'absenceForm',
+          data: newValue
+        });
       });
     }
 
