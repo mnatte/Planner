@@ -22,17 +22,13 @@
       this.selectedTimelineItem = ko.observable();
       this.selectedAbsence = ko.observable();
       this.selectedResource = ko.observable();
-      this.currentModal = ko.observable(null);
+      this.currentModal = ko.observable();
       this.selectedTimelineItem.subscribe(function(newValue) {
-        console.log(newValue);
         _this.selectedAbsence(newValue.dataObject);
         return _this.selectedResource(newValue.dataObject.person);
       });
-      this.selectedResource.subscribe(function(newValue) {
-        return console.log('selectedResource changed: ' + newValue.fullName());
-      });
+      this.selectedResource.subscribe(function(newValue) {});
       this.selectedAbsence.subscribe(function(newValue) {
-        console.log(newValue);
         return _this.currentModal({
           name: 'absenceForm',
           data: newValue
@@ -163,8 +159,7 @@
       var newAbsence;
       newAbsence = new Period(new Date(), new Date(), 'New Absence', 0);
       newAbsence.id = 0;
-      this.selectedAbsence(newAbsence);
-      return console.log(this.selectedAbsence());
+      return this.selectedAbsence(newAbsence);
     };
 
     AbsencesViewmodel.prototype.createVisualCuesForAbsences = function(data) {

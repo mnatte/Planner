@@ -17,20 +17,22 @@ class AbsencesViewmodel
 		@selectedAbsence = ko.observable()
 		@selectedResource = ko.observable()
 		#@absences = ko.observableArray()
-		@currentModal = ko.observable(null)
+		@currentModal = ko.observable()
 
 		@selectedTimelineItem.subscribe((newValue) => 
-			console.log newValue
+			#console.log newValue
 			@selectedAbsence newValue.dataObject
 			@selectedResource newValue.dataObject.person
 			)
 		@selectedResource.subscribe((newValue) =>
-			console.log 'selectedResource changed: ' + newValue.fullName()
+			#console.log 'selectedResource changed: ' + newValue.fullName()
 			)
 
 		@selectedAbsence.subscribe((newValue) =>
-			console.log newValue
+			#console.log newValue
+			# as soon as currentModal is filled, the binding gets activated (bindingHandels.modal.js)
 			@currentModal({ name: 'absenceForm', data: newValue})
+			# @currentModal({ name: 'dummy', data: 1})
 			)
 
 	load: (data) ->
@@ -114,7 +116,7 @@ class AbsencesViewmodel
 		newAbsence = new Period(new Date(), new Date(), 'New Absence', 0)
 		newAbsence.id = 0
 		@selectedAbsence newAbsence
-		console.log @selectedAbsence()
+		#console.log @selectedAbsence()
 
 	createVisualCuesForAbsences: (data) =>
 		uc = new UCreateVisualCuesForAbsences 30, (data) => console.log 'callback succesful: ' + data

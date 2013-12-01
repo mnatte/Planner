@@ -4,5 +4,5 @@
     <label>Start date (dd-mm-yyyy):</label><input type="text" data-bind="value: startDate.dateString" />
     <label>End date (dd-mm-yyyy):</label><input type="text" data-bind="value: endDate.dateString" />
     <button class="sexybutton" data-bind="click: $parent.saveSelectedAbsence.bind($data), enable:$root.selectedResource()"><span><span><span class="save">Save</span></span></span></button>
-    <button class="sexybutton" data-bind="click: $parent.deleteSelectedAbsence.bind($data), enable:$root.selectedAbsence()"><span><span><span class="delete">Delete</span></span></span></button>
+    <button class="sexybutton" data-bind="click: $parent.deleteSelectedAbsence.bind($data), enable: $root.selectedAbsence().id > 0"><span><span><span class="delete">Delete</span></span></span></button>
 </form>
