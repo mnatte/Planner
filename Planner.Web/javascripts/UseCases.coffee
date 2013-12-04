@@ -32,6 +32,12 @@ class UCalculateNeededResources
 	execute: (data) ->
 		@viewModel = new CalculateNeededResourcesViewmodel(@deliverable, @period, @focusFactor)
 		ko.applyBindings(@viewModel)
+
+class UModifyAbsences
+	constructor: (@selectedAbsence, @allResources, @afterSubmitCallback, @dialogObservable) ->
+	execute: (data) ->
+		console.log 'execute UModifyAbsences'
+		@dialogObservable({ name: 'absenceForm', data: new ModifyAbsencesViewmodel(@selectedAbsence, @allResources, @afterSubmitCallback) })
 		
 class UGetAvailableHoursForTeamMemberFromNow
 	constructor: (@teamMember, @phase) ->
@@ -781,6 +787,7 @@ root.UDisplayEnvironmentsGraph = UDisplayEnvironmentsGraph
 root.UDisplayPlannedHoursPerActivityArtefactProject = UDisplayPlannedHoursPerActivityArtefactProject
 
 root.UCalculateNeededResources = UCalculateNeededResources
+root.UModifyAbsences = UModifyAbsences
 
 
 

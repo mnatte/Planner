@@ -1,8 +1,10 @@
 ﻿<form>
-    <label>Resource:</label><select data-bind="options: $root.allResources, optionsText: function(item) { return item.fullName() }, value: $root.selectedResource, optionsCaption: 'Choose...', enable:$root.selectedAbsence() && $root.selectedAbsence().id === 0"></select>
-    <label>Absence title:</label><input type="text" data-bind="value: title, valueUpdate: 'afterkeydown'" />
+    <label>Resource:</label><select data-bind="options: allResources, optionsText: function(item) { return item.fullName() }, value: selectedResource, optionsCaption: 'Choose...', enable:selectedAbsence() && selectedAbsence().id === 0"></select>
+    <label>Absence title:</label><input type="text" data-bind="value: selectedAbsence().title, valueUpdate: 'afterkeydown'" />
+    <!-- ko with: selectedAbsence --><!-- the 'ko with' implementation here is the trick to get the period binding correct-->
     <label>Start date (dd-mm-yyyy):</label><input type="text" data-bind="value: startDate.dateString" />
     <label>End date (dd-mm-yyyy):</label><input type="text" data-bind="value: endDate.dateString" />
-    <button class="sexybutton" data-bind="click: $parent.saveSelectedAbsence.bind($data), enable:$root.selectedResource()"><span><span><span class="save">Save</span></span></span></button>
-    <button class="sexybutton" data-bind="click: $parent.deleteSelectedAbsence.bind($data), enable: $root.selectedAbsence().id > 0"><span><span><span class="delete">Delete</span></span></span></button>
+    <!--/ko-->
+    <button class="sexybutton" data-bind="click: saveSelectedAbsence.bind($data), enable:selectedResource()"><span><span><span class="save">Save</span></span></span></button>
+    <button class="sexybutton" data-bind="click: deleteSelectedAbsence.bind($data), enable: selectedAbsence().id > 0"><span><span><span class="delete">Delete</span></span></span></button>
 </form>

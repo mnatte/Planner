@@ -10,29 +10,26 @@
       var _this = this;
       this.allResources = allResources;
       this.createVisualCuesForAbsences = __bind(this.createVisualCuesForAbsences, this);
-      this.newAbsence = __bind(this.newAbsence, this);
-      this.deleteSelectedAbsence = __bind(this.deleteSelectedAbsence, this);
-      this.saveSelectedAbsence = __bind(this.saveSelectedAbsence, this);
       this.refreshTimeline = __bind(this.refreshTimeline, this);
-      this.closeDetails = __bind(this.closeDetails, this);
-      this.setAssignments = __bind(this.setAssignments, this);
+      this.newAbsence = __bind(this.newAbsence, this);
       Period.extend(RCrud);
       Period.extend(RPeriodSerialize);
       Resource.extend(RTeamMember);
       this.selectedTimelineItem = ko.observable();
       this.selectedAbsence = ko.observable();
-      this.selectedResource = ko.observable();
-      this.currentModal = ko.observable();
+      this.dialogAbsences = ko.observable();
+      this.closeDialog = ko.observable(false);
       this.selectedTimelineItem.subscribe(function(newValue) {
-        _this.selectedAbsence(newValue.dataObject);
-        return _this.selectedResource(newValue.dataObject.person);
+        return _this.selectedAbsence(newValue.dataObject);
       });
-      this.selectedResource.subscribe(function(newValue) {});
       this.selectedAbsence.subscribe(function(newValue) {
-        return _this.currentModal({
-          name: 'absenceForm',
-          data: newValue
-        });
+        var callback, uc;
+        callback = function(data) {
+          return _this.refreshTimeline(data);
+        };
+        _this.closeDialog(false);
+        uc = new UModifyAbsences(_this.selectedAbsence, _this.allResources, callback, _this.dialogAbsences);
+        return uc.execute();
       });
     }
 
@@ -62,104 +59,55 @@
       });
     };
 
-    AbsencesViewmodel.prototype.setAssignments = function(jsonData) {
-      this.assignments.removeAll();
-      return this.assignments(AssignedResource.createCollection(jsonData));
+    AbsencesViewmodel.prototype.newAbsence = function() {
+      var newAbsence;
+      newAbsence = new Period(new Date(), new Date(), 'New Absence', 0);
+      newAbsence.id = 0;
+      return this.selectedAbsence(newAbsence);
     };
 
-    AbsencesViewmodel.prototype.loadAssignments = function(releaseId) {
-      var ajax;
-      ajax = new Ajax();
-      return ajax.getAssignedResourcesForRelease(releaseId, this.setAssignments);
-    };
-
-    AbsencesViewmodel.prototype.closeDetails = function() {
-      return this.canShowDetails(false);
-    };
-
-    AbsencesViewmodel.prototype.refreshTimeline = function(index, newItem) {
-      var absence, p, timeline, timelineItem, _i, _len, _ref;
+    AbsencesViewmodel.prototype.refreshTimeline = function(newItem) {
+      var a, absence, index, p, timeline, timelineItem, _i, _j, _len, _len2, _ref, _ref2;
       console.log("refreshTimeline");
-      absence = Period.create(newItem);
-      _ref = this.allResources;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        p = _ref[_i];
-        if (p.id === newItem.Person.Id) absence.person = p;
-      }
-      timelineItem = {
-        group: absence.person.fullName(),
-        start: absence.startDate.date,
-        end: absence.endDate.date,
-        content: absence.title,
-        info: absence.toString(),
-        dataObject: absence
-      };
-      console.log(timelineItem);
-      if (index > -1) {
-        this.showAbsences.splice(index, 1, timelineItem);
-      } else {
-        this.showAbsences.splice(index, 0, timelineItem);
-      }
-      this.selectedTimelineItem(timelineItem);
-      timeline = new Mnd.Timeline(this.showAbsences, this.selectedTimelineItem);
-      return timeline.draw();
-    };
-
-    AbsencesViewmodel.prototype.saveSelectedAbsence = function() {
-      var a, absence, i, timelineItem, _i, _len, _ref,
-        _this = this;
-      i = -1;
-      absence = this.selectedAbsence();
+      index = -1;
       if (this.selectedAbsence().id > 0) {
         _ref = this.displayData;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           a = _ref[_i];
           if (a.dataObject === this.selectedAbsence()) timelineItem = a;
         }
-        i = this.displayData.indexOf(timelineItem);
-        absence.personId = absence.person.id;
-        delete absence.person;
-      } else {
-        absence.personId = this.selectedResource().id;
+        index = this.displayData.indexOf(timelineItem);
       }
-      console.log(ko.toJSON(absence));
-      return this.selectedAbsence().save("/planner/Resource/SaveAbsence", ko.toJSON(absence), function(data) {
-        return _this.refreshTimeline(i, data);
-      });
-    };
-
-    AbsencesViewmodel.prototype.deleteSelectedAbsence = function() {
-      var a, abs, i,
-        _this = this;
-      console.log(this.selectedAbsence());
-      abs = ((function() {
-        var _i, _len, _ref, _results;
-        _ref = this.showAbsences;
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          a = _ref[_i];
-          if (a.dataObject.id === this.selectedAbsence().id) _results.push(a);
+      console.log(index);
+      console.log(newItem);
+      if (newItem.StartDate) {
+        absence = Period.create(newItem);
+        _ref2 = this.allResources;
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          p = _ref2[_j];
+          if (p.id === newItem.Person.Id) absence.person = p;
         }
-        return _results;
-      }).call(this))[0];
-      i = this.showAbsences.indexOf(abs);
-      console.log('index: ' + i);
-      return this.selectedAbsence()["delete"]("/planner/Resource/DeleteAbsence/" + this.selectedAbsence().id, function(callbackdata) {
-        var next;
-        console.log(callbackdata);
-        _this.showAbsences.splice(i, 1);
-        next = _this.showAbsences[i];
-        console.log(next);
-        _this.selectedTimelineItem(next);
-        return $.unblockUI();
-      });
-    };
-
-    AbsencesViewmodel.prototype.newAbsence = function() {
-      var newAbsence;
-      newAbsence = new Period(new Date(), new Date(), 'New Absence', 0);
-      newAbsence.id = 0;
-      return this.selectedAbsence(newAbsence);
+        timelineItem = {
+          group: absence.person.fullName(),
+          start: absence.startDate.date,
+          end: absence.endDate.date,
+          content: absence.title,
+          info: absence.toString(),
+          dataObject: absence
+        };
+        console.log(timelineItem);
+        if (index > -1) {
+          this.showAbsences.splice(index, 1, timelineItem);
+        } else {
+          this.showAbsences.splice(index, 0, timelineItem);
+        }
+        this.selectedTimelineItem(timelineItem);
+      } else {
+        this.showAbsences.splice(index, 1);
+      }
+      timeline = new Mnd.Timeline(this.showAbsences, this.selectedTimelineItem);
+      timeline.draw();
+      return this.closeDialog(true);
     };
 
     AbsencesViewmodel.prototype.createVisualCuesForAbsences = function(data) {

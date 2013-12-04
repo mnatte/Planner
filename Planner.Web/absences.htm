@@ -58,6 +58,7 @@
     <script type="text/javascript" src="javascripts/ajax.js"></script>
     <script type="text/javascript" src="javascripts/Roles.js"></script>
     <script type="text/javascript" src="javascripts/UseCases.js"></script>
+    <script type="text/javascript" src="javascripts/usecaseViewmodels/modifyAbsencesViewmodel.js"></script>
 </head>
 <body>
 <!-- Primary Page Layout
@@ -80,7 +81,7 @@
             <button class="sexybutton" data-bind="click: $root.newAbsence.bind($data)"><span><span><span class="add">New</span></span></span></button>
         </div>
         <!--as soon as an absence is selected (or created) currentModal gets this absence as its value property-->
-        <div class="ten columns" data-bind="modal: currentModal"></div>
+        <div class="ten columns" id="modalAbsencesForm" data-bind="modal: dialogAbsences"></div>
 </div>
 <!-- /container -->
     <script type="text/javascript">
