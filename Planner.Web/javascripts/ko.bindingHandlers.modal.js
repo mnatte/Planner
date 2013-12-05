@@ -38,7 +38,7 @@ ko.bindingHandlers.modal = {
         console.log("update modal");
         console.log(context.$data.closeDialog());
         //show or hide the modal depending on whether the associated data is populated
-        if (data && !context.$data.closeDialog()) {
+        if (data) {
             $(element).modal();
         } else {
             $.modal.close();

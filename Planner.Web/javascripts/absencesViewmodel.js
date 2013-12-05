@@ -18,7 +18,6 @@
       this.selectedTimelineItem = ko.observable();
       this.selectedAbsence = ko.observable();
       this.dialogAbsences = ko.observable();
-      this.closeDialog = ko.observable(false);
       this.selectedTimelineItem.subscribe(function(newValue) {
         return _this.selectedAbsence(newValue.dataObject);
       });
@@ -27,7 +26,6 @@
         callback = function(data) {
           return _this.refreshTimeline(data);
         };
-        _this.closeDialog(false);
         uc = new UModifyAbsences(_this.selectedAbsence, _this.allResources, callback, _this.dialogAbsences);
         return uc.execute();
       });
@@ -107,7 +105,7 @@
       }
       timeline = new Mnd.Timeline(this.showAbsences, this.selectedTimelineItem);
       timeline.draw();
-      return this.closeDialog(true);
+      return this.dialogAbsences(null);
     };
 
     AbsencesViewmodel.prototype.createVisualCuesForAbsences = function(data) {

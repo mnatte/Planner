@@ -13,9 +13,8 @@ class AbsencesViewmodel
 		Resource.extend RTeamMember
 		@selectedTimelineItem = ko.observable()
 		@selectedAbsence = ko.observable()
+		# observable for 'modify absences' dialog. also passed to UModifyAbsences usecase
 		@dialogAbsences = ko.observable()
-		# observable used in bindingHandlers.modal.js for closing the dialog after submitting
-		@closeDialog = ko.observable(false)
 
 		@selectedTimelineItem.subscribe((newValue) => 
 			#console.log newValue
@@ -25,8 +24,6 @@ class AbsencesViewmodel
 		@selectedAbsence.subscribe((newValue) =>
 			#console.log newValue
 			callback = (data) => @refreshTimeline(data)
-			# don't close dialog
-			@closeDialog false
 			uc = new UModifyAbsences(@selectedAbsence, @allResources, callback, @dialogAbsences)
 			uc.execute()
 			)
@@ -77,8 +74,8 @@ class AbsencesViewmodel
 			@showAbsences.splice index, 1
 		timeline = new Mnd.Timeline(@showAbsences, @selectedTimelineItem)
 		timeline.draw()
-		# set dialog to close; variable caught in dialog binding
-		@closeDialog true
+		# set dialog data to null, dialog binding closes the dialog
+		@dialogAbsences null
 	createVisualCuesForAbsences: (data) =>
 		uc = new UCreateVisualCuesForAbsences 30, (data) => console.log 'callback succesful: ' + data
 		uc.execute()
