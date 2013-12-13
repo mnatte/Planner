@@ -15,8 +15,6 @@
       this.saveSelectedAbsence = __bind(this.saveSelectedAbsence, this);
       console.log('ModifyAbsencesViewmodel instantiated');
       console.log(this.selectedAbsence);
-      console.log(this.allResources);
-      console.log(this.modal);
       Period.extend(RCrud);
       Period.extend(RPeriodSerialize);
       Resource.extend(RTeamMember);
@@ -26,6 +24,7 @@
           p = _ref[_i];
           if (p.id === this.selectedAbsence().person.id) this.selectedPerson = p;
         }
+        console.log(this.selectedPerson);
       }
       this.selectedResource = ko.observable(this.selectedPerson);
     }

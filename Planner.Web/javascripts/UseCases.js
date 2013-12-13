@@ -1,5 +1,5 @@
 (function() {
-  var UAddAssignments, UAjax, UCalculateNeededResources, UCreateVisualCuesForAbsences, UCreateVisualCuesForGates, UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayBurndown, UDisplayEnvironments, UDisplayEnvironmentsGraph, UDisplayPhases, UDisplayPlannedHoursPerActivityArtefactProject, UDisplayPlanningForMultipleResources, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminEnvironments, ULoadAdminMeetings, ULoadAdminProcesses, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAbsences, UModifyAssignment, UPersistAndRefresh, UPlanEnvironment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUnAssignEnvironment, UUpdateDeliverableStatus, UUpdateScreen, root,
+  var UAddAssignments, UAjax, UCalculateNeededResources, UCreateVisualCuesForAbsences, UCreateVisualCuesForGates, UDeleteAssignment, UDisplayAbsences, UDisplayAssignments, UDisplayBurndown, UDisplayEnvironments, UDisplayEnvironmentsGraph, UDisplayPhases, UDisplayPlannedHoursPerActivityArtefactProject, UDisplayPlanningForMultipleResources, UDisplayPlanningForResource, UDisplayPlanningOverview, UDisplayReleaseOverview, UDisplayReleasePhases, UDisplayReleasePlanningInTimeline, UDisplayReleaseProgress, UDisplayReleaseProgressOverview, UDisplayReleaseStatus, UDisplayReleaseTimeline, UDisplayResourcesAvailability, UGetAvailableHoursForTeamMemberFromNow, ULoadAdminActivities, ULoadAdminDeliverables, ULoadAdminEnvironments, ULoadAdminMeetings, ULoadAdminProcesses, ULoadAdminProjects, ULoadAdminReleases, ULoadAdminResources, ULoadPlanResources, ULoadUpdateReleaseStatus, UModifyAbsences, UModifyAssignment, UModifyResourceAssignment, UPersistAndRefresh, UPlanEnvironment, URefreshView, URefreshViewAfterCheckPeriod, UReloadAbsenceInTimeline, URescheduleMilestone, UReschedulePhase, UUnAssignEnvironment, UUpdateDeliverableStatus, UUpdateScreen, root,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -748,7 +748,7 @@
         _ref = this.viewModelObservableCollection();
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           r = _ref[_i];
-          if (r.id === refreshed.id) oldItem = r;
+          if (+r.id === +refreshed.id) oldItem = r;
         }
         index = this.viewModelObservableCollection().indexOf(oldItem);
         this.viewModelObservableCollection.splice(index, 1, refreshed);
@@ -897,10 +897,7 @@
       var json,
         _this = this;
       console.log('execute UModifyAssignment');
-      console.log(this.assignment);
       json = ko.toJSON(this.assignment);
-      console.log(json);
-      console.log(this.sourceView);
       if (this.sourceView === "release") {
         return this.assignment.resource.planForRelease(this.assignment.release, this.assignment.project, this.assignment.milestone, this.assignment.deliverable, this.assignment.activity, this.assignment.period, this.assignment.focusFactor, function(data) {
           return _this.refreshData(data);
@@ -915,6 +912,33 @@
     return UModifyAssignment;
 
   })(UPersistAndRefresh);
+
+  UModifyResourceAssignment = (function() {
+
+    function UModifyResourceAssignment(assignment, viewModelObservableCollection, selectedObservable, updateViewUsecase, observableShowform) {
+      this.assignment = assignment;
+      this.viewModelObservableCollection = viewModelObservableCollection;
+      this.selectedObservable = selectedObservable;
+      this.updateViewUsecase = updateViewUsecase;
+      this.observableShowform = observableShowform;
+    }
+
+    UModifyResourceAssignment.prototype.execute = function() {
+      var json, res;
+      console.log('execute UModifyResourceAssignment');
+      json = ko.toJSON(this.assignment);
+      Resource.extend(RLookUp);
+      res = this.assignment.resource.planAndReturnResource(this.assignment.release, this.assignment.project, this.assignment.milestone, this.assignment.deliverable, this.assignment.activity, this.assignment.period, this.assignment.focusFactor);
+      console.log(res);
+      res.refreshInCollection(this.viewModelObservableCollection);
+      if (this.selectedObservable) this.selectedObservable(res);
+      if (this.observableShowform) this.observableShowform(null);
+      if (this.updateViewUsecase) return this.updateViewUsecase.execute();
+    };
+
+    return UModifyResourceAssignment;
+
+  })();
 
   UAddAssignments = (function(_super) {
 
@@ -1531,6 +1555,8 @@
   root.UDeleteAssignment = UDeleteAssignment;
 
   root.UAddAssignments = UAddAssignments;
+
+  root.UModifyResourceAssignment = UModifyResourceAssignment;
 
   root.URefreshView = URefreshView;
 

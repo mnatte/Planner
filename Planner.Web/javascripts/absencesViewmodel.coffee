@@ -8,8 +8,6 @@ class AbsencesViewmodel
 	constructor: (@allResources) ->
 		# ctor is executed in context of INSTANCE. Therfore @ refers here to CURRENT INSTANCE and attaches selectedPhase to all instances (since object IS ctor)
 		# enable persistence of instances of Period (absences)
-		Period.extend RCrud
-		Period.extend RPeriodSerialize
 		Resource.extend RTeamMember
 		@selectedTimelineItem = ko.observable()
 		@selectedAbsence = ko.observable()
@@ -76,6 +74,7 @@ class AbsencesViewmodel
 		timeline.draw()
 		# set dialog data to null, dialog binding closes the dialog
 		@dialogAbsences null
+
 	createVisualCuesForAbsences: (data) =>
 		uc = new UCreateVisualCuesForAbsences 30, (data) => console.log 'callback succesful: ' + data
 		uc.execute()

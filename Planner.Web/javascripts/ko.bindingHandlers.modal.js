@@ -36,7 +36,7 @@ ko.bindingHandlers.modal = {
     update: function (element, valueAccessor, allBindings, vm, context) {
         var data = ko.utils.unwrapObservable(valueAccessor());
         console.log("update modal");
-        console.log(context.$data.closeDialog());
+        //console.log(context.$data.closeDialog());
         //show or hide the modal depending on whether the associated data is populated
         if (data) {
             $(element).modal();

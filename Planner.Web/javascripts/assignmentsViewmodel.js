@@ -7,33 +7,43 @@
   AssignmentsViewmodel = (function() {
 
     function AssignmentsViewmodel(allResources) {
-      this.afterMail = __bind(this.afterMail, this);
-      this.updatePeriod = __bind(this.updatePeriod, this);
       var threeMonthsLater, weekLater,
         _this = this;
+      this.allResources = allResources;
+      this.refreshTimeline = __bind(this.refreshTimeline, this);
+      this.afterMail = __bind(this.afterMail, this);
+      this.updatePeriod = __bind(this.updatePeriod, this);
       Period.extend(RCrud);
       Period.extend(RPeriodSerialize);
       Resource.extend(RTeamMember);
+      this.showResources = ko.observableArray(this.allResources);
+      this.includeResources = ko.observableArray();
       this.selectedTimelineItem = ko.observable();
       this.selectedAbsence = ko.observable();
-      this.selectedResource = ko.observable();
+      this.dialogAbsences = ko.observable();
+      this.selectedAssignment = ko.observable();
       this.selectedTimelineItem.subscribe(function(newValue) {
         console.log(newValue);
         _this.selectedAbsence(newValue.dataObject);
-        return _this.selectedResource(newValue.dataObject.person);
+        if (newValue.dataObject.type() === "Period") {
+          return _this.selectedAbsence(newValue.dataObject);
+        }
       });
-      this.selectedResource.subscribe(function(newValue) {
-        return console.log('selectedResource changed: ' + newValue.fullName());
+      this.selectedAbsence.subscribe(function(newValue) {
+        var callback, uc;
+        console.log(newValue);
+        callback = function(data) {
+          return _this.refreshTimeline(data);
+        };
+        uc = new UModifyAbsences(_this.selectedAbsence, _this.allResources, callback, _this.dialogAbsences);
+        return uc.execute();
       });
-      this.allResources = ko.observableArray(allResources);
-      this.showResources = ko.observableArray(allResources);
-      this.includeResources = ko.observableArray();
       this.includeResources.subscribe(function(newValue) {
         var include;
         console.log(newValue);
         include = newValue.reduce(function(acc, x) {
           var r, resource, _i, _len, _ref;
-          _ref = _this.allResources();
+          _ref = _this.allResources;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             r = _ref[_i];
             if (+r.id === +x) resource = r;
@@ -140,6 +150,50 @@
 
     AssignmentsViewmodel.prototype.afterMail = function(data) {
       return console.log(data);
+    };
+
+    AssignmentsViewmodel.prototype.refreshTimeline = function(newItem) {
+      var a, absence, index, p, timeline, timelineItem, _i, _j, _len, _len2, _ref, _ref2;
+      console.log("refreshTimeline");
+      index = -1;
+      if (this.selectedAbsence().id > 0) {
+        _ref = this.displayData;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          a = _ref[_i];
+          if (a.dataObject === this.selectedAbsence()) timelineItem = a;
+        }
+        index = this.displayData.indexOf(timelineItem);
+      }
+      console.log(index);
+      console.log(newItem);
+      if (newItem.StartDate) {
+        absence = Period.create(newItem);
+        _ref2 = this.allResources;
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          p = _ref2[_j];
+          if (+p.id === +newItem.Person.Id) absence.person = p;
+        }
+        timelineItem = {
+          group: absence.person.fullName(),
+          start: absence.startDate.date,
+          end: absence.endDate.date,
+          content: absence.title,
+          info: absence.toString(),
+          dataObject: absence
+        };
+        console.log(timelineItem);
+        if (index > -1) {
+          this.showAssignments.splice(index, 1, timelineItem);
+        } else {
+          this.showAssignments.splice(index, 0, timelineItem);
+        }
+        this.selectedTimelineItem(timelineItem);
+      } else {
+        this.showAssignments.splice(index, 1);
+      }
+      timeline = new Mnd.Timeline(this.showAssignments, this.selectedTimelineItem);
+      timeline.draw();
+      return this.dialogAbsences(null);
     };
 
     return AssignmentsViewmodel;

@@ -65,7 +65,8 @@ class ResourceAvailabilityViewmodel
 
 	saveSelectedAssignment: =>
 		# data to persist, observableCollection to refresh, observable to refresh, callback to refresh screen, observable to hide form, dehydration method for callback
-		useCase = new UModifyAssignment(@selectedAssignment(), @allResources, @inspectResource, @updateScreenUseCase, @selectedAssignment, "resource", (json) -> Resource.create json)
+		# useCase = new UModifyAssignment(@selectedAssignment(), @allResources, @inspectResource, @updateScreenUseCase, @selectedAssignment, "resource", (json) -> Resource.create json)
+		useCase = new UModifyResourceAssignment(@selectedAssignment(), @allResources, @inspectResource, @updateScreenUseCase, @selectedAssignment)
 		useCase.execute()
 
 	deleteSelectedAssignment: =>

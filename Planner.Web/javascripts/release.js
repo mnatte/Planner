@@ -207,6 +207,10 @@
       return new Period(new Date(), endDate);
     };
 
+    Period.prototype.type = function() {
+      return "Period";
+    };
+
     return Period;
 
   })(Mixin);
@@ -250,6 +254,10 @@
         milestones.push(this.ms);
       }
       return milestones;
+    };
+
+    Milestone.prototype.type = function() {
+      return "Milestone";
     };
 
     return Milestone;
@@ -296,6 +304,10 @@
       return arr;
     };
 
+    Environment.prototype.type = function() {
+      return "Environment";
+    };
+
     return Environment;
 
   })(Mixin);
@@ -326,6 +338,10 @@
         arr.push(this.v);
       }
       return arr;
+    };
+
+    Version.prototype.type = function() {
+      return "Version";
     };
 
     return Version;
@@ -367,6 +383,10 @@
       return arr;
     };
 
+    Process.prototype.type = function() {
+      return "Process";
+    };
+
     return Process;
 
   })(Mixin);
@@ -399,6 +419,10 @@
       return phases;
     };
 
+    Phase.prototype.type = function() {
+      return "Phase";
+    };
+
     return Phase;
 
   })(Period);
@@ -423,6 +447,10 @@
 
     Week.prototype.shortNumber = function() {
       return parseInt(this.weekNr.substring(4, 6), 10);
+    };
+
+    Week.prototype.type = function() {
+      return "Week";
     };
 
     return Week;
@@ -513,6 +541,10 @@
       return releases;
     };
 
+    Release.prototype.type = function() {
+      return "Release";
+    };
+
     return Release;
 
   })(Phase);
@@ -570,6 +602,10 @@
       return projects;
     };
 
+    Project.prototype.type = function() {
+      return "Project";
+    };
+
     return Project;
 
   })(Mixin);
@@ -592,6 +628,10 @@
       var feature;
       feature = new Feature(jsonData.BusinessId, jsonData.ContactPerson, jsonData.EstimatedHours, jsonData.HoursWorked, jsonData.Priority, project, jsonData.RemainingHours, jsonData.Title, jsonData.Status);
       return feature;
+    };
+
+    Feature.prototype.type = function() {
+      return "Feature";
     };
 
     return Feature;
@@ -640,6 +680,10 @@
       return deliverables;
     };
 
+    Deliverable.prototype.type = function() {
+      return "Deliverable";
+    };
+
     return Deliverable;
 
   })(Mixin);
@@ -664,6 +708,10 @@
         status.assignedResources.push(Assignment.create(json, null, project, null));
       }
       return status;
+    };
+
+    ProjectActivityStatus.prototype.type = function() {
+      return "ProjectActivityStatus";
     };
 
     return ProjectActivityStatus;
@@ -693,6 +741,10 @@
         activities.push(this.act);
       }
       return activities;
+    };
+
+    Activity.prototype.type = function() {
+      return "Activity";
     };
 
     return Activity;
@@ -729,6 +781,10 @@
         meetings.push(this.meeting);
       }
       return meetings;
+    };
+
+    Meeting.prototype.type = function() {
+      return "Meeting";
     };
 
     return Meeting;
@@ -816,6 +872,10 @@
       return this.fullName();
     };
 
+    Resource.prototype.type = function() {
+      return "Resource";
+    };
+
     return Resource;
 
   })(Mixin);
@@ -884,6 +944,10 @@
       return assignments;
     };
 
+    Assignment.prototype.type = function() {
+      return "Assignment";
+    };
+
     return Assignment;
 
   })(Mixin);
@@ -897,6 +961,10 @@
       this.projectId = projectId;
       this.assignments = assignments;
     }
+
+    ReleaseAssignments.prototype.type = function() {
+      return "ReleaseAssignments";
+    };
 
     return ReleaseAssignments;
 

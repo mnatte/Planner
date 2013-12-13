@@ -358,15 +358,15 @@ class UPersistAndRefresh
 		if @dehydrate and @viewModelObservableCollection
 			refreshed = @dehydrate json
 			# replace old item in collection for new one
-			oldItem = r for r in @viewModelObservableCollection() when r.id is refreshed.id
+			oldItem = r for r in @viewModelObservableCollection() when +r.id is +refreshed.id
 			#console.log oldItem
 			index = @viewModelObservableCollection().indexOf(oldItem)
+			# index = index of item to remove, 1 is amount to be removed, refreshed is item to be inserted there
 			@viewModelObservableCollection.splice index, 1, refreshed
 		if @selectedObservable
 			@selectedObservable refreshed
 		if @observableShowform
 			@observableShowform null
-		# i = index of item to remove, 1 is amount to be removed, rel is item to be inserted there
 		if @updateViewUsecase
 			@updateViewUsecase.execute()
 
@@ -419,16 +419,40 @@ class UModifyAssignment extends UPersistAndRefresh
 		super @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate
 	execute: ->
 		console.log 'execute UModifyAssignment'
-		console.log @assignment
+		#console.log @assignment
 		json = ko.toJSON(@assignment)
-		console.log json
-		console.log @sourceView
+		#console.log json
+		#console.log @sourceView
+
+		# from release sourceView a new Release object is returned containing the updated assignments. This Release is the @selectedObservable to be placed in the 
+		# @viewModelObservableCollection which is allReleases
 		if @sourceView is "release"
 			# rel, proj, ms, del, act, per, ff
 			@assignment.resource.planForRelease(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, @assignment.focusFactor, (data) => @refreshData(data))
+		# from resource sourceView a new Person object is returned containing the updated assignments. This Person is the @selectedObservable to be placed in the 
+		# @viewModelObservableCollection which is allResources
 		else if @sourceView is "resource"
 			# rel, proj, ms, del, act, per, ff
 			@assignment.resource.plan(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, @assignment.focusFactor, (data) => @refreshData(data))
+
+class UModifyResourceAssignment
+	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in
+	constructor: (@assignment, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform) ->
+		# super @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate
+	execute: ->
+		console.log 'execute UModifyResourceAssignment'
+		json = ko.toJSON(@assignment)
+		Resource.extend RLookUp
+		# rel, proj, ms, del, act, per, ff
+		res = @assignment.resource.planAndReturnResource(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, @assignment.focusFactor)
+		console.log res
+		res.refreshInCollection @viewModelObservableCollection
+		if @selectedObservable
+			@selectedObservable res
+		if @observableShowform
+			@observableShowform null
+		if @updateViewUsecase
+			@updateViewUsecase.execute()
 
 class UAddAssignments extends UPersistAndRefresh
 	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in
@@ -763,6 +787,7 @@ root.ULoadUpdateReleaseStatus = ULoadUpdateReleaseStatus
 root.UModifyAssignment = UModifyAssignment
 root.UDeleteAssignment = UDeleteAssignment
 root.UAddAssignments = UAddAssignments
+root.UModifyResourceAssignment = UModifyResourceAssignment
 
 root.URefreshView = URefreshView
 root.UDisplayAssignments = UDisplayAssignments

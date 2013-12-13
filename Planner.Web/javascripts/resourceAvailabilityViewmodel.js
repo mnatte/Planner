@@ -107,9 +107,7 @@
 
     ResourceAvailabilityViewmodel.prototype.saveSelectedAssignment = function() {
       var useCase;
-      useCase = new UModifyAssignment(this.selectedAssignment(), this.allResources, this.inspectResource, this.updateScreenUseCase, this.selectedAssignment, "resource", function(json) {
-        return Resource.create(json);
-      });
+      useCase = new UModifyResourceAssignment(this.selectedAssignment(), this.allResources, this.inspectResource, this.updateScreenUseCase, this.selectedAssignment);
       return useCase.execute();
     };
 

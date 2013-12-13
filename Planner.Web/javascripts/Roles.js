@@ -1,5 +1,5 @@
 (function() {
-  var RCrud, RDeliverableStatus, RGroupBy, RMoveItem, RPlanEnvironment, RScheduleItem, RSchedulePeriod, RSimpleCrud, RTeamMember, root,
+  var RCrud, RDeliverableStatus, RGroupBy, RLookUp, RMoveItem, RPlanEnvironment, RScheduleItem, RSchedulePeriod, RSimpleCrud, RTeamMember, root,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     _this = this;
 
@@ -49,6 +49,31 @@
             set.items.push(item);
           }
           return this.sets;
+        }
+      });
+    }
+  };
+
+  RLookUp = {
+    extended: function() {
+      return this.include({
+        lookUp: function(collection) {
+          var i, _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = collection.length; _i < _len; _i++) {
+            i = collection[_i];
+            if (+i.id === +this.id) _results.push(i);
+          }
+          return _results;
+        },
+        refreshInCollection: function(collection) {
+          var index, oldItem, r, _i, _len;
+          for (_i = 0, _len = collection.length; _i < _len; _i++) {
+            r = collection[_i];
+            if (+r.id === +this.id) oldItem = r;
+          }
+          index = collection.indexOf(oldItem);
+          return collection.splice(index, 1, this);
         }
       });
     }
@@ -344,6 +369,13 @@
               return console.log("AJAX SAVE error: " + errorThrown);
             }
           });
+        },
+        planAndReturnResource: function(rel, proj, ms, del, act, per, ff) {
+          var resource;
+          resource = this.plan(rel, proj, ms, del, act, per, ff, function(json) {
+            return Resource.create(json);
+          });
+          return console.log(resource);
         },
         unassign: function(rel, proj, ms, del, act, per, callback) {
           return $.ajax("/planner/Resource/UnAssign", {
@@ -714,5 +746,7 @@
   root.RDeliverableStatus = RDeliverableStatus;
 
   root.RPlanEnvironment = RPlanEnvironment;
+
+  root.RLookUp = RLookUp;
 
 }).call(this);

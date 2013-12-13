@@ -175,6 +175,8 @@ class Period extends Mixin
 		new Period(DateFormatter.createJsDateFromJson(jsonData.StartDate), DateFormatter.createJsDateFromJson(jsonData.EndDate), jsonData.Title, jsonData.Id)
 	@createFromNow: (endDate) ->
 		new Period(new Date(), endDate)
+	type: ->
+		"Period"
 
 class Milestone extends Mixin
 	constructor: (@id, date, @time, @title, @description, @phaseId, @phaseTitle) ->
@@ -194,6 +196,8 @@ class Milestone extends Mixin
 			@ms = Milestone.create(ms)
 			milestones.push @ms
 		milestones
+	type: ->
+		"Milestone"
 
 class Environment extends Mixin
 	constructor: (@id, @name, @description, @location, @shortName) ->
@@ -211,6 +215,8 @@ class Environment extends Mixin
 			@env = Environment.create(e)
 			arr.push @env
 		arr
+	type: ->
+		"Environment"
 
 class Version extends Mixin
 	constructor: (@id, @number, @description, @name) ->
@@ -223,6 +229,8 @@ class Version extends Mixin
 			@v = Version.create(e)
 			arr.push @v
 		arr
+	type: ->
+		"Version"
 
 class Process extends Mixin
 	constructor: (@id, @title, @description, @shortName, @type) ->
@@ -238,6 +246,8 @@ class Process extends Mixin
 			@item = Process.create(i)
 			arr.push @item
 		arr
+	type: ->
+		"Process"
 
 class Phase extends Period
 	# attach seperate startDate, endDate and title properties to each instance
@@ -251,6 +261,8 @@ class Phase extends Period
 			@phase = Phase.create(phase)
 			phases.push @phase
 		phases
+	type: ->
+		"Phase"
 
 class Week
 	# format weekNr: YYYYww, e.g. 201248 (week 48 in 2012)
@@ -267,6 +279,8 @@ class Week
 		new Period(startdate, enddate, "week " + @weekNr)
 	shortNumber: ->
 		parseInt(@weekNr.substring(4,6),10)
+	type: ->
+		"Week"
 
 class Release extends Phase
 	constructor: (@id, @startDate, @endDate, @title, @parentId) ->
@@ -326,6 +340,8 @@ class Release extends Phase
 			rel = Release.create release
 			releases.push rel
 		releases
+	type: ->
+		"Release"
 
 # Release - Projects - Features & AssignedResources
 class Project extends Mixin
@@ -357,6 +373,8 @@ class Project extends Mixin
 			@project = Project.create(project, release)
 			projects.push @project
 		projects
+	type: ->
+		"Project"
 
 class Feature
 	constructor: (@businessId, @contactPerson, @estimatedHours, @hoursWorked, @priority, @project, @remainingHours, @title, @state) ->
@@ -365,6 +383,8 @@ class Feature
 		# create under given project
 		feature = new Feature(jsonData.BusinessId, jsonData.ContactPerson, jsonData.EstimatedHours, jsonData.HoursWorked, jsonData.Priority, project, jsonData.RemainingHours, jsonData.Title, jsonData.Status)
 		feature
+	type: ->
+		"Feature"
 
 class Deliverable extends Mixin
 	constructor: (@id, @title, @description, @format, @location, @milestone) ->
@@ -384,6 +404,8 @@ class Deliverable extends Mixin
 			@del = Deliverable.create(del)
 			deliverables.push @del
 		deliverables
+	type: ->
+		"Deliverable"
 
 class ProjectActivityStatus extends Mixin
 	constructor: (@hoursRemaining, @activity) ->
@@ -397,6 +419,8 @@ class ProjectActivityStatus extends Mixin
 		for json in jsonData.AssignedResources
 			status.assignedResources.push Assignment.create(json, null, project, null)
 		status
+	type: ->
+		"ProjectActivityStatus"
 
 class Activity extends Mixin
 	constructor: (@id, @title, @description) ->
@@ -408,6 +432,8 @@ class Activity extends Mixin
 			@act = Activity.create(act)
 			activities.push @act
 		activities
+	type: ->
+		"Activity"
 
 # Release - Meetings (- Roles?)
 class Meeting extends Mixin
@@ -421,6 +447,8 @@ class Meeting extends Mixin
 			@meeting = Meeting.create(meeting)
 			meetings.push @meeting
 		meetings
+	type: ->
+		"Meeting"
 
 class Resource extends Mixin
 	constructor: (@id, @firstName, @middleName, @lastName, @initials, @hoursPerWeek, @email, @phoneNumber, @company, @function) ->
@@ -463,6 +491,9 @@ class Resource extends Mixin
 		resources
 	toString: ->
 		@fullName()
+	type: ->
+		"Resource"
+
 
 class Assignment extends Mixin
 	constructor: (@id, @release, @resource, @project, @focusFactor, startDate, endDate, @activity, @milestone, @deliverable) ->
@@ -501,10 +532,14 @@ class Assignment extends Mixin
 			@assignment = Assignment.create(assignment, resource, project, release)
 			assignments.push @assignment
 		assignments
+	type: ->
+		"Assignment"
 
 # datastructure for submitting all assignments with release
 class ReleaseAssignments extends Mixin
 	constructor: (@phaseId, @projectId, @assignments) ->
+	type: ->
+		"ReleaseAssignments"
 
 # export to root object
 root.Period = Period

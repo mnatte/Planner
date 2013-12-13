@@ -5,7 +5,7 @@
 root = global ? window
 
 class AssignmentsViewmodel
-	constructor: (allResources) ->
+	constructor: (@allResources) ->
 		# ctor is executed in context of INSTANCE. Therfore @ refers here to CURRENT INSTANCE and attaches selectedPhase to all instances (since object IS ctor)
 		#@selectedPhase = ko.observable()
 		#@canShowDetails = ko.observable(false)
@@ -13,26 +13,38 @@ class AssignmentsViewmodel
 		Period.extend RCrud
 		Period.extend RPeriodSerialize
 		Resource.extend RTeamMember
+		#@allResources = ko.observableArray(allResources)
+		@showResources = ko.observableArray(@allResources)
+		@includeResources = ko.observableArray()
+
 		@selectedTimelineItem = ko.observable()
 		@selectedAbsence = ko.observable()
-		@selectedResource = ko.observable()
-		#@absences = ko.observableArray()
+		# observable for 'modify absences' dialog. also passed to UModifyAbsences usecase
+		@dialogAbsences = ko.observable()
+
+		@selectedAssignment = ko.observable()
+		#@selectedResource = ko.observable()
 		@selectedTimelineItem.subscribe((newValue) => 
 			console.log newValue
 			@selectedAbsence newValue.dataObject
-			@selectedResource newValue.dataObject.person
+			#@selectedResource newValue.dataObject.person
+			if newValue.dataObject.type() is "Period"
+				@selectedAbsence newValue.dataObject
 			)
-		@selectedResource.subscribe((newValue) =>
-			console.log 'selectedResource changed: ' + newValue.fullName()
+		@selectedAbsence.subscribe((newValue) => 
+			console.log newValue
+			callback = (data) => @refreshTimeline(data)
+			uc = new UModifyAbsences(@selectedAbsence, @allResources, callback, @dialogAbsences)
+			uc.execute()
 			)
-		@allResources = ko.observableArray(allResources)
-		@showResources = ko.observableArray(allResources)
-		@includeResources = ko.observableArray()
+		#@selectedResource.subscribe((newValue) =>
+			#console.log 'selectedResource changed: ' + newValue.fullName()
+			#)
 		@includeResources.subscribe((newValue) => 
 			console.log newValue
 			include = newValue.reduce (acc, x) =>
 							#console.log x
-							resource = r for r in @allResources() when +r.id is +x
+							resource = r for r in @allResources when +r.id is +x
 							#console.log resource
 							acc.push resource
 						 acc
@@ -92,6 +104,38 @@ class AssignmentsViewmodel
 
 	afterMail: (data) =>
 		console.log data
+
+	refreshTimeline: (newItem) =>
+		console.log "refreshTimeline"
+		index = -1 # index set for new absences
+		if @selectedAbsence().id > 0 # update of existing absence
+			timelineItem = a for a in @displayData when a.dataObject is @selectedAbsence()
+			index = @displayData.indexOf(timelineItem)
+		console.log index
+		console.log newItem
+		# check whether the returned json is an absence or just a message
+		if newItem.StartDate
+			absence = Period.create newItem
+			#console.log newItem.Person.Id
+			#console.log @allResources
+			absence.person = p for p in @allResources when +p.id is +newItem.Person.Id
+			timelineItem = {group: absence.person.fullName(), start: absence.startDate.date, end: absence.endDate.date, content: absence.title, info: absence.toString(), dataObject: absence}
+			#console.log absence
+			console.log timelineItem
+			if index > -1
+				# index = index of item to remove, 1 is amount to be removed, timelineItem is item to be inserted there
+				@showAssignments.splice index, 1, timelineItem
+			else
+				@showAssignments.splice index, 0, timelineItem
+			@selectedTimelineItem timelineItem
+		else
+			# just remove item from timeline
+			# index = index of item to remove, 1 is amount to be removed, timelineItem is item to be inserted there
+			@showAssignments.splice index, 1
+		timeline = new Mnd.Timeline(@showAssignments, @selectedTimelineItem)
+		timeline.draw()
+		# set dialog data to null, dialog binding closes the dialog
+		@dialogAbsences null
 
 # export to root object
 root.AssignmentsViewmodel = AssignmentsViewmodel

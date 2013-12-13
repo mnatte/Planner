@@ -39,6 +39,17 @@ RGroupBy =
 						# console.log("added #{item} to set #{set.label}")
 					@sets
 
+RLookUp = 
+	extended: ->
+		@include
+			lookUp: (collection) ->
+				i for i in collection when +i.id is +@id
+			refreshInCollection: (collection) ->
+				oldItem = r for r in collection when +r.id is +@id
+				index = collection.indexOf(oldItem)
+				# index = index of item to remove, 1 is amount to be removed, refreshed is item to be inserted there
+				collection.splice index, 1, @
+
 RTeamMember = 
 	createSnapshot: (jsonData) ->
 		res = new Resource(jsonData.Id, jsonData.FirstName, jsonData.MiddleName, jsonData.LastName, jsonData.Initials, jsonData.AvailableHoursPerWeek, jsonData.Email, jsonData.PhoneNumber)
@@ -179,6 +190,9 @@ RTeamMember =
 						callback data
 					error: (XHR, status, errorThrown) ->
 						console.log "AJAX SAVE error: #{errorThrown}"
+			planAndReturnResource: (rel, proj, ms, del, act, per, ff) ->
+				resource = @plan(rel, proj, ms, del, act, per, ff, (json) -> Resource.create json)
+				console.log resource
 			unassign: (rel, proj, ms, del, act, per, callback) ->
 				$.ajax "/planner/Resource/UnAssign",
 					dataType: "json"
@@ -417,4 +431,5 @@ root.RScheduleItem = RScheduleItem
 root.RSchedulePeriod = RSchedulePeriod
 root.RDeliverableStatus = RDeliverableStatus
 root.RPlanEnvironment = RPlanEnvironment
+root.RLookUp = RLookUp
 

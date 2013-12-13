@@ -1,7 +1,7 @@
 ﻿<form>
     <label>Resource:</label><select data-bind="options: allResources, optionsText: function(item) { return item.fullName() }, value: selectedResource, optionsCaption: 'Choose...', enable:selectedAbsence() && selectedAbsence().id === 0"></select>
-    <label>Absence title:</label><input type="text" data-bind="value: selectedAbsence().title, valueUpdate: 'afterkeydown'" />
     <!-- ko with: selectedAbsence --><!-- the 'ko with' implementation here is the trick to get the period binding correct-->
+    <label>Absence title:</label><input type="text" data-bind="value: title, valueUpdate: 'afterkeydown'" />
     <label>Start date (dd-mm-yyyy):</label><input type="text" data-bind="value: startDate.dateString" />
     <label>End date (dd-mm-yyyy):</label><input type="text" data-bind="value: endDate.dateString" />
     <!--/ko-->

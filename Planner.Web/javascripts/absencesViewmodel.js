@@ -12,8 +12,6 @@
       this.createVisualCuesForAbsences = __bind(this.createVisualCuesForAbsences, this);
       this.refreshTimeline = __bind(this.refreshTimeline, this);
       this.newAbsence = __bind(this.newAbsence, this);
-      Period.extend(RCrud);
-      Period.extend(RPeriodSerialize);
       Resource.extend(RTeamMember);
       this.selectedTimelineItem = ko.observable();
       this.selectedAbsence = ko.observable();

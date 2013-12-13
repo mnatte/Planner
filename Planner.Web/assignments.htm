@@ -30,6 +30,7 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/timeline.css" />
     <link rel="stylesheet" href="stylesheets/icon_styles.css">
     <link rel="stylesheet" href="stylesheets/sexybuttons.css">
+    <link rel="stylesheet" href="stylesheets/jquery.modal.css">
 
 	<!-- Favicons
 	================================================== -->
@@ -47,6 +48,8 @@
     <script type="text/javascript" src="Scripts/datehelper.js"></script>
     <script type="text/javascript" src="Scripts/timeline-min.js"></script>
     <script type="text/javascript" src="javascripts/Timeline.js"></script>
+    <script type="text/javascript" src="Scripts/jquery.modal.min.js"></script>
+    <script type="text/javascript" src="javascripts/ko.bindingHandlers.modal.js"></script>
         
     <script type="text/javascript" src="javascripts/Mixin.js"></script>
     <script type="text/javascript" src="javascripts/release.js"></script>
@@ -55,6 +58,7 @@
     <script type="text/javascript" src="javascripts/ajax.js"></script>
     <script type="text/javascript" src="javascripts/Roles.js"></script>
     <script type="text/javascript" src="javascripts/UseCases.js"></script>
+    <script type="text/javascript" src="javascripts/usecaseViewmodels/modifyAbsencesViewmodel.js"></script>
 </head>
 <body>
 <!-- Primary Page Layout
@@ -92,6 +96,8 @@
                 <div id="details"></div>
             </div>
         </section>
+        <!--as soon as an absence is selected (or created) dialogAbsences gets this absence as its value property-->
+        <div class="ten columns" id="modalAbsencesForm" data-bind="modal: dialogAbsences"></div>
 </div><!-- container -->
     <script type="text/javascript">
 
