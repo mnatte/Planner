@@ -26,9 +26,10 @@ class AssignmentsViewmodel
 		#@selectedResource = ko.observable()
 		@selectedTimelineItem.subscribe((newValue) => 
 			console.log newValue
-			@selectedAbsence newValue.dataObject
+			#@selectedAbsence newValue.dataObject
 			#@selectedResource newValue.dataObject.person
 			if newValue.dataObject.type() is "Period"
+				console.log "is Period"
 				@selectedAbsence newValue.dataObject
 			)
 		@selectedAbsence.subscribe((newValue) => 

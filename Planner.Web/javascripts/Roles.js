@@ -370,13 +370,6 @@
             }
           });
         },
-        planAndReturnResource: function(rel, proj, ms, del, act, per, ff) {
-          var resource;
-          resource = this.plan(rel, proj, ms, del, act, per, ff, function(json) {
-            return Resource.create(json);
-          });
-          return console.log(resource);
-        },
         unassign: function(rel, proj, ms, del, act, per, callback) {
           return $.ajax("/planner/Resource/UnAssign", {
             dataType: "json",

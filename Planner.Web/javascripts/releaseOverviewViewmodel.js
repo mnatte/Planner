@@ -119,11 +119,13 @@
         console.log(newValue);
         if (newValue) {
           x = newValue.dataObject;
-          x.resourceName = newValue.dataObject.resource.fullName();
-          x.resourceId = newValue.dataObject.resource.id;
-          console.log(x);
+          if (x.type() === "Assignment") {
+            x.resourceName = newValue.dataObject.resource.fullName();
+            x.resourceId = newValue.dataObject.resource.id;
+            console.log(x);
+            return _this.selectedAssignment(x);
+          }
         }
-        return _this.selectedAssignment(x);
       });
       updateScreenUseCases = [];
       updateScreenFunctions = [];

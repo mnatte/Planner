@@ -438,21 +438,13 @@ class UModifyAssignment extends UPersistAndRefresh
 class UModifyResourceAssignment
 	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in
 	constructor: (@assignment, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform) ->
-		# super @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate
+		 super @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, (json) -> Resource.create json
 	execute: ->
 		console.log 'execute UModifyResourceAssignment'
-		json = ko.toJSON(@assignment)
-		Resource.extend RLookUp
+		#json = ko.toJSON(@assignment)
 		# rel, proj, ms, del, act, per, ff
-		res = @assignment.resource.planAndReturnResource(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, @assignment.focusFactor)
-		console.log res
-		res.refreshInCollection @viewModelObservableCollection
-		if @selectedObservable
-			@selectedObservable res
-		if @observableShowform
-			@observableShowform null
-		if @updateViewUsecase
-			@updateViewUsecase.execute()
+		@assignment.resource.plan(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, @assignment.focusFactor, (data) => @refreshData(data))
+		
 
 class UAddAssignments extends UPersistAndRefresh
 	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in

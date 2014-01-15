@@ -46,7 +46,9 @@ namespace Mnd.Planner.Domain.Repositories
         protected override Resource CreateItemByDbRow(System.Data.SqlClient.SqlDataReader reader)
         {
             var res = new Resource { Id = int.Parse(reader["Id"].ToString()), FirstName = reader["FirstName"].ToString(), MiddleName = reader["MiddleName"].ToString(), LastName = reader["LastName"].ToString(), Initials = reader["Initials"].ToString(), Email = reader["Email"].ToString(), PhoneNumber = reader["PhoneNumber"].ToString(), AvailableHoursPerWeek = int.Parse(reader["HoursPerWeek"].ToString()) };
-            var absences = this.GetAbsences(res.Id);
+
+            // Only absences for a coming year (365 days)
+            var absences = this.GetAbsences(res.Id, 365);
             foreach (var abs in absences)
             {
                 res.PeriodsAway.Add(abs);
@@ -84,6 +86,11 @@ namespace Mnd.Planner.Domain.Repositories
             return lst;
         }
 
+        /// <summary>
+        /// Get all absences, also in the past
+        /// </summary>
+        /// <param name="resourceId"></param>
+        /// <returns></returns>
         public List<Absence> GetAbsences(int resourceId)
         {
             var conn = new SqlConnection(this.ConnectionString);
@@ -91,6 +98,36 @@ namespace Mnd.Planner.Domain.Repositories
             var cmd = new SqlCommand("sp_get_person_absences", conn);
             cmd.CommandType = System.Data.CommandType.StoredProcedure;
             cmd.Parameters.Add("@ResourceId", System.Data.SqlDbType.Int).Value = resourceId;
+            var lst = new List<Absence>();
+
+            using (conn)
+            {
+                conn.Open();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var ass = new Absence { Id = int.Parse(reader["Id"].ToString()), Title = reader["Title"].ToString(), EndDate = DateTime.Parse(reader["EndDate"].ToString()), StartDate = DateTime.Parse(reader["StartDate"].ToString()) };
+                        lst.Add(ass);
+                    }
+                }
+            }
+            return lst;
+        }
+
+        /// <summary>
+        /// Get absences for the next amount of days as specified
+        /// </summary>
+        /// <param name="resourceId"></param>
+        /// <returns></returns>
+        public List<Absence> GetAbsences(int resourceId, int amountDays)
+        {
+            var conn = new SqlConnection(this.ConnectionString);
+
+            var cmd = new SqlCommand("sp_get_person_absences_for_coming_days", conn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.Add("@ResourceId", System.Data.SqlDbType.Int).Value = resourceId;
+            cmd.Parameters.Add("@AmountDays", System.Data.SqlDbType.Int).Value = amountDays;
             var lst = new List<Absence>();
 
             using (conn)

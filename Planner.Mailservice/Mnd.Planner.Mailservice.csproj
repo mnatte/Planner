@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EmailMilestoneStatuses.cs" />
     <Compile Include="MailService.cs">
       <SubType>Component</SubType>
     </Compile>

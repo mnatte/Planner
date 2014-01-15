@@ -24,8 +24,8 @@
       this.selectedAssignment = ko.observable();
       this.selectedTimelineItem.subscribe(function(newValue) {
         console.log(newValue);
-        _this.selectedAbsence(newValue.dataObject);
         if (newValue.dataObject.type() === "Period") {
+          console.log("is Period");
           return _this.selectedAbsence(newValue.dataObject);
         }
       });

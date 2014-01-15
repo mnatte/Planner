@@ -190,9 +190,6 @@ RTeamMember =
 						callback data
 					error: (XHR, status, errorThrown) ->
 						console.log "AJAX SAVE error: #{errorThrown}"
-			planAndReturnResource: (rel, proj, ms, del, act, per, ff) ->
-				resource = @plan(rel, proj, ms, del, act, per, ff, (json) -> Resource.create json)
-				console.log resource
 			unassign: (rel, proj, ms, del, act, per, callback) ->
 				$.ajax "/planner/Resource/UnAssign",
 					dataType: "json"

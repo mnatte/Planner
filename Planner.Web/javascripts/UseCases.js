@@ -921,19 +921,17 @@
       this.selectedObservable = selectedObservable;
       this.updateViewUsecase = updateViewUsecase;
       this.observableShowform = observableShowform;
+      UModifyResourceAssignment.__super__.constructor.call(this, this.viewModelObservableCollection, this.selectedObservable, this.updateViewUsecase, this.observableShowform, function(json) {
+        return Resource.create(json);
+      });
     }
 
     UModifyResourceAssignment.prototype.execute = function() {
-      var json, res;
+      var _this = this;
       console.log('execute UModifyResourceAssignment');
-      json = ko.toJSON(this.assignment);
-      Resource.extend(RLookUp);
-      res = this.assignment.resource.planAndReturnResource(this.assignment.release, this.assignment.project, this.assignment.milestone, this.assignment.deliverable, this.assignment.activity, this.assignment.period, this.assignment.focusFactor);
-      console.log(res);
-      res.refreshInCollection(this.viewModelObservableCollection);
-      if (this.selectedObservable) this.selectedObservable(res);
-      if (this.observableShowform) this.observableShowform(null);
-      if (this.updateViewUsecase) return this.updateViewUsecase.execute();
+      return this.assignment.resource.plan(this.assignment.release, this.assignment.project, this.assignment.milestone, this.assignment.deliverable, this.assignment.activity, this.assignment.period, this.assignment.focusFactor, function(data) {
+        return _this.refreshData(data);
+      });
     };
 
     return UModifyResourceAssignment;

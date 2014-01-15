@@ -81,11 +81,12 @@ class ReleaseOverviewViewmodel
 			console.log newValue
 			if newValue
 				x = newValue.dataObject
-				x.resourceName = newValue.dataObject.resource.fullName()
-				x.resourceId = newValue.dataObject.resource.id
-				#x.period = newValue.dataObject.assignedPeriod
-				console.log x
-			@selectedAssignment x
+				if x.type() is "Assignment"
+					x.resourceName = newValue.dataObject.resource.fullName()
+					x.resourceId = newValue.dataObject.resource.id
+						#x.period = newValue.dataObject.assignedPeriod
+					console.log x
+					@selectedAssignment x
 			)
 		updateScreenUseCases = []
 		updateScreenFunctions = []
