@@ -53,8 +53,8 @@ namespace Mnd.Planner.Web.Controllers
         {
             var viewPeriod = new Period { StartDate = model.StartDate.ToDateTimeFromDutchString(), EndDate = model.EndDate.ToDateTimeFromDutchString() };
             var uc = new EmailResourcePlanning(viewPeriod);
-            uc.Execute();
             return this.Json(string.Format("Resourceplanning is mailed for {0} - {1}", model.StartDate, model.EndDate), JsonRequestBehavior.AllowGet);
+            uc.Execute();
         }
 
         [HttpPost]
