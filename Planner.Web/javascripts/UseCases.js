@@ -913,14 +913,17 @@
 
   })(UPersistAndRefresh);
 
-  UModifyResourceAssignment = (function() {
+  UModifyResourceAssignment = (function(_super) {
 
-    function UModifyResourceAssignment(assignment, viewModelObservableCollection, selectedObservable, updateViewUsecase, observableShowform) {
+    __extends(UModifyResourceAssignment, _super);
+
+    function UModifyResourceAssignment(assignment, viewModelObservableCollection, selectedObservable, updateViewUsecase, observableShowform, dialogObservable) {
       this.assignment = assignment;
       this.viewModelObservableCollection = viewModelObservableCollection;
       this.selectedObservable = selectedObservable;
       this.updateViewUsecase = updateViewUsecase;
       this.observableShowform = observableShowform;
+      this.dialogObservable = dialogObservable;
       UModifyResourceAssignment.__super__.constructor.call(this, this.viewModelObservableCollection, this.selectedObservable, this.updateViewUsecase, this.observableShowform, function(json) {
         return Resource.create(json);
       });
@@ -929,6 +932,10 @@
     UModifyResourceAssignment.prototype.execute = function() {
       var _this = this;
       console.log('execute UModifyResourceAssignment');
+      this.dialogObservable({
+        name: 'assignmentForm',
+        data: new ModifyAssignmentsViewmodel(this.selectedAbsence, this.allResources, this.afterSubmitCallback)
+      });
       return this.assignment.resource.plan(this.assignment.release, this.assignment.project, this.assignment.milestone, this.assignment.deliverable, this.assignment.activity, this.assignment.period, this.assignment.focusFactor, function(data) {
         return _this.refreshData(data);
       });
@@ -936,7 +943,7 @@
 
     return UModifyResourceAssignment;
 
-  })();
+  })(UPersistAndRefresh);
 
   UAddAssignments = (function(_super) {
 

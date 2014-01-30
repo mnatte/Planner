@@ -19,6 +19,9 @@ class ResourceAvailabilityViewmodel
 		@selectedTimelineItem = ko.observable()
 		@selectedAssignment = ko.observable()
 		@selectedResource = ko.observable()
+		# observable for 'modify assignments' dialog. also passed to UModifyResourceAssignment usecase
+		@dialogAssignments = ko.observable()
+
 		@selectedTimelineItem.subscribe((newValue) => 
 			console.log newValue
 			aap = newValue.assignment
@@ -29,10 +32,15 @@ class ResourceAvailabilityViewmodel
 			)
 		@selectedAssignment.subscribe((newValue) =>
 			console.log 'selectedAssignment changed: ' + newValue#.period
+			#callback = (data) => @refreshTimeline(data)
+			#uc = new UModifyAbsences(@selectedAbsence, @allResources, callback, @dialogAbsences
+			uc = new UModifyResourceAssignment(@selectedAssignment(), @allResources, @inspectResource, @updateScreenUseCase, @selectedAssignment, @dialogAssignments)
+			uc.execute()
 			)
 		@allResources.subscribe((newValue) =>
 			console.log 'allResources changed: ' + newValue
 			)
+
 		updateScreenUseCases = []
 		updateScreenUseCases.push(new URefreshView(@inspectResource, @checkPeriod()))
 		@updateScreenUseCase = new UUpdateScreen updateScreenUseCases

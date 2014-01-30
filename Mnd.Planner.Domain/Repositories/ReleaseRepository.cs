@@ -168,7 +168,9 @@ namespace Mnd.Planner.Domain.Repositories
 
                 // Release
                 // TODO: add different 'Type' value to child phases, these are also labelled 'Release', hence where clause on ParentId
-                var cmd = new SqlCommand("Select * from Phases where Type = 'Release' AND ISNULL(ParentId, 0) = 0", conn);
+
+                // filter out old releases
+                var cmd = new SqlCommand("Select * from Phases where Type = 'Release' AND ISNULL(ParentId, 0) = 0 AND EndDate >= GETDATE()", conn);
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())

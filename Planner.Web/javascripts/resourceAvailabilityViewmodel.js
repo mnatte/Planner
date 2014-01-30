@@ -25,6 +25,7 @@
       this.selectedTimelineItem = ko.observable();
       this.selectedAssignment = ko.observable();
       this.selectedResource = ko.observable();
+      this.dialogAssignments = ko.observable();
       this.selectedTimelineItem.subscribe(function(newValue) {
         var aap;
         console.log(newValue);
@@ -35,7 +36,10 @@
         return _this.selectedAssignment(newValue.assignment);
       });
       this.selectedAssignment.subscribe(function(newValue) {
-        return console.log('selectedAssignment changed: ' + newValue);
+        var uc;
+        console.log('selectedAssignment changed: ' + newValue);
+        uc = new UModifyResourceAssignment(_this.selectedAssignment(), _this.allResources, _this.inspectResource, _this.updateScreenUseCase, _this.selectedAssignment, _this.dialogAssignments);
+        return uc.execute();
       });
       this.allResources.subscribe(function(newValue) {
         return console.log('allResources changed: ' + newValue);
