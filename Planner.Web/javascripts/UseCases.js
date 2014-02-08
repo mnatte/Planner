@@ -930,14 +930,10 @@
     }
 
     UModifyResourceAssignment.prototype.execute = function() {
-      var _this = this;
       console.log('execute UModifyResourceAssignment');
-      this.dialogObservable({
+      return this.dialogObservable({
         name: 'assignmentForm',
-        data: new ModifyAssignmentsViewmodel(this.selectedAbsence, this.allResources, this.afterSubmitCallback)
-      });
-      return this.assignment.resource.plan(this.assignment.release, this.assignment.project, this.assignment.milestone, this.assignment.deliverable, this.assignment.activity, this.assignment.period, this.assignment.focusFactor, function(data) {
-        return _this.refreshData(data);
+        data: new ModifyAssignmentsViewmodel(this.selectedObservable, this.allResources, this.afterSubmitCallback)
       });
     };
 

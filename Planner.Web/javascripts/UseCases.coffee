@@ -443,9 +443,7 @@ class UModifyResourceAssignment extends UPersistAndRefresh
 		console.log 'execute UModifyResourceAssignment'
 		#json = ko.toJSON(@assignment)
 		# rel, proj, ms, del, act, per, ff
-		@dialogObservable({ name: 'assignmentForm', data: new ModifyAssignmentsViewmodel(@selectedAbsence, @allResources, @afterSubmitCallback) })
-		@assignment.resource.plan(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, @assignment.focusFactor, (data) => @refreshData(data))
-		
+		@dialogObservable({ name: 'assignmentForm', data: new ModifyAssignmentsViewmodel(@selectedObservable, @allResources, @afterSubmitCallback) })
 
 class UAddAssignments extends UPersistAndRefresh
 	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in

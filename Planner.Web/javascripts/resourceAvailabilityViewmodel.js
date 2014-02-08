@@ -38,7 +38,7 @@
       this.selectedAssignment.subscribe(function(newValue) {
         var uc;
         console.log('selectedAssignment changed: ' + newValue);
-        uc = new UModifyResourceAssignment(_this.selectedAssignment(), _this.allResources, _this.inspectResource, _this.updateScreenUseCase, _this.selectedAssignment, _this.dialogAssignments);
+        uc = new UModifyResourceAssignment(_this.selectedAssignment, _this.allResources, _this.inspectResource, _this.updateScreenUseCase, _this.selectedAssignment, _this.dialogAssignments);
         return uc.execute();
       });
       this.allResources.subscribe(function(newValue) {
@@ -111,7 +111,7 @@
 
     ResourceAvailabilityViewmodel.prototype.saveSelectedAssignment = function() {
       var useCase;
-      useCase = new UModifyResourceAssignment(this.selectedAssignment(), this.allResources, this.inspectResource, this.updateScreenUseCase, this.selectedAssignment);
+      useCase = new UModifyResourceAssignment(this.selectedAssignment, this.allResources, this.inspectResource, this.updateScreenUseCase, this.selectedAssignment);
       return useCase.execute();
     };
 

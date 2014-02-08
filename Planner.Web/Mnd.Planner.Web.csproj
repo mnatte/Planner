@@ -175,6 +175,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Content>
+    <Content Include="javascripts\usecaseViewmodels\modifyAssignmentsViewmodel.js">
+      <DependentUpon>modifyAssignmentsViewmodel.coffee</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Content>
     <Content Include="javascripts\usecaseViewmodels\modifyAbsencesViewmodel.js">
       <DependentUpon>modifyAbsencesViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -949,6 +954,10 @@
     <Content Include="Views\Shared\LogOnUserControl.ascx" />
     <Content Include="Views\Shared\Site.Master" />
     <Content Include="Views\Web.config" />
+    <None Include="javascripts\usecaseViewmodels\modifyAssignmentsViewmodel.coffee">
+      <Generator>CoffeeScriptGenerator</Generator>
+      <LastGenOutput>modifyAssignmentsViewmodel.js</LastGenOutput>
+    </None>
     <None Include="javascripts\usecaseViewmodels\modifyAbsencesViewmodel.coffee">
       <Generator>CoffeeScriptGenerator</Generator>
       <LastGenOutput>modifyAbsencesViewmodel.js</LastGenOutput>

@@ -7,37 +7,38 @@ root = global ? window
 class ModifyAssignmentsViewmodel
 	# allResources is used in the pulldown to select a resource.
 	# @selectedAbsence is an observable needed here to modify, from another view, the selected absence.
-	constructor: (@selectedAbsence, @allResources, @afterSubmitCallback) ->
+	constructor: (@selectedAssignment, @allResources, @afterSubmitCallback) ->
 		# ctor is executed in context of INSTANCE. Therfore @ refers here to CURRENT INSTANCE and attaches selectedPhase to all instances (since object IS ctor)
-		console.log 'ModifyAbsencesViewmodel instantiated'
-		console.log @selectedAbsence
+		console.log 'ModifyAssignmentsViewmodel instantiated'
+		console.log @selectedAssignment
 		#console.log @allResources
 		# enable persistence of instances of Period (absences)
 		Period.extend RCrud
 		Period.extend RPeriodSerialize
 		Resource.extend RTeamMember
 
-		if @selectedAbsence().person
-			@selectedPerson = p for p in @allResources when p.id is @selectedAbsence().person.id
+		if @selectedAssignment().person
+			@selectedPerson = p for p in @allResources when p.id is @selectedAssignment().person.id
 			console.log @selectedPerson
 
 		# @selectedResource is relevant within this context; not in the parent context
 		@selectedResource = ko.observable(@selectedPerson)
 
 
-	saveSelectedAbsence: =>
-		absence = @selectedAbsence() # set object to persist
-		if @selectedAbsence().id > 0 # update of existing absence, set personId
-			absence.personId = absence.person.id
-			delete absence.person
+	saveSelectedAssignment: =>
+		assignment = @selectedAssignment() # set object to persist
+		if @selectedAssignment().id > 0 # update of existing absence, set personId
+			assignment.personId = assignment.person.id
+			delete assignment.person
 		else
-			absence.personId = @selectedResource().id
-		console.log ko.toJSON(absence)
-		@selectedAbsence().save("/planner/Resource/SaveAbsence", ko.toJSON(absence), @afterSubmitCallback)
+			assignment.personId = @selectedResource().id
+		console.log ko.toJSON(assignment)
+		#@selectedAbsence().save("/planner/Resource/SaveAbsence", ko.toJSON(absence), @afterSubmitCallback)
+		@selectedAssignment().resource.plan(assignment.release, assignment.project, assignment.milestone, assignment.deliverable, assignment.activity, assignment.period, assignment.focusFactor, afterSubmitCallback)
 
-	deleteSelectedAbsence: =>
-		console.log @selectedAbsence()
-		@selectedAbsence().delete("/planner/Resource/DeleteAbsence/" + @selectedAbsence().id, @afterSubmitCallback)
+	deleteSelectedAssignment: =>
+		console.log @selectedAssignment()
+		#@selectedAbsence().delete("/planner/Resource/DeleteAbsence/" + @selectedAbsence().id, @afterSubmitCallback)
 
 # export to root object
 root.ModifyAssignmentsViewmodel = ModifyAssignmentsViewmodel

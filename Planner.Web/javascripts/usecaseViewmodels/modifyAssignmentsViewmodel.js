@@ -6,45 +6,46 @@
 
   ModifyAssignmentsViewmodel = (function() {
 
-    function ModifyAssignmentsViewmodel(selectedAbsence, allResources, afterSubmitCallback) {
+    function ModifyAssignmentsViewmodel(selectedAssignment, allResources, afterSubmitCallback) {
       var p, _i, _len, _ref;
-      this.selectedAbsence = selectedAbsence;
+      this.selectedAssignment = selectedAssignment;
       this.allResources = allResources;
       this.afterSubmitCallback = afterSubmitCallback;
-      this.deleteSelectedAbsence = __bind(this.deleteSelectedAbsence, this);
-      this.saveSelectedAbsence = __bind(this.saveSelectedAbsence, this);
-      console.log('ModifyAbsencesViewmodel instantiated');
-      console.log(this.selectedAbsence);
+      this.deleteSelectedAssignment = __bind(this.deleteSelectedAssignment, this);
+      this.saveSelectedAssignment = __bind(this.saveSelectedAssignment, this);
+      console.log('ModifyAssignmentsViewmodel instantiated');
+      console.log(this.selectedAssignment);
       Period.extend(RCrud);
       Period.extend(RPeriodSerialize);
       Resource.extend(RTeamMember);
-      if (this.selectedAbsence().person) {
+      if (this.selectedAssignment().person) {
         _ref = this.allResources;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           p = _ref[_i];
-          if (p.id === this.selectedAbsence().person.id) this.selectedPerson = p;
+          if (p.id === this.selectedAssignment().person.id) {
+            this.selectedPerson = p;
+          }
         }
         console.log(this.selectedPerson);
       }
       this.selectedResource = ko.observable(this.selectedPerson);
     }
 
-    ModifyAssignmentsViewmodel.prototype.saveSelectedAbsence = function() {
-      var absence;
-      absence = this.selectedAbsence();
-      if (this.selectedAbsence().id > 0) {
-        absence.personId = absence.person.id;
-        delete absence.person;
+    ModifyAssignmentsViewmodel.prototype.saveSelectedAssignment = function() {
+      var assignment;
+      assignment = this.selectedAssignment();
+      if (this.selectedAssignment().id > 0) {
+        assignment.personId = assignment.person.id;
+        delete assignment.person;
       } else {
-        absence.personId = this.selectedResource().id;
+        assignment.personId = this.selectedResource().id;
       }
-      console.log(ko.toJSON(absence));
-      return this.selectedAbsence().save("/planner/Resource/SaveAbsence", ko.toJSON(absence), this.afterSubmitCallback);
+      console.log(ko.toJSON(assignment));
+      return this.selectedAssignment().resource.plan(assignment.release, assignment.project, assignment.milestone, assignment.deliverable, assignment.activity, assignment.period, assignment.focusFactor, afterSubmitCallback);
     };
 
-    ModifyAssignmentsViewmodel.prototype.deleteSelectedAbsence = function() {
-      console.log(this.selectedAbsence());
-      return this.selectedAbsence()["delete"]("/planner/Resource/DeleteAbsence/" + this.selectedAbsence().id, this.afterSubmitCallback);
+    ModifyAssignmentsViewmodel.prototype.deleteSelectedAssignment = function() {
+      return console.log(this.selectedAssignment());
     };
 
     return ModifyAssignmentsViewmodel;

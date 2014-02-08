@@ -34,7 +34,7 @@ class ResourceAvailabilityViewmodel
 			console.log 'selectedAssignment changed: ' + newValue#.period
 			#callback = (data) => @refreshTimeline(data)
 			#uc = new UModifyAbsences(@selectedAbsence, @allResources, callback, @dialogAbsences
-			uc = new UModifyResourceAssignment(@selectedAssignment(), @allResources, @inspectResource, @updateScreenUseCase, @selectedAssignment, @dialogAssignments)
+			uc = new UModifyResourceAssignment(@selectedAssignment, @allResources, @inspectResource, @updateScreenUseCase, @selectedAssignment, @dialogAssignments)
 			uc.execute()
 			)
 		@allResources.subscribe((newValue) =>
@@ -74,7 +74,7 @@ class ResourceAvailabilityViewmodel
 	saveSelectedAssignment: =>
 		# data to persist, observableCollection to refresh, observable to refresh, callback to refresh screen, observable to hide form, dehydration method for callback
 		# useCase = new UModifyAssignment(@selectedAssignment(), @allResources, @inspectResource, @updateScreenUseCase, @selectedAssignment, "resource", (json) -> Resource.create json)
-		useCase = new UModifyResourceAssignment(@selectedAssignment(), @allResources, @inspectResource, @updateScreenUseCase, @selectedAssignment)
+		useCase = new UModifyResourceAssignment(@selectedAssignment, @allResources, @inspectResource, @updateScreenUseCase, @selectedAssignment)
 		useCase.execute()
 
 	deleteSelectedAssignment: =>
