@@ -14,15 +14,15 @@
       this.deleteSelectedAssignment = __bind(this.deleteSelectedAssignment, this);
       this.saveSelectedAssignment = __bind(this.saveSelectedAssignment, this);
       console.log('ModifyAssignmentsViewmodel instantiated');
-      console.log(this.selectedAssignment);
+      console.log(this.selectedAssignment());
       Period.extend(RCrud);
       Period.extend(RPeriodSerialize);
       Resource.extend(RTeamMember);
-      if (this.selectedAssignment().person) {
+      if (this.selectedAssignment().resource) {
         _ref = this.allResources;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           p = _ref[_i];
-          if (p.id === this.selectedAssignment().person.id) {
+          if (p.id === this.selectedAssignment().resource.id) {
             this.selectedPerson = p;
           }
         }

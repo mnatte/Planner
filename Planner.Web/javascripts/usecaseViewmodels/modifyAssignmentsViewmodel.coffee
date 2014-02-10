@@ -6,19 +6,19 @@ root = global ? window
 
 class ModifyAssignmentsViewmodel
 	# allResources is used in the pulldown to select a resource.
-	# @selectedAbsence is an observable needed here to modify, from another view, the selected absence.
+	# @selectedAssignment is an observable needed here to modify, from another view, the selected assignment.
 	constructor: (@selectedAssignment, @allResources, @afterSubmitCallback) ->
 		# ctor is executed in context of INSTANCE. Therfore @ refers here to CURRENT INSTANCE and attaches selectedPhase to all instances (since object IS ctor)
 		console.log 'ModifyAssignmentsViewmodel instantiated'
-		console.log @selectedAssignment
+		console.log @selectedAssignment()
 		#console.log @allResources
 		# enable persistence of instances of Period (absences)
 		Period.extend RCrud
 		Period.extend RPeriodSerialize
 		Resource.extend RTeamMember
 
-		if @selectedAssignment().person
-			@selectedPerson = p for p in @allResources when p.id is @selectedAssignment().person.id
+		if @selectedAssignment().resource
+			@selectedPerson = p for p in @allResources when p.id is @selectedAssignment().resource.id
 			console.log @selectedPerson
 
 		# @selectedResource is relevant within this context; not in the parent context

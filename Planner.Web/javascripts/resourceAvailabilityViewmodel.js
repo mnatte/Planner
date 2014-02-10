@@ -37,9 +37,12 @@
       });
       this.selectedAssignment.subscribe(function(newValue) {
         var uc;
-        console.log('selectedAssignment changed: ' + newValue);
-        uc = new UModifyResourceAssignment(_this.selectedAssignment, _this.allResources, _this.inspectResource, _this.updateScreenUseCase, _this.selectedAssignment, _this.dialogAssignments);
-        return uc.execute();
+        console.log('selectedAssignment changed');
+        console.log(newValue);
+        if (newValue) {
+          uc = new UModifyResourceAssignment(_this.selectedAssignment, _this.allResources(), null, _this.dialogAssignments);
+          return uc.execute();
+        }
       });
       this.allResources.subscribe(function(newValue) {
         return console.log('allResources changed: ' + newValue);

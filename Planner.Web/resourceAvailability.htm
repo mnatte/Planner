@@ -28,6 +28,7 @@
 	<link rel="stylesheet" href="stylesheets/layout.css">
     <link rel="stylesheet" href="stylesheets/tables.css">
     <link rel="stylesheet" href="stylesheets/sexybuttons.css">
+    <link rel="stylesheet" href="stylesheets/jquery.modal.css">
 
     <link rel="stylesheet" type="text/css" href="stylesheets/timeline.css" />
 
@@ -122,15 +123,7 @@
         <!--as soon as an assignment is selected (or created) dialogAssignments gets this assignment as its value property-->
         <div class="ten columns" id="modalAssignmentsForm" data-bind="modal: dialogAssignments"></div>
 
-        <div id="form" class="four columns">
-            <!-- ko if: $root.selectedAssignment() -->
-            <section id="assignmentFormSection" class="fourteen columns" data-bind="fadeVisible: true, fadeDuration: 500">
-                <!-- ko template: {name: 'assignmentForm', data: $root.selectedAssignment()} -->
-                <!-- /ko -->
-            </section>
-            <!--/ko-->
-        </div>
-	</div><!-- container -->
+    </div><!-- container -->
     <script type="text/javascript">
 
         $(document).ready(function () {

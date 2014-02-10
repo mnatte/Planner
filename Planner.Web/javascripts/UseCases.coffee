@@ -435,15 +435,21 @@ class UModifyAssignment extends UPersistAndRefresh
 			# rel, proj, ms, del, act, per, ff
 			@assignment.resource.plan(@assignment.release, @assignment.project, @assignment.milestone, @assignment.deliverable, @assignment.activity, @assignment.period, @assignment.focusFactor, (data) => @refreshData(data))
 
+#class UModifyAbsences
+#	constructor: (@selectedAbsence, @allResources, @afterSubmitCallback, @dialogObservable) ->
+#	execute: (data) ->
+#		console.log 'execute UModifyAbsences'
+#		@dialogObservable({ name: 'absenceForm', data: new ModifyAbsencesViewmodel(@selectedAbsence, @allResources, @afterSubmitCallback) })
+
 class UModifyResourceAssignment extends UPersistAndRefresh
 	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in
-	constructor: (@assignment, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dialogObservable) ->
-		 super @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, (json) -> Resource.create json
+	constructor: (@selectedAssignment, @allResources, @afterSubmitCallback, @dialogObservable) ->
+		 # super @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, (json) -> Resource.create json
 	execute: ->
 		console.log 'execute UModifyResourceAssignment'
 		#json = ko.toJSON(@assignment)
 		# rel, proj, ms, del, act, per, ff
-		@dialogObservable({ name: 'assignmentForm', data: new ModifyAssignmentsViewmodel(@selectedObservable, @allResources, @afterSubmitCallback) })
+		@dialogObservable({ name: 'assignmentForm', data: new ModifyAssignmentsViewmodel(@selectedAssignment, @allResources, @afterSubmitCallback) })
 
 class UAddAssignments extends UPersistAndRefresh
 	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in

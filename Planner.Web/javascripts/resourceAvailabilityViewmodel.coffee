@@ -31,11 +31,15 @@ class ResourceAvailabilityViewmodel
 			@selectedAssignment newValue.assignment
 			)
 		@selectedAssignment.subscribe((newValue) =>
-			console.log 'selectedAssignment changed: ' + newValue#.period
+			console.log 'selectedAssignment changed'
+			console.log newValue
+			#console.log @allResources()
 			#callback = (data) => @refreshTimeline(data)
 			#uc = new UModifyAbsences(@selectedAbsence, @allResources, callback, @dialogAbsences
-			uc = new UModifyResourceAssignment(@selectedAssignment, @allResources, @inspectResource, @updateScreenUseCase, @selectedAssignment, @dialogAssignments)
-			uc.execute()
+			if newValue
+				# console.log @allResources()
+				uc = new UModifyResourceAssignment(@selectedAssignment, @allResources(), null, @dialogAssignments)
+				uc.execute()
 			)
 		@allResources.subscribe((newValue) =>
 			console.log 'allResources changed: ' + newValue

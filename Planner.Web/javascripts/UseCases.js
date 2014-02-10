@@ -917,23 +917,18 @@
 
     __extends(UModifyResourceAssignment, _super);
 
-    function UModifyResourceAssignment(assignment, viewModelObservableCollection, selectedObservable, updateViewUsecase, observableShowform, dialogObservable) {
-      this.assignment = assignment;
-      this.viewModelObservableCollection = viewModelObservableCollection;
-      this.selectedObservable = selectedObservable;
-      this.updateViewUsecase = updateViewUsecase;
-      this.observableShowform = observableShowform;
+    function UModifyResourceAssignment(selectedAssignment, allResources, afterSubmitCallback, dialogObservable) {
+      this.selectedAssignment = selectedAssignment;
+      this.allResources = allResources;
+      this.afterSubmitCallback = afterSubmitCallback;
       this.dialogObservable = dialogObservable;
-      UModifyResourceAssignment.__super__.constructor.call(this, this.viewModelObservableCollection, this.selectedObservable, this.updateViewUsecase, this.observableShowform, function(json) {
-        return Resource.create(json);
-      });
     }
 
     UModifyResourceAssignment.prototype.execute = function() {
       console.log('execute UModifyResourceAssignment');
       return this.dialogObservable({
         name: 'assignmentForm',
-        data: new ModifyAssignmentsViewmodel(this.selectedObservable, this.allResources, this.afterSubmitCallback)
+        data: new ModifyAssignmentsViewmodel(this.selectedAssignment, this.allResources, this.afterSubmitCallback)
       });
     };
 

@@ -192,7 +192,6 @@
     <Content Include="templates\calculateNeededResourcesForm.tmpl.html" />
     <Content Include="templates\dummy.tmpl.html" />
     <Content Include="templates\environmentPlanningForm.tmpl.html" />
-    <Content Include="xxx_processPerformance.htm" />
     <Content Include="javascripts\adminMeetingViewmodel.js">
       <DependentUpon>adminMeetingViewmodel.coffee</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -808,7 +807,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>planResourcesViewmodel.coffee</DependentUpon>
     </Content>
-    <Content Include="xxx_planResources.htm" />
     <Content Include="images\bg_nav.PNG" />
     <Content Include="adminRelease.htm" />
     <Content Include="javascripts\adminProjectViewmodel.js">
@@ -901,7 +899,6 @@
     <Content Include="Scripts\knockout-array-filter.js" />
     <Content Include="Scripts\koExternalTemplateEngine_all.min.js" />
     <Content Include="Scripts\tabs.js" />
-    <Content Include="xxx_Release.htm" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
     <Content Include="Scripts\jquery.dateFormat-1.0.js" />
     <Content Include="Scripts\knockout-2.0.0.debug.js" />
