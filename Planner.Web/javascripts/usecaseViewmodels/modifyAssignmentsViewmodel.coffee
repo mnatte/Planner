@@ -26,15 +26,17 @@ class ModifyAssignmentsViewmodel
 
 
 	saveSelectedAssignment: =>
+		console.log 'saveSelectedAssignment'
 		assignment = @selectedAssignment() # set object to persist
-		if @selectedAssignment().id > 0 # update of existing absence, set personId
-			assignment.personId = assignment.person.id
-			delete assignment.person
-		else
-			assignment.personId = @selectedResource().id
+		#if @selectedAssignment().id > 0 # update of existing absence, set personId
+		#	assignment.personId = assignment.person.id
+		#	delete assignment.person
+		#else
+		#	assignment.personId = @selectedResource().id
 		console.log ko.toJSON(assignment)
+		#@afterSubmitCallback()
 		#@selectedAbsence().save("/planner/Resource/SaveAbsence", ko.toJSON(absence), @afterSubmitCallback)
-		@selectedAssignment().resource.plan(assignment.release, assignment.project, assignment.milestone, assignment.deliverable, assignment.activity, assignment.period, assignment.focusFactor, afterSubmitCallback)
+		@selectedAssignment().resource.plan(assignment.release, assignment.project, assignment.milestone, assignment.deliverable, assignment.activity, assignment.period, assignment.focusFactor, @afterSubmitCallback)
 
 	deleteSelectedAssignment: =>
 		console.log @selectedAssignment()

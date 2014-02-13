@@ -733,6 +733,7 @@
       this.updateViewUsecase = updateViewUsecase;
       this.observableShowform = observableShowform;
       this.dehydrate = dehydrate;
+      console.log(this.updateViewUsecase);
     }
 
     UPersistAndRefresh.prototype.execute = function() {
@@ -741,8 +742,9 @@
 
     UPersistAndRefresh.prototype.refreshData = function(json) {
       var index, oldItem, r, refreshed, _i, _len, _ref;
+      console.log('execute RefreshData from UPersistAndRefresh');
       console.log(json);
-      console.log(this.dehydrate);
+      console.log(this.updateViewUsecase);
       if (this.dehydrate && this.viewModelObservableCollection) {
         refreshed = this.dehydrate(json);
         _ref = this.viewModelObservableCollection();
@@ -755,7 +757,10 @@
       }
       if (this.selectedObservable) this.selectedObservable(refreshed);
       if (this.observableShowform) this.observableShowform(null);
-      if (this.updateViewUsecase) return this.updateViewUsecase.execute();
+      if (this.updateViewUsecase) {
+        console.log('execute UpdateViewCase from UPersistAndRefresh');
+        return this.updateViewUsecase.execute();
+      }
     };
 
     return UPersistAndRefresh;
@@ -917,18 +922,25 @@
 
     __extends(UModifyResourceAssignment, _super);
 
-    function UModifyResourceAssignment(selectedAssignment, allResources, afterSubmitCallback, dialogObservable) {
+    function UModifyResourceAssignment(selectedAssignment, allResources, updateViewUseCase, dialogObservable) {
       this.selectedAssignment = selectedAssignment;
       this.allResources = allResources;
-      this.afterSubmitCallback = afterSubmitCallback;
+      this.updateViewUseCase = updateViewUseCase;
       this.dialogObservable = dialogObservable;
+      console.log(this.updateViewUseCase);
+      UModifyResourceAssignment.__super__.constructor.call(this, this.allResources, null, this.updateViewUseCase, this.dialogObservable, function(json) {
+        return Resource.create(json);
+      });
     }
 
     UModifyResourceAssignment.prototype.execute = function() {
+      var _this = this;
       console.log('execute UModifyResourceAssignment');
       return this.dialogObservable({
         name: 'assignmentForm',
-        data: new ModifyAssignmentsViewmodel(this.selectedAssignment, this.allResources, this.afterSubmitCallback)
+        data: new ModifyAssignmentsViewmodel(this.selectedAssignment, this.allResources(), function(data) {
+          return _this.refreshData(data);
+        })
       });
     };
 

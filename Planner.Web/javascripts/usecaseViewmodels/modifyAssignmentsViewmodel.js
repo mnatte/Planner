@@ -33,15 +33,10 @@
 
     ModifyAssignmentsViewmodel.prototype.saveSelectedAssignment = function() {
       var assignment;
+      console.log('saveSelectedAssignment');
       assignment = this.selectedAssignment();
-      if (this.selectedAssignment().id > 0) {
-        assignment.personId = assignment.person.id;
-        delete assignment.person;
-      } else {
-        assignment.personId = this.selectedResource().id;
-      }
       console.log(ko.toJSON(assignment));
-      return this.selectedAssignment().resource.plan(assignment.release, assignment.project, assignment.milestone, assignment.deliverable, assignment.activity, assignment.period, assignment.focusFactor, afterSubmitCallback);
+      return this.selectedAssignment().resource.plan(assignment.release, assignment.project, assignment.milestone, assignment.deliverable, assignment.activity, assignment.period, assignment.focusFactor, this.afterSubmitCallback);
     };
 
     ModifyAssignmentsViewmodel.prototype.deleteSelectedAssignment = function() {

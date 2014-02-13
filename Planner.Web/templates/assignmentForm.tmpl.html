@@ -6,6 +6,6 @@
     <label>End date (dd-mm-yyyy):</label><input type="text" data-bind="value: period.endDate.dateString" />
     <label>Focus factor:</label><input type="text" data-bind="value: focusFactor" />
     <!--/ko-->
-    <button class="sexybutton" data-bind="click: $root.saveSelectedAssignment.bind($data), enable:$root.selectedAssignment()"><span><span><span class="save">Save</span></span></span></button>
-    <button class="sexybutton" data-bind="click: $root.deleteSelectedAssignment.bind($data), enable:$root.selectedAssignment()"><span><span><span class="delete">Delete</span></span></span></button>
+    <button class="sexybutton" data-bind="click: saveSelectedAssignment.bind($data), enable:$root.selectedAssignment()"><span><span><span class="save">Save</span></span></span></button>
+    <button class="sexybutton" data-bind="click: deleteSelectedAssignment.bind($data), enable:$root.selectedAssignment()"><span><span><span class="delete">Delete</span></span></span></button>
 </form>

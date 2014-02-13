@@ -338,6 +338,10 @@ class URefreshView
 		resWithAssAndAbsInDate.periodsAway = (a for a in @selectedObservable().periodsAway when a.overlaps(@checkPeriod))
 		#console.log resWithAssAndAbsInDate
 		@selectedObservable resWithAssAndAbsInDate
+		# ko.applyBindingsToNode($('#mytimeline'), {
+		#	assignmentsTimeline: $data, 
+		#	observableModel: $root.selectedTimelineItem
+		#})
 
 class URefreshViewAfterCheckPeriod
 	constructor: (@checkPeriod, @viewModelObservableGraph, @viewModelObservableForm) ->
@@ -350,11 +354,14 @@ class UPersistAndRefresh
 	# @updateViewUsecase is the callback usecase, @observableShowform is the observable used for hiding the form after processing
 	# @dehydrate is the function used in the callback to instantiate the new item by the returned json data
 	constructor: (@viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate) ->
+		console.log @updateViewUsecase
 	execute: ->
 		throw new Error('Abstract method execute of UPersistAndRefresh UseCase')
 	refreshData: (json) ->
+		console.log 'execute RefreshData from UPersistAndRefresh'
 		console.log json
-		console.log @dehydrate
+		# console.log @dehydrate
+		console.log @updateViewUsecase
 		if @dehydrate and @viewModelObservableCollection
 			refreshed = @dehydrate json
 			# replace old item in collection for new one
@@ -368,6 +375,7 @@ class UPersistAndRefresh
 		if @observableShowform
 			@observableShowform null
 		if @updateViewUsecase
+			console.log 'execute UpdateViewCase from UPersistAndRefresh'
 			@updateViewUsecase.execute()
 
 class UPlanEnvironment extends UPersistAndRefresh
@@ -441,15 +449,23 @@ class UModifyAssignment extends UPersistAndRefresh
 #		console.log 'execute UModifyAbsences'
 #		@dialogObservable({ name: 'absenceForm', data: new ModifyAbsencesViewmodel(@selectedAbsence, @allResources, @afterSubmitCallback) })
 
+# UPersistAndRefresh
+	# @observableCollection is used to refresh the collection in which the refreshed item is put after persisting
+	# @selectedObservable is the observable to set to the refreshed item itself, used in callback to refresh the view on its properties
+	# @updateViewUsecase is the callback usecase, @observableShowform is the observable used for hiding the form after processing
+	# @dehydrate is the function used in the callback to instantiate the new item by the returned json data
+	#constructor: (@observableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate) ->
+
 class UModifyResourceAssignment extends UPersistAndRefresh
 	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in
-	constructor: (@selectedAssignment, @allResources, @afterSubmitCallback, @dialogObservable) ->
-		 # super @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, (json) -> Resource.create json
+	constructor: (@selectedAssignment, @allResources, @updateViewUseCase, @dialogObservable) ->
+		 console.log @updateViewUseCase
+		 # @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate
+		 # set selectedObservable to null since we don't want to select the resource in this case; the dialog form displays an assignment
+		 super @allResources, null, @updateViewUseCase, @dialogObservable, (json) -> Resource.create json
 	execute: ->
 		console.log 'execute UModifyResourceAssignment'
-		#json = ko.toJSON(@assignment)
-		# rel, proj, ms, del, act, per, ff
-		@dialogObservable({ name: 'assignmentForm', data: new ModifyAssignmentsViewmodel(@selectedAssignment, @allResources, @afterSubmitCallback) })
+		@dialogObservable({ name: 'assignmentForm', data: new ModifyAssignmentsViewmodel(@selectedAssignment, @allResources(), (data) => @refreshData(data)) })
 
 class UAddAssignments extends UPersistAndRefresh
 	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in

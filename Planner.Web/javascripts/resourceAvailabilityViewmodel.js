@@ -7,11 +7,9 @@
   ResourceAvailabilityViewmodel = (function() {
 
     function ResourceAvailabilityViewmodel(allResources) {
-      this.deleteSelectedAssignment = __bind(this.deleteSelectedAssignment, this);
-      this.saveSelectedAssignment = __bind(this.saveSelectedAssignment, this);
       this.inspectOverplanning = __bind(this.inspectOverplanning, this);
       this.checkAvailability = __bind(this.checkAvailability, this);
-      var monthLater, updateScreenUseCases,
+      var monthLater, updateScreenFunctions, updateScreenUseCases,
         _this = this;
       console.log(allResources);
       Resource.extend(RTeamMember);
@@ -26,6 +24,12 @@
       this.selectedAssignment = ko.observable();
       this.selectedResource = ko.observable();
       this.dialogAssignments = ko.observable();
+      updateScreenUseCases = [];
+      updateScreenFunctions = [];
+      updateScreenFunctions.push(function() {
+        return _this.inspectResource(null);
+      });
+      this.updateScreenUseCase = new UUpdateScreen(updateScreenUseCases, updateScreenFunctions);
       this.selectedTimelineItem.subscribe(function(newValue) {
         var aap;
         console.log(newValue);
@@ -40,16 +44,13 @@
         console.log('selectedAssignment changed');
         console.log(newValue);
         if (newValue) {
-          uc = new UModifyResourceAssignment(_this.selectedAssignment, _this.allResources(), null, _this.dialogAssignments);
+          uc = new UModifyResourceAssignment(_this.selectedAssignment, _this.allResources, _this.updateScreenUseCase, _this.dialogAssignments);
           return uc.execute();
         }
       });
       this.allResources.subscribe(function(newValue) {
         return console.log('allResources changed: ' + newValue);
       });
-      updateScreenUseCases = [];
-      updateScreenUseCases.push(new URefreshView(this.inspectResource, this.checkPeriod()));
-      this.updateScreenUseCase = new UUpdateScreen(updateScreenUseCases);
       this.checkPeriod.subscribe(function(newValue) {
         return _this.inspectResource();
       });
@@ -110,20 +111,6 @@
       }).call(this);
       this.inspectResource(resWithAssAndAbsInDate);
       return this.selectedAssignment(null);
-    };
-
-    ResourceAvailabilityViewmodel.prototype.saveSelectedAssignment = function() {
-      var useCase;
-      useCase = new UModifyResourceAssignment(this.selectedAssignment, this.allResources, this.inspectResource, this.updateScreenUseCase, this.selectedAssignment);
-      return useCase.execute();
-    };
-
-    ResourceAvailabilityViewmodel.prototype.deleteSelectedAssignment = function() {
-      var useCase;
-      useCase = new UDeleteAssignment(this.selectedAssignment(), this.allResources, this.inspectResource, this.updateScreenUseCase, this.selectedAssignment, "resource", function(json) {
-        return Resource.create(json);
-      });
-      return useCase.execute();
     };
 
     return ResourceAvailabilityViewmodel;

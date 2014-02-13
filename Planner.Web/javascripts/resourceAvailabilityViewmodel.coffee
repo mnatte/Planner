@@ -22,6 +22,12 @@ class ResourceAvailabilityViewmodel
 		# observable for 'modify assignments' dialog. also passed to UModifyResourceAssignment usecase
 		@dialogAssignments = ko.observable()
 
+		updateScreenUseCases = []
+		#updateScreenUseCases.push(new URefreshView(@inspectResource, @checkPeriod()))
+		updateScreenFunctions = []
+		updateScreenFunctions.push(() => @inspectResource null)
+		@updateScreenUseCase = new UUpdateScreen(updateScreenUseCases, updateScreenFunctions)
+
 		@selectedTimelineItem.subscribe((newValue) => 
 			console.log newValue
 			aap = newValue.assignment
@@ -34,20 +40,15 @@ class ResourceAvailabilityViewmodel
 			console.log 'selectedAssignment changed'
 			console.log newValue
 			#console.log @allResources()
-			#callback = (data) => @refreshTimeline(data)
-			#uc = new UModifyAbsences(@selectedAbsence, @allResources, callback, @dialogAbsences
 			if newValue
-				# console.log @allResources()
-				uc = new UModifyResourceAssignment(@selectedAssignment, @allResources(), null, @dialogAssignments)
+				# console.log @updateScreenUseCase
+				# @selectedAssignment, @allResourcesObservable, @updateViewUseCase, @dialogObservable
+				uc = new UModifyResourceAssignment(@selectedAssignment, @allResources, @updateScreenUseCase, @dialogAssignments)
 				uc.execute()
 			)
 		@allResources.subscribe((newValue) =>
 			console.log 'allResources changed: ' + newValue
 			)
-
-		updateScreenUseCases = []
-		updateScreenUseCases.push(new URefreshView(@inspectResource, @checkPeriod()))
-		@updateScreenUseCase = new UUpdateScreen updateScreenUseCases
 
 		@checkPeriod.subscribe((newValue) =>
 			@inspectResource()
@@ -75,15 +76,15 @@ class ResourceAvailabilityViewmodel
 		@inspectResource resWithAssAndAbsInDate
 		@selectedAssignment null
 
-	saveSelectedAssignment: =>
+	#saveSelectedAssignment: =>
 		# data to persist, observableCollection to refresh, observable to refresh, callback to refresh screen, observable to hide form, dehydration method for callback
 		# useCase = new UModifyAssignment(@selectedAssignment(), @allResources, @inspectResource, @updateScreenUseCase, @selectedAssignment, "resource", (json) -> Resource.create json)
-		useCase = new UModifyResourceAssignment(@selectedAssignment, @allResources, @inspectResource, @updateScreenUseCase, @selectedAssignment)
-		useCase.execute()
+	#	useCase = new UModifyResourceAssignment(@selectedAssignment, @allResources, @inspectResource, @updateScreenUseCase, @selectedAssignment)
+	#	useCase.execute()
 
-	deleteSelectedAssignment: =>
-		useCase = new UDeleteAssignment(@selectedAssignment(), @allResources, @inspectResource, @updateScreenUseCase, @selectedAssignment, "resource", (json) -> Resource.create json)
-		useCase.execute()
+	#deleteSelectedAssignment: =>
+	#	useCase = new UDeleteAssignment(@selectedAssignment(), @allResources, @inspectResource, @updateScreenUseCase, @selectedAssignment, "resource", (json) -> Resource.create json)
+	#	useCase.execute()
 
 # export to root object
 root.ResourceAvailabilityViewmodel = ResourceAvailabilityViewmodel
