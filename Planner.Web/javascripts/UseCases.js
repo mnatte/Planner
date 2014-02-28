@@ -51,27 +51,6 @@
 
   })();
 
-  UModifyAbsences = (function() {
-
-    function UModifyAbsences(selectedAbsence, allResources, afterSubmitCallback, dialogObservable) {
-      this.selectedAbsence = selectedAbsence;
-      this.allResources = allResources;
-      this.afterSubmitCallback = afterSubmitCallback;
-      this.dialogObservable = dialogObservable;
-    }
-
-    UModifyAbsences.prototype.execute = function(data) {
-      console.log('execute UModifyAbsences');
-      return this.dialogObservable({
-        name: 'absenceForm',
-        data: new ModifyAbsencesViewmodel(this.selectedAbsence, this.allResources, this.afterSubmitCallback)
-      });
-    };
-
-    return UModifyAbsences;
-
-  })();
-
   UGetAvailableHoursForTeamMemberFromNow = (function() {
 
     function UGetAvailableHoursForTeamMemberFromNow(teamMember, phase) {
@@ -759,7 +738,7 @@
       if (this.observableShowform) this.observableShowform(null);
       if (this.updateViewUsecase) {
         console.log('execute UpdateViewCase from UPersistAndRefresh');
-        return this.updateViewUsecase.execute();
+        return this.updateViewUsecase.execute(json);
       }
     };
 
@@ -915,6 +894,33 @@
     };
 
     return UModifyAssignment;
+
+  })(UPersistAndRefresh);
+
+  UModifyAbsences = (function(_super) {
+
+    __extends(UModifyAbsences, _super);
+
+    function UModifyAbsences(selectedAbsence, allResources, updateViewUseCase, dialogObservable) {
+      this.selectedAbsence = selectedAbsence;
+      this.allResources = allResources;
+      this.updateViewUseCase = updateViewUseCase;
+      this.dialogObservable = dialogObservable;
+      UModifyAbsences.__super__.constructor.call(this, this.allResources, null, this.updateViewUseCase, this.dialogObservable, null);
+    }
+
+    UModifyAbsences.prototype.execute = function(data) {
+      var _this = this;
+      console.log('execute UModifyAbsences');
+      return this.dialogObservable({
+        name: 'absenceForm',
+        data: new ModifyAbsencesViewmodel(this.selectedAbsence, this.allResources(), function(data) {
+          return _this.refreshData(data);
+        })
+      });
+    };
+
+    return UModifyAbsences;
 
   })(UPersistAndRefresh);
 
@@ -1084,7 +1090,7 @@
       this.delegates = delegates;
     }
 
-    UUpdateScreen.prototype.execute = function() {
+    UUpdateScreen.prototype.execute = function(json) {
       var del, uc, _i, _j, _len, _len2, _ref, _ref2, _results;
       console.log(this.usecases);
       console.log(this.delegates);
@@ -1100,7 +1106,7 @@
         _results = [];
         for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
           del = _ref2[_j];
-          del();
+          del(json);
           _results.push(true);
         }
         return _results;

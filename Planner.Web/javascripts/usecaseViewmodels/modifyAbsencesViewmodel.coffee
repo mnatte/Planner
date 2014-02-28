@@ -11,7 +11,8 @@ class ModifyAbsencesViewmodel
 		# ctor is executed in context of INSTANCE. Therfore @ refers here to CURRENT INSTANCE and attaches selectedPhase to all instances (since object IS ctor)
 		console.log 'ModifyAbsencesViewmodel instantiated'
 		console.log @selectedAbsence
-		#console.log @allResources
+		console.log @selectedAbsence()
+		console.log @allResources
 		# enable persistence of instances of Period (absences)
 		Period.extend RCrud
 		Period.extend RPeriodSerialize

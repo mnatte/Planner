@@ -10,27 +10,32 @@ ko.bindingHandlers.modal = {
     init: function (element, valueAccessor, allBindings, vm, context) {
         var modelBindingElement = valueAccessor();
         // modelBindingElement is only a function since it is an observable
-        // console.log(modelBindingElement);
+        console.log("init modal");
 
         //template's name field can accept a function to return the name dynamically
         var templateName = function () {
+            console.log("templateName");
             // evaluate the observable
             var value = modelBindingElement();
             //console.log("template name");
-            //console.log(value);
-            //console.log(value && value.name);
+            console.log(value);
+            // only return value.name if value evaluates to true. JS '&&' only evaluates the second statement if the first statement evaluates to true; otherwise it returns false
+            console.log(value && value.name);
             return value && value.name;
         };
 
         //a computed to wrap the current modal data
         var templateData = ko.computed(function () {
+            console.log("templateData");
             // evaluate the observable
             var value = modelBindingElement();
+            console.log(value && value.data);
+            // only return value.data if value evaluates to true. JS '&&' only evaluates the second statement if the first statement evaluates to true; otherwise it returns false
             return value && value.data;
         });
 
         //apply the template binding to this element
-        // console.log(modelProperty);
+        console.log(modelBindingElement);
         return ko.applyBindingsToNode(element, { template: { 'if': modelBindingElement, name: templateName, data: templateData} }, context);
     },
     update: function (element, valueAccessor, allBindings, vm, context) {

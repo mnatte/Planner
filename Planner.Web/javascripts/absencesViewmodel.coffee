@@ -5,7 +5,7 @@
 root = global ? window
 
 class AbsencesViewmodel
-	constructor: (@allResources) ->
+	constructor: (allResources) ->
 		# ctor is executed in context of INSTANCE. Therfore @ refers here to CURRENT INSTANCE and attaches selectedPhase to all instances (since object IS ctor)
 		# enable persistence of instances of Period (absences)
 		Resource.extend RTeamMember
@@ -13,6 +13,11 @@ class AbsencesViewmodel
 		@selectedAbsence = ko.observable()
 		# observable for 'modify absences' dialog. also passed to UModifyAbsences usecase
 		@dialogAbsences = ko.observable()
+		@allResources = ko.observableArray(allResources)
+
+		updateScreenFunctions = []
+		updateScreenFunctions.push((data) => @refreshTimeline(data))
+		@updateScreenUseCase = new UUpdateScreen(null, updateScreenFunctions)
 
 		@selectedTimelineItem.subscribe((newValue) => 
 			#console.log newValue
@@ -21,8 +26,9 @@ class AbsencesViewmodel
 		
 		@selectedAbsence.subscribe((newValue) =>
 			#console.log newValue
-			callback = (data) => @refreshTimeline(data)
-			uc = new UModifyAbsences(@selectedAbsence, @allResources, callback, @dialogAbsences)
+			#callback = (data) => @refreshTimeline(data)
+			uc = new UModifyAbsences(@selectedAbsence, @allResources, @updateScreenUseCase, @dialogAbsences)
+			#uc = new UModifyAbsences(@selectedAbsence, @allResources, callback, @dialogAbsences)
 			uc.execute()
 			)
 
@@ -56,7 +62,7 @@ class AbsencesViewmodel
 		# check whether the returned json is an absence or just a message
 		if newItem.StartDate
 			absence = Period.create newItem
-			absence.person = p for p in @allResources when p.id is newItem.Person.Id
+			absence.person = p for p in @allResources() when +p.id is +newItem.Person.Id
 			timelineItem = {group: absence.person.fullName(), start: absence.startDate.date, end: absence.endDate.date, content: absence.title, info: absence.toString(), dataObject: absence}
 			#console.log absence
 			console.log timelineItem

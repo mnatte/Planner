@@ -7,24 +7,27 @@
   AbsencesViewmodel = (function() {
 
     function AbsencesViewmodel(allResources) {
-      var _this = this;
-      this.allResources = allResources;
       this.createVisualCuesForAbsences = __bind(this.createVisualCuesForAbsences, this);
       this.refreshTimeline = __bind(this.refreshTimeline, this);
       this.newAbsence = __bind(this.newAbsence, this);
+      var updateScreenFunctions,
+        _this = this;
       Resource.extend(RTeamMember);
       this.selectedTimelineItem = ko.observable();
       this.selectedAbsence = ko.observable();
       this.dialogAbsences = ko.observable();
+      this.allResources = ko.observableArray(allResources);
+      updateScreenFunctions = [];
+      updateScreenFunctions.push(function(data) {
+        return _this.refreshTimeline(data);
+      });
+      this.updateScreenUseCase = new UUpdateScreen(null, updateScreenFunctions);
       this.selectedTimelineItem.subscribe(function(newValue) {
         return _this.selectedAbsence(newValue.dataObject);
       });
       this.selectedAbsence.subscribe(function(newValue) {
-        var callback, uc;
-        callback = function(data) {
-          return _this.refreshTimeline(data);
-        };
-        uc = new UModifyAbsences(_this.selectedAbsence, _this.allResources, callback, _this.dialogAbsences);
+        var uc;
+        uc = new UModifyAbsences(_this.selectedAbsence, _this.allResources, _this.updateScreenUseCase, _this.dialogAbsences);
         return uc.execute();
       });
     }
@@ -78,10 +81,10 @@
       console.log(newItem);
       if (newItem.StartDate) {
         absence = Period.create(newItem);
-        _ref2 = this.allResources;
+        _ref2 = this.allResources();
         for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
           p = _ref2[_j];
-          if (p.id === newItem.Person.Id) absence.person = p;
+          if (+p.id === +newItem.Person.Id) absence.person = p;
         }
         timelineItem = {
           group: absence.person.fullName(),

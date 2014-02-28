@@ -22,8 +22,10 @@
       this.checkPeriod = ko.observable(new Period(new Date(), monthLater));
       this.selectedTimelineItem = ko.observable();
       this.selectedAssignment = ko.observable();
+      this.selectedAbsence = ko.observable();
       this.selectedResource = ko.observable();
       this.dialogAssignments = ko.observable();
+      this.dialogAbsences = ko.observable();
       updateScreenUseCases = [];
       updateScreenFunctions = [];
       updateScreenFunctions.push(function() {
@@ -33,11 +35,14 @@
       this.selectedTimelineItem.subscribe(function(newValue) {
         var aap;
         console.log(newValue);
-        aap = newValue.assignment;
-        aap.resourceName = newValue.resource.fullName();
-        aap.resourceId = newValue.resource.id;
-        console.log(newValue.assignment);
-        return _this.selectedAssignment(newValue.assignment);
+        if (newValue.assignment) {
+          aap = newValue.assignment;
+          aap.resourceName = newValue.resource.fullName();
+          aap.resourceId = newValue.resource.id;
+          console.log(newValue.assignment);
+          _this.selectedAssignment(newValue.assignment);
+        }
+        if (newValue.absence) return _this.selectedAbsence(newValue.absence);
       });
       this.selectedAssignment.subscribe(function(newValue) {
         var uc;
@@ -45,6 +50,18 @@
         console.log(newValue);
         if (newValue) {
           uc = new UModifyResourceAssignment(_this.selectedAssignment, _this.allResources, _this.updateScreenUseCase, _this.dialogAssignments);
+          return uc.execute();
+        }
+      });
+      this.selectedAbsence.subscribe(function(newValue) {
+        var callback, uc;
+        console.log('selectedAbsence changed');
+        console.log(newValue);
+        if (newValue) {
+          callback = function(data) {
+            return _this.inspectResource(null);
+          };
+          uc = new UModifyAbsences(_this.selectedAbsence, _this.allResources, _this.updateScreenUseCase, _this.dialogAbsences);
           return uc.execute();
         }
       });

@@ -15,6 +15,8 @@
       this.saveSelectedAbsence = __bind(this.saveSelectedAbsence, this);
       console.log('ModifyAbsencesViewmodel instantiated');
       console.log(this.selectedAbsence);
+      console.log(this.selectedAbsence());
+      console.log(this.allResources);
       Period.extend(RCrud);
       Period.extend(RPeriodSerialize);
       Resource.extend(RTeamMember);

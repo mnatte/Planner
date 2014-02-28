@@ -18,9 +18,11 @@ class ResourceAvailabilityViewmodel
 		@checkPeriod = ko.observable(new Period(new Date(), monthLater))
 		@selectedTimelineItem = ko.observable()
 		@selectedAssignment = ko.observable()
+		@selectedAbsence = ko.observable()
 		@selectedResource = ko.observable()
 		# observable for 'modify assignments' dialog. also passed to UModifyResourceAssignment usecase
 		@dialogAssignments = ko.observable()
+		@dialogAbsences = ko.observable()
 
 		updateScreenUseCases = []
 		#updateScreenUseCases.push(new URefreshView(@inspectResource, @checkPeriod()))
@@ -30,11 +32,14 @@ class ResourceAvailabilityViewmodel
 
 		@selectedTimelineItem.subscribe((newValue) => 
 			console.log newValue
-			aap = newValue.assignment
-			aap.resourceName = newValue.resource.fullName()
-			aap.resourceId = newValue.resource.id
-			console.log newValue.assignment
-			@selectedAssignment newValue.assignment
+			if newValue.assignment
+				aap = newValue.assignment
+				aap.resourceName = newValue.resource.fullName()
+				aap.resourceId = newValue.resource.id
+				console.log newValue.assignment
+				@selectedAssignment newValue.assignment
+			if newValue.absence
+				@selectedAbsence newValue.absence
 			)
 		@selectedAssignment.subscribe((newValue) =>
 			console.log 'selectedAssignment changed'
@@ -44,6 +49,16 @@ class ResourceAvailabilityViewmodel
 				# console.log @updateScreenUseCase
 				# @selectedAssignment, @allResourcesObservable, @updateViewUseCase, @dialogObservable
 				uc = new UModifyResourceAssignment(@selectedAssignment, @allResources, @updateScreenUseCase, @dialogAssignments)
+				uc.execute()
+			)
+		@selectedAbsence.subscribe((newValue) =>
+			console.log 'selectedAbsence changed'
+			console.log newValue
+			#console.log @allResources()
+			if newValue
+				callback = (data) => @inspectResource null
+				# constructor: (@selectedAbsence, @allResources, @updateViewUseCase, @dialogObservable) ->
+				uc = new UModifyAbsences(@selectedAbsence, @allResources, @updateScreenUseCase, @dialogAbsences)
 				uc.execute()
 			)
 		@allResources.subscribe((newValue) =>

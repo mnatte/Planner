@@ -33,12 +33,6 @@ class UCalculateNeededResources
 		@viewModel = new CalculateNeededResourcesViewmodel(@deliverable, @period, @focusFactor)
 		ko.applyBindings(@viewModel)
 
-class UModifyAbsences
-	constructor: (@selectedAbsence, @allResources, @afterSubmitCallback, @dialogObservable) ->
-	execute: (data) ->
-		console.log 'execute UModifyAbsences'
-		@dialogObservable({ name: 'absenceForm', data: new ModifyAbsencesViewmodel(@selectedAbsence, @allResources, @afterSubmitCallback) })
-		
 class UGetAvailableHoursForTeamMemberFromNow
 	constructor: (@teamMember, @phase) ->
 	execute: ->
@@ -376,7 +370,7 @@ class UPersistAndRefresh
 			@observableShowform null
 		if @updateViewUsecase
 			console.log 'execute UpdateViewCase from UPersistAndRefresh'
-			@updateViewUsecase.execute()
+			@updateViewUsecase.execute(json)
 
 class UPlanEnvironment extends UPersistAndRefresh
 	constructor: (@environment, @version, @period, @viewModelObservableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate) ->
@@ -456,6 +450,15 @@ class UModifyAssignment extends UPersistAndRefresh
 	# @dehydrate is the function used in the callback to instantiate the new item by the returned json data
 	#constructor: (@observableCollection, @selectedObservable, @updateViewUsecase, @observableShowform, @dehydrate) ->
 
+class UModifyAbsences extends UPersistAndRefresh
+	# constructor: (@selectedAbsence, @allResources, @afterSubmitCallback, @dialogObservable) ->
+	constructor: (@selectedAbsence, @allResources, @updateViewUseCase, @dialogObservable) ->
+		super @allResources, null, @updateViewUseCase, @dialogObservable, null
+	execute: (data) ->
+		console.log 'execute UModifyAbsences'
+		# @dialogObservable({ name: 'absenceForm', data: new ModifyAbsencesViewmodel(@selectedAbsence, @allResources, @afterSubmitCallback) })
+		@dialogObservable({ name: 'absenceForm', data: new ModifyAbsencesViewmodel(@selectedAbsence, @allResources(), (data) => @refreshData(data)) })
+
 class UModifyResourceAssignment extends UPersistAndRefresh
 	# @assignment contains the data to persist. @viewModelObservableCollection is the collection to replace the old item in
 	constructor: (@selectedAssignment, @allResources, @updateViewUseCase, @dialogObservable) ->
@@ -525,7 +528,7 @@ class UUpdateDeliverableStatus extends UPersistAndRefresh
 
 class UUpdateScreen
 	constructor: (@usecases, @delegates) ->
-	execute: ->
+	execute: (json) ->
 		console.log @usecases
 		console.log @delegates
 		if @usecases
@@ -533,7 +536,7 @@ class UUpdateScreen
 				uc.execute()
 		if @delegates
 			for del in @delegates
-				del()
+				del(json)
 				true
 
 class UDisplayReleaseTimeline

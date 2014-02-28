@@ -13,7 +13,7 @@
             var trackAssignments = [];
 
             // valueAccessor is model passed to binding, viewModel is complete viewModel within scope
-            
+
             console.log("valueAccessor: " + valueAccessor());
             resource = valueAccessor();
             observableModel = allBindingsAccessor().observableModel;
@@ -28,13 +28,13 @@
 
                 release = createRowItem(ass.release.title, 0);
                 //if (releases.indexOf(key) === -1) {
-                    //grp++;
-                    //releases.push(key);
-                    //release = ass.release.title;
-                    //sameRelease++;
-               // } else {
-                   // release = ass.release.title + '[' + sameRelease + ']'
-                    //sameRelease++;
+                //grp++;
+                //releases.push(key);
+                //release = ass.release.title;
+                //sameRelease++;
+                // } else {
+                // release = ass.release.title + '[' + sameRelease + ']'
+                //sameRelease++;
                 //}
                 console.log(release);
 
@@ -55,6 +55,7 @@
 
             for (_j = 0, _len2 = resource.periodsAway.length; _j < _len2; _j++) {
                 abs = resource.periodsAway[_j];
+                abs.person = resource;
                 //console.log(abs)
                 //console.log(abs.title + ': ' + abs.endDate.dateString);
 
@@ -64,7 +65,8 @@
                     end: abs.endDate.date,
                     content: abs.title,
                     info: abs.toString(),
-                    resource: resource
+                    resource: resource,
+                    absence: abs
                 };
                 if (abs.startDate.dateString === abs.endDate.dateString) {
                     delete obj2.end;
